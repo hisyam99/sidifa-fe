@@ -1,44 +1,89 @@
-import { component$, useSignal, $ } from '@builder.io/qwik';
-import api from '../../services/api';
+import { component$, useSignal, $ } from "@builder.io/qwik";
+import { useLocation } from "@builder.io/qwik-city";
+import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { resetPasswordSchema, type ResetPasswordForm } from "~/types/auth";
+import api from "~/services/api";
 
 export default component$(() => {
-  const form = useSignal({ token: '', password: '' });
-  const msg = useSignal<string | null>(null);
   const error = useSignal<string | null>(null);
+  const success = useSignal<string | null>(null);
+  const location = useLocation();
 
-  const handleInput = $((e: Event) => {
-    const target = e.target as HTMLInputElement;
-    form.value = { ...form.value, [target.name]: target.value };
+  const [form, { Form, Field }] = useForm<ResetPasswordForm>({
+    loader: { value: { token: "", password: "" } },
+    validate: valiForm$(resetPasswordSchema),
   });
 
-  const handleSubmit = $(async (e: Event) => {
-    e.preventDefault();
-    msg.value = null;
+  const handleSubmit = $(async (values: ResetPasswordForm) => {
+    console.log("📝 Reset Password - Form Data:", values);
     error.value = null;
-    
-    console.log('🔑 Reset Password - Form Data:', { token: form.value.token, password: '***' });
-    
+    success.value = null;
+
     try {
-      const response = await api.post('/auth/reset-password', form.value);
-      console.log('🎉 Reset Password - Success Response:', response.data);
-      msg.value = 'Password berhasil direset!';
-      form.value = { token: '', password: '' };
+      const response = await api.post("/auth/reset-password", values);
+      console.log("🎉 Reset Password - Success Response:", response.data);
+      success.value = "Password berhasil diubah!";
+
+      // Redirect ke login setelah 2 detik
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
     } catch (err: any) {
-      console.log('💥 Reset Password - Error:', err);
-      error.value = err.response?.data?.message || 'Gagal reset password';
+      console.log("💥 Reset Password - Error:", err);
+      error.value = err.response?.data?.message || "Gagal mengubah password";
     }
   });
+
+  // Ambil token dari URL query parameter
+  const token = location.url.searchParams.get("token") || "";
 
   return (
     <div class="container mx-auto max-w-md p-4">
       <h1 class="text-2xl font-bold mb-4">Reset Password</h1>
-      <form preventdefault:submit onSubmit$={handleSubmit} class="flex flex-col gap-3">
-        <input class="input input-bordered" name="token" placeholder="Token" value={form.value.token} onInput$={handleInput} />
-        <input class="input input-bordered" name="password" placeholder="Password Baru" type="password" value={form.value.password} onInput$={handleInput} />
-        <button class="btn btn-primary" type="submit">Reset Password</button>
-      </form>
-      {msg.value && <div class="text-green-500 mt-2">{msg.value}</div>}
+      <p class="text-gray-600 mb-4">Masukkan password baru Anda.</p>
+
+      <Form onSubmit$={handleSubmit} class="flex flex-col gap-3">
+        <Field name="token">
+          {(field: any, props: any) => (
+            <div>
+              <input {...props} type="hidden" value={token} />
+            </div>
+          )}
+        </Field>
+
+        <Field name="password">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="password"
+                placeholder="Password Baru"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          disabled={form.submitting}
+        >
+          {form.submitting ? "Mengubah..." : "Ubah Password"}
+        </button>
+      </Form>
+
+      <div class="mt-4 text-center">
+        <a href="/login" class="text-blue-500 hover:underline">
+          Kembali ke Login
+        </a>
+      </div>
+
       {error.value && <div class="text-red-500 mt-2">{error.value}</div>}
+      {success.value && <div class="text-green-500 mt-2">{success.value}</div>}
     </div>
   );
-}); 
+});

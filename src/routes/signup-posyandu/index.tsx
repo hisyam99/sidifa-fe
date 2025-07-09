@@ -1,55 +1,153 @@
-import { component$, useSignal, $ } from '@builder.io/qwik';
-import api from '../../services/api';
+import { component$, useSignal, $ } from "@builder.io/qwik";
+import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { signupPosyanduSchema, type SignupPosyanduForm } from "~/types/auth";
+import api from "~/services/api";
 
 export default component$(() => {
-  const form = useSignal({
-    name: '',
-    email: '',
-    password: '',
-    no_telp: '',
-    nama_posyandu: '',
-    lokasi: '',
-  });
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
 
-  const handleInput = $((e: Event) => {
-    const target = e.target as HTMLInputElement;
-    form.value = { ...form.value, [target.name]: target.value };
+  const [form, { Form, Field }] = useForm<SignupPosyanduForm>({
+    loader: {
+      value: {
+        name: "",
+        email: "",
+        password: "",
+        no_telp: "",
+        nama_posyandu: "",
+        lokasi: "",
+      },
+    },
+    validate: valiForm$(signupPosyanduSchema),
   });
 
-  const handleSubmit = $(async (e: Event) => {
-    e.preventDefault();
+  const handleSubmit = $(async (values: SignupPosyanduForm) => {
+    console.log("📝 Signup Posyandu - Form Data:", values);
     error.value = null;
     success.value = null;
-    
-    console.log('📝 Signup Posyandu - Form Data:', form.value);
-    
+
     try {
-      const response = await api.post('/auth/signup/posyandu', { ...form.value });
-      console.log('🎉 Signup Posyandu - Success Response:', response.data);
-      success.value = 'Pendaftaran berhasil!';
-      form.value = { name: '', email: '', password: '', no_telp: '', nama_posyandu: '', lokasi: '' };
+      const response = await api.post("/auth/signup/posyandu", values);
+      console.log("🎉 Signup Posyandu - Success Response:", response.data);
+      success.value = "Pendaftaran berhasil!";
     } catch (err: any) {
-      console.log('💥 Signup Posyandu - Error:', err);
-      error.value = err.response?.data?.message || 'Pendaftaran gagal';
+      console.log("💥 Signup Posyandu - Error:", err);
+      error.value = err.response?.data?.message || "Pendaftaran gagal";
     }
   });
 
   return (
     <div class="container mx-auto max-w-md p-4">
       <h1 class="text-2xl font-bold mb-4">Daftar Posyandu</h1>
-      <form preventdefault:submit onSubmit$={handleSubmit} class="flex flex-col gap-3">
-        <input class="input input-bordered" name="name" placeholder="Nama Lengkap" value={form.value.name} onInput$={handleInput} />
-        <input class="input input-bordered" name="email" placeholder="Email" type="email" value={form.value.email} onInput$={handleInput} />
-        <input class="input input-bordered" name="password" placeholder="Password" type="password" value={form.value.password} onInput$={handleInput} />
-        <input class="input input-bordered" name="no_telp" placeholder="No Telp" value={form.value.no_telp} onInput$={handleInput} />
-        <input class="input input-bordered" name="nama_posyandu" placeholder="Nama Posyandu" value={form.value.nama_posyandu} onInput$={handleInput} />
-        <input class="input input-bordered" name="lokasi" placeholder="Lokasi" value={form.value.lokasi} onInput$={handleInput} />
-        <button class="btn btn-primary" type="submit">Daftar</button>
-      </form>
+
+      <Form onSubmit$={handleSubmit} class="flex flex-col gap-3">
+        <Field name="name">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="text"
+                placeholder="Nama Lengkap"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <Field name="email">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="email"
+                placeholder="Email"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <Field name="password">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="password"
+                placeholder="Password"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <Field name="no_telp">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="text"
+                placeholder="No Telp"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <Field name="nama_posyandu">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="text"
+                placeholder="Nama Posyandu"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <Field name="lokasi">
+          {(field: any, props: any) => (
+            <div>
+              <input
+                {...props}
+                type="text"
+                placeholder="Lokasi"
+                class="input input-bordered w-full"
+              />
+              {field.error && (
+                <div class="text-red-500 text-sm mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+
+        <button
+          type="submit"
+          class="btn btn-primary"
+          disabled={form.submitting}
+        >
+          {form.submitting ? "Mendaftar..." : "Daftar"}
+        </button>
+      </Form>
+
       {error.value && <div class="text-red-500 mt-2">{error.value}</div>}
       {success.value && <div class="text-green-500 mt-2">{success.value}</div>}
     </div>
   );
-}); 
+});

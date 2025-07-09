@@ -1,75 +1,214 @@
-# Qwik City App ⚡️
+# SIDIFA - Sistem Informasi Digital Posyandu dan Psikolog
 
-- [Qwik Docs](https://qwik.dev/)
-- [Discord](https://qwik.dev/chat)
-- [Qwik GitHub](https://github.com/QwikDev/qwik)
-- [@QwikDev](https://twitter.com/QwikDev)
-- [Vite](https://vitejs.dev/)
+Aplikasi full-stack untuk sistem informasi digital posyandu dan psikolog yang dibangun dengan Qwik, NestJS, dan menggunakan modular-forms dengan valibot untuk validasi form yang robust.
 
----
+## 🚀 Tech Stack
 
-## Project Structure
+### Frontend
 
-This project is using Qwik with [QwikCity](https://qwik.dev/qwikcity/overview/). QwikCity is just an extra set of tools on top of Qwik to make it easier to build a full site, including directory-based routing, layouts, and more.
+- **Qwik v1.14.1** - Framework JavaScript modern dengan resumability
+- **DaisyUI v5** - Component library untuk TailwindCSS
+- **TailwindCSS v4** - Utility-first CSS framework
+- **Modular Forms** - Form library untuk Qwik dengan validasi yang powerful
+- **Valibot** - Schema validation library yang lightweight dan type-safe
+- **Axios** - HTTP client untuk API calls
 
-Inside your project, you'll see the following directory structure:
+### Backend
 
-```
-├── public/
-│   └── ...
-└── src/
-    ├── components/
-    │   └── ...
-    └── routes/
-        └── ...
-```
+- **NestJS v11.1.3** - Progressive Node.js framework
+- **JWT** - JSON Web Token untuk authentication
+- **TypeORM** - ORM untuk database
+- **PostgreSQL** - Database
 
-- `src/routes`: Provides the directory-based routing, which can include a hierarchy of `layout.tsx` layout files, and an `index.tsx` file as the page. Additionally, `index.ts` files are endpoints. Please see the [routing docs](https://qwik.dev/qwikcity/routing/overview/) for more info.
+## ✨ Fitur
 
-- `src/components`: Recommended directory for components.
+### Authentication System
 
-- `public`: Any static assets, like images, can be placed in the public directory. Please see the [Vite public directory](https://vitejs.dev/guide/assets.html#the-public-directory) for more info.
+- ✅ Signup untuk Posyandu dan Psikolog
+- ✅ Login dengan JWT
+- ✅ Forgot Password dengan email reset
+- ✅ Reset Password dengan token
+- ✅ Profile management
+- ✅ Logout
 
-## Add Integrations and deployment
+### Form Validation
 
-Use the `bun qwik add` command to add additional integrations. Some examples of integrations includes: Cloudflare, Netlify or Express Server, and the [Static Site Generator (SSG)](https://qwik.dev/qwikcity/guides/static-site-generation/).
+- ✅ Real-time validation dengan Valibot
+- ✅ Custom error messages dalam Bahasa Indonesia
+- ✅ Password strength validation
+- ✅ Email format validation
+- ✅ Required field validation
 
-```shell
-bun qwik add # or `bun qwik add`
-```
+### UI/UX
 
-## Development
+- ✅ Responsive design dengan DaisyUI
+- ✅ Loading states
+- ✅ Error handling
+- ✅ Success messages
+- ✅ Conditional navigation berdasarkan login status
 
-Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
+## 🛠️ Installation
 
-```shell
-npm start # or `bun start`
-```
+### Prerequisites
 
-> Note: during dev mode, Vite may request a significant number of `.js` files. This does not represent a Qwik production build.
+- Node.js 18+
+- Bun (recommended) atau npm
+- PostgreSQL database
 
-## Preview
+### Frontend Setup
 
-The preview command will create a production build of the client modules, a production build of `src/entry.preview.tsx`, and run a local server. The preview server is only for convenience to preview a production build locally and should not be used as a production server.
-
-```shell
-bun preview # or `bun preview`
-```
-
-## Production
-
-The production build will generate client and server modules by running both client and server build commands. The build command will use Typescript to run a type check on the source code.
-
-```shell
-bun build # or `bun build`
-```
-
-## Bun Server
-
-This app has a minimal [Bun server](https://bun.sh/docs/api/http) implementation. After running a full build, you can preview the build using the command:
-
-```
-bun run serve
+```bash
+cd sidifa-fev2
+bun install
+bun run dev
 ```
 
-Then visit [http://localhost:3000/](http://localhost:3000/)
+### Backend Setup
+
+```bash
+cd backend
+npm install
+npm run start:dev
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── routes/                 # Qwik City routes
+│   ├── signup-posyandu/    # Signup form untuk posyandu
+│   ├── signup-psikolog/    # Signup form untuk psikolog
+│   ├── login/              # Login form
+│   ├── profile/            # User profile page
+│   ├── forgot-password/    # Forgot password form
+│   ├── reset-password/     # Reset password form
+│   └── layout.tsx          # Main layout dengan navigation
+├── types/
+│   └── auth.ts             # Valibot schemas dan types
+├── services/
+│   └── api.ts              # Axios instance dengan interceptors
+└── components/             # Reusable components
+```
+
+## 🔧 Form Validation dengan Valibot
+
+### Schema Definition
+
+```typescript
+import { object, string, email, minLength, regex, pipe } from "valibot";
+
+export const signupPosyanduSchema = object({
+  name: pipe(string(), minLength(1, "Nama harus diisi")),
+  email: pipe(string(), email("Email tidak valid")),
+  password: pipe(
+    string(),
+    minLength(8, "Password minimal 8 karakter"),
+    regex(
+      /^(?=.*[A-Z])(?=.*\d).+$/,
+      "Password harus mengandung huruf besar dan angka",
+    ),
+  ),
+  // ... other fields
+});
+```
+
+### Form Implementation
+
+```typescript
+import { useForm, valiForm$ } from "@modular-forms/qwik";
+
+const [form, { Form, Field }] = useForm<SignupPosyanduForm>({
+  loader: { value: { name: "", email: "", password: "" } },
+  validate: valiForm$(signupPosyanduSchema),
+});
+```
+
+## 🔐 Authentication Flow
+
+1. **Signup**: User mendaftar sebagai Posyandu atau Psikolog
+2. **Login**: User login dengan email dan password
+3. **JWT Token**: Token disimpan di localStorage
+4. **Protected Routes**: Profile page hanya bisa diakses setelah login
+5. **Logout**: Token dihapus dari localStorage
+
+## 🎨 UI Components
+
+### Form Fields
+
+- Input fields dengan validasi real-time
+- Error messages yang informatif
+- Loading states saat submit
+- Responsive design
+
+### Navigation
+
+- Conditional navigation berdasarkan login status
+- Role-based display (Posyandu/Psikolog)
+- Clean dan modern design
+
+## 📱 Responsive Design
+
+Aplikasi menggunakan DaisyUI dan TailwindCSS untuk responsive design yang optimal di berbagai device:
+
+- Desktop
+- Tablet
+- Mobile
+
+## 🔍 Development
+
+### Running in Development
+
+```bash
+bun run dev
+```
+
+### Building for Production
+
+```bash
+bun run build
+```
+
+### Preview Production Build
+
+```bash
+bun run preview
+```
+
+## 🧪 Testing
+
+Untuk menjalankan tests:
+
+```bash
+bun run test
+```
+
+## 📝 API Endpoints
+
+### Authentication
+
+- `POST /auth/signup/posyandu` - Signup posyandu
+- `POST /auth/signup/psikolog` - Signup psikolog
+- `POST /auth/login` - Login
+- `POST /auth/forgot-password` - Forgot password
+- `POST /auth/reset-password` - Reset password
+- `GET /auth/profile` - Get user profile
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Qwik](https://qwik.dev/) - For the amazing framework
+- [Modular Forms](https://modularforms.dev/) - For the powerful form library
+- [Valibot](https://valibot.dev/) - For the lightweight validation
+- [DaisyUI](https://daisyui.com/) - For the beautiful components
+- [NestJS](https://nestjs.com/) - For the robust backend framework
