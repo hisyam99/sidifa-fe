@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { WelcomeCard, SignupCards } from "~/components/home";
-import { useAuth } from "~/hooks";
+import { useAuthLoader } from "~/routes/layout";
 import {
   LuStethoscope,
   LuBarChart,
@@ -19,7 +19,7 @@ import {
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { isLoggedIn, user } = useAuth();
+  const auth = useAuthLoader();
 
   return (
     <main class="min-h-screen">
@@ -30,7 +30,7 @@ export default component$(() => {
         <div class="container mx-auto px-4 py-20 relative z-10">
           <div class="text-center mb-16 animate-fade-in-up">
             <div class="avatar placeholder mb-8">
-              <div class="bg-gradient-primary text-white rounded-full w-32 h-32 shadow-2xl">
+              <div class="bg-gradient-primary  rounded-full w-32 h-32 shadow-2xl">
                 <LuHeart class="w-16 h-16" />
               </div>
             </div>
@@ -49,11 +49,11 @@ export default component$(() => {
             </p>
           </div>
 
-          {isLoggedIn.value ? (
+          {auth.value.isLoggedIn ? (
             <div class="max-w-4xl mx-auto animate-slide-in-right">
               <WelcomeCard
-                userName={user.value?.name || ""}
-                userRole={user.value?.role || ""}
+                userName={auth.value.user?.name || ""}
+                userRole={auth.value.user?.role || ""}
               />
             </div>
           ) : (
@@ -80,7 +80,7 @@ export default component$(() => {
       </section>
 
       {/* Statistics Section */}
-      {!isLoggedIn.value && (
+      {!auth.value.isLoggedIn && (
         <section class="py-16 bg-gradient-to-r from-primary/10 to-secondary/10">
           <div class="container mx-auto px-4">
             <div class="text-center mb-12">
@@ -95,7 +95,7 @@ export default component$(() => {
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
               <div class="text-center">
-                <div class="bg-gradient-primary text-white rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <div class="bg-gradient-primary  rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
                   <LuUsers class="w-8 h-8" />
                 </div>
                 <h3 class="text-3xl font-bold text-gradient-primary mb-2">
@@ -107,7 +107,7 @@ export default component$(() => {
               </div>
 
               <div class="text-center">
-                <div class="bg-gradient-secondary text-white rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <div class="bg-gradient-secondary  rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
                   <LuHeart class="w-8 h-8" />
                 </div>
                 <h3 class="text-3xl font-bold text-gradient-secondary mb-2">
@@ -117,7 +117,7 @@ export default component$(() => {
               </div>
 
               <div class="text-center">
-                <div class="bg-gradient-accent text-white rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <div class="bg-gradient-accent  rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
                   <LuBrain class="w-8 h-8" />
                 </div>
                 <h3 class="text-3xl font-bold text-gradient-accent mb-2">
@@ -127,7 +127,7 @@ export default component$(() => {
               </div>
 
               <div class="text-center">
-                <div class="bg-primary text-white rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
+                <div class="bg-primary  rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg">
                   <LuTrendingUp class="w-8 h-8" />
                 </div>
                 <h3 class="text-3xl font-bold text-primary mb-2">70%</h3>
@@ -141,7 +141,7 @@ export default component$(() => {
       )}
 
       {/* Features Section */}
-      {!isLoggedIn.value && (
+      {!auth.value.isLoggedIn && (
         <section class="py-20 bg-base-100">
           <div class="container mx-auto px-4">
             <div class="text-center mb-16">
@@ -159,7 +159,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-gradient-primary text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-gradient-primary  rounded-full w-20 h-20 shadow-lg">
                       <LuBarChart class="w-10 h-10" />
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-gradient-secondary text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-gradient-secondary  rounded-full w-20 h-20 shadow-lg">
                       <LuShield class="w-10 h-10" />
                     </div>
                   </div>
@@ -206,7 +206,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-gradient-accent text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-gradient-accent  rounded-full w-20 h-20 shadow-lg">
                       <LuZap class="w-10 h-10" />
                     </div>
                   </div>
@@ -229,7 +229,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-primary text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-primary  rounded-full w-20 h-20 shadow-lg">
                       <LuHeart class="w-10 h-10" />
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-secondary text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-secondary  rounded-full w-20 h-20 shadow-lg">
                       <LuBrain class="w-10 h-10" />
                     </div>
                   </div>
@@ -275,7 +275,7 @@ export default component$(() => {
               <div class="card-elegant group">
                 <div class="card-body text-center p-8">
                   <div class="avatar placeholder mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                    <div class="bg-accent text-white rounded-full w-20 h-20 shadow-lg">
+                    <div class="bg-accent  rounded-full w-20 h-20 shadow-lg">
                       <LuGlobe class="w-10 h-10" />
                     </div>
                   </div>
@@ -300,7 +300,7 @@ export default component$(() => {
       )}
 
       {/* Testimonials Section */}
-      {!isLoggedIn.value && (
+      {!auth.value.isLoggedIn && (
         <section class="py-20 bg-gradient-to-br from-base-200 to-base-300">
           <div class="container mx-auto px-4">
             <div class="text-center mb-16">
@@ -331,7 +331,7 @@ export default component$(() => {
                   </p>
                   <div class="flex items-center gap-3">
                     <div class="avatar placeholder">
-                      <div class="bg-primary text-white rounded-full w-10 h-10">
+                      <div class="bg-primary  rounded-full w-10 h-10">
                         <span class="text-sm font-bold">S</span>
                       </div>
                     </div>
@@ -361,7 +361,7 @@ export default component$(() => {
                   </p>
                   <div class="flex items-center gap-3">
                     <div class="avatar placeholder">
-                      <div class="bg-secondary text-white rounded-full w-10 h-10">
+                      <div class="bg-secondary  rounded-full w-10 h-10">
                         <span class="text-sm font-bold">D</span>
                       </div>
                     </div>
@@ -391,7 +391,7 @@ export default component$(() => {
                   </p>
                   <div class="flex items-center gap-3">
                     <div class="avatar placeholder">
-                      <div class="bg-accent text-white rounded-full w-10 h-10">
+                      <div class="bg-accent  rounded-full w-10 h-10">
                         <span class="text-sm font-bold">R</span>
                       </div>
                     </div>
@@ -410,8 +410,8 @@ export default component$(() => {
       )}
 
       {/* CTA Section */}
-      {!isLoggedIn.value && (
-        <section class="py-20 bg-gradient-primary text-white">
+      {!auth.value.isLoggedIn && (
+        <section class="py-20 bg-gradient-primary">
           <div class="container mx-auto px-4 text-center">
             <h2 class="text-responsive-lg font-bold mb-6">
               Bergabunglah dengan SIDIFA Sekarang

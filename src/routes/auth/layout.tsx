@@ -27,7 +27,7 @@ export default component$(() => {
             class="inline-flex items-center gap-3 mb-4 hover:scale-105 transition-transform duration-300"
           >
             <div class="avatar placeholder">
-              <div class="bg-gradient-primary text-white rounded-full w-12 h-12 shadow-lg">
+              <div class="bg-gradient-primary  rounded-full w-12 h-12 shadow-lg">
                 <LuHeart class="w-6 h-6" />
               </div>
             </div>

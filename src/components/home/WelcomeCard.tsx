@@ -16,7 +16,7 @@ export default component$<WelcomeCardProps>(({ userName, userRole }) => {
     <div class="card-elegant max-w-2xl mx-auto text-center group">
       <div class="card-body p-8">
         <div class="avatar placeholder mb-6 group-hover:scale-110 transition-transform duration-300">
-          <div class="bg-gradient-primary text-white rounded-full w-24 h-24 shadow-xl">
+          <div class="bg-gradient-primary  rounded-full w-24 h-24 shadow-xl">
             <LuHeart class="w-12 h-12" />
           </div>
         </div>

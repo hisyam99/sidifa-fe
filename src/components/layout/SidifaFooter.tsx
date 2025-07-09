@@ -16,14 +16,14 @@ import {
 export default component$(() => {
   return (
     <footer class="footer footer-center p-10 bg-gradient-to-br from-base-200 to-base-300 text-base-content border-t border-base-200/50">
-      <div class="max-w-7xl mx-auto w-full">
+      <div class="container mx-auto px-4">
         {/* Main Footer Content */}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
           <div class="text-center lg:text-left">
             <div class="flex items-center justify-center lg:justify-start mb-4">
               <div class="avatar placeholder mr-3">
-                <div class="bg-gradient-primary text-white rounded-full w-12 h-12 shadow-lg">
+                <div class="bg-gradient-primary  rounded-full w-12 h-12 shadow-lg">
                   <LuHeart class="w-6 h-6" />
                 </div>
               </div>

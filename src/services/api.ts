@@ -3,12 +3,22 @@ import axios from "axios";
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3001/api/v1",
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
+
+// Helper untuk ambil token dari cookie
+function getTokenFromCookie() {
+  if (typeof document !== "undefined") {
+    const match = document.cookie.match(/(?:^|; )access_token=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+  return null;
+}
 
 // Request interceptor untuk JWT dan logging
 api.interceptors.request.use((config) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  // Ambil token dari cookie (bukan localStorage)
+  const token = getTokenFromCookie();
   if (token) config.headers.Authorization = `Bearer ${token}`;
 
   console.log("🚀 REQUEST:", {

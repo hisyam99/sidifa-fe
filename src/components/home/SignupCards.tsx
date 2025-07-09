@@ -17,7 +17,7 @@ export default component$(() => {
       <div class="card-elegant text-center group hover:shadow-2xl transition-all duration-500">
         <div class="card-body p-8">
           <div class="avatar placeholder mb-6 group-hover:scale-110 transition-transform duration-300">
-            <div class="bg-gradient-primary text-white rounded-full w-24 h-24 shadow-xl">
+            <div class="bg-gradient-primary  rounded-full w-24 h-24 shadow-xl">
               <LuStethoscope class="w-12 h-12" />
             </div>
           </div>
@@ -65,7 +65,7 @@ export default component$(() => {
       <div class="card-elegant text-center group hover:shadow-2xl transition-all duration-500">
         <div class="card-body p-8">
           <div class="avatar placeholder mb-6 group-hover:scale-110 transition-transform duration-300">
-            <div class="bg-gradient-secondary text-white rounded-full w-24 h-24 shadow-xl">
+            <div class="bg-gradient-secondary  rounded-full w-24 h-24 shadow-xl">
               <LuBrain class="w-12 h-12" />
             </div>
           </div>

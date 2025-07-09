@@ -75,8 +75,11 @@ export default component$(() => {
 
       <div class="divider">atau</div>
 
-      <div class="text-center">
-        <a href="/auth/login" class="btn btn-outline btn-sm w-full">
+      <div class="text-center text-sm mt-2">
+        <a
+          href="/auth/login"
+          class="link link-primary font-medium w-full block"
+        >
           Kembali ke Login
         </a>
       </div>
