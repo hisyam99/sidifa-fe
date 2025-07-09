@@ -7,6 +7,7 @@ interface FormFieldProps {
   placeholder?: string;
   label?: string;
   class?: string;
+  required?: boolean;
 }
 
 export default component$<FormFieldProps>(
@@ -16,23 +17,29 @@ export default component$<FormFieldProps>(
     type = "text",
     placeholder,
     label,
-    class: className = "input input-bordered w-full",
+    class: className = "",
+    required = false,
   }) => {
     return (
-      <div>
+      <div class="form-control w-full">
         {label && (
           <label class="label">
-            <span class="label-text font-semibold">{label}</span>
+            <span class="label-text font-medium">
+              {label}
+              {required && <span class="text-error ml-1">*</span>}
+            </span>
           </label>
         )}
         <input
           {...props}
           type={type}
           placeholder={placeholder}
-          class={className}
+          class={`input input-bordered w-full ${field.error ? "input-error" : ""} ${className}`}
         />
         {field.error && (
-          <div class="text-red-500 text-sm mt-1">{field.error}</div>
+          <label class="label">
+            <span class="label-text-alt text-error">{field.error}</span>
+          </label>
         )}
       </div>
     );

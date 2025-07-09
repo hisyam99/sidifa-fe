@@ -3,8 +3,7 @@ import { useLocation } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { resetPasswordSchema, type ResetPasswordForm } from "~/types/auth";
 import api from "~/services/api";
-import FormField from "~/components/ui/FormField";
-import Alert from "~/components/ui/Alert";
+import { FormField, Alert, Card } from "~/components/ui";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -28,7 +27,7 @@ export default component$(() => {
 
       // Redirect ke login setelah 2 detik
       setTimeout(() => {
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       }, 2000);
     } catch (err: any) {
       console.log("💥 Reset Password - Error:", err);
@@ -40,11 +39,18 @@ export default component$(() => {
   const token = location.url.searchParams.get("token") || "";
 
   return (
-    <>
-      <h1 class="text-2xl font-bold mb-4">Reset Password</h1>
-      <p class="text-gray-600 mb-4">Masukkan password baru Anda.</p>
+    <Card class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="avatar placeholder mb-4">
+          <div class="bg-success text-success-content rounded-full w-16">
+            <span class="text-2xl">🔒</span>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold">Reset Password</h1>
+        <p class="text-base-content/70 mt-2">Masukkan password baru Anda</p>
+      </div>
 
-      <Form onSubmit$={handleSubmit} class="flex flex-col gap-3">
+      <Form onSubmit$={handleSubmit} class="space-y-4">
         <Field name="token">
           {(field: any, props: any) => (
             <div>
@@ -59,30 +65,41 @@ export default component$(() => {
               field={field}
               props={props}
               type="password"
-              placeholder="Password Baru"
+              placeholder="Masukkan password baru"
+              label="Password Baru"
+              required
             />
           )}
         </Field>
 
         <button
           type="submit"
-          class="btn btn-primary"
+          class="btn btn-success w-full"
           disabled={form.submitting}
         >
-          {form.submitting ? "Mengubah..." : "Ubah Password"}
+          {form.submitting ? (
+            <>
+              <span class="loading loading-spinner loading-sm"></span>
+              Mengubah...
+            </>
+          ) : (
+            "Ubah Password"
+          )}
         </button>
       </Form>
 
-      <div class="mt-4 text-center">
-        <a href="/login" class="text-blue-500 hover:underline">
+      <div class="divider">atau</div>
+
+      <div class="text-center">
+        <a href="/auth/login" class="btn btn-outline btn-sm w-full">
           Kembali ke Login
         </a>
       </div>
 
-      {error.value && <Alert type="error" message={error.value} class="mt-2" />}
+      {error.value && <Alert type="error" message={error.value} class="mt-4" />}
       {success.value && (
-        <Alert type="success" message={success.value} class="mt-2" />
+        <Alert type="success" message={success.value} class="mt-4" />
       )}
-    </>
+    </Card>
   );
 });

@@ -4,7 +4,7 @@ import { SignupPosyanduForm } from "~/components/auth";
 
 export default component$(() => {
   return (
-    <PageContainer>
+    <PageContainer centered>
       <SignupPosyanduForm />
     </PageContainer>
   );

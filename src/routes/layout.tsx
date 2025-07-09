@@ -1,6 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { SidifaHeader, SidifaFooter, Navigation } from "~/components/layout";
+import { Navigation, SidifaFooter } from "~/components/layout";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -11,11 +11,8 @@ export const useServerTimeLoader = routeLoader$(() => {
 export default component$(() => {
   return (
     <>
-      <SidifaHeader />
       <Navigation />
-      <main class="min-h-screen">
-        <Slot />
-      </main>
+      <Slot />
       <SidifaFooter />
     </>
   );

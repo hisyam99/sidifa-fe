@@ -3,8 +3,7 @@ import { useNavigate } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api from "~/services/api";
-import FormField from "~/components/ui/FormField";
-import Alert from "~/components/ui/Alert";
+import { FormField, Alert, Card } from "~/components/ui";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -46,7 +45,7 @@ export default component$(() => {
 
       // Redirect ke profile setelah 1 detik
       setTimeout(() => {
-        nav("/profile");
+        nav("/dashboard/profile");
       }, 1000);
     } catch (err: any) {
       console.log("💥 Login - Error:", err);
@@ -55,17 +54,27 @@ export default component$(() => {
   });
 
   return (
-    <>
-      <h1 class="text-2xl font-bold mb-4">Login</h1>
+    <Card class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="avatar placeholder mb-4">
+          <div class="bg-primary text-primary-content rounded-full w-16">
+            <span class="text-2xl">🔐</span>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold">Masuk ke SIDIFA</h1>
+        <p class="text-base-content/70 mt-2">Silakan masuk dengan akun Anda</p>
+      </div>
 
-      <Form onSubmit$={handleSubmit} class="flex flex-col gap-3">
+      <Form onSubmit$={handleSubmit} class="space-y-4">
         <Field name="email">
           {(field: any, props: any) => (
             <FormField
               field={field}
               props={props}
               type="email"
-              placeholder="Email"
+              placeholder="Masukkan email Anda"
+              label="Email"
+              required
             />
           )}
         </Field>
@@ -76,30 +85,55 @@ export default component$(() => {
               field={field}
               props={props}
               type="password"
-              placeholder="Password"
+              placeholder="Masukkan password Anda"
+              label="Password"
+              required
             />
           )}
         </Field>
 
+        <div class="form-control">
+          <label class="label cursor-pointer justify-start gap-2">
+            <input type="checkbox" class="checkbox checkbox-sm" />
+            <span class="label-text">Ingat saya</span>
+          </label>
+        </div>
+
         <button
           type="submit"
-          class="btn btn-primary"
+          class="btn btn-primary w-full"
           disabled={form.submitting}
         >
-          {form.submitting ? "Login..." : "Login"}
+          {form.submitting ? (
+            <>
+              <span class="loading loading-spinner loading-sm"></span>
+              Masuk...
+            </>
+          ) : (
+            "Masuk"
+          )}
         </button>
       </Form>
 
-      <div class="mt-4 text-center">
-        <a href="/forgot-password" class="text-blue-500 hover:underline">
+      <div class="divider">atau</div>
+
+      <div class="space-y-3">
+        <a href="/auth/forgot-password" class="btn btn-outline btn-sm w-full">
           Lupa Password?
         </a>
+
+        <div class="text-center text-sm">
+          <span class="text-base-content/70">Belum punya akun? </span>
+          <a href="/auth/signup/posyandu" class="link link-primary font-medium">
+            Daftar sekarang
+          </a>
+        </div>
       </div>
 
-      {error.value && <Alert type="error" message={error.value} class="mt-2" />}
+      {error.value && <Alert type="error" message={error.value} class="mt-4" />}
       {success.value && (
-        <Alert type="success" message={success.value} class="mt-2" />
+        <Alert type="success" message={success.value} class="mt-4" />
       )}
-    </>
+    </Card>
   );
 });

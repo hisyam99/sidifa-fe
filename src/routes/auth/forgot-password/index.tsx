@@ -1,11 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { PageContainer } from "~/components/layout";
-import { LoginForm } from "~/components/auth";
+import { ForgotPasswordForm } from "~/components/auth";
 
 export default component$(() => {
   return (
-    <PageContainer>
-      <LoginForm />
+    <PageContainer centered>
+      <ForgotPasswordForm />
     </PageContainer>
   );
 });

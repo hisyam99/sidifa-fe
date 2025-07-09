@@ -2,8 +2,7 @@ import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "~/types/auth";
 import api from "~/services/api";
-import FormField from "~/components/ui/FormField";
-import Alert from "~/components/ui/Alert";
+import { FormField, Alert, Card } from "~/components/ui";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -31,43 +30,61 @@ export default component$(() => {
   });
 
   return (
-    <>
-      <h1 class="text-2xl font-bold mb-4">Lupa Password</h1>
-      <p class="text-gray-600 mb-4">
-        Masukkan email Anda untuk menerima link reset password.
-      </p>
+    <Card class="w-full max-w-md">
+      <div class="text-center mb-6">
+        <div class="avatar placeholder mb-4">
+          <div class="bg-warning text-warning-content rounded-full w-16">
+            <span class="text-2xl">🔑</span>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold">Lupa Password</h1>
+        <p class="text-base-content/70 mt-2">
+          Masukkan email Anda untuk menerima link reset password
+        </p>
+      </div>
 
-      <Form onSubmit$={handleSubmit} class="flex flex-col gap-3">
+      <Form onSubmit$={handleSubmit} class="space-y-4">
         <Field name="email">
           {(field: any, props: any) => (
             <FormField
               field={field}
               props={props}
               type="email"
-              placeholder="Email"
+              placeholder="Masukkan email Anda"
+              label="Email"
+              required
             />
           )}
         </Field>
 
         <button
           type="submit"
-          class="btn btn-primary"
+          class="btn btn-warning w-full"
           disabled={form.submitting}
         >
-          {form.submitting ? "Mengirim..." : "Kirim Email Reset"}
+          {form.submitting ? (
+            <>
+              <span class="loading loading-spinner loading-sm"></span>
+              Mengirim...
+            </>
+          ) : (
+            "Kirim Email Reset"
+          )}
         </button>
       </Form>
 
-      <div class="mt-4 text-center">
-        <a href="/login" class="text-blue-500 hover:underline">
+      <div class="divider">atau</div>
+
+      <div class="text-center">
+        <a href="/auth/login" class="btn btn-outline btn-sm w-full">
           Kembali ke Login
         </a>
       </div>
 
-      {error.value && <Alert type="error" message={error.value} class="mt-2" />}
+      {error.value && <Alert type="error" message={error.value} class="mt-4" />}
       {success.value && (
-        <Alert type="success" message={success.value} class="mt-2" />
+        <Alert type="success" message={success.value} class="mt-4" />
       )}
-    </>
+    </Card>
   );
 });
