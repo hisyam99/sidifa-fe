@@ -3,6 +3,7 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { signupPosyanduSchema, type SignupPosyanduForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
+import { LuStethoscope } from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -23,16 +24,16 @@ export default component$(() => {
   });
 
   const handleSubmit = $(async (values: SignupPosyanduForm) => {
-    console.log("📝 Signup Posyandu - Form Data:", values);
+    console.log("Signup Posyandu - Form Data:", values);
     error.value = null;
     success.value = null;
 
     try {
       const response = await api.post("/auth/signup/posyandu", values);
-      console.log("🎉 Signup Posyandu - Success Response:", response.data);
+      console.log("Signup Posyandu - Success Response:", response.data);
       success.value = "Pendaftaran berhasil!";
     } catch (err: any) {
-      console.log("💥 Signup Posyandu - Error:", err);
+      console.log("Signup Posyandu - Error:", err);
       error.value = err.response?.data?.message || "Pendaftaran gagal";
     }
   });
@@ -42,7 +43,7 @@ export default component$(() => {
       <div class="text-center mb-6">
         <div class="avatar placeholder mb-4">
           <div class="bg-primary text-primary-content rounded-full w-16">
-            <span class="text-2xl">🏥</span>
+            <LuStethoscope class="w-8 h-8 mx-auto" />
           </div>
         </div>
         <h1 class="text-2xl font-bold">Daftar Posyandu</h1>
@@ -141,7 +142,7 @@ export default component$(() => {
             <input type="checkbox" class="checkbox checkbox-sm" required />
             <span class="label-text">
               Saya setuju dengan{" "}
-              <a href="#" class="link link-primary">
+              <a href="/terms" class="link link-primary">
                 syarat dan ketentuan
               </a>
             </span>
@@ -155,8 +156,7 @@ export default component$(() => {
         >
           {form.submitting ? (
             <>
-              <span class="loading loading-spinner loading-sm"></span>
-              Mendaftar...
+              <span class="loading loading-spinner loading-sm" /> Mendaftar...
             </>
           ) : (
             "Daftar Posyandu"

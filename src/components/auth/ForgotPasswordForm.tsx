@@ -3,6 +3,7 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
+import { LuKey } from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -14,16 +15,16 @@ export default component$(() => {
   });
 
   const handleSubmit = $(async (values: ForgotPasswordForm) => {
-    console.log("📝 Forgot Password - Form Data:", values);
+    console.log("Forgot Password - Form Data:", values);
     error.value = null;
     success.value = null;
 
     try {
       const response = await api.post("/auth/forgot-password", values);
-      console.log("🎉 Forgot Password - Success Response:", response.data);
+      console.log("Forgot Password - Success Response:", response.data);
       success.value = "Email reset password telah dikirim!";
     } catch (err: any) {
-      console.log("💥 Forgot Password - Error:", err);
+      console.log("Forgot Password - Error:", err);
       error.value =
         err.response?.data?.message || "Gagal mengirim email reset password";
     }
@@ -34,7 +35,7 @@ export default component$(() => {
       <div class="text-center mb-6">
         <div class="avatar placeholder mb-4">
           <div class="bg-warning text-warning-content rounded-full w-16">
-            <span class="text-2xl">🔑</span>
+            <LuKey class="w-8 h-8 mx-auto" />
           </div>
         </div>
         <h1 class="text-2xl font-bold">Lupa Password</h1>
@@ -64,8 +65,7 @@ export default component$(() => {
         >
           {form.submitting ? (
             <>
-              <span class="loading loading-spinner loading-sm"></span>
-              Mengirim...
+              <span class="loading loading-spinner loading-sm" /> Mengirim...
             </>
           ) : (
             "Kirim Email Reset"

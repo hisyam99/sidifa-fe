@@ -1,5 +1,10 @@
 import { component$ } from "@builder.io/qwik";
-import { Card } from "~/components/ui";
+import {
+  LuHeart,
+  LuUser,
+  LuArrowRight,
+  LuSparkles,
+} from "@qwikest/icons/lucide";
 
 interface WelcomeCardProps {
   userName: string;
@@ -8,37 +13,47 @@ interface WelcomeCardProps {
 
 export default component$<WelcomeCardProps>(({ userName, userRole }) => {
   return (
-    <Card class="max-w-md mx-auto text-center">
-      <div class="avatar placeholder mb-4">
-        <div class="bg-primary text-primary-content rounded-full w-20">
-          <span class="text-3xl">👋</span>
+    <div class="card-elegant max-w-2xl mx-auto text-center group">
+      <div class="card-body p-8">
+        <div class="avatar placeholder mb-6 group-hover:scale-110 transition-transform duration-300">
+          <div class="bg-gradient-primary text-white rounded-full w-24 h-24 shadow-xl">
+            <LuHeart class="w-12 h-12" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <LuSparkles class="w-5 h-5 text-accent" />
+          <h2 class="card-title text-3xl font-bold text-gradient-primary">
+            Selamat Datang, {userName}!
+          </h2>
+          <LuSparkles class="w-5 h-5 text-accent" />
+        </div>
+
+        <p class="text-base-content/70 mb-6 text-lg">
+          Anda login sebagai{" "}
+          <span class="badge badge-primary badge-lg gap-2 px-4 py-3">
+            <LuUser class="w-4 h-4" />
+            {userRole}
+          </span>
+        </p>
+
+        <p class="text-base-content/60 mb-8 leading-relaxed">
+          Selamat datang kembali di SIDIFA. Platform Anda untuk memberikan
+          layanan kesehatan dan dukungan psikologis yang inklusif dan
+          berkualitas.
+        </p>
+
+        <div class="card-actions justify-center">
+          <a
+            href="/dashboard/profile"
+            class="btn-hero inline-flex items-center gap-3"
+          >
+            <LuUser class="w-5 h-5" />
+            Lihat Profil
+            <LuArrowRight class="w-4 h-4" />
+          </a>
         </div>
       </div>
-      <h2 class="card-title text-2xl mb-4 justify-center">
-        Selamat Datang, {userName}!
-      </h2>
-      <p class="text-base-content/70 mb-6">
-        Anda login sebagai{" "}
-        <span class="badge badge-primary badge-lg">{userRole}</span>
-      </p>
-      <div class="card-actions justify-center">
-        <a href="/dashboard/profile" class="btn btn-primary">
-          <svg
-            class="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            ></path>
-          </svg>
-          Lihat Profile
-        </a>
-      </div>
-    </Card>
+    </div>
   );
 });

@@ -1,165 +1,271 @@
-import { component$, $ } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
-import { Card } from "~/components/ui";
+import { component$ } from "@builder.io/qwik";
+import { useAuth } from "~/hooks";
+import {
+  LuUser,
+  LuMail,
+  LuPhone,
+  LuMapPin,
+  LuHeart,
+  LuBrain,
+  LuPencil,
+  LuShield,
+  LuZap,
+  LuCheckCircle,
+} from "@qwikest/icons/lucide";
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  no_telp: string;
-  nama_posyandu?: string;
-  lokasi?: string;
-  spesialis?: string;
-}
-
-interface ProfileCardProps {
-  user: User;
-}
-
-export default component$<ProfileCardProps>(({ user }) => {
-  const nav = useNavigate();
-
-  const handleLogout = $(() => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user");
-      nav("/auth/login");
-    }
-  });
+export default component$(() => {
+  const { user } = useAuth();
 
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "posyandu":
-        return "🏥";
+        return <LuHeart class="w-6 h-6" />;
       case "psikolog":
-        return "🧠";
+        return <LuBrain class="w-6 h-6" />;
       default:
-        return "👤";
+        return <LuUser class="w-6 h-6" />;
     }
   };
 
   const getRoleColor = (role: string) => {
     switch (role) {
       case "posyandu":
-        return "bg-primary";
+        return "bg-gradient-primary";
       case "psikolog":
-        return "bg-secondary";
+        return "bg-gradient-secondary";
       default:
-        return "bg-accent";
+        return "bg-gradient-accent";
+    }
+  };
+
+  const getRoleBenefits = (role: string) => {
+    if (role === "posyandu") {
+      return [
+        {
+          text: "Kelola data kesehatan masyarakat",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+        {
+          text: "Laporan dan statistik real-time",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+        {
+          text: "Akses ke layanan psikologis",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+      ];
+    } else if (role === "psikolog") {
+      return [
+        {
+          text: "Kelola jadwal konseling",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+        {
+          text: "Rekam medis pasien",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+        {
+          text: "Kolaborasi dengan posyandu",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+      ];
+    } else {
+      return [
+        {
+          text: "Akses ke informasi kesehatan",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+        {
+          text: "Layanan konseling",
+          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
+        },
+      ];
     }
   };
 
   return (
-    <Card class="max-w-2xl mx-auto">
-      <div class="text-center mb-6">
-        <div class="avatar placeholder mb-4">
-          <div
-            class={`${getRoleColor(user.role)} text-primary-content rounded-full w-20`}
-          >
-            <span class="text-3xl">{getRoleIcon(user.role)}</span>
-          </div>
-        </div>
-        <h1 class="text-2xl font-bold">Profile Pengguna</h1>
-        <p class="text-base-content/70 mt-2">Informasi detail akun Anda</p>
-      </div>
-
-      <div class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Nama Lengkap</span>
-            </label>
-            <div class="input input-bordered bg-base-200">{user.name}</div>
-          </div>
-
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Email</span>
-            </label>
-            <div class="input input-bordered bg-base-200">{user.email}</div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">Role</span>
-            </label>
-            <div class="input input-bordered bg-base-200">
-              <span class="badge badge-primary badge-lg capitalize">
-                {user.role}
-              </span>
-            </div>
-          </div>
-
-          <div class="form-control">
-            <label class="label">
-              <span class="label-text font-medium">No Telepon</span>
-            </label>
-            <div class="input input-bordered bg-base-200">{user.no_telp}</div>
-          </div>
-        </div>
-
-        {user.role === "posyandu" && (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Nama Posyandu</span>
-              </label>
-              <div class="input input-bordered bg-base-200">
-                {user.nama_posyandu}
+    <div class="w-full max-w-7xl mx-auto">
+      <div class="card-elegant">
+        <div class="card-body p-4 md:p-8">
+          {/* Header */}
+          <div class="text-center mb-6 md:mb-8">
+            <div class="avatar placeholder mb-4 md:mb-6">
+              <div
+                class={`${getRoleColor(user.value?.role || "user")} text-white rounded-full w-24 h-24 md:w-32 md:h-32 shadow-2xl`}
+              >
+                {getRoleIcon(user.value?.role || "user")}
               </div>
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Lokasi</span>
-              </label>
-              <div class="input input-bordered bg-base-200">{user.lokasi}</div>
-            </div>
+            <h1 class="text-2xl md:text-4xl font-bold text-gradient-primary mb-2">
+              Profil Pengguna
+            </h1>
+            <p class="text-base-content/70 text-sm md:text-lg">
+              Informasi detail akun SIDIFA Anda
+            </p>
           </div>
-        )}
 
-        {user.role === "psikolog" && (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Spesialisasi</span>
-              </label>
-              <div class="input input-bordered bg-base-200">
-                {user.spesialis}
+          {/* Profile Info */}
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 md:gap-8">
+            {/* Basic Info */}
+            <div class="space-y-4 md:space-y-6">
+              <h2 class="text-xl md:text-2xl font-bold text-gradient-secondary mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
+                <LuUser class="w-5 h-5 md:w-6 md:h-6" />
+                Informasi Dasar
+              </h2>
+
+              <div class="space-y-3 md:space-y-4">
+                <div class="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-base-200/50 rounded-lg">
+                  <div class="avatar placeholder">
+                    <div
+                      class={`${getRoleColor(user.value?.role || "user")} text-white rounded-full w-10 h-10 md:w-12 md:h-12`}
+                    >
+                      <span class="text-sm md:text-lg font-bold">
+                        {user.value?.name?.charAt(0).toUpperCase() || "U"}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-base md:text-lg truncate">
+                      {user.value?.name || "Nama tidak tersedia"}
+                    </p>
+                    <div class="badge badge-primary gap-2 mt-1">
+                      {getRoleIcon(user.value?.role || "user")}
+                      <span class="capitalize text-xs md:text-sm">
+                        {user.value?.role || "user"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2 md:space-y-3">
+                  <div class="flex items-center gap-3 p-3 bg-base-200/30 rounded-lg">
+                    <LuMail class="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs md:text-sm text-base-content/60">
+                        Email
+                      </p>
+                      <p class="font-medium text-sm md:text-base truncate">
+                        {user.value?.email || "Email tidak tersedia"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-3 p-3 bg-base-200/30 rounded-lg">
+                    <LuPhone class="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs md:text-sm text-base-content/60">
+                        Nomor Telepon
+                      </p>
+                      <p class="font-medium text-sm md:text-base truncate">
+                        {user.value?.no_telp || "Nomor telepon tidak tersedia"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {user.value?.role === "posyandu" &&
+                    user.value?.nama_posyandu && (
+                      <div class="flex items-center gap-3 p-3 bg-base-200/30 rounded-lg">
+                        <LuHeart class="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                        <div class="flex-1 min-w-0">
+                          <p class="text-xs md:text-sm text-base-content/60">
+                            Nama Posyandu
+                          </p>
+                          <p class="font-medium text-sm md:text-base truncate">
+                            {user.value.nama_posyandu}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                  {user.value?.role === "psikolog" && user.value?.spesialis && (
+                    <div class="flex items-center gap-3 p-3 bg-base-200/30 rounded-lg">
+                      <LuBrain class="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs md:text-sm text-base-content/60">
+                          Spesialisasi
+                        </p>
+                        <p class="font-medium text-sm md:text-base truncate">
+                          {user.value.spesialis}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {user.value?.lokasi && (
+                    <div class="flex items-center gap-3 p-3 bg-base-200/30 rounded-lg">
+                      <LuMapPin class="w-4 h-4 md:w-5 md:h-5 text-primary flex-shrink-0" />
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs md:text-sm text-base-content/60">
+                          Lokasi
+                        </p>
+                        <p class="font-medium text-sm md:text-base truncate">
+                          {user.value.lokasi}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">Lokasi Praktik</span>
-              </label>
-              <div class="input input-bordered bg-base-200">{user.lokasi}</div>
+
+            {/* Account Status & Actions */}
+            <div class="space-y-4 md:space-y-6">
+              <h2 class="text-xl md:text-2xl font-bold text-gradient-secondary mb-4 md:mb-6 flex items-center gap-2 md:gap-3">
+                <LuShield class="w-5 h-5 md:w-6 md:h-6" />
+                Status Akun
+              </h2>
+
+              <div class="space-y-3 md:space-y-4">
+                {/* Account Status */}
+                <div class="card bg-base-200/30 border border-base-300">
+                  <div class="card-body p-4 md:p-6">
+                    <div class="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                      <LuCheckCircle class="w-5 h-5 md:w-6 md:h-6 text-success" />
+                      <h3 class="font-bold text-base md:text-lg">Akun Aktif</h3>
+                    </div>
+                    <p class="text-base-content/70 text-xs md:text-sm">
+                      Akun Anda telah terverifikasi dan aktif menggunakan
+                      layanan SIDIFA.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Role Benefits */}
+                <div class="card bg-base-200/30 border border-base-300">
+                  <div class="card-body p-4 md:p-6">
+                    <h3 class="font-bold text-base md:text-lg mb-3 md:mb-4 flex items-center gap-2 md:gap-3">
+                      <LuZap class="w-4 h-4 md:w-5 md:h-5 text-accent" />
+                      Manfaat Akun
+                    </h3>
+                    <ul class="space-y-2 text-xs md:text-sm">
+                      {getRoleBenefits(user.value?.role || "user").map(
+                        (benefit, index) => (
+                          <li key={index} class="flex items-center gap-2">
+                            {benefit.icon}
+                            <span>{benefit.text}</span>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div class="space-y-2 md:space-y-3">
+                  <button class="btn btn-primary w-full gap-2 md:gap-3 text-sm md:text-base">
+                    <LuPencil class="w-3 h-3 md:w-4 md:h-4" />
+                    Edit Profil
+                  </button>
+                  <button class="btn btn-outline w-full gap-2 md:gap-3 text-sm md:text-base">
+                    <LuShield class="w-3 h-3 md:w-4 md:h-4" />
+                    Ubah Password
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
-
-      <div class="divider">Aksi</div>
-
-      <div class="card-actions justify-center">
-        <button onClick$={handleLogout} class="btn btn-error btn-outline">
-          <svg
-            class="w-4 h-4 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            ></path>
-          </svg>
-          Logout
-        </button>
-      </div>
-    </Card>
+    </div>
   );
 });

@@ -34,6 +34,7 @@
     "@modular-forms/qwik": "^0.29.1",
     "@mui/material": "^5.18.0",
     "@mui/x-data-grid": "^6.20.4",
+    "@qwikest/icons": "^0.0.13",
     "@types/bun": "*",
     "@types/node": "20.14.11",
     "@types/react": "^18.3.23",

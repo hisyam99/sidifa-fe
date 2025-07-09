@@ -1,2 +1,256 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  root: ":root";
+  themes:
+    light,
+    dark,
+    cupcake,
+    bumblebee,
+    emerald,
+    corporate,
+    synthwave,
+    retro,
+    cyberpunk,
+    valentine,
+    halloween,
+    garden,
+    forest,
+    aqua,
+    lofi,
+    pastel,
+    fantasy,
+    wireframe,
+    black,
+    luxury,
+    dracula,
+    cmyk,
+    autumn,
+    business,
+    acid,
+    lemonade,
+    night --prefersdark,
+    coffee,
+    winter --default,
+    dim,
+    nord,
+    sunset;
+}
+
+@plugin "daisyui/theme" {
+  name: "sidifa";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+
+  /* Modern Healthcare Color Palette */
+  --color-primary: oklch(55% 0.15 240); /* Professional Blue */
+  --color-primary-content: oklch(98% 0.005 240);
+  --color-secondary: oklch(65% 0.12 160); /* Healing Green */
+  --color-secondary-content: oklch(98% 0.005 160);
+  --color-accent: oklch(70% 0.18 30); /* Warm Orange */
+  --color-accent-content: oklch(98% 0.005 30);
+
+  /* Neutral Colors */
+  --color-base-100: oklch(99% 0.002 240);
+  --color-base-200: oklch(97% 0.003 240);
+  --color-base-300: oklch(94% 0.004 240);
+  --color-base-content: oklch(25% 0.005 240);
+
+  /* Status Colors */
+  --color-info: oklch(75% 0.15 220);
+  --color-info-content: oklch(98% 0.005 220);
+  --color-success: oklch(70% 0.15 160);
+  --color-success-content: oklch(98% 0.005 160);
+  --color-warning: oklch(80% 0.15 45);
+  --color-warning-content: oklch(98% 0.005 45);
+  --color-error: oklch(65% 0.18 15);
+  --color-error-content: oklch(98% 0.005 15);
+
+  /* Modern Design Tokens */
+  --radius-selector: 1rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 1;
+
+  /* Custom Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Custom Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Custom Utility Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Gradient Backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, oklch(55% 0.15 240), oklch(65% 0.12 160));
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, oklch(65% 0.12 160), oklch(70% 0.18 30));
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, oklch(70% 0.18 30), oklch(75% 0.15 220));
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(97% 0.003 240);
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(85% 0.08 240);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(75% 0.12 240);
+}
+
+/* Focus States */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+/* Custom Button Styles */
+.btn-hero {
+  @apply btn btn-lg btn-primary shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300;
+}
+
+.btn-card {
+  @apply btn btn-primary shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300;
+}
+
+/* Card Enhancements */
+.card-elegant {
+  @apply card bg-base-100 shadow-lg hover:shadow-xl border border-base-200 transition-all duration-300;
+}
+
+.card-glass {
+  @apply card glass shadow-xl hover:shadow-2xl transition-all duration-300;
+}
+
+/* Text Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, oklch(55% 0.15 240), oklch(65% 0.12 160));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, oklch(65% 0.12 160), oklch(70% 0.18 30));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Responsive Typography */
+.text-responsive-xl {
+  @apply text-4xl md:text-5xl lg:text-6xl;
+}
+
+.text-responsive-lg {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.text-responsive-md {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+/* Accessibility Enhancements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Loading States */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

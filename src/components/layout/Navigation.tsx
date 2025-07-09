@@ -1,6 +1,17 @@
 import { component$, $ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
+import {
+  LuMenu,
+  LuHome,
+  LuUser,
+  LuLogIn,
+  LuStethoscope,
+  LuBrain,
+  LuSettings,
+  LuLogOut,
+  LuHeart,
+} from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const { isLoggedIn, user } = useAuth();
@@ -15,92 +26,154 @@ export default component$(() => {
   });
 
   return (
-    <nav class="navbar bg-base-100 shadow-lg border-b border-base-300">
+    <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="navbar-start">
         <div class="dropdown">
-          <div tabIndex={0} role="button" class="btn btn-ghost lg:hidden">
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              ></path>
-            </svg>
-          </div>
-          <ul
-            tabIndex={0}
-            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-          >
+          <button class="btn btn-ghost btn-circle lg:hidden focus-ring">
+            <LuMenu class="w-6 h-6 text-base-content" />
+          </button>
+          <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
             <li>
-              <a href="/">Beranda</a>
+              <a
+                href="/"
+                class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+              >
+                <LuHome class="w-5 h-5 text-primary" />
+                <span class="font-medium">Beranda</span>
+              </a>
             </li>
             {!isLoggedIn.value ? (
               <>
                 <li>
-                  <a href="/auth/login">Login</a>
+                  <a
+                    href="/auth/login"
+                    class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                  >
+                    <LuLogIn class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Masuk</span>
+                  </a>
                 </li>
                 <li>
-                  <a href="/auth/signup/posyandu">Daftar Posyandu</a>
+                  <a
+                    href="/auth/signup/posyandu"
+                    class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                  >
+                    <LuStethoscope class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Daftar Posyandu</span>
+                  </a>
                 </li>
                 <li>
-                  <a href="/auth/signup/psikolog">Daftar Psikolog</a>
+                  <a
+                    href="/auth/signup/psikolog"
+                    class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                  >
+                    <LuBrain class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Daftar Psikolog</span>
+                  </a>
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <a href="/dashboard/profile">Profile</a>
+                  <a
+                    href="/dashboard/profile"
+                    class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                  >
+                    <LuUser class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Profil</span>
+                  </a>
                 </li>
                 {user.value?.role === "posyandu" && (
                   <li>
-                    <a href="/dashboard/posyandu">Data Posyandu</a>
+                    <a
+                      href="/dashboard/posyandu"
+                      class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                    >
+                      <LuHeart class="w-5 h-5 text-primary" />
+                      <span class="font-medium">Data Posyandu</span>
+                    </a>
                   </li>
                 )}
                 {user.value?.role === "psikolog" && (
                   <li>
-                    <a href="/dashboard/psikolog">Data Psikolog</a>
+                    <a
+                      href="/dashboard/psikolog"
+                      class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                    >
+                      <LuBrain class="w-5 h-5 text-primary" />
+                      <span class="font-medium">Data Psikolog</span>
+                    </a>
                   </li>
                 )}
+                <li>
+                  <a
+                    href="/dashboard/settings"
+                    class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                  >
+                    <LuSettings class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Pengaturan</span>
+                  </a>
+                </li>
               </>
             )}
           </ul>
         </div>
-        <a href="/" class="btn btn-ghost text-xl">
-          <div class="avatar placeholder">
-            <div class="bg-primary text-primary-content rounded-full w-10">
-              <span class="text-lg font-bold">S</span>
+
+        <a
+          href="/"
+          class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300"
+        >
+          <div class="avatar placeholder mr-3">
+            <div class="bg-gradient-primary text-white rounded-full w-12 h-12 shadow-lg">
+              <LuHeart class="w-6 h-6" />
             </div>
           </div>
-          <span class="ml-2 font-bold">SIDIFA</span>
+          <div class="flex flex-col items-start">
+            <span class="font-bold text-gradient-primary">SIDIFA</span>
+            <span class="text-xs text-base-content/60 font-medium">
+              Sistem Informasi Difabel
+            </span>
+          </div>
         </a>
       </div>
+
       <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1">
+        <ul class="menu menu-horizontal px-1 gap-2">
           <li>
-            <a href="/" class="link link-hover">
+            <a
+              href="/"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
+              <LuHome class="w-4 h-4 text-primary" />
               Beranda
             </a>
           </li>
           {!isLoggedIn.value ? (
             <>
               <li>
-                <a href="/auth/login" class="link link-hover">
-                  Login
+                <a
+                  href="/auth/login"
+                  class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                >
+                  <LuLogIn class="w-4 h-4 text-primary" />
+                  Masuk
                 </a>
               </li>
               <li>
-                <a href="/auth/signup/posyandu" class="link link-hover">
+                <a
+                  href="/auth/signup/posyandu"
+                  class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                >
+                  <LuStethoscope class="w-4 h-4 text-primary" />
                   Daftar Posyandu
                 </a>
               </li>
               <li>
-                <a href="/auth/signup/psikolog" class="link link-hover">
+                <a
+                  href="/auth/signup/psikolog"
+                  class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                >
+                  <LuBrain class="w-4 h-4 text-primary" />
                   Daftar Psikolog
                 </a>
               </li>
@@ -108,20 +181,32 @@ export default component$(() => {
           ) : (
             <>
               <li>
-                <a href="/dashboard/profile" class="link link-hover">
-                  Profile
+                <a
+                  href="/dashboard/profile"
+                  class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                >
+                  <LuUser class="w-4 h-4 text-primary" />
+                  Profil
                 </a>
               </li>
               {user.value?.role === "posyandu" && (
                 <li>
-                  <a href="/dashboard/posyandu" class="link link-hover">
+                  <a
+                    href="/dashboard/posyandu"
+                    class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                  >
+                    <LuHeart class="w-4 h-4 text-primary" />
                     Data Posyandu
                   </a>
                 </li>
               )}
               {user.value?.role === "psikolog" && (
                 <li>
-                  <a href="/dashboard/psikolog" class="link link-hover">
+                  <a
+                    href="/dashboard/psikolog"
+                    class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                  >
+                    <LuBrain class="w-4 h-4 text-primary" />
                     Data Psikolog
                   </a>
                 </li>
@@ -130,47 +215,77 @@ export default component$(() => {
           )}
         </ul>
       </div>
+
       <div class="navbar-end">
         {!isLoggedIn.value ? (
-          <a href="/auth/login" class="btn btn-primary">
+          <a
+            href="/auth/login"
+            class="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300"
+          >
+            <LuLogIn class="w-4 h-4" />
             Masuk
           </a>
         ) : (
           <div class="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              class="btn btn-ghost btn-circle avatar"
-            >
-              <div class="w-10 rounded-full">
+            <button class="btn btn-ghost btn-circle avatar focus-ring">
+              <div class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300">
                 <div class="avatar placeholder">
-                  <div class="bg-primary text-primary-content rounded-full w-10">
+                  <div class="bg-gradient-primary text-white rounded-full w-10 h-10">
                     <span class="text-sm font-bold">
                       {user.value?.name?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
                 </div>
               </div>
-            </div>
-            <ul
-              tabIndex={0}
-              class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-            >
+            </button>
+            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-56 border border-base-200/50">
+              <li class="menu-title">
+                <div class="flex items-center gap-3 p-2">
+                  <div class="avatar placeholder">
+                    <div class="bg-gradient-primary text-white rounded-full w-8 h-8">
+                      <span class="text-xs font-bold">
+                        {user.value?.name?.charAt(0).toUpperCase() || "U"}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="font-medium text-sm">
+                      {user.value?.name || "User"}
+                    </span>
+                    <span class="text-xs text-base-content/60 capitalize">
+                      {user.value?.role || "user"}
+                    </span>
+                  </div>
+                </div>
+              </li>
+              <div class="divider my-1"></div>
               <li>
-                <a href="/dashboard/profile" class="justify-between">
-                  Profile
-                  <span class="badge badge-primary badge-sm">
-                    {user.value?.role}
-                  </span>
+                <a
+                  href="/dashboard/profile"
+                  class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                >
+                  <LuUser class="w-4 h-4 text-primary" />
+                  <span class="font-medium">Profil</span>
                 </a>
               </li>
               <li>
-                <a href="/dashboard/settings">Settings</a>
-              </li>
-              <li>
-                <a href="#" onClick$={handleLogout}>
-                  Logout
+                <a
+                  href="/dashboard/settings"
+                  class="flex items-center gap-3 hover:bg-primary/10 rounded-lg"
+                >
+                  <LuSettings class="w-4 h-4 text-primary" />
+                  <span class="font-medium">Pengaturan</span>
                 </a>
+              </li>
+              <div class="divider my-1"></div>
+              <li>
+                <button
+                  onClick$={handleLogout}
+                  class="flex items-center gap-3 hover:bg-error/10 rounded-lg text-error"
+                >
+                  <LuLogOut class="w-4 h-4" />
+                  <span class="font-medium">Keluar</span>
+                </button>
               </li>
             </ul>
           </div>
