@@ -411,7 +411,7 @@ export default component$(() => {
 
       {/* CTA Section */}
       {!isLoggedIn.value && (
-        <section class="py-20 bg-gradient-primary text-white">
+        <section class="py-20 bg-gradient-primary">
           <div class="container mx-auto px-4 text-center">
             <h2 class="text-responsive-lg font-bold mb-6">
               Bergabunglah dengan SIDIFA Sekarang
