@@ -49,10 +49,14 @@ export const TableApp = qwikify$(() => {
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+          }}
+          pageSizeOptions={[5]}
           checkboxSelection
-          disableSelectionOnClick
+          disableRowSelectionOnClick
         />
       </div>
     </>
