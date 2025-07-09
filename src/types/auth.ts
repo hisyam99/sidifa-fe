@@ -20,6 +20,10 @@ export const signupPosyanduSchema = object({
       "Password harus mengandung huruf besar dan angka",
     ),
   ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
+  ),
   no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
   nama_posyandu: pipe(string(), minLength(1, "Nama posyandu harus diisi")),
   lokasi: pipe(string(), minLength(1, "Lokasi harus diisi")),
@@ -36,6 +40,10 @@ export const signupPsikologSchema = object({
       /^(?=.*[A-Z])(?=.*\d).+$/,
       "Password harus mengandung huruf besar dan angka",
     ),
+  ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
   ),
   no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
   spesialis: pipe(string(), minLength(1, "Spesialis harus diisi")),

@@ -1,1 +1,2 @@
-export { useAuth, type User } from "./useAuth";
+export { useAuth } from "./useAuth";
+export type { User } from "~/utils/auth";

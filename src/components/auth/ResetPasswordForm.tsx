@@ -4,6 +4,7 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { resetPasswordSchema, type ResetPasswordForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
+import { extractErrorMessage } from "~/utils/error";
 import { LuLock } from "@qwikest/icons/lucide";
 
 export default component$(() => {
@@ -14,6 +15,9 @@ export default component$(() => {
   const [form, { Form, Field }] = useForm<ResetPasswordForm>({
     loader: { value: { token: "", password: "" } },
     validate: valiForm$(resetPasswordSchema),
+    // Tambahkan konfigurasi untuk mencegah reset form
+    validateOn: "blur",
+    revalidateOn: "blur",
   });
 
   const handleSubmit = $(async (values: ResetPasswordForm) => {
@@ -32,7 +36,7 @@ export default component$(() => {
       }, 2000);
     } catch (err: any) {
       console.log("Reset Password - Error:", err);
-      error.value = err.response?.data?.message || "Gagal mengubah password";
+      error.value = extractErrorMessage(err);
     }
   });
 
@@ -40,12 +44,10 @@ export default component$(() => {
   const token = location.url.searchParams.get("token") || "";
 
   return (
-    <Card class="w-full max-w-md">
+    <Card class="w-full">
       <div class="text-center mb-6">
-        <div class="avatar placeholder mb-4">
-          <div class="bg-success text-success-content rounded-full w-16">
-            <LuLock class="w-8 h-8 mx-auto" />
-          </div>
+        <div class="bg-success text-success-content w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <LuLock class="w-8 h-8" />
         </div>
         <h1 class="text-2xl font-bold">Reset Password</h1>
         <p class="text-base-content/70 mt-2">Masukkan password baru Anda</p>
@@ -80,7 +82,8 @@ export default component$(() => {
         >
           {form.submitting ? (
             <>
-              <span class="loading loading-spinner loading-sm" /> Mengubah...
+              <div class="skeleton w-4 h-4"></div>
+              Mengubah...
             </>
           ) : (
             "Ubah Password"

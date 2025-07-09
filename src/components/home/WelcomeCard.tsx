@@ -4,6 +4,7 @@ import {
   LuUser,
   LuArrowRight,
   LuSparkles,
+  LuBarChart,
 } from "@qwikest/icons/lucide";
 
 interface WelcomeCardProps {
@@ -13,12 +14,10 @@ interface WelcomeCardProps {
 
 export default component$<WelcomeCardProps>(({ userName, userRole }) => {
   return (
-    <div class="card-elegant max-w-2xl mx-auto text-center group">
+    <div class="card-elegant mx-auto text-center group">
       <div class="card-body p-8">
-        <div class="avatar placeholder mb-6 group-hover:scale-110 transition-transform duration-300">
-          <div class="bg-gradient-primary  rounded-full w-24 h-24 shadow-xl">
-            <LuHeart class="w-12 h-12" />
-          </div>
+        <div class="bg-gradient-primary rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+          <LuHeart class="w-12 h-12" />
         </div>
 
         <div class="flex items-center justify-center gap-2 mb-4">
@@ -44,12 +43,9 @@ export default component$<WelcomeCardProps>(({ userName, userRole }) => {
         </p>
 
         <div class="card-actions justify-center">
-          <a
-            href="/dashboard/profile"
-            class="btn-hero inline-flex items-center gap-3"
-          >
-            <LuUser class="w-5 h-5" />
-            Lihat Profil
+          <a href="/dashboard" class="btn-hero inline-flex items-center gap-3">
+            <LuBarChart class="w-5 h-5" />
+            Dashboard
             <LuArrowRight class="w-4 h-4" />
           </a>
         </div>

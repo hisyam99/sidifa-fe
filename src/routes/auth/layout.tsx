@@ -1,5 +1,22 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { LuHeart } from "@qwikest/icons/lucide";
+import type { RequestHandler } from "@builder.io/qwik-city";
+
+// Middleware: Redirect to dashboard if already logged in (user_session cookie check)
+export const onRequest: RequestHandler = async ({ redirect, cookie }) => {
+  const userSessionCookie = cookie.get("user_session");
+  if (userSessionCookie?.value) {
+    try {
+      const userSession = JSON.parse(
+        decodeURIComponent(userSessionCookie.value),
+      );
+      if (userSession?.id && userSession?.role) {
+        throw redirect(302, "/dashboard");
+      }
+    } catch {
+      // If JSON parse fails, treat as not logged in
+    }
+  }
+};
 
 export default component$(() => {
   return (
@@ -19,29 +36,8 @@ export default component$(() => {
         style="animation-delay: 2s;"
       ></div>
 
-      <div class="container mx-auto py-8 px-4 relative z-10">
-        {/* Header */}
-        <div class="text-center mb-8">
-          <a
-            href="/"
-            class="inline-flex items-center gap-3 mb-4 hover:scale-105 transition-transform duration-300"
-          >
-            <div class="avatar placeholder">
-              <div class="bg-gradient-primary  rounded-full w-12 h-12 shadow-lg">
-                <LuHeart class="w-6 h-6" />
-              </div>
-            </div>
-            <div class="flex flex-col items-start">
-              <span class="font-bold text-xl text-gradient-primary">
-                SIDIFA
-              </span>
-              <span class="text-sm text-base-content/60 font-medium">
-                Sistem Informasi Difabel
-              </span>
-            </div>
-          </a>
-        </div>
-
+      {/* Main Content */}
+      <div class="relative z-10 min-h-[calc(100vh-120px)]">
         <Slot />
       </div>
     </main>

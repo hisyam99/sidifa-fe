@@ -22,10 +22,8 @@ export default component$(() => {
           {/* Brand Section */}
           <div class="text-center lg:text-left">
             <div class="flex items-center justify-center lg:justify-start mb-4">
-              <div class="avatar placeholder mr-3">
-                <div class="bg-gradient-primary  rounded-full w-12 h-12 shadow-lg">
-                  <LuHeart class="w-6 h-6" />
-                </div>
+              <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
+                <LuHeart class="w-6 h-6" />
               </div>
               <div class="flex flex-col items-start">
                 <span class="font-bold text-xl text-gradient-primary">
@@ -143,7 +141,7 @@ export default component$(() => {
 
         {/* Features Section */}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 rounded-lg backdrop-blur-sm">
+          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
             <LuUsers class="w-6 h-6 text-primary" />
             <div class="text-left">
               <h4 class="font-semibold text-sm">Layanan Inklusif</h4>
@@ -152,7 +150,7 @@ export default component$(() => {
               </p>
             </div>
           </div>
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 rounded-lg backdrop-blur-sm">
+          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
             <LuShield class="w-6 h-6 text-primary" />
             <div class="text-left">
               <h4 class="font-semibold text-sm">Keamanan Data</h4>
@@ -161,7 +159,7 @@ export default component$(() => {
               </p>
             </div>
           </div>
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 rounded-lg backdrop-blur-sm">
+          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
             <LuZap class="w-6 h-6 text-primary" />
             <div class="text-left">
               <h4 class="font-semibold text-sm">Akses Cepat</h4>

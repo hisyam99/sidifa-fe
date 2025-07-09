@@ -3,7 +3,8 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { signupPsikologSchema, type SignupPsikologForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
-import { LuBrain } from "@qwikest/icons/lucide";
+import { extractErrorMessage } from "~/utils/error";
+import { LuBrain, LuArrowRight } from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -15,126 +16,163 @@ export default component$(() => {
         name: "",
         email: "",
         password: "",
+        confirmPassword: "",
         no_telp: "",
         spesialis: "",
         lokasi: "",
       },
     },
     validate: valiForm$(signupPsikologSchema),
+    validateOn: "blur",
+    revalidateOn: "blur",
   });
 
   const handleSubmit = $(async (values: SignupPsikologForm) => {
-    console.log("Signup Psikolog - Form Data:", values);
     error.value = null;
     success.value = null;
 
+    // Custom validation untuk memastikan password dan confirmPassword sama
+    if (values.password !== values.confirmPassword) {
+      error.value = "Password dan konfirmasi password tidak sama";
+      return;
+    }
+
     try {
-      const response = await api.post("/auth/signup/psikolog", values);
-      console.log("Signup Psikolog - Success Response:", response.data);
+      await api.post("/auth/signup/psikolog", values);
       success.value = "Pendaftaran berhasil!";
     } catch (err: any) {
-      console.log("Signup Psikolog - Error:", err);
-      error.value = err.response?.data?.message || "Pendaftaran gagal";
+      error.value = extractErrorMessage(err);
     }
   });
 
   return (
-    <Card class="w-full max-w-2xl">
-      <div class="text-center mb-6">
-        <div class="avatar placeholder mb-4">
-          <div class="bg-primary text-primary-content rounded-full w-16">
-            <LuBrain class="w-8 h-8 mx-auto" />
-          </div>
+    <Card class="w-full max-w-2xl mx-auto">
+      <div class="text-center mb-8">
+        <div class="bg-primary text-primary-content rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center shadow-xl">
+          <LuBrain class="w-8 h-8" />
         </div>
-        <h1 class="text-2xl font-bold">Daftar Psikolog</h1>
-        <p class="text-base-content/70 mt-2">
+        <h1 class="text-2xl lg:text-3xl font-bold text-gradient-primary mb-2">
+          Daftar Psikolog
+        </h1>
+        <p class="text-base-content/70 text-sm lg:text-base">
           Daftarkan praktik psikologi Anda ke sistem SIDIFA
         </p>
       </div>
 
-      <Form onSubmit$={handleSubmit} class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field name="name">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="text"
-                placeholder="Masukkan nama lengkap"
-                label="Nama Lengkap"
-                required
-              />
-            )}
-          </Field>
+      <Form onSubmit$={handleSubmit} class="space-y-6 w-full">
+        {/* Personal Information */}
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-base-content">
+            Informasi Pribadi
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field name="name">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="text"
+                  placeholder="Masukkan nama lengkap"
+                  label="Nama Lengkap"
+                  required
+                />
+              )}
+            </Field>
 
-          <Field name="email">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="email"
-                placeholder="Masukkan email"
-                label="Email"
-                required
-              />
-            )}
-          </Field>
+            <Field name="email">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="email"
+                  placeholder="Masukkan email"
+                  label="Email"
+                  required
+                />
+              )}
+            </Field>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field name="no_telp">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="tel"
+                  placeholder="Masukkan nomor telepon"
+                  label="Nomor Telepon"
+                  required
+                />
+              )}
+            </Field>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field name="password">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="password"
-                placeholder="Masukkan password"
-                label="Password"
-                required
-              />
-            )}
-          </Field>
+        {/* Password Section */}
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-base-content">Keamanan Akun</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field name="password">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="password"
+                  placeholder="Masukkan password"
+                  label="Password"
+                  required
+                />
+              )}
+            </Field>
 
-          <Field name="no_telp">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="tel"
-                placeholder="Masukkan nomor telepon"
-                label="Nomor Telepon"
-                required
-              />
-            )}
-          </Field>
+            <Field name="confirmPassword">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="password"
+                  placeholder="Konfirmasi password"
+                  label="Konfirmasi Password"
+                  required
+                />
+              )}
+            </Field>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field name="spesialis">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="text"
-                placeholder="Masukkan spesialisasi"
-                label="Spesialisasi"
-                required
-              />
-            )}
-          </Field>
+        {/* Professional Information */}
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-base-content">
+            Informasi Profesional
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field name="spesialis">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="text"
+                  placeholder="Masukkan spesialisasi"
+                  label="Spesialisasi"
+                  required
+                />
+              )}
+            </Field>
 
-          <Field name="lokasi">
-            {(field: any, props: any) => (
-              <FormField
-                field={field}
-                props={props}
-                type="text"
-                placeholder="Masukkan lokasi praktik"
-                label="Lokasi Praktik"
-                required
-              />
-            )}
-          </Field>
+            <Field name="lokasi">
+              {(field: any, props: any) => (
+                <FormField
+                  field={field}
+                  props={props}
+                  type="text"
+                  placeholder="Masukkan lokasi praktik"
+                  label="Lokasi Praktik"
+                  required
+                />
+              )}
+            </Field>
+          </div>
         </div>
 
         <div class="form-control">
@@ -156,10 +194,13 @@ export default component$(() => {
         >
           {form.submitting ? (
             <>
-              <span class="loading loading-spinner loading-sm" /> Mendaftar...
+              <div class="skeleton w-4 h-4"></div>
+              Mendaftar...
             </>
           ) : (
-            "Daftar Psikolog"
+            <>
+              Daftar Psikolog <LuArrowRight class="w-4 h-4" />
+            </>
           )}
         </button>
       </Form>
@@ -173,9 +214,9 @@ export default component$(() => {
         </a>
       </div>
 
-      {error.value && <Alert type="error" message={error.value} class="mt-4" />}
+      {error.value && <Alert type="error" message={error.value} class="mt-6" />}
       {success.value && (
-        <Alert type="success" message={success.value} class="mt-4" />
+        <Alert type="success" message={success.value} class="mt-6" />
       )}
     </Card>
   );

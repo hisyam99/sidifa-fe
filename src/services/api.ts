@@ -1,24 +1,16 @@
 import axios from "axios";
+import { cookieUtils } from "~/utils/auth";
 
 const api = axios.create({
-  baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3001/api/v1",
+  baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3000/api/v1",
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
 
-// Helper untuk ambil token dari cookie
-function getTokenFromCookie() {
-  if (typeof document !== "undefined") {
-    const match = document.cookie.match(/(?:^|; )access_token=([^;]*)/);
-    return match ? decodeURIComponent(match[1]) : null;
-  }
-  return null;
-}
-
 // Request interceptor untuk JWT dan logging
 api.interceptors.request.use((config) => {
   // Ambil token dari cookie (bukan localStorage)
-  const token = getTokenFromCookie();
+  const token = cookieUtils.getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
 
   console.log("🚀 REQUEST:", {
@@ -31,7 +23,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor untuk logging
+// Response interceptor untuk logging dan token refresh
 api.interceptors.response.use(
   (response) => {
     console.log("✅ RESPONSE:", {
@@ -41,15 +33,35 @@ api.interceptors.response.use(
     });
     return response;
   },
-  (error) => {
+  async (error) => {
     console.log("❌ ERROR:", {
       status: error.response?.status,
       url: error.config?.url,
       data: error.response?.data,
       message: error.message,
     });
-    return Promise.reject(error);
+    return Promise.reject(new Error(error.response?.data?.message));
   },
 );
+
+// Profile service functions
+export const profileService = {
+  async getProfile() {
+    const response = await api.get("/auth/profile");
+    return response.data;
+  },
+};
+
+// Auth service functions
+export const authService = {
+  async logout() {
+    const response = await api.post("/auth/logout");
+    return response.data;
+  },
+  async refresh() {
+    const response = await api.post("/auth/refresh");
+    return response.data;
+  },
+};
 
 export default api;
