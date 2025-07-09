@@ -1,5 +1,6 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { WelcomeCard, SignupCards } from "~/components/home";
 
 export default component$(() => {
   const isLoggedIn = useSignal(false);
@@ -35,53 +36,9 @@ export default component$(() => {
         </p>
 
         {isLoggedIn.value ? (
-          <div class="card bg-base-100 shadow-xl max-w-md mx-auto">
-            <div class="card-body">
-              <h2 class="card-title text-2xl mb-4">
-                Selamat Datang, {userName.value}!
-              </h2>
-              <p class="text-gray-600 mb-4">
-                Anda login sebagai{" "}
-                <span class="badge badge-primary">{userRole.value}</span>
-              </p>
-              <div class="card-actions justify-center">
-                <a href="/profile" class="btn btn-primary">
-                  Lihat Profile
-                </a>
-              </div>
-            </div>
-          </div>
+          <WelcomeCard userName={userName.value!} userRole={userRole.value!} />
         ) : (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h2 class="card-title text-2xl mb-4">Posyandu</h2>
-                <p class="text-gray-600 mb-4">
-                  Daftar sebagai Posyandu untuk mengelola data kesehatan
-                  masyarakat.
-                </p>
-                <div class="card-actions justify-center">
-                  <a href="/signup-posyandu" class="btn btn-primary">
-                    Daftar Posyandu
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div class="card bg-base-100 shadow-xl">
-              <div class="card-body">
-                <h2 class="card-title text-2xl mb-4">Psikolog</h2>
-                <p class="text-gray-600 mb-4">
-                  Daftar sebagai Psikolog untuk memberikan layanan konseling.
-                </p>
-                <div class="card-actions justify-center">
-                  <a href="/signup-psikolog" class="btn btn-secondary">
-                    Daftar Psikolog
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SignupCards />
         )}
 
         {!isLoggedIn.value && (
