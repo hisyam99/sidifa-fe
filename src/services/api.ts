@@ -1,11 +1,3 @@
-// CSRF PROTECTION FLOW
-// ---------------------
-// - Semua request POST/PUT/PATCH/DELETE akan otomatis fetch CSRF token dari /csrf/token jika belum ada.
-// - Token hanya di-fetch sekali per session (reload). Jika ingin fetch ulang, reset flag csrfFetched.
-// - Saat logout, flag csrfFetched direset agar token di-fetch ulang saat login berikutnya.
-//
-// Pastikan backend mengirimkan cookie _csrf dan frontend sudah mengatur xsrfCookieName & xsrfHeaderName sesuai backend.
-
 import axios from "axios";
 
 const api = axios.create({
@@ -17,25 +9,16 @@ const api = axios.create({
   withCredentials: true,
   xsrfCookieName: "_csrf",
   xsrfHeaderName: "X-CSRF-TOKEN",
-  timeout: 10000, // 10 detik timeout
+  timeout: 10000,
 });
 
 // CSRF Token fetcher
-/**
- * Fetch CSRF token dari backend agar cookie _csrf tersedia di browser.
- * Wajib dipanggil sebelum request POST/PUT/DELETE yang butuh CSRF protection.
- */
 export async function fetchCsrfToken() {
-  const response = await axios.get(
-    `${import.meta.env.PUBLIC_API_URL || "http://localhost:3000/api/v1"}/csrf/token`,
-    {
-      withCredentials: true,
-    },
-  );
+  const response = await api.get("/csrf/token");
   return response.data;
 }
 
-// Auto-fetch CSRF token untuk semua request POST/PUT/PATCH/DELETE
+// Auto-fetch CSRF token untuk POST/PUT/PATCH/DELETE
 let csrfFetched = false;
 let csrfTokenValue: string | null = null;
 
@@ -51,11 +34,11 @@ api.interceptors.request.use(async (config) => {
       csrfTokenValue = response.csrfToken;
       csrfFetched = true;
     } catch (error) {
-      console.error("Failed to fetch CSRF token:", error);
+      console.error("Gagal mengambil CSRF token:", error);
+      return Promise.reject(new Error("Tidak dapat mengambil CSRF token"));
     }
   }
 
-  // Set CSRF header jika token sudah ada
   if (
     csrfTokenValue &&
     ["post", "put", "patch", "delete"].includes(
@@ -68,7 +51,7 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Request interceptor untuk JWT dan logging
+// Request interceptor untuk logging
 api.interceptors.request.use((config) => {
   console.log("🚀 REQUEST:", {
     method: config.method?.toUpperCase(),
@@ -79,7 +62,6 @@ api.interceptors.request.use((config) => {
     headers: config.headers,
   });
 
-  // Debug CSRF token
   if (
     ["post", "put", "patch", "delete"].includes(
       config.method?.toLowerCase() || "",
@@ -96,7 +78,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor untuk logging dan token refresh
+// Response interceptor untuk logging dan penanganan error
 api.interceptors.response.use(
   (response) => {
     console.log("✅ RESPONSE:", {
@@ -117,7 +99,7 @@ api.interceptors.response.use(
   },
 );
 
-// Profile service functions
+// Profile service
 export const profileService = {
   async getProfile() {
     const response = await api.get("/auth/me");
@@ -125,28 +107,18 @@ export const profileService = {
   },
 };
 
-// Auth service functions
+// Auth service
 export const authService = {
-  /**
-   * Melakukan logout user dan reset state CSRF agar token di-fetch ulang saat login berikutnya
-   */
   async logout() {
     csrfFetched = false;
     csrfTokenValue = null;
     const response = await api.post("/auth/logout");
     return response.data;
   },
-  /**
-   * Melakukan refresh token
-   */
   async refresh() {
     const response = await api.post("/auth/refresh");
     return response.data;
   },
-  /**
-   * Melakukan login user. Tidak perlu manual fetch CSRF, sudah otomatis di interceptor.
-   * @param {object} data - Data login (username, password, dst)
-   */
   async login(data: any) {
     const response = await api.post("/auth/login", data);
     return response.data;
