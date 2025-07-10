@@ -78,7 +78,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor untuk logging dan penanganan error
+// Response interceptor untuk logging, penanganan error, dan refresh token
 api.interceptors.response.use(
   (response) => {
     console.log("✅ RESPONSE:", {
@@ -95,7 +95,31 @@ api.interceptors.response.use(
       data: error.response?.data,
       message: error.message,
     });
-    return Promise.reject(new Error(error.response?.data?.message));
+
+    // Tangani token kadaluarsa (401)
+    if (
+      error.response?.status === 401 &&
+      !error.config._retry && // Cegah loop tak terbatas
+      error.config.url !== "/auth/refresh" // Jangan refresh jika sudah di endpoint refresh
+    ) {
+      error.config._retry = true; // Tandai permintaan telah mencoba refresh
+      try {
+        await authService.refresh(); // Panggil refresh token
+        // Ulangi permintaan asli dengan token baru
+        return api(error.config);
+      } catch (refreshError) {
+        console.error("Gagal refresh token:", refreshError);
+        // Bersihkan data autentikasi jika refresh gagal
+        await authService.logout(); // Panggil logout untuk membersihkan CSRF dan data sesi
+        return Promise.reject(
+          new Error("Sesi telah berakhir, silakan login kembali"),
+        );
+      }
+    }
+
+    return Promise.reject(
+      new Error(error.response?.data?.message || "Terjadi kesalahan"),
+    );
   },
 );
 
