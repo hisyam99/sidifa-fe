@@ -3,8 +3,12 @@ import { cookieUtils } from "~/utils/auth";
 
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3000/api/v1",
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
   withCredentials: true,
+  timeout: 10000, // 10 detik timeout
 });
 
 // Request interceptor untuk JWT dan logging
@@ -16,6 +20,8 @@ api.interceptors.request.use((config) => {
   console.log("🚀 REQUEST:", {
     method: config.method?.toUpperCase(),
     url: config.url,
+    baseURL: config.baseURL,
+    fullURL: `${config.baseURL}${config.url}`,
     data: config.data,
     headers: config.headers,
   });

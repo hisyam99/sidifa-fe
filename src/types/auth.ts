@@ -72,6 +72,10 @@ export const resetPasswordSchema = object({
       "Password harus mengandung huruf besar dan angka",
     ),
   ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
+  ),
 });
 
 // Type exports

@@ -18,8 +18,14 @@ export default extendConfig(baseConfig, () => {
     plugins: [
       bunServerAdapter({
         ssg: {
-          include: ["/*"],
-          origin: "https://yoursite.dev",
+          include: [
+            "/*",
+          ],
+          exclude: [
+            "/auth/reset-password",  // Exclude reset-password karena butuh dynamic token
+            "/auth/reset-password/*" // Exclude semua sub-routes juga
+          ],
+          origin: "https://sidifa.bits.my.id",
           maxWorkers: 1, // Limit Workers to 1, otherwise SSG will hang when compiling Qwik City app with `bun run --bun build`.
         },
       }),
