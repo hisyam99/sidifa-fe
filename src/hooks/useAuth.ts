@@ -1,6 +1,6 @@
 import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
 import { profileService, authService } from "~/services/api";
-import { cookieUtils, sessionUtils, type User } from "~/utils/auth";
+import { sessionUtils, type User } from "~/utils/auth";
 
 export const useAuth = () => {
   const isLoggedIn = useSignal(false);
@@ -18,7 +18,6 @@ export const useAuth = () => {
       if (sessionUser) {
         user.value = sessionUser;
         isLoggedIn.value = true;
-        cookieUtils.setUserSession(sessionUser); // Sync minimal data to cookie
         loading.value = false;
         return;
       }
@@ -28,9 +27,8 @@ export const useAuth = () => {
       user.value = profileData;
       isLoggedIn.value = true;
 
-      // Store in both sessionStorage and cookie
+      // Store in sessionStorage only
       sessionUtils.setUserProfile(profileData);
-      cookieUtils.setUserSession(profileData);
     } catch {
       user.value = null;
       isLoggedIn.value = false;
@@ -64,7 +62,6 @@ export const useAuth = () => {
       user.value = profileData;
       isLoggedIn.value = true;
       sessionUtils.setUserProfile(profileData);
-      cookieUtils.setUserSession(profileData);
     } catch (error: any) {
       user.value = null;
       isLoggedIn.value = false;
@@ -87,7 +84,6 @@ export const useAuth = () => {
     if (sessionUser) {
       user.value = sessionUser;
       isLoggedIn.value = true;
-      cookieUtils.setUserSession(sessionUser); // Sync minimal data to cookie
       loading.value = false;
       return;
     }

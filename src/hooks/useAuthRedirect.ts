@@ -1,6 +1,6 @@
 import { useVisibleTask$, isServer } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
-import { cookieUtils } from "~/utils/auth";
+import { sessionUtils } from "~/utils/auth";
 
 export const useAuthRedirect = () => {
   const nav = useNavigate();
@@ -12,7 +12,7 @@ export const useAuthRedirect = () => {
       return;
     }
 
-    const userSession = cookieUtils.getUserSession();
+    const userSession = sessionUtils.getUserProfile();
     if (userSession) {
       nav("/dashboard");
     }
