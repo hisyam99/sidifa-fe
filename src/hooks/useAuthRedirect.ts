@@ -12,6 +12,15 @@ export const useAuthRedirect = () => {
       return;
     }
 
+    // Prevent multiple executions using window flag
+    if (typeof window !== "undefined" && (window as any).authRedirectExecuted) {
+      return;
+    }
+    
+    if (typeof window !== "undefined") {
+      (window as any).authRedirectExecuted = true;
+    }
+
     const userSession = sessionUtils.getUserProfile();
     if (userSession) {
       nav("/dashboard");

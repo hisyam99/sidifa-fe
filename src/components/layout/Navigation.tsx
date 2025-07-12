@@ -1,4 +1,4 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $, useVisibleTask$ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import {
@@ -17,6 +17,17 @@ import {
 export default component$(() => {
   const { isLoggedIn, user, loading, logout } = useAuth();
   const nav = useNavigate();
+
+  // Force re-render when auth state changes
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    // This will trigger re-render when auth state changes
+    console.log("🔄 Navigation re-rendering, auth state:", {
+      isLoggedIn: isLoggedIn.value,
+      user: user.value?.email,
+      loading: loading.value,
+    });
+  });
 
   const handleLogout = $(async () => {
     await logout();

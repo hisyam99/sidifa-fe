@@ -1,16 +1,21 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
 import { loginSchema, type LoginForm } from "~/types/auth";
-import api from "~/services/api";
+import { authService } from "~/services/api";
 import { Alert, Card, FormField } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
+import { useAuth } from "~/hooks";
 import { LuArrowRight } from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
+  const loading = useSignal(false);
+  const { refreshUserData } = useAuth();
+  const nav = useNavigate();
 
-  const [form, { Form, Field }] = useForm<LoginForm>({
+  const [, { Form, Field }] = useForm<LoginForm>({
     loader: { value: { email: "", password: "" } },
     validate: valiForm$(loginSchema),
     validateOn: "blur",
@@ -20,14 +25,35 @@ export default component$(() => {
   const handleSubmit = $(async (values: LoginForm) => {
     error.value = null;
     success.value = null;
+    loading.value = true;
+    
     try {
-      await api.post("/auth/login", values);
+      // Use the improved authService.login
+      console.log("🔐 Starting login process...");
+      await authService.login(values);
+      
+      // Check if cookies were set
+      const cookies = document.cookie;
+      console.log("🍪 Cookies after login:", cookies);
+      
+      if (!cookies.includes("jwt")) {
+        console.warn("⚠️ JWT cookie not found after login");
+        error.value = "Login berhasil tapi ada masalah dengan cookies. Silakan coba refresh halaman.";
+        return;
+      }
+      
       success.value = "Login berhasil!";
-      setTimeout(() => {
-        window.location.href = "/dashboard";
-      }, 1000);
+      
+      // Refresh user data to update authentication state
+      await refreshUserData();
+      
+      // Navigate immediately after state is updated
+      nav("/dashboard");
     } catch (err: any) {
+      console.error("❌ Login error:", err);
       error.value = extractErrorMessage(err);
+    } finally {
+      loading.value = false;
     }
   });
 
@@ -91,9 +117,9 @@ export default component$(() => {
         <button
           type="submit"
           class="btn btn-primary w-full"
-          disabled={form.submitting}
+          disabled={loading.value}
         >
-          {form.submitting ? (
+          {loading.value ? (
             <>
               <div class="skeleton w-4 h-4"></div>
               Masuk...
