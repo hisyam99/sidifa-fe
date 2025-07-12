@@ -100,25 +100,36 @@ export default component$(() => {
                       <span class="font-medium">Profil</span>
                     </a>
                   </li>
+                  {user.value?.role === "admin" && (
+                    <li>
+                      <a
+                        href="/admin"
+                        class="flex items-center gap-3 hover:bg-primary/10"
+                      >
+                        <LuBarChart class="w-5 h-5 text-primary" />
+                        <span class="font-medium">Dashboard Admin</span>
+                      </a>
+                    </li>
+                  )}
                   {user.value?.role === "posyandu" && (
                     <li>
                       <a
-                        href="/dashboard/posyandu"
+                        href="/posyandu"
                         class="flex items-center gap-3 hover:bg-primary/10"
                       >
                         <LuHeart class="w-5 h-5 text-primary" />
-                        <span class="font-medium">Data Posyandu</span>
+                        <span class="font-medium">Dashboard Posyandu</span>
                       </a>
                     </li>
                   )}
                   {user.value?.role === "psikolog" && (
                     <li>
                       <a
-                        href="/dashboard/psikolog"
+                        href="/psikolog"
                         class="flex items-center gap-3 hover:bg-primary/10"
                       >
                         <LuBrain class="w-5 h-5 text-primary" />
-                        <span class="font-medium">Data Psikolog</span>
+                        <span class="font-medium">Dashboard Psikolog</span>
                       </a>
                     </li>
                   )}
@@ -194,22 +205,31 @@ export default component$(() => {
                   <LuUser class="w-4 h-4 text-primary" />
                   Profil
                 </a>
+                {user.value?.role === "admin" && (
+                  <a
+                    href="/admin"
+                    class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+                  >
+                    <LuBarChart class="w-4 h-4 text-primary" />
+                    Dashboard Admin
+                  </a>
+                )}
                 {user.value?.role === "posyandu" && (
                   <a
-                    href="/dashboard/posyandu"
+                    href="/posyandu"
                     class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
                   >
                     <LuHeart class="w-4 h-4 text-primary" />
-                    Data Posyandu
+                    Dashboard Posyandu
                   </a>
                 )}
                 {user.value?.role === "psikolog" && (
                   <a
-                    href="/dashboard/psikolog"
+                    href="/psikolog"
                     class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
                   >
                     <LuBrain class="w-4 h-4 text-primary" />
-                    Data Psikolog
+                    Dashboard Psikolog
                   </a>
                 )}
               </>
@@ -248,21 +268,54 @@ export default component$(() => {
                         {user.value?.email || "User"}
                       </span>
                       <span class="text-xs text-base-content/60 capitalize">
-                        {user.value?.role || "user"}
+                        {user.value?.role || "Role"}
                       </span>
                     </div>
                   </div>
                 </li>
-                <div class="divider my-1"></div>
+                <div class="divider my-0"></div>
                 <li>
                   <a
                     href="/dashboard"
-                    class="flex items-center gap-3 hover:bg-primary/10"
+                    class="flex items-center gap-3 p-2 hover:bg-primary/10"
                   >
-                    <LuBarChart class="w-4 h-4 text-primary" />
-                    <span class="font-medium">Dashboard</span>
+                    <LuBarChart class="w-5 h-5 text-primary" />
+                    <span class="font-medium">Dashboard Utama</span>
                   </a>
                 </li>
+                {user.value?.role === "admin" && (
+                  <li>
+                    <a
+                      href="/admin"
+                      class="flex items-center gap-3 p-2 hover:bg-primary/10"
+                    >
+                      <LuBarChart class="w-5 h-5 text-primary" />
+                      <span class="font-medium">Dashboard Admin</span>
+                    </a>
+                  </li>
+                )}
+                {user.value?.role === "posyandu" && (
+                  <li>
+                    <a
+                      href="/posyandu"
+                      class="flex items-center gap-3 p-2 hover:bg-primary/10"
+                    >
+                      <LuHeart class="w-5 h-5 text-primary" />
+                      <span class="font-medium">Dashboard Posyandu</span>
+                    </a>
+                  </li>
+                )}
+                {user.value?.role === "psikolog" && (
+                  <li>
+                    <a
+                      href="/psikolog"
+                      class="flex items-center gap-3 p-2 hover:bg-primary/10"
+                    >
+                      <LuBrain class="w-5 h-5 text-primary" />
+                      <span class="font-medium">Dashboard Psikolog</span>
+                    </a>
+                  </li>
+                )}
                 <li>
                   <a
                     href="/dashboard/profile"
