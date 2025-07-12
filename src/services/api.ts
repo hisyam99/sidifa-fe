@@ -107,7 +107,7 @@ api.interceptors.response.use(
     }
 
     // Untuk semua error lain, teruskan saja error aslinya.
-    return Promise.reject(error);
+    return Promise.reject(new Error(error));
   },
 );
 
