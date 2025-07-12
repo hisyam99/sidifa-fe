@@ -1,4 +1,5 @@
 import axios from "axios";
+import { sessionUtils } from "~/utils/auth"; // Impor sessionUtils
 
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3000/api/v1",
@@ -9,7 +10,6 @@ const api = axios.create({
   withCredentials: true,
   xsrfCookieName: "_csrf",
   xsrfHeaderName: "X-CSRF-TOKEN",
-  timeout: 10000,
 });
 
 // CSRF Token fetcher
@@ -21,7 +21,6 @@ export async function fetchCsrfToken() {
 // Auto-fetch CSRF token untuk POST/PUT/PATCH/DELETE
 let csrfFetched = false;
 let csrfTokenValue: string | null = null;
-
 api.interceptors.request.use(async (config) => {
   if (
     ["post", "put", "patch", "delete"].includes(
@@ -38,7 +37,6 @@ api.interceptors.request.use(async (config) => {
       return Promise.reject(new Error("Tidak dapat mengambil CSRF token"));
     }
   }
-
   if (
     csrfTokenValue &&
     ["post", "put", "patch", "delete"].includes(
@@ -47,7 +45,6 @@ api.interceptors.request.use(async (config) => {
   ) {
     config.headers["X-CSRF-TOKEN"] = csrfTokenValue;
   }
-
   return config;
 });
 
@@ -56,25 +53,8 @@ api.interceptors.request.use((config) => {
   console.log("🚀 REQUEST:", {
     method: config.method?.toUpperCase(),
     url: config.url,
-    baseURL: config.baseURL,
     fullURL: `${config.baseURL}${config.url}`,
-    data: config.data,
-    headers: config.headers,
   });
-
-  if (
-    ["post", "put", "patch", "delete"].includes(
-      config.method?.toLowerCase() || "",
-    )
-  ) {
-    console.log("🔍 CSRF Debug:", {
-      cookieName: "_csrf",
-      headerName: "X-CSRF-TOKEN",
-      headerValue: config.headers?.["X-CSRF-TOKEN"],
-      allHeaders: config.headers,
-    });
-  }
-
   return config;
 });
 
@@ -84,14 +64,15 @@ api.interceptors.response.use(
     console.log("✅ RESPONSE:", {
       status: response.status,
       url: response.config.url,
-      data: response.data,
     });
     return response;
   },
   async (error) => {
+    const originalRequest = error.config;
+
     console.log("❌ ERROR:", {
       status: error.response?.status,
-      url: error.config?.url,
+      url: originalRequest?.url,
       data: error.response?.data,
       message: error.message,
     });
@@ -99,27 +80,34 @@ api.interceptors.response.use(
     // Tangani token kadaluarsa (401)
     if (
       error.response?.status === 401 &&
-      !error.config._retry && // Cegah loop tak terbatas
-      error.config.url !== "/auth/refresh" // Jangan refresh jika sudah di endpoint refresh
+      !originalRequest._retry &&
+      originalRequest.url !== "/auth/refresh"
     ) {
-      error.config._retry = true; // Tandai permintaan telah mencoba refresh
+      originalRequest._retry = true;
+
       try {
-        await authService.refresh(); // Panggil refresh token
-        // Ulangi permintaan asli dengan token baru
-        return api(error.config);
+        console.log("🔄 Mencoba refresh token...");
+        await authService.refresh();
+        console.log("✅ Token berhasil di-refresh. Mengulang request asli...");
+        return api(originalRequest);
       } catch (refreshError) {
         console.error("Gagal refresh token:", refreshError);
-        // Bersihkan data autentikasi jika refresh gagal
-        await authService.logout(); // Panggil logout untuk membersihkan CSRF dan data sesi
+
+        // --- PERBAIKAN PENTING ---
+        // Jangan panggil logout() di sini. Ini yang menyebabkan rentetan request.
+        // Cukup bersihkan sesi di sisi client dan biarkan error mengalir
+        // agar useAuth hook bisa menanganinya.
+        sessionUtils.clearAllAuthData();
+
+        // Tolak promise agar pemanggil tahu bahwa otentikasi gagal total.
         return Promise.reject(
-          new Error("Sesi telah berakhir, silakan login kembali"),
+          new Error("Sesi telah berakhir, silakan login kembali."),
         );
       }
     }
 
-    return Promise.reject(
-      new Error(error.response?.data?.message || "Terjadi kesalahan"),
-    );
+    // Untuk semua error lain, teruskan saja error aslinya.
+    return Promise.reject(error);
   },
 );
 
@@ -134,6 +122,7 @@ export const profileService = {
 // Auth service
 export const authService = {
   async logout() {
+    // Saat logout, reset status csrf agar diambil ulang jika login lagi.
     csrfFetched = false;
     csrfTokenValue = null;
     const response = await api.post("/auth/logout");

@@ -13,7 +13,8 @@ import {
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { user, loading, error, checkAuthStatus, logout } = useAuth();
+  // 1. Hapus `checkAuthStatus` dan ganti dengan `refreshUserData`
+  const { user, loading, error, refreshUserData, logout } = useAuth();
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -139,7 +140,8 @@ export default component$(() => {
         <div class="card bg-base-100 shadow-lg">
           <div class="card-body text-center">
             <p class="text-error mb-4">{error.value}</p>
-            <button class="btn btn-primary" onClick$={() => checkAuthStatus()}>
+            {/* 2. Ganti pemanggilan fungsi di onClick$ */}
+            <button class="btn btn-primary" onClick$={() => refreshUserData()}>
               Coba Lagi
             </button>
           </div>
@@ -154,7 +156,9 @@ export default component$(() => {
       <div class="container mx-auto px-4 py-8">
         <div class="card bg-base-100 shadow-lg">
           <div class="card-body text-center">
-            <p class="text-base-content/70">Tidak ada data profil</p>
+            <p class="text-base-content/70">
+              Gagal memuat data profil atau Anda belum login.
+            </p>
           </div>
         </div>
       </div>

@@ -2,6 +2,12 @@ import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
 import { profileService, authService } from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
 
+// Ganti 'let' dengan sebuah objek. Kita akan mengubah properti objek, bukan variabel itu sendiri.
+// Ini adalah pola standar untuk menghindari "illegal reassignment" error pada bundler.
+const authCheckState = {
+  attempted: false,
+};
+
 export const useAuth = () => {
   const isLoggedIn = useSignal(false);
   const user = useSignal<User | null>(null);
@@ -12,31 +18,18 @@ export const useAuth = () => {
     try {
       loading.value = true;
       error.value = null;
-
-      // Check sessionStorage first for immediate response
-      const sessionUser = sessionUtils.getUserProfile();
-      if (sessionUser) {
-        user.value = sessionUser;
-        isLoggedIn.value = true;
-        loading.value = false;
-        return;
-      }
-
-      // If no session, fetch from API
       const profileData = await profileService.getProfile();
       user.value = profileData;
       isLoggedIn.value = true;
-
-      // Store in sessionStorage only
       sessionUtils.setUserProfile(profileData);
     } catch {
       user.value = null;
       isLoggedIn.value = false;
-      error.value = "Gagal memuat data profil";
-
-      // Clear all auth data on failure
+      error.value = "Sesi tidak valid atau telah berakhir.";
       sessionUtils.clearAllAuthData();
     } finally {
+      // Ubah properti 'attempted' pada objek
+      authCheckState.attempted = true;
       loading.value = false;
     }
   });
@@ -44,13 +37,14 @@ export const useAuth = () => {
   const logout = $(async () => {
     try {
       await authService.logout();
-    } catch (error) {
-      console.log("Error during logout:", error);
+    } catch (err) {
+      console.error("Error during logout:", err);
     } finally {
-      // Clear all auth data
       sessionUtils.clearAllAuthData();
       user.value = null;
       isLoggedIn.value = false;
+      // Reset properti 'attempted' pada objek
+      authCheckState.attempted = false;
     }
   });
 
@@ -62,10 +56,10 @@ export const useAuth = () => {
       user.value = profileData;
       isLoggedIn.value = true;
       sessionUtils.setUserProfile(profileData);
-    } catch (error: any) {
+    } catch {
       user.value = null;
       isLoggedIn.value = false;
-      error.value = "Gagal memuat data profil";
+      error.value = "Gagal memuat ulang data profil.";
       sessionUtils.clearAllAuthData();
     } finally {
       loading.value = false;
@@ -74,21 +68,27 @@ export const useAuth = () => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    // Server guard - don't run on server
     if (isServer) {
       return;
     }
 
-    // Check sessionStorage first for immediate response
     const sessionUser = sessionUtils.getUserProfile();
     if (sessionUser) {
       user.value = sessionUser;
       isLoggedIn.value = true;
       loading.value = false;
+      // Ubah properti 'attempted' pada objek
+      authCheckState.attempted = true;
       return;
     }
 
-    // If no session, fetch from API
+    // Baca properti 'attempted' dari objek
+    if (authCheckState.attempted) {
+      isLoggedIn.value = false;
+      loading.value = false;
+      return;
+    }
+
     checkAuthStatus();
   });
 
@@ -97,7 +97,6 @@ export const useAuth = () => {
     user,
     loading,
     error,
-    checkAuthStatus,
     logout,
     refreshUserData,
   };

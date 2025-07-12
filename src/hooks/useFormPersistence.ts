@@ -8,7 +8,7 @@ import { useSignal, $, type QRL } from "@builder.io/qwik";
  * @returns Objek dengan signal dan fungsi untuk mengelola form.
  */
 export const useFormPersistence = <T extends Record<string, unknown>>(
-  initialData: T
+  initialData: T,
 ) => {
   const formData = useSignal<T>(initialData);
   const hasErrors = useSignal(false);
