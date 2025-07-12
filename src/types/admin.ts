@@ -23,4 +23,5 @@ export interface ListUserParams {
   limit?: number;
   page?: number;
   name?: string;
-} 
+  orderBy?: string;
+}

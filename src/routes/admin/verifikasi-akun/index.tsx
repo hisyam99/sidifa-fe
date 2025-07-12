@@ -3,7 +3,15 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { adminService } from "~/services/api";
 import { Alert } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
-import { LuCheck, LuX, LuLoader2, LuSearch, LuEye, LuChevronLeft, LuChevronRight } from "@qwikest/icons/lucide";
+import {
+  LuCheck,
+  LuX,
+  LuLoader2,
+  LuSearch,
+  LuEye,
+  LuChevronLeft,
+  LuChevronRight,
+} from "@qwikest/icons/lucide";
 import type { User, ListUserResponse } from "~/types/admin";
 
 export default component$(() => {
@@ -11,13 +19,14 @@ export default component$(() => {
   const success = useSignal<string | null>(null);
   const loading = useSignal(false);
   const users = useSignal<User[]>([]);
-  const meta = useSignal<ListUserResponse['meta'] | null>(null);
-  
+  const meta = useSignal<ListUserResponse["meta"] | null>(null);
+
   // Pagination & Filter
   const currentPage = useSignal(1);
   const limit = useSignal(5);
   const searchName = useSignal("");
-  
+  const orderBy = useSignal(""); // default: no sorting
+
   // Detail Modal
   const selectedUser = useSignal<User | null>(null);
   const showDetailModal = useSignal(false);
@@ -25,14 +34,15 @@ export default component$(() => {
   const fetchUsers = $(async () => {
     loading.value = true;
     error.value = null;
-    
+
     try {
       const response = await adminService.listUsers({
         limit: limit.value,
         page: currentPage.value,
-        name: searchName.value || undefined
+        name: searchName.value || undefined,
+        orderBy: orderBy.value || undefined, // only send if not empty
       });
-      
+
       users.value = response.data;
       meta.value = response.meta;
     } catch (err: any) {
@@ -42,19 +52,21 @@ export default component$(() => {
     }
   });
 
-  const handleVerification = $(async (userId: string, verification: "verified" | "unverified") => {
-    error.value = null;
-    success.value = null;
-    
-    try {
-      await adminService.verifyUser(userId, verification);
-      success.value = `Akun berhasil ${verification === "verified" ? "diverifikasi" : "ditolak"}`;
-      // Refresh data
-      await fetchUsers();
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
-    }
-  });
+  const handleVerification = $(
+    async (userId: string, verification: "verified" | "unverified") => {
+      error.value = null;
+      success.value = null;
+
+      try {
+        await adminService.verifyUser(userId, verification);
+        success.value = `Akun berhasil ${verification === "verified" ? "diverifikasi" : "ditolak"}`;
+        // Refresh data
+        await fetchUsers();
+      } catch (err: any) {
+        error.value = extractErrorMessage(err);
+      }
+    },
+  );
 
   const handleSearch = $(async () => {
     currentPage.value = 1; // Reset to first page when searching
@@ -77,12 +89,12 @@ export default component$(() => {
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -103,11 +115,58 @@ export default component$(() => {
     return verification === "verified" ? "badge-success" : "badge-warning";
   };
 
+  // Helper function to calculate pagination buttons
+  const getPaginationButtons = (currentPage: number, totalPages: number) => {
+    const buttons = [];
+    const maxButtons = 5;
+
+    if (totalPages <= maxButtons) {
+      // If total pages is less than or equal to max buttons, show all
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(i);
+      }
+    } else {
+      // Calculate start and end page numbers
+      let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+      const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+      // Adjust if we're near the end
+      if (endPage - startPage + 1 < maxButtons) {
+        startPage = Math.max(1, endPage - maxButtons + 1);
+      }
+
+      // Add first page if not included
+      if (startPage > 1) {
+        buttons.push(1);
+        if (startPage > 2) {
+          buttons.push("...");
+        }
+      }
+
+      // Add middle pages
+      for (let i = startPage; i <= endPage; i++) {
+        if (i === 1 || i === totalPages) continue; // Skip if already added
+        buttons.push(i);
+      }
+
+      // Add last page if not included
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          buttons.push("...");
+        }
+        buttons.push(totalPages);
+      }
+    }
+
+    return buttons;
+  };
+
   return (
     <div>
       <h1 class="text-3xl font-bold mb-4">Verifikasi Akun</h1>
       <p class="mb-6">
-        Setujui atau tolak pendaftaran akun baru dari Kader Posyandu dan Psikolog.
+        Setujui atau tolak pendaftaran akun baru dari Kader Posyandu dan
+        Psikolog.
       </p>
 
       {/* Search & Filter */}
@@ -120,14 +179,14 @@ export default component$(() => {
                 <span class="label-text">Cari berdasarkan nama</span>
               </label>
               <div class="input-group">
-                <input 
+                <input
                   id="search-name"
-                  type="text" 
-                  placeholder="Masukkan nama user..." 
+                  type="text"
+                  placeholder="Masukkan nama user..."
                   class="input input-bordered flex-1"
                   value={searchName.value}
-                  onInput$={(ev: any) => searchName.value = ev.target.value}
-                  onKeyUp$={(ev: any) => ev.key === 'Enter' && handleSearch()}
+                  onInput$={(ev: any) => (searchName.value = ev.target.value)}
+                  onKeyUp$={(ev: any) => ev.key === "Enter" && handleSearch()}
                 />
                 <button class="btn btn-primary" onClick$={handleSearch}>
                   <LuSearch class="w-4 h-4" />
@@ -135,10 +194,33 @@ export default component$(() => {
               </div>
             </div>
             <div class="form-control">
+              <label for="order-by-select" class="label">
+                <span class="label-text">Urutkan berdasarkan</span>
+              </label>
+              <select
+                id="order-by-select"
+                class="select select-bordered"
+                value={orderBy.value}
+                onChange$={(ev: any) => {
+                  orderBy.value = ev.target.value;
+                  currentPage.value = 1;
+                  fetchUsers();
+                }}
+              >
+                <option value="">(Default - Tidak diurutkan)</option>
+                <option value="desc">Terbaru</option>
+                <option value="asc">Terlama</option>
+                <option value="name:asc">Nama A-Z</option>
+                <option value="name:desc">Nama Z-A</option>
+                <option value="email:asc">Email A-Z</option>
+                <option value="email:desc">Email Z-A</option>
+              </select>
+            </div>
+            <div class="form-control">
               <label for="limit-select" class="label">
                 <span class="label-text">Limit per halaman</span>
               </label>
-              <select 
+              <select
                 id="limit-select"
                 class="select select-bordered"
                 value={limit.value}
@@ -168,10 +250,13 @@ export default component$(() => {
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
           <h2 class="card-title">Daftar User</h2>
-          
+
           {loading.value ? (
             <div class="flex justify-center items-center py-8">
-              <LuLoader2 class="animate-spin text-primary" style={{ width: '32px', height: '32px' }} />
+              <LuLoader2
+                class="animate-spin text-primary"
+                style={{ width: "32px", height: "32px" }}
+              />
             </div>
           ) : (
             <>
@@ -200,13 +285,17 @@ export default component$(() => {
                           </span>
                         </td>
                         <td>
-                          <span class={`badge ${getVerificationBadge(user.verification)}`}>
-                            {user.verification === "verified" ? "Terverifikasi" : "Menunggu Verifikasi"}
+                          <span
+                            class={`badge ${getVerificationBadge(user.verification)}`}
+                          >
+                            {user.verification === "verified"
+                              ? "Terverifikasi"
+                              : "Menunggu Verifikasi"}
                           </span>
                         </td>
                         <td class="text-sm">{formatDate(user.created_at)}</td>
                         <td class="flex gap-2">
-                          <button 
+                          <button
                             class="btn btn-sm btn-ghost"
                             onClick$={() => showUserDetail(user)}
                           >
@@ -214,15 +303,19 @@ export default component$(() => {
                           </button>
                           {user.verification === "unverified" && (
                             <>
-                              <button 
+                              <button
                                 class="btn btn-sm btn-success"
-                                onClick$={() => handleVerification(user.id, "verified")}
+                                onClick$={() =>
+                                  handleVerification(user.id, "verified")
+                                }
                               >
                                 <LuCheck class="w-4 h-4" />
                               </button>
-                              <button 
+                              <button
                                 class="btn btn-sm btn-error"
-                                onClick$={() => handleVerification(user.id, "unverified")}
+                                onClick$={() =>
+                                  handleVerification(user.id, "unverified")
+                                }
                               >
                                 <LuX class="w-4 h-4" />
                               </button>
@@ -239,29 +332,47 @@ export default component$(() => {
               {meta.value && (
                 <div class="flex items-center justify-between mt-6">
                   <div class="text-sm text-base-content/70">
-                    Menampilkan {((meta.value.currentPage - 1) * meta.value.limit) + 1} - {Math.min(meta.value.currentPage * meta.value.limit, meta.value.totalUsers)} dari {meta.value.totalUsers} user
+                    Menampilkan{" "}
+                    {(meta.value.currentPage - 1) * meta.value.limit + 1} -{" "}
+                    {Math.min(
+                      meta.value.currentPage * meta.value.limit,
+                      meta.value.totalUsers,
+                    )}{" "}
+                    dari {meta.value.totalUsers} user
                   </div>
                   <div class="join">
-                    <button 
+                    <button
                       class="join-item btn btn-sm"
                       disabled={meta.value.currentPage === 1}
-                      onClick$={() => handlePageChange(meta.value!.currentPage - 1)}
+                      onClick$={() =>
+                        handlePageChange(meta.value!.currentPage - 1)
+                      }
                     >
                       <LuChevronLeft class="w-4 h-4" />
                     </button>
-                    {Array.from({ length: meta.value.totalPages }, (_, i) => i + 1).map((page) => (
-                      <button 
-                        key={page}
-                        class={`join-item btn btn-sm ${page === meta.value!.currentPage ? 'btn-active' : ''}`}
-                        onClick$={() => handlePageChange(page)}
+                    {getPaginationButtons(
+                      meta.value.currentPage,
+                      meta.value.totalPages,
+                    ).map((page, index) => (
+                      <button
+                        key={index}
+                        class={`join-item btn btn-sm ${page === meta.value!.currentPage ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
+                        disabled={page === "..."}
+                        onClick$={() =>
+                          typeof page === "number" && handlePageChange(page)
+                        }
                       >
                         {page}
                       </button>
                     ))}
-                    <button 
+                    <button
                       class="join-item btn btn-sm"
-                      disabled={meta.value.currentPage === meta.value.totalPages}
-                      onClick$={() => handlePageChange(meta.value!.currentPage + 1)}
+                      disabled={
+                        meta.value.currentPage === meta.value.totalPages
+                      }
+                      onClick$={() =>
+                        handlePageChange(meta.value!.currentPage + 1)
+                      }
                     >
                       <LuChevronRight class="w-4 h-4" />
                     </button>
@@ -284,47 +395,65 @@ export default component$(() => {
                   <label for="detail-name" class="label">
                     <span class="label-text font-medium">Nama</span>
                   </label>
-                  <p id="detail-name" class="text-base-content">{selectedUser.value.name}</p>
+                  <p id="detail-name" class="text-base-content">
+                    {selectedUser.value.name}
+                  </p>
                 </div>
                 <div>
                   <label for="detail-email" class="label">
                     <span class="label-text font-medium">Email</span>
                   </label>
-                  <p id="detail-email" class="text-base-content">{selectedUser.value.email}</p>
+                  <p id="detail-email" class="text-base-content">
+                    {selectedUser.value.email}
+                  </p>
                 </div>
                 <div>
                   <label for="detail-phone" class="label">
                     <span class="label-text font-medium">No. Telepon</span>
                   </label>
-                  <p id="detail-phone" class="text-base-content">{selectedUser.value.no_telp || "-"}</p>
+                  <p id="detail-phone" class="text-base-content">
+                    {selectedUser.value.no_telp || "-"}
+                  </p>
                 </div>
                 <div>
                   <label for="detail-role" class="label">
                     <span class="label-text font-medium">Peran</span>
                   </label>
-                  <span id="detail-role" class={`badge ${getRoleBadge(selectedUser.value.role)}`}>
+                  <span
+                    id="detail-role"
+                    class={`badge ${getRoleBadge(selectedUser.value.role)}`}
+                  >
                     {selectedUser.value.role}
                   </span>
                 </div>
                 <div>
                   <label for="detail-verification" class="label">
-                    <span class="label-text font-medium">Status Verifikasi</span>
+                    <span class="label-text font-medium">
+                      Status Verifikasi
+                    </span>
                   </label>
-                  <span id="detail-verification" class={`badge ${getVerificationBadge(selectedUser.value.verification)}`}>
-                    {selectedUser.value.verification === "verified" ? "Terverifikasi" : "Menunggu Verifikasi"}
+                  <span
+                    id="detail-verification"
+                    class={`badge ${getVerificationBadge(selectedUser.value.verification)}`}
+                  >
+                    {selectedUser.value.verification === "verified"
+                      ? "Terverifikasi"
+                      : "Menunggu Verifikasi"}
                   </span>
                 </div>
                 <div>
                   <label for="detail-created" class="label">
                     <span class="label-text font-medium">Tanggal Daftar</span>
                   </label>
-                  <p id="detail-created" class="text-base-content">{formatDate(selectedUser.value.created_at)}</p>
+                  <p id="detail-created" class="text-base-content">
+                    {formatDate(selectedUser.value.created_at)}
+                  </p>
                 </div>
               </div>
-              
+
               {selectedUser.value.verification === "unverified" && (
                 <div class="flex gap-2 pt-4">
-                  <button 
+                  <button
                     class="btn btn-success"
                     onClick$={() => {
                       handleVerification(selectedUser.value!.id, "verified");
@@ -334,7 +463,7 @@ export default component$(() => {
                     <LuCheck class="w-4 h-4 mr-2" />
                     Verifikasi
                   </button>
-                  <button 
+                  <button
                     class="btn btn-error"
                     onClick$={() => {
                       handleVerification(selectedUser.value!.id, "unverified");
@@ -348,9 +477,9 @@ export default component$(() => {
               )}
             </div>
             <div class="modal-action">
-              <button 
-                class="btn" 
-                onClick$={() => showDetailModal.value = false}
+              <button
+                class="btn"
+                onClick$={() => (showDetailModal.value = false)}
               >
                 Tutup
               </button>

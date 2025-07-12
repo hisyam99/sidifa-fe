@@ -140,23 +140,31 @@ export const authService = {
 
 // Admin service
 export const adminService = {
-  async listUsers(params: { limit?: number; page?: number; name?: string }) {
+  async listUsers(params: {
+    limit?: number;
+    page?: number;
+    name?: string;
+    orderBy?: string;
+  }) {
     const queryParams = new URLSearchParams();
-    if (params.limit) queryParams.append('limit', params.limit.toString());
-    if (params.page) queryParams.append('page', params.page.toString());
-    if (params.name) queryParams.append('name', params.name);
-    
-    const response = await api.get(`/admin/list-user?${queryParams.toString()}`);
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.name) queryParams.append("name", params.name);
+    if (params.orderBy) queryParams.append("orderBy", params.orderBy);
+
+    const response = await api.get(
+      `/admin/list-user?${queryParams.toString()}`,
+    );
     return response.data;
   },
-  
+
   async verifyUser(userId: string, verification: "verified" | "unverified") {
     const response = await api.patch("/admin/verification", {
       userId,
-      verification
+      verification,
     });
     return response.data;
-  }
+  },
 };
 
 export default api;
