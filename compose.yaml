@@ -1,0 +1,11 @@
+name: sidifa-fe
+services:
+  sidifa-fe:
+    build: .
+    image: sidifa-fe:latest
+    container_name: sidifa-fe
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env
+    restart: unless-stopped

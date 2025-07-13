@@ -2,7 +2,7 @@ import axios from "axios";
 import { sessionUtils } from "~/utils/auth"; // Impor sessionUtils
 
 const api = axios.create({
-  baseURL: import.meta.env.PUBLIC_API_URL || "http://localhost:3000/api/v1",
+  baseURL: import.meta.env.PUBLIC_API_URL || "__PUBLIC_API_URL__",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
