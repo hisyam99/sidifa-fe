@@ -40,7 +40,37 @@ export const sessionUtils = {
     }
   },
 
+  // --- NEW: Login status helpers using localStorage ---
+  setAuthStatus(isLoggedIn: boolean): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_status", JSON.stringify(isLoggedIn));
+    }
+  },
+
+  getAuthStatus(): boolean | null {
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem("auth_status");
+      if (raw !== null) {
+        try {
+          return JSON.parse(raw) as boolean;
+        } catch {
+          this.removeAuthStatus();
+        }
+      }
+    }
+    return null;
+  },
+
+  removeAuthStatus(): void {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_status");
+    }
+  },
+  // --- END NEW ---
+
   clearAllAuthData(): void {
     this.removeUserProfile();
+    // Pastikan status login di-reset agar diakses cepat tanpa panggilan API berikutnya
+    this.setAuthStatus(false);
   },
 };

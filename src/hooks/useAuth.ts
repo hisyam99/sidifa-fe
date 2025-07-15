@@ -22,11 +22,13 @@ export const useAuth = () => {
       user.value = profileData;
       isLoggedIn.value = true;
       sessionUtils.setUserProfile(profileData);
+      sessionUtils.setAuthStatus(true);
     } catch {
       user.value = null;
       isLoggedIn.value = false;
       error.value = "Sesi tidak valid atau telah berakhir.";
       sessionUtils.clearAllAuthData();
+      sessionUtils.setAuthStatus(false);
     } finally {
       // Ubah properti 'attempted' pada objek
       authCheckState.attempted = true;
@@ -41,6 +43,7 @@ export const useAuth = () => {
       console.error("Error during logout:", err);
     } finally {
       sessionUtils.clearAllAuthData();
+      sessionUtils.setAuthStatus(false);
       user.value = null;
       isLoggedIn.value = false;
       // Reset properti 'attempted' pada objek
@@ -56,11 +59,13 @@ export const useAuth = () => {
       user.value = profileData;
       isLoggedIn.value = true;
       sessionUtils.setUserProfile(profileData);
+      sessionUtils.setAuthStatus(true);
     } catch {
       user.value = null;
       isLoggedIn.value = false;
       error.value = "Gagal memuat ulang data profil.";
       sessionUtils.clearAllAuthData();
+      sessionUtils.setAuthStatus(false);
     } finally {
       loading.value = false;
     }
@@ -69,6 +74,16 @@ export const useAuth = () => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     if (isServer) {
+      return;
+    }
+
+    // Cek status login yang tersimpan di localStorage. Jika terset "false",
+    // kita langsung anggap pengguna belum login tanpa perlu memanggil API.
+    const storedAuth = sessionUtils.getAuthStatus();
+    if (storedAuth === false) {
+      isLoggedIn.value = false;
+      loading.value = false;
+      authCheckState.attempted = true;
       return;
     }
 

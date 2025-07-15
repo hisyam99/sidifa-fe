@@ -2,6 +2,7 @@ import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api from "~/services/api";
+import { sessionUtils } from "~/utils/auth";
 import { Alert, Card, FormField } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
 import { LuArrowRight } from "@qwikest/icons/lucide";
@@ -22,6 +23,8 @@ export default component$(() => {
     success.value = null;
     try {
       await api.post("/auth/login", values);
+      // Tandai status login berhasil di localStorage sebelum redirect
+      sessionUtils.setAuthStatus(true);
       success.value = "Login berhasil!";
       setTimeout(() => {
         window.location.href = "/dashboard";
