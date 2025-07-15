@@ -12,6 +12,7 @@ import {
   LuLogOut,
   LuHeart,
   LuBarChart,
+  LuHelpCircle,
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
@@ -48,6 +49,15 @@ export default component$(() => {
                 <a href="/" class="flex items-center gap-3 hover:bg-primary/10">
                   <LuHome class="w-5 h-5 text-primary" />
                   <span class="font-medium">Beranda</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/faq"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
+                  <LuHelpCircle class="w-5 h-5 text-primary" />
+                  <span class="font-medium">FAQ</span>
                 </a>
               </li>
               {!isLoggedIn.value ? (
@@ -171,6 +181,13 @@ export default component$(() => {
             >
               <LuHome class="w-4 h-4 text-primary" />
               Beranda
+            </a>
+            <a
+              href="/faq"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
+              <LuHelpCircle class="w-4 h-4 text-primary" />
+              FAQ
             </a>
             {!isLoggedIn.value ? (
               <>

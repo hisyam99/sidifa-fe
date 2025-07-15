@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { LuMapPin, LuBuilding2, LuShare2 } from "@qwikest/icons/lucide";
+import { LuMapPin, LuBuilding, LuShare } from "@qwikest/icons/lucide";
 
 export default component$(() => {
   const jobs = [
@@ -43,7 +43,7 @@ export default component$(() => {
               <h2 class="card-title">{job.title}</h2>
               <div class="flex items-center gap-4 text-sm text-gray-500">
                 <span class="flex items-center gap-1">
-                  <LuBuilding2 /> {job.company}
+                  <LuBuilding /> {job.company}
                 </span>
                 <span class="flex items-center gap-1">
                   <LuMapPin /> {job.location}
@@ -61,7 +61,7 @@ export default component$(() => {
               </div>
               <div class="card-actions justify-end">
                 <button class="btn btn-ghost btn-sm">
-                  <LuShare2 class="w-4 h-4 mr-1" />
+                  <LuShare class="w-4 h-4 mr-1" />
                   Bagikan
                 </button>
                 <button class="btn btn-primary">Lihat Detail</button>

@@ -59,7 +59,12 @@ export default component$(() => {
             class="card bg-base-100 shadow-xl image-full"
           >
             <figure>
-              <img src={article.image} alt={article.title} />
+              <img
+                src={article.image}
+                alt={article.title}
+                width="400"
+                height="250"
+              />
             </figure>
             <div class="card-body">
               <h2 class="card-title">{article.title}</h2>
