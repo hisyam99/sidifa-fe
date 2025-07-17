@@ -31,7 +31,10 @@ export default component$(() => {
         <div class="container mx-auto px-4 flex items-center justify-between">
           <div class="navbar-start">
             {/* Mobile menu button skeleton */}
-            <button class="btn btn-ghost btn-circle lg:hidden focus-ring">
+            <button
+              class="btn btn-ghost btn-circle lg:hidden focus-ring"
+              aria-label="Buka menu navigasi"
+            >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             {/* Logo is static, no need for skeleton */}
@@ -60,7 +63,10 @@ export default component$(() => {
       <div class="container mx-auto px-4 flex items-center justify-between">
         <div class="navbar-start">
           <div class="dropdown">
-            <button class="btn btn-ghost btn-circle lg:hidden focus-ring">
+            <button
+              class="btn btn-ghost btn-circle lg:hidden focus-ring"
+              aria-label="Buka menu navigasi"
+            >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
