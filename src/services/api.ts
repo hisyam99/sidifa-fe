@@ -191,4 +191,9 @@ export const kaderService = {
   },
 };
 
+export const getPosyanduDetail = async (id: string) => {
+  const response = await api.get(`/kader/posyandu/detail/${id}`);
+  return response.data;
+};
+
 export default api;

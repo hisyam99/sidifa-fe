@@ -87,3 +87,14 @@ export interface DashboardSummary {
   notifications_unread: number;
   last_updated: string;
 }
+
+export interface PosyanduDetail {
+  id: string;
+  nama_posyandu: string;
+  alamat: string;
+  no_telp: string;
+  users_id: string;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+}
