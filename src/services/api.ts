@@ -174,4 +174,21 @@ export const adminService = {
   },
 };
 
+// Kader service
+export const kaderService = {
+  async getKaderPosyanduList(params: {
+    limit?: number;
+    nama_posyandu?: string;
+    page?: number;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.nama_posyandu)
+      queryParams.append("nama_posyandu", params.nama_posyandu);
+    if (params.page) queryParams.append("page", params.page.toString());
+    const response = await api.get(`/kader/posyandu?${queryParams.toString()}`);
+    return response.data;
+  },
+};
+
 export default api;

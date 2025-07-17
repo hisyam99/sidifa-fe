@@ -25,8 +25,9 @@ export default component$(() => {
               Bergabung sebagai Kader Posyandu
             </h1>
             <p class="text-lg text-base-content/70 leading-relaxed">
-              Daftar sebagai kader posyandu untuk mengelola data kesehatan masyarakat
-              dan memberikan layanan inklusif bagi penyandang disabilitas.
+              Daftar sebagai kader posyandu untuk mengelola data kesehatan
+              masyarakat dan memberikan layanan inklusif bagi penyandang
+              disabilitas.
             </p>
           </div>
 
