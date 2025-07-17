@@ -130,7 +130,7 @@ export default component$(() => {
       <div class="text-center text-sm space-y-2">
         <span class="text-base-content/70">Belum punya akun?</span>
         <div class="flex flex-col sm:flex-row gap-2 justify-center mt-1">
-          <a href="/auth/signup/posyandu" class="link link-primary font-medium">
+          <a href="/auth/signup/kader" class="link link-primary font-medium">
             Daftar Posyandu
           </a>
           <span class="text-base-content/40">|</span>

@@ -73,7 +73,7 @@ export const NavigationGuest = component$(() => {
                   </li>
                   <li>
                     <a
-                      href="/auth/signup/posyandu"
+                      href="/auth/signup/kader"
                       class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200 auth-dependent"
                     >
                       <LuStethoscope class="w-5 h-5 text-primary" />
@@ -137,7 +137,7 @@ export const NavigationGuest = component$(() => {
             {!isAuthenticated.value ? (
               <>
                 <a
-                  href="/auth/signup/posyandu"
+                  href="/auth/signup/kader"
                   class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300 auth-dependent"
                 >
                   <LuStethoscope class="w-4 h-4 text-primary" />

@@ -22,10 +22,10 @@ export default component$(() => {
               <LuStethoscope class="w-10 h-10" />
             </div>
             <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold text-gradient-primary mb-4">
-              Bergabung sebagai Posyandu
+              Bergabung sebagai Kader Posyandu
             </h1>
             <p class="text-lg text-base-content/70 leading-relaxed">
-              Daftarkan posyandu Anda untuk mengelola data kesehatan masyarakat
+              Daftar sebagai kader posyandu untuk mengelola data kesehatan masyarakat
               dan memberikan layanan inklusif bagi penyandang disabilitas.
             </p>
           </div>

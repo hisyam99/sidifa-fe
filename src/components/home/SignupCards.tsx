@@ -48,7 +48,7 @@ export default component$(() => {
 
           <div class="card-actions justify-center">
             <a
-              href="/auth/signup/posyandu"
+              href="/auth/signup/kader"
               class="btn-hero inline-flex items-center gap-3"
             >
               <LuPlus class="w-5 h-5" />

@@ -186,7 +186,7 @@ bun run test
 
 ### Authentication
 
-- `POST /auth/signup/posyandu` - Signup posyandu
+- `POST /auth/signup/kader` - Signup posyandu
 - `POST /auth/signup/psikolog` - Signup psikolog
 - `POST /auth/login` - Login
 - `POST /auth/forgot-password` - Forgot password

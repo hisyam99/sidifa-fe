@@ -422,7 +422,7 @@ export default component$(() => {
               </p>
               <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="/auth/signup/posyandu"
+                  href="/auth/signup/kader"
                   class="btn btn-secondary btn-lg gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 >
                   <LuStethoscope class="w-5 h-5" />

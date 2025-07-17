@@ -59,7 +59,7 @@ bunServerAdapter({
     include: [
       "/",                           // Home page
       "/auth/login",                 // Login page
-      "/auth/signup/posyandu",       // Signup posyandu
+      "/auth/signup/kader",       // Signup posyandu
       "/auth/signup/psikolog",       // Signup psikolog
       "/auth/forgot-password",       // Forgot password
       "/demo/*",                     // Demo routes

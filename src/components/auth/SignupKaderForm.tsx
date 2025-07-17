@@ -1,6 +1,6 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
-import { signupPosyanduSchema, type SignupPosyanduForm } from "~/types/auth";
+import { signupKaderSchema, type SignupKaderForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
@@ -10,7 +10,7 @@ export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
 
-  const [form, { Form, Field }] = useForm<SignupPosyanduForm>({
+  const [form, { Form, Field }] = useForm<SignupKaderForm>({
     loader: {
       value: {
         name: "",
@@ -18,16 +18,15 @@ export default component$(() => {
         password: "",
         confirmPassword: "",
         no_telp: "",
-        nama_posyandu: "",
-        lokasi: "",
+        jabatan: "",
       },
     },
-    validate: valiForm$(signupPosyanduSchema),
+    validate: valiForm$(signupKaderSchema),
     validateOn: "blur",
     revalidateOn: "blur",
   });
 
-  const handleSubmit = $(async (values: SignupPosyanduForm) => {
+  const handleSubmit = $(async (values: SignupKaderForm) => {
     error.value = null;
     success.value = null;
 
@@ -38,7 +37,7 @@ export default component$(() => {
     }
 
     try {
-      await api.post("/auth/signup/posyandu", values);
+      await api.post("/auth/signup/kader", values);
       success.value = "Pendaftaran berhasil!";
     } catch (err: any) {
       error.value = extractErrorMessage(err);
@@ -52,10 +51,10 @@ export default component$(() => {
           <LuStethoscope class="w-8 h-8" />
         </div>
         <h1 class="text-2xl lg:text-3xl font-bold text-gradient-primary mb-2">
-          Daftar Posyandu
+          Daftar Kader
         </h1>
         <p class="text-base-content/70 text-sm lg:text-base">
-          Daftarkan posyandu Anda ke sistem SIDIFA
+          Daftarkan kader Anda ke sistem SIDIFA
         </p>
       </div>
 
@@ -141,33 +140,20 @@ export default component$(() => {
           </div>
         </div>
 
-        {/* Posyandu Information */}
+        {/* Kader Information */}
         <div class="space-y-4">
           <h3 class="text-lg font-semibold text-base-content">
-            Informasi Posyandu
+            Informasi Kader
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Field name="nama_posyandu">
+            <Field name="jabatan">
               {(field: any, props: any) => (
                 <FormField
                   field={field}
                   props={props}
                   type="text"
-                  placeholder="Masukkan nama posyandu"
-                  label="Nama Posyandu"
-                  required
-                />
-              )}
-            </Field>
-
-            <Field name="lokasi">
-              {(field: any, props: any) => (
-                <FormField
-                  field={field}
-                  props={props}
-                  type="text"
-                  placeholder="Masukkan lokasi posyandu"
-                  label="Lokasi Posyandu"
+                  placeholder="Masukkan jabatan"
+                  label="Jabatan"
                   required
                 />
               )}
@@ -199,7 +185,7 @@ export default component$(() => {
             </>
           ) : (
             <>
-              Daftar Posyandu <LuArrowRight class="w-4 h-4" />
+              Daftar Kader <LuArrowRight class="w-4 h-4" />
             </>
           )}
         </button>

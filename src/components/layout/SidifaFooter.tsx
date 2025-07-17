@@ -65,7 +65,7 @@ export default component$(() => {
               </li>
               <li>
                 <a
-                  href="/auth/signup/posyandu"
+                  href="/auth/signup/kader"
                   class="link link-hover text-sm hover:text-primary transition-colors duration-300"
                 >
                   Daftar Posyandu
