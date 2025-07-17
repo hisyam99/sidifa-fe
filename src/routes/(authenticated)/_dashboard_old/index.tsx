@@ -1,8 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
-import { useVisibleTask$ } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
 import {
   LuHeart,
   LuBrain,
@@ -23,18 +21,6 @@ import {
 
 export default component$(() => {
   const { user, logout } = useAuth();
-  const nav = useNavigate();
-
-  // Redirect otomatis ke dashboard sesuai role
-  useVisibleTask$(() => {
-    if (user.value?.role === "kader") {
-      nav("/kader");
-    } else if (user.value?.role === "psikolog") {
-      nav("/psikolog");
-    } else if (user.value?.role === "admin") {
-      nav("/admin");
-    }
-  });
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
