@@ -77,6 +77,18 @@ api.interceptors.response.use(
       message: error.message,
     });
 
+    // Tangani 429 (Too Many Requests) - JANGAN hapus session/data apapun
+    if (error.response?.status === 429) {
+      console.log("⚠️ Rate limit exceeded (429) - preserving session data");
+      // Buat error custom yang tidak akan menyebabkan session clearing
+      const rateLimitError = new Error("Terlalu banyak permintaan, silakan coba lagi nanti.");
+      rateLimitError.name = "RateLimitError";
+      // Tambahkan flag untuk menandai ini adalah 429 error
+      (rateLimitError as any).isRateLimit = true;
+      (rateLimitError as any).response = error.response;
+      return Promise.reject(rateLimitError);
+    }
+
     // Tangani token kadaluarsa (401)
     if (
       error.response?.status === 401 &&
@@ -99,14 +111,8 @@ api.interceptors.response.use(
       }
     }
 
-    // Jika error 429 (Too Many Requests), jangan hapus session/data apapun
-    if (error.response?.status === 429) {
-      // Bisa tambahkan notifikasi di UI jika ingin
-      return Promise.reject(error);
-    }
-
     // Untuk semua error lain, teruskan saja error aslinya.
-    return Promise.reject(new Error(error));
+    return Promise.reject(error);
   },
 );
 

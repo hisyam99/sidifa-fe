@@ -2,6 +2,7 @@ import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { profileService, authService } from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
+import { isRateLimitError, isAuthError } from "~/utils/error";
 
 // Global state untuk mencegah multiple API calls dan initialization
 const globalAuthState = {
@@ -49,22 +50,29 @@ export const useAuth = () => {
       sessionUtils.setAuthStatus(true);
       globalAuthState.lastCheck = now;
     } catch (err: any) {
-      // Jika error 429, jangan hapus session/data apapun
-      if (err?.response?.status === 429) {
+      // Tangani 429 error dengan lebih spesifik
+      if (isRateLimitError(err)) {
+        console.log("⚠️ Rate limit detected in checkAuthStatus - preserving session");
         error.value = "Terlalu banyak permintaan, silakan coba lagi nanti.";
+        // JANGAN hapus session/data apapun untuk 429 error
         return;
       }
-      user.value = null;
-      isLoggedIn.value = false;
-      globalAuthState.globalUser = null;
-      globalAuthState.globalIsLoggedIn = false;
-      error.value = "Sesi tidak valid atau telah berakhir.";
-      sessionUtils.clearAllAuthData();
-      sessionUtils.setAuthStatus(false);
 
-      // Redirect ke login jika error 401 atau refresh token gagal
-      if (err?.message?.includes('401') || err?.message?.includes('Sesi telah berakhir')) {
+      // Tangani error lain yang mungkin menyebabkan session clearing
+      if (isAuthError(err)) {
+        console.log("🔐 Unauthorized error detected - clearing session");
+        user.value = null;
+        isLoggedIn.value = false;
+        globalAuthState.globalUser = null;
+        globalAuthState.globalIsLoggedIn = false;
+        error.value = "Sesi tidak valid atau telah berakhir.";
+        sessionUtils.clearAllAuthData();
+        sessionUtils.setAuthStatus(false);
         nav("/auth/login");
+      } else {
+        // Untuk error lain yang tidak spesifik, jangan hapus session
+        console.log("⚠️ Non-critical error in checkAuthStatus - preserving session", err);
+        error.value = "Terjadi kesalahan, silakan coba lagi.";
       }
     } finally {
       globalAuthState.isChecking = false;

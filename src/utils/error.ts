@@ -24,6 +24,34 @@ function isApiErrorResponse(
 }
 
 /**
+ * Check if error is a rate limit error (429)
+ * This prevents session clearing for rate limit errors
+ */
+export const isRateLimitError = (error: any): boolean => {
+  return (
+    error?.isRateLimit === true ||
+    error?.name === "RateLimitError" ||
+    error?.response?.status === 429 ||
+    (error?.message && error.message.includes("Terlalu banyak permintaan"))
+  );
+};
+
+/**
+ * Check if error is an authentication error (401)
+ * This indicates session should be cleared
+ */
+export const isAuthError = (error: any): boolean => {
+  return (
+    error?.response?.status === 401 ||
+    (error?.message && (
+      error.message.includes("401") ||
+      error.message.includes("Sesi telah berakhir") ||
+      error.message.includes("Unauthorized")
+    ))
+  );
+};
+
+/**
  * Extract error message from backend response
  * Backend provides consistent error format: { message, error, statusCode }
  */
