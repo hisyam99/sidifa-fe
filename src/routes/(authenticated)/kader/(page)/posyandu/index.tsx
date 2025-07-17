@@ -143,105 +143,102 @@ export default component$(() => {
       )}
 
       {/* Card Table */}
-      <div class="card bg-base-100 shadow-xl">
+      <div class="card bg-base-100 shadow-xl relative">
         <div class="card-body">
           <h2 class="card-title">Daftar Posyandu</h2>
 
-          {loading.value ? (
-            <div class="flex justify-center items-center py-8">
+          {/* Overlay Spinner */}
+          {loading.value && (
+            <div class="absolute inset-0 bg-base-100/70 flex justify-center items-center z-10">
               <LuLoader2
                 class="animate-spin text-primary"
                 style={{ width: "32px", height: "32px" }}
               />
             </div>
-          ) : (
-            <>
-              <div class="overflow-x-auto">
-                <table class="table w-full">
-                  <thead>
-                    <tr>
-                      <th>Nama Posyandu</th>
-                      <th>Alamat</th>
-                      <th>No. Telp</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {posyanduList.value.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={4}
-                          class="text-center text-base-content/60 py-8"
-                        >
-                          Tidak ada data posyandu.
-                        </td>
-                      </tr>
-                    ) : (
-                      posyanduList.value.map((posyandu) => (
-                        <tr key={posyandu.id}>
-                          <td class="font-medium">{posyandu.nama_posyandu}</td>
-                          <td>{posyandu.alamat}</td>
-                          <td>{posyandu.no_telp}</td>
-                          <td>
-                            <a
-                              href={`/kader/posyandu/detail/${posyandu.id}`}
-                              class="btn btn-primary btn-sm"
-                            >
-                              Detail
-                            </a>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+          )}
 
-              {/* Pagination */}
-              {meta.value && meta.value.totalPage > 1 && (
-                <div class="flex items-center justify-between mt-6">
-                  <div class="text-sm text-base-content/70">
-                    Menampilkan {posyanduList.value.length} dari{" "}
-                    {meta.value.totalData} posyandu
-                  </div>
-                  <div class="join">
-                    <button
-                      class="join-item btn btn-sm"
-                      disabled={meta.value.currentPage === 1}
-                      onClick$={() =>
-                        handlePageChange(meta.value.currentPage - 1)
-                      }
+          <div
+            class={`overflow-x-auto ${loading.value ? "pointer-events-none opacity-60" : ""}`}
+          >
+            <table class="table w-full">
+              <thead>
+                <tr>
+                  <th>Nama Posyandu</th>
+                  <th>Alamat</th>
+                  <th>No. Telp</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posyanduList.value.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      class="text-center text-base-content/60 py-8"
                     >
-                      <LuChevronLeft class="w-4 h-4" />
-                    </button>
-                    {getPaginationButtons(
-                      meta.value.currentPage,
-                      meta.value.totalPage,
-                    ).map((page, idx) => (
-                      <button
-                        key={idx}
-                        class={`join-item btn btn-sm ${page === meta.value.currentPage ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
-                        disabled={page === "..."}
-                        onClick$={() =>
-                          typeof page === "number" && handlePageChange(page)
-                        }
-                      >
-                        {page}
-                      </button>
-                    ))}
-                    <button
-                      class="join-item btn btn-sm"
-                      disabled={meta.value.currentPage === meta.value.totalPage}
-                      onClick$={() =>
-                        handlePageChange(meta.value.currentPage + 1)
-                      }
-                    >
-                      <LuChevronRight class="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
+                      Tidak ada data posyandu.
+                    </td>
+                  </tr>
+                ) : (
+                  posyanduList.value.map((posyandu) => (
+                    <tr key={posyandu.id}>
+                      <td class="font-medium">{posyandu.nama_posyandu}</td>
+                      <td>{posyandu.alamat}</td>
+                      <td>{posyandu.no_telp}</td>
+                      <td>
+                        <a
+                          href={`/kader/posyandu/detail/${posyandu.id}`}
+                          class="btn btn-primary btn-sm"
+                        >
+                          Detail
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {meta.value && meta.value.totalPage > 1 && (
+            <div class="flex items-center justify-between mt-6">
+              <div class="text-sm text-base-content/70">
+                Menampilkan {posyanduList.value.length} dari{" "}
+                {meta.value.totalData} posyandu
+              </div>
+              <div class="join">
+                <button
+                  class="join-item btn btn-sm"
+                  disabled={meta.value.currentPage === 1}
+                  onClick$={() => handlePageChange(meta.value.currentPage - 1)}
+                >
+                  <LuChevronLeft class="w-4 h-4" />
+                </button>
+                {getPaginationButtons(
+                  meta.value.currentPage,
+                  meta.value.totalPage,
+                ).map((page, idx) => (
+                  <button
+                    key={idx}
+                    class={`join-item btn btn-sm ${page === meta.value.currentPage ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
+                    disabled={page === "..."}
+                    onClick$={() =>
+                      typeof page === "number" && handlePageChange(page)
+                    }
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  class="join-item btn btn-sm"
+                  disabled={meta.value.currentPage === meta.value.totalPage}
+                  onClick$={() => handlePageChange(meta.value.currentPage + 1)}
+                >
+                  <LuChevronRight class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
