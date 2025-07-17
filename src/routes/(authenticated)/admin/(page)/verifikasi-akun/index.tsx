@@ -248,139 +248,134 @@ export default component$(() => {
       )}
 
       {/* Tabel Daftar Akun */}
-      <div class="card bg-base-100 shadow-xl">
+      <div class="card bg-base-100 shadow-xl relative">
         <div class="card-body">
           <h2 class="card-title">Daftar User</h2>
 
-          {loading.value ? (
-            <div class="flex justify-center items-center py-8">
+          {/* Overlay Spinner */}
+          {loading.value && (
+            <div class="absolute inset-0 rounded-3xl bg-base-100/70 flex justify-center items-center z-10">
               <LuLoader2
                 class="animate-spin text-primary"
                 style={{ width: "32px", height: "32px" }}
               />
             </div>
-          ) : (
-            <>
-              <div class="overflow-x-auto">
-                <table class="table w-full">
-                  <thead>
-                    <tr>
-                      <th>Nama</th>
-                      <th>Email</th>
-                      <th>No. Telepon</th>
-                      <th>Peran</th>
-                      <th>Status</th>
-                      <th>Tanggal Daftar</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.value.map((user) => (
-                      <tr key={user.id}>
-                        <td class="font-medium">{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>{user.no_telp || "-"}</td>
-                        <td>
-                          <span class={`badge ${getRoleBadge(user.role)}`}>
-                            {user.role}
-                          </span>
-                        </td>
-                        <td>
-                          <span
-                            class={`badge ${getVerificationBadge(user.verification)}`}
-                          >
-                            {user.verification === "verified"
-                              ? "Terverifikasi"
-                              : "Menunggu Verifikasi"}
-                          </span>
-                        </td>
-                        <td class="text-sm">{formatDate(user.created_at)}</td>
-                        <td class="flex gap-2">
-                          <button
-                            class="btn btn-sm btn-ghost"
-                            onClick$={() => showUserDetail(user)}
-                          >
-                            <LuEye class="w-4 h-4" />
-                          </button>
-                          {user.verification === "unverified" && (
-                            <>
-                              <button
-                                class="btn btn-sm btn-success"
-                                onClick$={() =>
-                                  handleVerification(user.id, "verified")
-                                }
-                              >
-                                <LuCheck class="w-4 h-4" />
-                              </button>
-                              <button
-                                class="btn btn-sm btn-error"
-                                onClick$={() =>
-                                  handleVerification(user.id, "unverified")
-                                }
-                              >
-                                <LuX class="w-4 h-4" />
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          )}
 
-              {/* Pagination */}
-              {meta.value && (
-                <div class="flex items-center justify-between mt-6">
-                  <div class="text-sm text-base-content/70">
-                    Menampilkan{" "}
-                    {(meta.value.currentPage - 1) * meta.value.limit + 1} -{" "}
-                    {Math.min(
-                      meta.value.currentPage * meta.value.limit,
-                      meta.value.totalUsers,
-                    )}{" "}
-                    dari {meta.value.totalUsers} user
-                  </div>
-                  <div class="join">
-                    <button
-                      class="join-item btn btn-sm"
-                      disabled={meta.value.currentPage === 1}
-                      onClick$={() =>
-                        handlePageChange(meta.value!.currentPage - 1)
-                      }
-                    >
-                      <LuChevronLeft class="w-4 h-4" />
-                    </button>
-                    {getPaginationButtons(
-                      meta.value.currentPage,
-                      meta.value.totalPages,
-                    ).map((page, index) => (
-                      <button
-                        key={index}
-                        class={`join-item btn btn-sm ${page === meta.value!.currentPage ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
-                        disabled={page === "..."}
-                        onClick$={() =>
-                          typeof page === "number" && handlePageChange(page)
-                        }
+          <div
+            class={`overflow-x-auto ${loading.value ? "pointer-events-none opacity-60" : ""}`}
+          >
+            <table class="table w-full">
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>No. Telepon</th>
+                  <th>Peran</th>
+                  <th>Status</th>
+                  <th>Tanggal Daftar</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.value.map((user) => (
+                  <tr key={user.id}>
+                    <td class="font-medium">{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.no_telp || "-"}</td>
+                    <td>
+                      <span class={`badge ${getRoleBadge(user.role)}`}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        class={`badge ${getVerificationBadge(user.verification)}`}
                       >
-                        {page}
+                        {user.verification === "verified"
+                          ? "Terverifikasi"
+                          : "Menunggu Verifikasi"}
+                      </span>
+                    </td>
+                    <td class="text-sm">{formatDate(user.created_at)}</td>
+                    <td class="flex gap-2">
+                      <button
+                        class="btn btn-sm btn-ghost"
+                        onClick$={() => showUserDetail(user)}
+                      >
+                        <LuEye class="w-4 h-4" />
                       </button>
-                    ))}
-                    <button
-                      class="join-item btn btn-sm"
-                      disabled={
-                        meta.value.currentPage === meta.value.totalPages
-                      }
-                      onClick$={() =>
-                        handlePageChange(meta.value!.currentPage + 1)
-                      }
-                    >
-                      <LuChevronRight class="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
+                      {user.verification === "unverified" && (
+                        <>
+                          <button
+                            class="btn btn-sm btn-success"
+                            onClick$={() =>
+                              handleVerification(user.id, "verified")
+                            }
+                          >
+                            <LuCheck class="w-4 h-4" />
+                          </button>
+                          <button
+                            class="btn btn-sm btn-error"
+                            onClick$={() =>
+                              handleVerification(user.id, "unverified")
+                            }
+                          >
+                            <LuX class="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {meta.value && (
+            <div class="flex items-center justify-between mt-6">
+              <div class="text-sm text-base-content/70">
+                Menampilkan{" "}
+                {(meta.value.currentPage - 1) * meta.value.limit + 1} -{" "}
+                {Math.min(
+                  meta.value.currentPage * meta.value.limit,
+                  meta.value.totalUsers,
+                )}{" "}
+                dari {meta.value.totalUsers} user
+              </div>
+              <div class="join">
+                <button
+                  class="join-item btn btn-sm"
+                  disabled={meta.value.currentPage === 1}
+                  onClick$={() => handlePageChange(meta.value!.currentPage - 1)}
+                >
+                  <LuChevronLeft class="w-4 h-4" />
+                </button>
+                {getPaginationButtons(
+                  meta.value.currentPage,
+                  meta.value.totalPages,
+                ).map((page, index) => (
+                  <button
+                    key={index}
+                    class={`join-item btn btn-sm ${page === meta.value!.currentPage ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
+                    disabled={page === "..."}
+                    onClick$={() =>
+                      typeof page === "number" && handlePageChange(page)
+                    }
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  class="join-item btn btn-sm"
+                  disabled={meta.value.currentPage === meta.value.totalPages}
+                  onClick$={() => handlePageChange(meta.value!.currentPage + 1)}
+                >
+                  <LuChevronRight class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>

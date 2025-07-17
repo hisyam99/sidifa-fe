@@ -149,7 +149,7 @@ export default component$(() => {
 
           {/* Overlay Spinner */}
           {loading.value && (
-            <div class="absolute inset-0 bg-base-100/70 flex justify-center items-center z-10">
+            <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center z-10">
               <LuLoader2
                 class="animate-spin text-primary"
                 style={{ width: "32px", height: "32px" }}
