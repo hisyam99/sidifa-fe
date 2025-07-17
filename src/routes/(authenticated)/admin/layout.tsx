@@ -1,51 +1,51 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
-import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
+import { NavigationAdmin } from "~/components/layout";
 import {
   LuBarChart,
   LuHome,
-  LuFileText,
-  LuLoader2,
+  LuUser,
+  LuUsers,
+  LuBuilding,
+  LuKey,
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { isLoggedIn, loading } = useAuth();
   const location = useLocation();
 
-  useCheckRole(["psikolog"]);
-
-  if (loading.value) {
-    return (
-      <div class="flex justify-center items-center min-h-screen">
-        <LuLoader2
-          class="animate-spin text-primary"
-          style={{ width: "50px", height: "50px" }}
-        />
-      </div>
-    );
-  }
-
-  if (!isLoggedIn.value) {
-    return null;
-  }
+  useCheckRole(["admin"]);
 
   const menuItems = [
-    { href: "/psikolog/", label: "Dashboard", icon: LuHome },
+    { href: "/admin/", label: "Dashboard", icon: LuHome },
+    { href: "/admin/verifikasi-akun/", label: "Verifikasi Akun", icon: LuKey },
     {
-      href: "/psikolog/laporan-asesmen/",
-      label: "Laporan Asesmen",
-      icon: LuFileText,
+      href: "/admin/manajemen-posyandu/",
+      label: "Manajemen Posyandu",
+      icon: LuBuilding,
+    },
+    {
+      href: "/admin/manajemen-psikolog/",
+      label: "Manajemen Psikolog",
+      icon: LuUser,
+    },
+    {
+      href: "/admin/manajemen-pengguna/",
+      label: "Manajemen Pengguna",
+      icon: LuUsers,
     },
   ];
 
   return (
-    <div class="min-h-screen bg-base-200/60">
+    <div>
+      <NavigationAdmin />
+      <div class="min-h-screen bg-base-200/60">
+      
       <div class="drawer lg:drawer-open">
-        <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:p-8">
           <label
-            for="my-drawer-4"
+            for="my-drawer-2"
             class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
           >
             <LuBarChart />
@@ -57,14 +57,12 @@ export default component$(() => {
         </div>
         <aside class="drawer-side">
           <label
-            for="my-drawer-4"
+            for="my-drawer-2"
             aria-label="close sidebar"
             class="drawer-overlay"
           ></label>
           <ul class="menu p-4 w-80 min-h-full bg-base-100 lg:bg-transparent text-base-content">
-            <li class="text-xl font-bold p-4 hidden lg:block">
-              Si-DIFA Psikolog
-            </li>
+            <li class="text-xl font-bold p-4 hidden lg:block">Si-DIFA Admin</li>
             {menuItems.map((item) => (
               <li
                 key={item.href}
@@ -80,5 +78,7 @@ export default component$(() => {
         </aside>
       </div>
     </div>
+    </div>
+    
   );
 });

@@ -1,13 +1,33 @@
-import { component$, Slot } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
+import { component$, Slot, useVisibleTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
+import { sessionUtils } from "~/utils/auth";
 
 export default component$(() => {
-  const { isLoggedIn, loading } = useAuth();
-  const nav = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const isClient = useSignal(false);
+  const isAuthenticated = useSignal(false);
 
-  // Show loading while checking auth status
-  if (loading.value) {
+  // Client-side hydration dengan localStorage untuk mencegah flickering
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    isClient.value = true;
+    // Gunakan localStorage untuk initial state yang konsisten
+    const storedAuth = sessionUtils.getAuthStatus();
+    const hasUserProfile = !!sessionUtils.getUserProfile();
+    isAuthenticated.value = storedAuth === true && hasUserProfile;
+  });
+
+  // Update auth state ketika berubah (hanya di client)
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    track(() => isLoggedIn.value);
+    if (isClient.value) {
+      isAuthenticated.value = isLoggedIn.value;
+    }
+  });
+
+  // Show skeleton loading hanya saat SSR atau initial load
+  if (!isClient.value) {
     return (
       <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
         <div class="container mx-auto px-4 py-8">
@@ -53,10 +73,9 @@ export default component$(() => {
     );
   }
 
-  // Redirect to login if not authenticated
-  if (!isLoggedIn.value) {
-    nav("/auth/login");
-    return null;
+  // Let the auth hook handle redirects setelah client hydration
+  if (!isAuthenticated.value) {
+    return null; // The auth hook will redirect
   }
 
   return <Slot />;

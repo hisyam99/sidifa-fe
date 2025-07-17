@@ -1,7 +1,7 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
-import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
+import { NavigationPosyandu } from "~/components/layout";
 import {
   LuBarChart,
   LuHome,
@@ -9,29 +9,12 @@ import {
   LuBookOpen,
   LuBriefcase,
   LuLineChart,
-  LuLoader2,
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { isLoggedIn, loading } = useAuth();
   const location = useLocation();
 
   useCheckRole(["posyandu"]);
-
-  if (loading.value) {
-    return (
-      <div class="flex justify-center items-center min-h-screen">
-        <LuLoader2
-          class="animate-spin text-primary"
-          style={{ width: "50px", height: "50px" }}
-        />
-      </div>
-    );
-  }
-
-  if (!isLoggedIn.value) {
-    return null;
-  }
 
   const menuItems = [
     { href: "/posyandu/", label: "Dashboard", icon: LuHome },
@@ -59,6 +42,7 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
+      <NavigationPosyandu />
       <div class="drawer lg:drawer-open">
         <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:p-8">

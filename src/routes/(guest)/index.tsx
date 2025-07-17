@@ -19,47 +19,10 @@ import {
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { isLoggedIn, user, loading } = useAuth();
+  const { isLoggedIn, user } = useAuth();
 
   // Create stars array for testimonials
   const stars = Array.from({ length: 5 }, (_, i) => `star-${i}`);
-
-  // Show loading while checking auth status
-  if (loading.value) {
-    return (
-      <main class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
-        <div class="container mx-auto px-4 py-8">
-          {/* Hero Skeleton */}
-          <div class="text-center mb-16">
-            <div class="skeleton w-32 h-32 mx-auto mb-8"></div>
-            <div class="skeleton h-12 w-96 mx-auto mb-6"></div>
-            <div class="skeleton h-6 w-80 mx-auto mb-4"></div>
-            <div class="skeleton h-6 w-72 mx-auto"></div>
-          </div>
-
-          {/* Content Skeleton */}
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <div class="skeleton h-6 w-32 mb-4"></div>
-                <div class="skeleton h-4 w-full mb-2"></div>
-                <div class="skeleton h-4 w-3/4 mb-2"></div>
-                <div class="skeleton h-4 w-1/2"></div>
-              </div>
-            </div>
-            <div class="card bg-base-100 shadow-lg">
-              <div class="card-body">
-                <div class="skeleton h-6 w-32 mb-4"></div>
-                <div class="skeleton h-4 w-full mb-2"></div>
-                <div class="skeleton h-4 w-3/4 mb-2"></div>
-                <div class="skeleton h-4 w-1/2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main class="min-h-screen relative overflow-hidden">

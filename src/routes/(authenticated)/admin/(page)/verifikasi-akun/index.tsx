@@ -84,6 +84,7 @@ export default component$(() => {
   });
 
   // Load initial data
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     fetchUsers();
   });

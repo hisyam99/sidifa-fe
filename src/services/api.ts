@@ -92,18 +92,17 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Gagal refresh token:", refreshError);
-
-        // --- PERBAIKAN PENTING ---
-        // Jangan panggil logout() di sini. Ini yang menyebabkan rentetan request.
-        // Cukup bersihkan sesi di sisi client dan biarkan error mengalir
-        // agar useAuth hook bisa menanganinya.
         sessionUtils.clearAllAuthData();
-
-        // Tolak promise agar pemanggil tahu bahwa otentikasi gagal total.
         return Promise.reject(
-          new Error("Sesi telah berakhir, silakan login kembali."),
+          new Error("Sesi telah berakhir, silakan login kembali.")
         );
       }
+    }
+
+    // Jika error 429 (Too Many Requests), jangan hapus session/data apapun
+    if (error.response?.status === 429) {
+      // Bisa tambahkan notifikasi di UI jika ingin
+      return Promise.reject(error);
     }
 
     // Untuk semua error lain, teruskan saja error aslinya.

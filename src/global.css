@@ -268,3 +268,35 @@
     background-position: 200% 0;
   }
 }
+
+/* Navigation hydration improvements */
+.navbar-end {
+  min-height: 2rem; /* Prevent layout shift during auth state changes */
+}
+
+/* Smooth transitions for auth-dependent elements */
+.auth-dependent {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.auth-dependent.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Prevent layout shift during skeleton loading */
+.skeleton-container {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Smooth navigation transitions */
+.navbar {
+  transition: background-color 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out;
+}
+
+/* Prevent flash of unstyled content */
+.navbar * {
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}

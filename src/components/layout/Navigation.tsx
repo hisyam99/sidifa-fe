@@ -29,8 +29,27 @@ export default component$(() => {
     return (
       <nav class="navbar bg-base-100/80 border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4 flex items-center justify-between">
-          <div class="skeleton w-32 h-8"></div>
-          <div class="skeleton w-24 h-8"></div>
+          <div class="navbar-start">
+            {/* Mobile menu button skeleton */}
+            <button class="btn btn-ghost btn-circle lg:hidden focus-ring">
+              <LuMenu class="w-6 h-6 text-base-content" />
+            </button>
+            {/* Logo is static, no need for skeleton */}
+            <a
+              href="/"
+              class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300"
+            >
+              <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
+                <LuHeart class="w-6 h-6" />
+              </div>
+              <div class="flex flex-col items-start">
+                <span class="font-bold text-gradient-primary">SIDIFA</span>
+                <span class="text-xs text-base-content/60 font-medium">
+                  Sistem Informasi Difabel
+                </span>
+              </div>
+            </a>
+          </div>
         </div>
       </nav>
     );

@@ -1,38 +1,75 @@
 import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
 import { profileService, authService } from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
 
-// Ganti 'let' dengan sebuah objek. Kita akan mengubah properti objek, bukan variabel itu sendiri.
-// Ini adalah pola standar untuk menghindari "illegal reassignment" error pada bundler.
-const authCheckState = {
-  attempted: false,
+// Global state untuk mencegah multiple API calls dan initialization
+const globalAuthState = {
+  isInitialized: false,
+  isChecking: false,
+  lastCheck: 0,
+  checkInterval: 5 * 60 * 1000, // 5 minutes
+  // Global signals untuk konsistensi antar komponen
+  globalIsLoggedIn: false,
+  globalUser: null as User | null,
+  globalLoading: true,
 };
 
 export const useAuth = () => {
-  const isLoggedIn = useSignal(false);
-  const user = useSignal<User | null>(null);
-  const loading = useSignal(true);
+  const isLoggedIn = useSignal(globalAuthState.globalIsLoggedIn);
+  const user = useSignal<User | null>(globalAuthState.globalUser);
+  const loading = useSignal(globalAuthState.globalLoading);
   const error = useSignal<string | null>(null);
+  const nav = useNavigate();
 
-  const checkAuthStatus = $(async () => {
+  const checkAuthStatus = $(async (forceCheck = false) => {
+    // Prevent multiple simultaneous checks
+    if (globalAuthState.isChecking && !forceCheck) {
+      return;
+    }
+
+    // Skip if checked recently (unless forced)
+    const now = Date.now();
+    if (!forceCheck && now - globalAuthState.lastCheck < globalAuthState.checkInterval) {
+      return;
+    }
+
+    globalAuthState.isChecking = true;
+    
     try {
       loading.value = true;
+      globalAuthState.globalLoading = true;
       error.value = null;
       const profileData = await profileService.getProfile();
       user.value = profileData;
       isLoggedIn.value = true;
+      globalAuthState.globalUser = profileData;
+      globalAuthState.globalIsLoggedIn = true;
       sessionUtils.setUserProfile(profileData);
       sessionUtils.setAuthStatus(true);
-    } catch {
+      globalAuthState.lastCheck = now;
+    } catch (err: any) {
+      // Jika error 429, jangan hapus session/data apapun
+      if (err?.response?.status === 429) {
+        error.value = "Terlalu banyak permintaan, silakan coba lagi nanti.";
+        return;
+      }
       user.value = null;
       isLoggedIn.value = false;
+      globalAuthState.globalUser = null;
+      globalAuthState.globalIsLoggedIn = false;
       error.value = "Sesi tidak valid atau telah berakhir.";
       sessionUtils.clearAllAuthData();
       sessionUtils.setAuthStatus(false);
+
+      // Redirect ke login jika error 401 atau refresh token gagal
+      if (err?.message?.includes('401') || err?.message?.includes('Sesi telah berakhir')) {
+        nav("/auth/login");
+      }
     } finally {
-      // Ubah properti 'attempted' pada objek
-      authCheckState.attempted = true;
+      globalAuthState.isChecking = false;
       loading.value = false;
+      globalAuthState.globalLoading = false;
     }
   });
 
@@ -46,29 +83,16 @@ export const useAuth = () => {
       sessionUtils.setAuthStatus(false);
       user.value = null;
       isLoggedIn.value = false;
-      // Reset properti 'attempted' pada objek
-      authCheckState.attempted = false;
+      globalAuthState.globalUser = null;
+      globalAuthState.globalIsLoggedIn = false;
+      globalAuthState.isInitialized = false;
+      globalAuthState.lastCheck = 0;
+      nav("/auth/login");
     }
   });
 
   const refreshUserData = $(async () => {
-    try {
-      loading.value = true;
-      error.value = null;
-      const profileData = await profileService.getProfile();
-      user.value = profileData;
-      isLoggedIn.value = true;
-      sessionUtils.setUserProfile(profileData);
-      sessionUtils.setAuthStatus(true);
-    } catch {
-      user.value = null;
-      isLoggedIn.value = false;
-      error.value = "Gagal memuat ulang data profil.";
-      sessionUtils.clearAllAuthData();
-      sessionUtils.setAuthStatus(false);
-    } finally {
-      loading.value = false;
-    }
+    await checkAuthStatus(true); // Force check
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task
@@ -77,33 +101,57 @@ export const useAuth = () => {
       return;
     }
 
-    // Cek status login yang tersimpan di localStorage. Jika terset "false",
-    // kita langsung anggap pengguna belum login tanpa perlu memanggil API.
+    // Skip if already initialized
+    if (globalAuthState.isInitialized) {
+      // Sync dengan global state
+      isLoggedIn.value = globalAuthState.globalIsLoggedIn;
+      user.value = globalAuthState.globalUser;
+      loading.value = globalAuthState.globalLoading;
+      return;
+    }
+
+    // Cek status login yang tersimpan di localStorage
     const storedAuth = sessionUtils.getAuthStatus();
     if (storedAuth === false) {
       isLoggedIn.value = false;
       loading.value = false;
-      authCheckState.attempted = true;
+      globalAuthState.globalIsLoggedIn = false;
+      globalAuthState.globalLoading = false;
+      globalAuthState.isInitialized = true;
       return;
     }
 
     const sessionUser = sessionUtils.getUserProfile();
-    if (sessionUser) {
+    
+    // Jika ada data user tersimpan, gunakan data tersebut
+    if (sessionUser && storedAuth === true) {
       user.value = sessionUser;
       isLoggedIn.value = true;
       loading.value = false;
-      // Ubah properti 'attempted' pada objek
-      authCheckState.attempted = true;
+      globalAuthState.globalUser = sessionUser;
+      globalAuthState.globalIsLoggedIn = true;
+      globalAuthState.globalLoading = false;
+      globalAuthState.isInitialized = true;
+      
+      // Validasi dengan API di background (non-blocking)
+      setTimeout(() => {
+        checkAuthStatus();
+      }, 100);
       return;
     }
 
-    // Baca properti 'attempted' dari objek
-    if (authCheckState.attempted) {
+    // Jika tidak ada data tersimpan (first visit)
+    if (!sessionUser && storedAuth === null) {
       isLoggedIn.value = false;
       loading.value = false;
+      globalAuthState.globalIsLoggedIn = false;
+      globalAuthState.globalLoading = false;
+      globalAuthState.isInitialized = true;
       return;
     }
 
+    // Fallback: cek auth status jika ada data tapi tidak jelas statusnya
+    globalAuthState.isInitialized = true;
     checkAuthStatus();
   });
 
