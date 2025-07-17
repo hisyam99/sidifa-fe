@@ -43,11 +43,10 @@ export const isRateLimitError = (error: any): boolean => {
 export const isAuthError = (error: any): boolean => {
   return (
     error?.response?.status === 401 ||
-    (error?.message && (
-      error.message.includes("401") ||
-      error.message.includes("Sesi telah berakhir") ||
-      error.message.includes("Unauthorized")
-    ))
+    (error?.message &&
+      (error.message.includes("401") ||
+        error.message.includes("Sesi telah berakhir") ||
+        error.message.includes("Unauthorized")))
   );
 };
 

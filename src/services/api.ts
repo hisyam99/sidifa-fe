@@ -81,7 +81,9 @@ api.interceptors.response.use(
     if (error.response?.status === 429) {
       console.log("⚠️ Rate limit exceeded (429) - preserving session data");
       // Buat error custom yang tidak akan menyebabkan session clearing
-      const rateLimitError = new Error("Terlalu banyak permintaan, silakan coba lagi nanti.");
+      const rateLimitError = new Error(
+        "Terlalu banyak permintaan, silakan coba lagi nanti.",
+      );
       rateLimitError.name = "RateLimitError";
       // Tambahkan flag untuk menandai ini adalah 429 error
       (rateLimitError as any).isRateLimit = true;
@@ -106,7 +108,7 @@ api.interceptors.response.use(
         console.error("Gagal refresh token:", refreshError);
         sessionUtils.clearAllAuthData();
         return Promise.reject(
-          new Error("Sesi telah berakhir, silakan login kembali.")
+          new Error("Sesi telah berakhir, silakan login kembali."),
         );
       }
     }

@@ -26,9 +26,21 @@ export const NavigationAdmin = component$(() => {
   const menuItems = [
     { href: "/admin/", label: "Dashboard", icon: LuHome },
     { href: "/admin/verifikasi-akun/", label: "Verifikasi Akun", icon: LuKey },
-    { href: "/admin/manajemen-posyandu/", label: "Manajemen Posyandu", icon: LuBuilding },
-    { href: "/admin/manajemen-psikolog/", label: "Manajemen Psikolog", icon: LuUser },
-    { href: "/admin/manajemen-pengguna/", label: "Manajemen Pengguna", icon: LuUsers },
+    {
+      href: "/admin/manajemen-posyandu/",
+      label: "Manajemen Posyandu",
+      icon: LuBuilding,
+    },
+    {
+      href: "/admin/manajemen-psikolog/",
+      label: "Manajemen Psikolog",
+      icon: LuUser,
+    },
+    {
+      href: "/admin/manajemen-pengguna/",
+      label: "Manajemen Pengguna",
+      icon: LuUsers,
+    },
   ];
 
   return (
@@ -42,7 +54,10 @@ export const NavigationAdmin = component$(() => {
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} class="flex items-center gap-3 hover:bg-primary/10">
+                  <a
+                    href={item.href}
+                    class="flex items-center gap-3 hover:bg-primary/10"
+                  >
                     <item.icon class="w-5 h-5 text-primary" />
                     <span class="font-medium">{item.label}</span>
                   </a>
@@ -50,13 +65,18 @@ export const NavigationAdmin = component$(() => {
               ))}
             </ul>
           </div>
-          <a href="/admin/" class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300">
+          <a
+            href="/admin/"
+            class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300"
+          >
             <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
               <LuBarChart class="w-6 h-6" />
             </div>
             <div class="flex flex-col items-start">
               <span class="font-bold text-gradient-primary">Si-DIFA Admin</span>
-              <span class="text-xs text-base-content/60 font-medium">Sistem Informasi Difabel</span>
+              <span class="text-xs text-base-content/60 font-medium">
+                Sistem Informasi Difabel
+              </span>
             </div>
           </a>
         </div>
@@ -66,7 +86,7 @@ export const NavigationAdmin = component$(() => {
               <a
                 key={item.href}
                 href={item.href}
-                class={`btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300${location.url.pathname === item.href ? ' font-bold text-primary' : ''}`}
+                class={`btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300${location.url.pathname === item.href ? " font-bold text-primary" : ""}`}
               >
                 <item.icon class="w-4 h-4 text-primary" />
                 {item.label}
@@ -103,20 +123,29 @@ export const NavigationAdmin = component$(() => {
               </li>
               <div class="divider my-0"></div>
               <li>
-                <a href="/dashboard/profile" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/profile"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuUser class="w-4 h-4 text-primary" />
                   <span class="font-medium">Profil</span>
                 </a>
               </li>
               <li>
-                <a href="/dashboard/settings" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/settings"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuSettings class="w-4 h-4 text-primary" />
                   <span class="font-medium">Pengaturan</span>
                 </a>
               </li>
               <div class="divider my-1"></div>
               <li>
-                <button onClick$={handleLogout} class="flex items-center gap-3 hover:bg-error/10 text-error">
+                <button
+                  onClick$={handleLogout}
+                  class="flex items-center gap-3 hover:bg-error/10 text-error"
+                >
                   <LuLogOut class="w-4 h-4" />
                   <span class="font-medium">Keluar</span>
                 </button>
@@ -127,4 +156,4 @@ export const NavigationAdmin = component$(() => {
       </div>
     </nav>
   );
-}); 
+});

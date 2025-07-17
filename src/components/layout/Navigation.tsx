@@ -140,14 +140,14 @@ export default component$(() => {
                       </a>
                     </li>
                   )}
-                  {user.value?.role === "posyandu" && (
+                  {user.value?.role === "kader" && (
                     <li>
                       <a
-                        href="/posyandu"
+                        href="/kader"
                         class="flex items-center gap-3 hover:bg-primary/10"
                       >
                         <LuHeart class="w-5 h-5 text-primary" />
-                        <span class="font-medium">Dashboard Posyandu</span>
+                        <span class="font-medium">Dashboard Kader</span>
                       </a>
                     </li>
                   )}
@@ -250,13 +250,13 @@ export default component$(() => {
                     Dashboard Admin
                   </a>
                 )}
-                {user.value?.role === "posyandu" && (
+                {user.value?.role === "kader" && (
                   <a
-                    href="/posyandu"
+                    href="/kader"
                     class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
                   >
                     <LuHeart class="w-4 h-4 text-primary" />
-                    Dashboard Posyandu
+                    Dashboard Kader
                   </a>
                 )}
                 {user.value?.role === "psikolog" && (
@@ -330,14 +330,14 @@ export default component$(() => {
                     </a>
                   </li>
                 )}
-                {user.value?.role === "posyandu" && (
+                {user.value?.role === "kader" && (
                   <li>
                     <a
-                      href="/posyandu"
+                      href="/kader"
                       class="flex items-center gap-3 p-2 hover:bg-primary/10"
                     >
                       <LuHeart class="w-5 h-5 text-primary" />
-                      <span class="font-medium">Dashboard Posyandu</span>
+                      <span class="font-medium">Dashboard Kader</span>
                     </a>
                   </li>
                 )}

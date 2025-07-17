@@ -1,7 +1,7 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
-import api from "~/services/api";
+import api, { profileService } from "~/services/api";
 import { sessionUtils } from "~/utils/auth";
 import { Alert, Card, FormField } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
@@ -25,6 +25,22 @@ export default component$(() => {
       await api.post("/auth/login", values);
       // Tandai status login berhasil di localStorage sebelum redirect
       sessionUtils.setAuthStatus(true);
+      // Fetch user profile
+      const profile = await profileService.getProfile();
+      if (profile && profile.role) {
+        sessionUtils.setUserProfile(profile);
+        let redirectTo = "/dashboard";
+        if (profile.role === "admin") redirectTo = "/admin";
+        else if (profile.role === "psikolog") redirectTo = "/psikolog";
+        else if (profile.role === "kader" || profile.role === "posyandu")
+          redirectTo = "/kader";
+        success.value = "Login berhasil!";
+        setTimeout(() => {
+          window.location.href = redirectTo;
+        }, 1000);
+        return;
+      }
+      // Fallback jika tidak dapat role
       success.value = "Login berhasil!";
       setTimeout(() => {
         window.location.href = "/dashboard";

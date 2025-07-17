@@ -2,6 +2,7 @@ import { component$, Slot } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { NavigationPsikolog } from "~/components/layout";
+import { Breadcrumbs } from "~/components/layout/Breadcrumbs";
 import { LuBarChart, LuHome, LuFileText } from "@qwikest/icons/lucide";
 
 export default component$(() => {
@@ -31,6 +32,7 @@ export default component$(() => {
             <LuBarChart />
             Buka Menu
           </label>
+          <Breadcrumbs />
           <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
             <Slot />
           </main>

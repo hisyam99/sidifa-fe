@@ -18,7 +18,7 @@ export default component$(() => {
     const storedAuth = sessionUtils.getAuthStatus();
     const hasUserProfile = !!sessionUtils.getUserProfile();
     const userProfile = sessionUtils.getUserProfile();
-    
+
     isAuthenticated.value = storedAuth === true && hasUserProfile;
     isAdmin.value = userProfile?.role === "admin";
   });
@@ -28,7 +28,7 @@ export default component$(() => {
   useVisibleTask$(({ track }) => {
     track(() => isLoggedIn.value);
     track(() => user.value);
-    
+
     if (isClient.value) {
       isAuthenticated.value = isLoggedIn.value;
       isAdmin.value = user.value?.role === "admin";

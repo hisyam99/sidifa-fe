@@ -276,7 +276,9 @@
 
 /* Smooth transitions for auth-dependent elements */
 .auth-dependent {
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition:
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .auth-dependent.loading {
@@ -293,10 +295,14 @@
 
 /* Smooth navigation transitions */
 .navbar {
-  transition: background-color 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    backdrop-filter 0.3s ease-in-out;
 }
 
 /* Prevent flash of unstyled content */
 .navbar * {
-  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  transition:
+    color 0.2s ease-in-out,
+    background-color 0.2s ease-in-out;
 }

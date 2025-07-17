@@ -38,102 +38,152 @@ export const NavigationAuth = component$(() => {
                 </a>
               </li>
               <li>
-                <a href="/faq" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/faq"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuHelpCircle class="w-5 h-5 text-primary" />
                   <span class="font-medium">FAQ</span>
                 </a>
               </li>
               <li>
-                <a href="/dashboard" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuBarChart class="w-5 h-5 text-primary" />
                   <span class="font-medium">Dashboard</span>
                 </a>
               </li>
               <li>
-                <a href="/dashboard/profile" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/profile"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuUser class="w-5 h-5 text-primary" />
                   <span class="font-medium">Profil</span>
                 </a>
               </li>
               {user.value?.role === "admin" && (
                 <li>
-                  <a href="/admin" class="flex items-center gap-3 hover:bg-primary/10">
+                  <a
+                    href="/admin"
+                    class="flex items-center gap-3 hover:bg-primary/10"
+                  >
                     <LuBarChart class="w-5 h-5 text-primary" />
                     <span class="font-medium">Dashboard Admin</span>
                   </a>
                 </li>
               )}
-              {user.value?.role === "posyandu" && (
+              {user.value?.role === "kader" && (
                 <li>
-                  <a href="/posyandu" class="flex items-center gap-3 hover:bg-primary/10">
+                  <a
+                    href="/kader"
+                    class="flex items-center gap-3 hover:bg-primary/10"
+                  >
                     <LuHeart class="w-5 h-5 text-primary" />
-                    <span class="font-medium">Dashboard Posyandu</span>
+                    <span class="font-medium">Dashboard Kader</span>
                   </a>
                 </li>
               )}
               {user.value?.role === "psikolog" && (
                 <li>
-                  <a href="/psikolog" class="flex items-center gap-3 hover:bg-primary/10">
+                  <a
+                    href="/psikolog"
+                    class="flex items-center gap-3 hover:bg-primary/10"
+                  >
                     <LuBrain class="w-5 h-5 text-primary" />
                     <span class="font-medium">Dashboard Psikolog</span>
                   </a>
                 </li>
               )}
               <li>
-                <a href="/dashboard/settings" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/settings"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuSettings class="w-5 h-5 text-primary" />
                   <span class="font-medium">Pengaturan</span>
                 </a>
               </li>
             </ul>
           </div>
-          <a href="/" class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300">
+          <a
+            href="/"
+            class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300"
+          >
             <div class="bg-gradient-primary  rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
               <LuHeart class="w-6 h-6" />
             </div>
             <div class="flex flex-col items-start">
               <span class="font-bold text-gradient-primary">SIDIFA</span>
-              <span class="text-xs text-base-content/60 font-medium">Sistem Informasi Difabel</span>
+              <span class="text-xs text-base-content/60 font-medium">
+                Sistem Informasi Difabel
+              </span>
             </div>
           </a>
         </div>
         <div class="navbar-end">
           <div class="hidden lg:flex items-center gap-2 mr-4">
-            <a href="/" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            <a
+              href="/"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
               <LuHome class="w-4 h-4 text-primary" />
               Beranda
             </a>
-            <a href="/faq" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            <a
+              href="/faq"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
               <LuHelpCircle class="w-4 h-4 text-primary" />
               FAQ
             </a>
-            <a href="/dashboard" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            <a
+              href="/dashboard"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
               <LuBarChart class="w-4 h-4 text-primary" />
               Dashboard
             </a>
-            <a href="/dashboard/profile" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            <a
+              href="/dashboard/profile"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
               <LuUser class="w-4 h-4 text-primary" />
               Profil
             </a>
             {user.value?.role === "admin" && (
-              <a href="/admin" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+              <a
+                href="/admin"
+                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+              >
                 <LuBarChart class="w-4 h-4 text-primary" />
                 Dashboard Admin
               </a>
             )}
-            {user.value?.role === "posyandu" && (
-              <a href="/posyandu" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            {user.value?.role === "kader" && (
+              <a
+                href="/kader"
+                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+              >
                 <LuHeart class="w-4 h-4 text-primary" />
-                Dashboard Posyandu
+                Dashboard Kader
               </a>
             )}
             {user.value?.role === "psikolog" && (
-              <a href="/psikolog" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+              <a
+                href="/psikolog"
+                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+              >
                 <LuBrain class="w-4 h-4 text-primary" />
                 Dashboard Psikolog
               </a>
             )}
-            <a href="/dashboard/settings" class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300">
+            <a
+              href="/dashboard/settings"
+              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
+            >
               <LuSettings class="w-4 h-4 text-primary" />
               Pengaturan
             </a>
@@ -168,20 +218,29 @@ export const NavigationAuth = component$(() => {
               </li>
               <div class="divider my-0"></div>
               <li>
-                <a href="/dashboard/profile" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/profile"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuUser class="w-4 h-4 text-primary" />
                   <span class="font-medium">Profil</span>
                 </a>
               </li>
               <li>
-                <a href="/dashboard/settings" class="flex items-center gap-3 hover:bg-primary/10">
+                <a
+                  href="/dashboard/settings"
+                  class="flex items-center gap-3 hover:bg-primary/10"
+                >
                   <LuSettings class="w-4 h-4 text-primary" />
                   <span class="font-medium">Pengaturan</span>
                 </a>
               </li>
               <div class="divider my-1"></div>
               <li>
-                <button onClick$={handleLogout} class="flex items-center gap-3 hover:bg-error/10 text-error">
+                <button
+                  onClick$={handleLogout}
+                  class="flex items-center gap-3 hover:bg-error/10 text-error"
+                >
                   <LuLogOut class="w-4 h-4" />
                   <span class="font-medium">Keluar</span>
                 </button>
@@ -192,4 +251,4 @@ export const NavigationAuth = component$(() => {
       </div>
     </nav>
   );
-}); 
+});

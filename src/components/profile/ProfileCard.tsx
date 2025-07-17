@@ -18,7 +18,7 @@ export default component$(() => {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return <LuHeart class="w-6 h-6" />;
       case "psikolog":
         return <LuBrain class="w-6 h-6" />;
@@ -29,7 +29,7 @@ export default component$(() => {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return "bg-gradient-primary";
       case "psikolog":
         return "bg-gradient-secondary";
@@ -40,7 +40,7 @@ export default component$(() => {
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return "Kader Posyandu";
       case "psikolog":
         return "Psikolog";
@@ -50,7 +50,7 @@ export default component$(() => {
   };
 
   const getRoleBenefits = (role: string) => {
-    if (role === "posyandu") {
+    if (role === "kader") {
       return [
         {
           text: "Kelola data kesehatan masyarakat",

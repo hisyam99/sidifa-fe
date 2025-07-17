@@ -31,12 +31,15 @@ export const useAuth = () => {
 
     // Skip if checked recently (unless forced)
     const now = Date.now();
-    if (!forceCheck && now - globalAuthState.lastCheck < globalAuthState.checkInterval) {
+    if (
+      !forceCheck &&
+      now - globalAuthState.lastCheck < globalAuthState.checkInterval
+    ) {
       return;
     }
 
     globalAuthState.isChecking = true;
-    
+
     try {
       loading.value = true;
       globalAuthState.globalLoading = true;
@@ -52,7 +55,9 @@ export const useAuth = () => {
     } catch (err: any) {
       // Tangani 429 error dengan lebih spesifik
       if (isRateLimitError(err)) {
-        console.log("⚠️ Rate limit detected in checkAuthStatus - preserving session");
+        console.log(
+          "⚠️ Rate limit detected in checkAuthStatus - preserving session",
+        );
         error.value = "Terlalu banyak permintaan, silakan coba lagi nanti.";
         // JANGAN hapus session/data apapun untuk 429 error
         return;
@@ -71,7 +76,10 @@ export const useAuth = () => {
         nav("/auth/login");
       } else {
         // Untuk error lain yang tidak spesifik, jangan hapus session
-        console.log("⚠️ Non-critical error in checkAuthStatus - preserving session", err);
+        console.log(
+          "⚠️ Non-critical error in checkAuthStatus - preserving session",
+          err,
+        );
         error.value = "Terjadi kesalahan, silakan coba lagi.";
       }
     } finally {
@@ -130,7 +138,7 @@ export const useAuth = () => {
     }
 
     const sessionUser = sessionUtils.getUserProfile();
-    
+
     // Jika ada data user tersimpan, gunakan data tersebut
     if (sessionUser && storedAuth === true) {
       user.value = sessionUser;
@@ -140,7 +148,7 @@ export const useAuth = () => {
       globalAuthState.globalIsLoggedIn = true;
       globalAuthState.globalLoading = false;
       globalAuthState.isInitialized = true;
-      
+
       // Validasi dengan API di background (non-blocking)
       setTimeout(() => {
         checkAuthStatus();

@@ -24,7 +24,7 @@ export default component$(() => {
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return "Kader Posyandu";
       case "psikolog":
         return "Psikolog";
@@ -57,7 +57,7 @@ export default component$(() => {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return <LuHeart class="w-6 h-6" />;
       case "psikolog":
         return <LuBrain class="w-6 h-6" />;
@@ -68,7 +68,7 @@ export default component$(() => {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "posyandu":
+      case "kader":
         return "bg-gradient-primary";
       case "psikolog":
         return "bg-gradient-secondary";
@@ -78,7 +78,7 @@ export default component$(() => {
   };
 
   const getDashboardStats = (role: string) => {
-    if (role === "posyandu") {
+    if (role === "kader") {
       return [
         {
           title: "Total Penyandang Disabilitas",
@@ -163,7 +163,7 @@ export default component$(() => {
   };
 
   const getRecentActivities = (role: string) => {
-    if (role === "posyandu") {
+    if (role === "kader") {
       return [
         {
           title: "Pendaftaran Baru",
@@ -332,7 +332,7 @@ export default component$(() => {
                     <LuUser class="w-4 h-4" />
                     Profil Saya
                   </a>
-                  {user.value?.role === "posyandu" && (
+                  {user.value?.role === "kader" && (
                     <a
                       href="/dashboard/posyandu"
                       class="btn btn-outline btn-secondary w-full justify-start gap-3"

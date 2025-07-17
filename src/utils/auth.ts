@@ -1,6 +1,6 @@
 // Auth utilities for consistent sessionStorage management
 
-export type UserRole = "admin" | "psikolog" | "posyandu";
+export type UserRole = "admin" | "psikolog" | "posyandu" | "kader";
 
 export interface User {
   id: string;

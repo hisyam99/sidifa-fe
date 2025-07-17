@@ -11,7 +11,10 @@ export default component$(() => {
   if (loading.value) {
     return (
       <div class="flex justify-center items-center min-h-screen">
-        <LuLoader2 class="animate-spin text-primary" style={{ width: "50px", height: "50px" }} />
+        <LuLoader2
+          class="animate-spin text-primary"
+          style={{ width: "50px", height: "50px" }}
+        />
       </div>
     );
   }
