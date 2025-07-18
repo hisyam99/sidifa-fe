@@ -196,4 +196,56 @@ export const getPosyanduDetail = async (id: string) => {
   return response.data;
 };
 
+export const informasiEdukasiAdminService = {
+  async list(params: {
+    limit?: number;
+    page?: number;
+    deskripsi?: string;
+    judul?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.deskripsi) queryParams.append("deskripsi", params.deskripsi);
+    if (params.judul) queryParams.append("judul", params.judul);
+    const response = await api.get(
+      `/admin/informasi-edukasi?${queryParams.toString()}`,
+    );
+    return response.data;
+  },
+  async detail(id: string) {
+    const response = await api.get(`/admin/informasi-edukasi/detail/${id}`);
+    return response.data;
+  },
+  async update(data: {
+    id: string;
+    judul: string;
+    tipe: string;
+    deskripsi: string;
+    file_name: string;
+    role: string;
+    name: string;
+  }) {
+    const response = await api.patch(`/admin/informasi-edukasi`, data);
+    return response.data;
+  },
+  async delete(id: string) {
+    const response = await api.delete(`/admin/informasi-edukasi`, {
+      data: { id },
+    });
+    return response.data;
+  },
+  async create(data: {
+    judul: string;
+    tipe: string;
+    deskripsi: string;
+    file_name: string;
+    role: string;
+    name: string;
+  }) {
+    const response = await api.post(`/admin/informasi-edukasi`, data);
+    return response.data;
+  },
+};
+
 export default api;
