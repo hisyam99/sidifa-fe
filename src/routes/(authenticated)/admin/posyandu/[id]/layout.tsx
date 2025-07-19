@@ -7,6 +7,8 @@ import {
   LuClipboardList,
   LuLineChart,
   LuArrowLeft,
+  LuUsers,
+  LuSettings,
 } from "@qwikest/icons/lucide";
 import { useLocation } from "@builder.io/qwik-city";
 
@@ -16,7 +18,7 @@ export default component$(() => {
   const isAuthenticated = useSignal(false);
   const location = useLocation();
 
-  useCheckRole(["kader"]);
+  useCheckRole(["admin"]);
 
   // Client-side hydration dan update auth state
   useTask$(({ track }) => {
@@ -45,7 +47,7 @@ export default component$(() => {
   // Extract posyanduId from the URL
   const pathParts = location.url.pathname.split("/");
   const posyanduId = pathParts[pathParts.indexOf("posyandu") + 1];
-  const base = `/kader/posyandu/${posyanduId}`;
+  const base = `/admin/posyandu/${posyanduId}`;
 
   const menuItems = [
     { href: base, label: "Dashboard", icon: LuBarChart },
@@ -58,6 +60,16 @@ export default component$(() => {
       href: `${base}/pendataan-ibk`,
       label: "Pendataan IBK",
       icon: LuClipboardList,
+    },
+    {
+      href: `${base}/manajemen-kader`,
+      label: "Manajemen Kader",
+      icon: LuUsers,
+    },
+    {
+      href: `${base}/pengaturan`,
+      label: "Pengaturan",
+      icon: LuSettings,
     },
   ];
 
@@ -89,7 +101,7 @@ export default component$(() => {
           ></label>
           <ul class="menu p-4 w-80 min-h-full bg-base-100 lg:bg-transparent text-base-content">
             <li class="text-xl font-bold p-4 hidden lg:block">
-              Detail Posyandu
+              Detail Posyandu (Admin)
             </li>
             {menuItems.map((item) => (
               <li
@@ -104,7 +116,7 @@ export default component$(() => {
             ))}
             <li class="mt-8">
               <a
-                href="/kader/posyandu"
+                href="/admin/manajemen-posyandu"
                 class="btn btn-outline btn-primary w-full flex items-center gap-2"
               >
                 <LuArrowLeft />

@@ -172,6 +172,53 @@ export const adminService = {
     });
     return response.data;
   },
+
+  // Admin Posyandu CRUD operations
+  async listPosyandu(params: {
+    limit?: number;
+    page?: number;
+    nama_posyandu?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.nama_posyandu)
+      queryParams.append("nama_posyandu", params.nama_posyandu);
+
+    const response = await api.get(`/admin/posyandu?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  async createPosyandu(data: {
+    nama_posyandu: string;
+    alamat: string;
+    no_telp: string;
+  }) {
+    const response = await api.post("/admin/posyandu", data);
+    return response.data;
+  },
+
+  async updatePosyandu(data: {
+    id: string;
+    nama_posyandu?: string;
+    alamat?: string;
+    no_telp?: string;
+  }) {
+    const response = await api.patch("/admin/posyandu", data);
+    return response.data;
+  },
+
+  async deletePosyandu(id: string) {
+    const response = await api.delete("/admin/posyandu", {
+      data: { id },
+    });
+    return response.data;
+  },
+
+  async detailPosyandu(id: string) {
+    const response = await api.get(`/admin/posyandu/detail/${id}`);
+    return response.data;
+  },
 };
 
 // Kader service
