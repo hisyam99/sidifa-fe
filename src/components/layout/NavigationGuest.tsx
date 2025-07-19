@@ -13,19 +13,37 @@ import {
 } from "@qwikest/icons/lucide";
 
 export const NavigationGuest = component$(() => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth(); // Destructure user from useAuth
   const isClient = useSignal(false);
   const isAuthenticated = useSignal(false);
+  const dashboardPath = useSignal("/dashboard"); // New signal for dynamic dashboard path
 
-  // Client-side hydration dengan localStorage untuk mencegah flickering
+  // Client-side hydration dan update auth state
   useTask$(({ track }) => {
     track(isLoggedIn); // Track isLoggedIn to re-run on auth state change
+    track(() => user.value?.role); // Track user role to update dashboard path
 
     isClient.value = true;
     // Gunakan localStorage untuk initial state yang konsisten
     const storedAuth = sessionUtils.getAuthStatus();
     const hasUserProfile = !!sessionUtils.getUserProfile();
     isAuthenticated.value = storedAuth === true && hasUserProfile;
+
+    // Set dashboard path based on user role
+    const role = user.value?.role;
+    if (isAuthenticated.value && role) {
+      if (role === "kader" || role === "posyandu") {
+        dashboardPath.value = "/kader";
+      } else if (role === "psikolog") {
+        dashboardPath.value = "/psikolog";
+      } else if (role === "admin") {
+        dashboardPath.value = "/admin";
+      } else {
+        dashboardPath.value = "/dashboard"; // Default fallback
+      }
+    } else {
+      dashboardPath.value = "/dashboard"; // Default for unauthenticated
+    }
   });
 
   // Update auth state ketika berubah (hanya di client) - this task is now redundant due to the above change.
@@ -92,7 +110,7 @@ export const NavigationGuest = component$(() => {
               ) : (
                 <li>
                   <a
-                    href="/dashboard"
+                    href={dashboardPath.value} // Use dynamic path
                     class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200 auth-dependent"
                   >
                     <LuBarChart class="w-5 h-5 text-primary" />
@@ -162,7 +180,7 @@ export const NavigationGuest = component$(() => {
             </a>
           ) : (
             <a
-              href="/dashboard"
+              href={dashboardPath.value} // Use dynamic path
               class="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
             >
               <LuBarChart class="w-4 h-4" />

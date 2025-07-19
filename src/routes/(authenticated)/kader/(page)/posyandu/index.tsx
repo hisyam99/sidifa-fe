@@ -201,7 +201,7 @@ export default component$(() => {
                       <td>{posyandu.no_telp}</td>
                       <td>
                         <a
-                          href={`/kader/posyandu/detail/${posyandu.id}`}
+                          href={`/kader/posyandu/${posyandu.id}`}
                           class="btn btn-primary btn-sm"
                         >
                           Detail
