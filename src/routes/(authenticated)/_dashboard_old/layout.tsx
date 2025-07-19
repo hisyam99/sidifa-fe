@@ -1,4 +1,4 @@
-import { component$, Slot, useVisibleTask$, useSignal } from "@builder.io/qwik";
+import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
 
@@ -7,23 +7,14 @@ export default component$(() => {
   const isClient = useSignal(false);
   const isAuthenticated = useSignal(false);
 
-  // Client-side hydration dengan localStorage untuk mencegah flickering
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
+  // Client-side hydration dan update auth state
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+
     isClient.value = true;
-    // Gunakan localStorage untuk initial state yang konsisten
     const storedAuth = sessionUtils.getAuthStatus();
     const hasUserProfile = !!sessionUtils.getUserProfile();
     isAuthenticated.value = storedAuth === true && hasUserProfile;
-  });
-
-  // Update auth state ketika berubah (hanya di client)
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
-    track(() => isLoggedIn.value);
-    if (isClient.value) {
-      isAuthenticated.value = isLoggedIn.value;
-    }
   });
 
   // Show skeleton loading hanya saat SSR atau initial load

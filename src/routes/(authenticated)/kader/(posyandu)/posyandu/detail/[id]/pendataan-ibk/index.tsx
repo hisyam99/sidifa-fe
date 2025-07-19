@@ -1,12 +1,7 @@
 // File: /sidifa-fev2/src/routes/posyandu/pendataan-ibk/index.tsx
 
-import {
-  component$,
-  useSignal,
-  useStore,
-  $,
-  useVisibleTask$,
-} from "@builder.io/qwik";
+import { component$, useSignal, useStore, $, useTask$ } from "@builder.io/qwik";
+import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { FormWizard, type WizardStep, IBKCard } from "~/components/ui";
 import type { IBKRecord, IBKRegistrationForm, DisabilityType } from "~/types";
@@ -40,6 +35,8 @@ export default component$(() => {
   const currentStep = useSignal(0);
   const selectedIBK = useSignal<IBKRecord | null>(null);
   const showIBKDetail = useSignal(false);
+
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn
 
   // Mock data for existing IBK (no changes needed here)
   const existingIBK = useStore<IBKRecord[]>([
@@ -235,6 +232,23 @@ export default component$(() => {
     },
   ];
 
+  // Initial data loading or side effects for pendataan-ibk
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+
+    if (isLoggedIn.value) {
+      // This is where you would call your data fetching function, e.g., fetchDataForIBK();
+      console.log("Fetching IBK data now that user is logged in.");
+      // For now, it's a console log as there's no explicit fetch call in the mock data section.
+      // If you have a function like `fetchIBKData()` uncomment and call it here.
+      // fetchDataForIBK();
+    } else {
+      console.log("Not logged in, not fetching IBK data.");
+      // Clear any data if not logged in, or show appropriate message
+      existingIBK.splice(0, existingIBK.length);
+    }
+  });
+
   // Form validation (no changes needed here)
   const validateCurrentStep = $(() => {
     const currentStepData = wizardSteps[currentStep.value];
@@ -259,9 +273,8 @@ export default component$(() => {
     }
   });
 
-  // Update step validation (no changes needed here, ESLint disable comment already there)
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async ({ track }) => {
+  // Update step validation (no changes needed here)
+  useTask$(async ({ track }) => {
     track(() => currentStep.value);
     track(() => formData.step1.nama_lengkap);
     track(() => formData.step1.nik);

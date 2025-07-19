@@ -1,4 +1,4 @@
-import { component$, useVisibleTask$, useSignal } from "@builder.io/qwik";
+import { component$, useTask$, useSignal } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
@@ -10,34 +10,20 @@ export default component$(() => {
   const isAuthenticated = useSignal(false);
   const isAdmin = useSignal(false);
 
-  // Client-side hydration dengan localStorage untuk mencegah flickering
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
+  // Client-side hydration dan update auth state
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+    track(() => user.value?.role); // Re-run when user role changes
+
     isClient.value = true;
-    // Gunakan localStorage untuk initial state yang konsisten
     const storedAuth = sessionUtils.getAuthStatus();
     const hasUserProfile = !!sessionUtils.getUserProfile();
     const userProfile = sessionUtils.getUserProfile();
 
     isAuthenticated.value = storedAuth === true && hasUserProfile;
     isAdmin.value = userProfile?.role === "admin";
-  });
 
-  // Update auth state ketika berubah (hanya di client)
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
-    track(() => isLoggedIn.value);
-    track(() => user.value);
-
-    if (isClient.value) {
-      isAuthenticated.value = isLoggedIn.value;
-      isAdmin.value = user.value?.role === "admin";
-    }
-  });
-
-  // Redirect jika bukan admin
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
+    // Redirect jika bukan admin, only after client hydration and auth status is known
     if (isClient.value && isAuthenticated.value && !isAdmin.value) {
       nav("/dashboard");
     }

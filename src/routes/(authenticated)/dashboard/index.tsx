@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
-import { useVisibleTask$ } from "@builder.io/qwik";
+import { useTask$ } from "@builder.io/qwik"; // Removed useSignal
 import { useNavigate } from "@builder.io/qwik-city";
 import {
   LuHeart,
@@ -22,17 +22,23 @@ import {
 } from "@qwikest/icons/lucide";
 
 export default component$(() => {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggedIn } = useAuth(); // Get isLoggedIn
   const nav = useNavigate();
 
-  // Redirect otomatis ke dashboard sesuai role
-  useVisibleTask$(() => {
-    if (user.value?.role === "kader") {
-      nav("/kader");
-    } else if (user.value?.role === "psikolog") {
-      nav("/psikolog");
-    } else if (user.value?.role === "admin") {
-      nav("/admin");
+  // Redirect otomatis ke dashboard sesuai role ketika user atau isLoggedIn berubah
+  useTask$(({ track }) => {
+    track(() => user.value?.role); // Track user role
+    track(isLoggedIn); // Track isLoggedIn
+
+    // Only attempt redirection if logged in and user role is defined
+    if (isLoggedIn.value && user.value?.role) {
+      if (user.value?.role === "kader") {
+        nav("/kader");
+      } else if (user.value?.role === "psikolog") {
+        nav("/psikolog");
+      } else if (user.value?.role === "admin") {
+        nav("/admin");
+      }
     }
   });
 

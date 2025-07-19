@@ -1,4 +1,5 @@
-import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
+import { useAuth } from "~/hooks";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { adminService } from "~/services/api";
 import { Alert } from "~/components/ui";
@@ -17,7 +18,7 @@ import type { User, ListUserResponse } from "~/types/admin";
 export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
-  const loading = useSignal(false);
+  const loading = useSignal(true); // Change initial state to true
   const users = useSignal<User[]>([]);
   const meta = useSignal<ListUserResponse["meta"] | null>(null);
 
@@ -30,6 +31,8 @@ export default component$(() => {
   // Detail Modal
   const selectedUser = useSignal<User | null>(null);
   const showDetailModal = useSignal(false);
+
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn from useAuth
 
   const fetchUsers = $(async () => {
     loading.value = true;
@@ -83,10 +86,19 @@ export default component$(() => {
     showDetailModal.value = true;
   });
 
-  // Load initial data
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
-    fetchUsers();
+  // Load initial data or re-load if authentication state changes
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+
+    if (isLoggedIn.value) {
+      fetchUsers();
+    } else {
+      users.value = [];
+      meta.value = null;
+      error.value =
+        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
+      loading.value = false;
+    }
   });
 
   const formatDate = (dateString: string) => {

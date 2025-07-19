@@ -1,4 +1,5 @@
-import { component$, useVisibleTask$, useSignal } from "@builder.io/qwik";
+import { component$, useTask$, useSignal } from "@builder.io/qwik";
+import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
@@ -16,9 +17,13 @@ export default component$(() => {
     file_name: "",
   });
 
-  useVisibleTask$(async () => {
-    const id = loc.params.id;
-    if (id) {
+  const { isLoggedIn } = useAuth();
+
+  useTask$(async ({ track }) => {
+    track(isLoggedIn);
+    const id = track(() => loc.params.id);
+
+    if (isLoggedIn.value && id) {
       const data = await fetchDetail(id);
       if (data?.data) {
         form.value = {

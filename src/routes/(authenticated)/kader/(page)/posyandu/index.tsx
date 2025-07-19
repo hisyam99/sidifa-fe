@@ -1,4 +1,5 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import { useAuth } from "~/hooks";
 import {
   LuChevronLeft,
   LuChevronRight,
@@ -10,11 +11,13 @@ import { kaderService } from "~/services/api";
 export default component$(() => {
   const posyanduList = useSignal<any[]>([]);
   const meta = useSignal<any | null>(null);
-  const loading = useSignal(false);
+  const loading = useSignal(true); // Change initial state to true
   const error = useSignal<string | null>(null);
   const currentPage = useSignal(1);
   const limit = useSignal(10); // default 10
   const searchName = useSignal("");
+
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn from useAuth
 
   const fetchPosyandu = $(async () => {
     loading.value = true;
@@ -34,9 +37,20 @@ export default component$(() => {
     }
   });
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
-    fetchPosyandu();
+  // Initial load or re-load if authentication state changes
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+
+    if (isLoggedIn.value) {
+      fetchPosyandu();
+    } else {
+      // If not logged in, clear data and show an error/message
+      posyanduList.value = [];
+      meta.value = null;
+      error.value =
+        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
+      loading.value = false;
+    }
   });
 
   const handlePageChange = $(async (page: number) => {

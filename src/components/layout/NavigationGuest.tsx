@@ -1,4 +1,4 @@
-import { component$, useVisibleTask$, useSignal } from "@builder.io/qwik";
+import { component$, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
 import {
@@ -18,8 +18,9 @@ export const NavigationGuest = component$(() => {
   const isAuthenticated = useSignal(false);
 
   // Client-side hydration dengan localStorage untuk mencegah flickering
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
+  useTask$(({ track }) => {
+    track(isLoggedIn); // Track isLoggedIn to re-run on auth state change
+
     isClient.value = true;
     // Gunakan localStorage untuk initial state yang konsisten
     const storedAuth = sessionUtils.getAuthStatus();
@@ -27,14 +28,9 @@ export const NavigationGuest = component$(() => {
     isAuthenticated.value = storedAuth === true && hasUserProfile;
   });
 
-  // Update auth state ketika berubah (hanya di client)
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(({ track }) => {
-    track(() => isLoggedIn.value);
-    if (isClient.value) {
-      isAuthenticated.value = isLoggedIn.value;
-    }
-  });
+  // Update auth state ketika berubah (hanya di client) - this task is now redundant due to the above change.
+  // Removing the redundant task and its eslint-disable directive.
+  // The first useTask$ now handles both initial hydration and subsequent isLoggedIn changes.
 
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">

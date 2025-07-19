@@ -1,4 +1,5 @@
-import { component$, useVisibleTask$, useSignal } from "@builder.io/qwik";
+import { component$, useTask$, useSignal } from "@builder.io/qwik";
+import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
@@ -83,14 +84,33 @@ export default component$(() => {
   } = useInformasiEdukasiAdmin();
   const nav = useNavigate();
 
-  useVisibleTask$(() => {
-    fetchList();
-  });
-
   // State untuk filter dan modal
   const filterJudul = useSignal("");
   const filterDeskripsi = useSignal("");
   const deleteId = useSignal<string | null>(null);
+
+  const { isLoggedIn } = useAuth();
+
+  useTask$(({ track }) => {
+    track(isLoggedIn);
+    track(filterJudul);
+    track(filterDeskripsi);
+    track(page);
+    track(limit);
+
+    if (isLoggedIn.value) {
+      fetchList({
+        judul: filterJudul.value,
+        deskripsi: filterDeskripsi.value,
+        page: page.value,
+        limit: limit.value,
+      });
+    } else {
+      items.value = [];
+      error.value =
+        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
+    }
+  });
 
   return (
     <div class="p-4">

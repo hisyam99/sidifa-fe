@@ -1,6 +1,7 @@
 // File: /sidifa-fev2/src/routes/posyandu/index.tsx
 
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { useAuth } from "~/hooks"; // Add this import
 import { useLocation } from "@builder.io/qwik-city";
 import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
@@ -8,20 +9,31 @@ import { extractErrorMessage } from "~/utils/error";
 
 export default component$(() => {
   const loc = useLocation();
-  const id = loc.params.id;
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const data = useSignal<PosyanduDetail | null>(null);
 
-  useVisibleTask$(async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const res = await getPosyanduDetail(id);
-      data.value = res;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
-    } finally {
+  const { isLoggedIn } = useAuth(); // Get isLoggedIn
+
+  useTask$(async ({ track }) => {
+    track(isLoggedIn); // Re-run when isLoggedIn changes
+    const idParam = track(() => loc.params.id); // Track id parameter directly
+
+    if (isLoggedIn.value && idParam) {
+      loading.value = true;
+      error.value = null;
+      try {
+        const res = await getPosyanduDetail(idParam);
+        data.value = res;
+      } catch (err: any) {
+        error.value = extractErrorMessage(err);
+      } finally {
+        loading.value = false;
+      }
+    } else if (!isLoggedIn.value) {
+      data.value = null;
+      error.value =
+        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
       loading.value = false;
     }
   });
