@@ -1,28 +1,53 @@
-import { component$, useTask$, useSignal } from "@builder.io/qwik";
+import { component$, useTask$, useSignal, $ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { InformasiDetailCard } from "~/components/admin/information";
+import { GenericLoadingSpinner, ConfirmationModal } from "~/components/common";
+import type { InformasiItem } from "~/types/informasi";
 
 export default component$(() => {
   const { fetchDetail, deleteItem, loading, error, success } =
     useInformasiEdukasiAdmin();
   const nav = useNavigate();
   const loc = useLocation();
-  const detail = useSignal<any>(null);
-  const deleteModal = useSignal(false);
+  const detail = useSignal<InformasiItem | null>(null);
+  const showDeleteModal = useSignal(false);
 
   const { isLoggedIn } = useAuth();
 
   useTask$(async ({ track }) => {
     track(isLoggedIn);
-    const id = track(() => loc.params.id);
+    track(() => loc.params.id); // Track loc.params.id directly
 
-    if (isLoggedIn.value && id) {
-      const data = await fetchDetail(id);
+    if (isLoggedIn.value && loc.params.id) {
+      const data = await fetchDetail(loc.params.id); // Use loc.params.id directly
       detail.value = data || null;
     }
+  });
+
+  const handleEdit = $((id: string) => {
+    nav(`/admin/informasi/${id}/edit`);
+  });
+
+  const handleDeleteClick = $(() => {
+    showDeleteModal.value = true;
+  });
+
+  const handleConfirmDelete = $(async () => {
+    if (detail.value?.id) {
+      await deleteItem(detail.value.id);
+      showDeleteModal.value = false;
+      if (!error.value) {
+        // Only navigate if delete was successful from API perspective
+        nav("/admin/informasi");
+      }
+    }
+  });
+
+  const handleCancelDelete = $(() => {
+    showDeleteModal.value = false;
   });
 
   return (
@@ -31,67 +56,26 @@ export default component$(() => {
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
       {loading.value ? (
-        <div class="flex justify-center">
-          <LoadingSpinner />
-        </div>
+        <GenericLoadingSpinner />
       ) : detail.value ? (
-        <div class="card bg-base-100 shadow-md p-6">
-          <div class="mb-2">
-            <b>Judul:</b> {detail.value.judul}
-          </div>
-          <div class="mb-2">
-            <b>Tipe:</b> {detail.value.tipe}
-          </div>
-          <div class="mb-2">
-            <b>Deskripsi:</b> {detail.value.deskripsi}
-          </div>
-          <div class="mb-2">
-            <b>File:</b> {detail.value.file_url || "-"}
-          </div>
-          <div class="flex gap-2 mt-4">
-            <button
-              class="btn btn-primary"
-              onClick$={() =>
-                nav(`/admin/(page)/informasi/${detail.value.id}/edit`)
-              }
-            >
-              Edit
-            </button>
-            <button
-              class="btn btn-error"
-              onClick$={() => (deleteModal.value = true)}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+        <InformasiDetailCard
+          item={detail.value}
+          onEdit$={handleEdit}
+          onDelete$={handleDeleteClick}
+        />
       ) : (
-        <div class="text-center">Data tidak ditemukan</div>
-      )}
-      {/* Modal Delete */}
-      {deleteModal.value && detail.value && (
-        <div class="modal modal-open">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
-            <p>Yakin ingin menghapus data ini?</p>
-            <div class="modal-action">
-              <button class="btn" onClick$={() => (deleteModal.value = false)}>
-                Batal
-              </button>
-              <button
-                class="btn btn-error"
-                onClick$={async () => {
-                  await deleteItem(detail.value.id);
-                  deleteModal.value = false;
-                  nav("/admin/(page)/informasi");
-                }}
-              >
-                Hapus
-              </button>
-            </div>
-          </div>
+        <div class="text-center py-8 text-base-content/70">
+          Data tidak ditemukan
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        title="Konfirmasi Hapus Data"
+        message="Apakah Anda yakin ingin menghapus informasi ini? Tindakan ini tidak dapat dibatalkan."
+        onConfirm$={handleConfirmDelete}
+        onCancel$={handleCancelDelete}
+      />
     </div>
   );
 });

@@ -1,6 +1,6 @@
 // File: /sidifa-fev2/src/routes/posyandu/pendataan-ibk/index.tsx
 
-import { component$, useSignal, useStore, $, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useStore, $, useTask$, Component, SVGProps } from "@builder.io/qwik";
 import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { FormWizard, type WizardStep, IBKCard } from "~/components/ui";
@@ -18,14 +18,21 @@ import {
   LuX,
   LuActivity,
   // Ensure all necessary icons are imported
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
 
 // FIX: Create an ICON_MAP to dynamically select components by string name
-const PENDATAAN_IBK_ICON_MAP = {
+const PENDATAAN_IBK_ICON_MAP: { [key: string]: Component<SVGProps<SVGSVGElement>> } = {
   LuActivity: LuActivity,
   LuBrain: LuBrain,
   LuHeart: LuHeart,
   LuEye: LuEye,
+  LuUsers: LuUsers,
+  LuFilter: LuFilter,
+  LuInfo: LuInfo,
+  LuCheck: LuCheck,
+  LuX: LuX,
+  LuSearch: LuSearch,
+  LuPlus: LuPlus,
   // Add other icons used in this file's `disabilityTypes` if any are missing
 };
 

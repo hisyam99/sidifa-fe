@@ -8,9 +8,9 @@ import {
   LuUsers,
   LuShield,
   LuZap,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized";
 
-export default component$(() => {
+export const SignupCards = component$(() => {
   return (
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mx-auto">
       {/* Posyandu Card */}

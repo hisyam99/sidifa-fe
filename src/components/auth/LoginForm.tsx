@@ -5,7 +5,7 @@ import api, { profileService } from "~/services/api";
 import { sessionUtils } from "~/utils/auth";
 import { Alert, Card, FormField } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
-import { LuArrowRight } from "@qwikest/icons/lucide";
+import { LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
 
 export default component$(() => {
   const error = useSignal<string | null>(null);

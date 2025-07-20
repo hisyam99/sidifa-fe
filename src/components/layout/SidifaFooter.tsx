@@ -11,16 +11,27 @@ import {
   LuUsers,
   LuShield,
   LuZap,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
+import {
+  ContactItem,
+  FeatureCard,
+  FooterLink,
+  FooterSection,
+  SocialButton,
+} from "~/components/common";
 
-export default component$(() => {
+export const SidifaFooter = component$(() => {
   return (
     <footer class="footer footer-center p-10 bg-gradient-to-br from-base-200 to-base-300 text-base-content border-t border-base-200/50">
       <div class="container mx-auto px-4">
         {/* Main Footer Content */}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
-          <div class="text-center lg:text-left">
+          <FooterSection
+            title="SIDIFA"
+            gradientClass="text-gradient-primary"
+            textAlign="center"
+          >
             <div class="flex items-center justify-center lg:justify-start mb-4">
               <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
                 <LuHeart class="w-6 h-6" />
@@ -39,135 +50,70 @@ export default component$(() => {
               memberikan layanan konseling yang terintegrasi untuk penyandang
               disabilitas.
             </p>
-          </div>
+          </FooterSection>
 
           {/* Quick Links */}
-          <div class="text-center lg:text-left">
-            <h3 class="font-bold text-lg mb-4 text-gradient-secondary">
-              Layanan
-            </h3>
+          <FooterSection
+            title="Layanan"
+            gradientClass="text-gradient-secondary"
+            textAlign="center"
+          >
             <ul class="space-y-2">
-              <li>
-                <a
-                  href="/"
-                  class="link link-hover text-sm hover:text-primary transition-colors duration-300"
-                >
-                  Beranda
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/auth/login"
-                  class="link link-hover text-sm hover:text-primary transition-colors duration-300"
-                >
-                  Masuk
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/auth/signup/kader"
-                  class="link link-hover text-sm hover:text-primary transition-colors duration-300"
-                >
-                  Daftar Posyandu
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/auth/signup/psikolog"
-                  class="link link-hover text-sm hover:text-primary transition-colors duration-300"
-                >
-                  Daftar Psikolog
-                </a>
-              </li>
+              <FooterLink href="/" label="Beranda" />
+              <FooterLink href="/auth/login" label="Masuk" />
+              <FooterLink href="/auth/signup/kader" label="Daftar Posyandu" />
+              <FooterLink
+                href="/auth/signup/psikolog"
+                label="Daftar Psikolog"
+              />
             </ul>
-          </div>
+          </FooterSection>
 
           {/* Contact Info */}
-          <div class="text-center lg:text-left">
-            <h3 class="font-bold text-lg mb-4 text-gradient-secondary">
-              Kontak
-            </h3>
+          <FooterSection
+            title="Kontak"
+            gradientClass="text-gradient-secondary"
+            textAlign="center"
+          >
             <div class="space-y-3">
-              <div class="flex items-center justify-center lg:justify-start gap-3">
-                <LuMapPin class="w-4 h-4 text-primary" />
-                <span class="text-sm text-base-content/70">
-                  Malang, Jawa Timur
-                </span>
-              </div>
-              <div class="flex items-center justify-center lg:justify-start gap-3">
-                <LuPhone class="w-4 h-4 text-primary" />
-                <span class="text-sm text-base-content/70">+62 341 123456</span>
-              </div>
-              <div class="flex items-center justify-center lg:justify-start gap-3">
-                <LuMail class="w-4 h-4 text-primary" />
-                <span class="text-sm text-base-content/70">info@sidifa.id</span>
-              </div>
+              <ContactItem icon={LuMapPin} text="Malang, Jawa Timur" />
+              <ContactItem icon={LuPhone} text="+62 341 123456" />
+              <ContactItem icon={LuMail} text="info@sidifa.id" />
             </div>
-          </div>
+          </FooterSection>
 
           {/* Social Media */}
-          <div class="text-center lg:text-left">
-            <h3 class="font-bold text-lg mb-4 text-gradient-secondary">
-              Ikuti Kami
-            </h3>
+          <FooterSection
+            title="Ikuti Kami"
+            gradientClass="text-gradient-secondary"
+            textAlign="center"
+          >
             <div class="flex justify-center lg:justify-start gap-3">
-              <button
-                class="btn btn-circle btn-sm btn-ghost hover:bg-primary/10 transition-all duration-300"
-                aria-label="Facebook"
-              >
-                <LuFacebook class="w-5 h-5 text-primary" />
-              </button>
-              <button
-                class="btn btn-circle btn-sm btn-ghost hover:bg-primary/10 transition-all duration-300"
-                aria-label="Instagram"
-              >
-                <LuInstagram class="w-5 h-5 text-primary" />
-              </button>
-              <button
-                class="btn btn-circle btn-sm btn-ghost hover:bg-primary/10 transition-all duration-300"
-                aria-label="Twitter"
-              >
-                <LuTwitter class="w-5 h-5 text-primary" />
-              </button>
-              <button
-                class="btn btn-circle btn-sm btn-ghost hover:bg-primary/10 transition-all duration-300"
-                aria-label="YouTube"
-              >
-                <LuYoutube class="w-5 h-5 text-primary" />
-              </button>
+              <SocialButton icon={LuFacebook} ariaLabel="Facebook" />
+              <SocialButton icon={LuInstagram} ariaLabel="Instagram" />
+              <SocialButton icon={LuTwitter} ariaLabel="Twitter" />
+              <SocialButton icon={LuYoutube} ariaLabel="YouTube" />
             </div>
-          </div>
+          </FooterSection>
         </div>
 
         {/* Features Section */}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
-            <LuUsers class="w-6 h-6 text-primary" />
-            <div class="text-left">
-              <h4 class="font-semibold text-sm">Layanan Inklusif</h4>
-              <p class="text-xs text-base-content/60">
-                Mendukung semua kalangan
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
-            <LuShield class="w-6 h-6 text-primary" />
-            <div class="text-left">
-              <h4 class="font-semibold text-sm">Keamanan Data</h4>
-              <p class="text-xs text-base-content/60">
-                Terlindungi dan terpercaya
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center justify-center gap-3 p-4 bg-base-100/50 backdrop-blur-sm">
-            <LuZap class="w-6 h-6 text-primary" />
-            <div class="text-left">
-              <h4 class="font-semibold text-sm">Akses Cepat</h4>
-              <p class="text-xs text-base-content/60">
-                Real-time dan responsif
-              </p>
-            </div>
-          </div>
+          <FeatureCard
+            icon={LuUsers}
+            title="Layanan Inklusif"
+            description="Mendukung semua kalangan"
+          />
+          <FeatureCard
+            icon={LuShield}
+            title="Keamanan Data"
+            description="Terlindungi dan terpercaya"
+          />
+          <FeatureCard
+            icon={LuZap}
+            title="Akses Cepat"
+            description="Real-time dan responsif"
+          />
         </div>
 
         {/* Divider */}
@@ -181,15 +127,9 @@ export default component$(() => {
             </p>
           </aside>
           <nav class="flex gap-4">
-            <button class="link link-hover text-sm text-base-content/60 hover:text-primary transition-colors duration-300">
-              Kebijakan Privasi
-            </button>
-            <button class="link link-hover text-sm text-base-content/60 hover:text-primary transition-colors duration-300">
-              Syarat & Ketentuan
-            </button>
-            <button class="link link-hover text-sm text-base-content/60 hover:text-primary transition-colors duration-300">
-              Bantuan
-            </button>
+            <FooterLink isButton={true} label="Kebijakan Privasi" />
+            <FooterLink isButton={true} label="Syarat & Ketentuan" />
+            <FooterLink isButton={true} label="Bantuan" />
           </nav>
         </div>
       </div>

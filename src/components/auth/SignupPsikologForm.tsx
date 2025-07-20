@@ -4,7 +4,7 @@ import { signupPsikologSchema, type SignupPsikologForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
-import { LuBrain, LuArrowRight } from "@qwikest/icons/lucide";
+import { LuBrain, LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
 
 export default component$(() => {
   const error = useSignal<string | null>(null);

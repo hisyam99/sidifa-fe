@@ -18,7 +18,7 @@ import {
   // Add any other icons that might be passed as a string name to this component
   // e.g., LuPlus, LuEye, LuClock, LuClipboardList, LuBrain, LuShield, LuFileText, LuDownload, LuCalendarDays, LuUserCheck
   // Include all icons that appear in posyandu/index.tsx or elsewhere that pass a string icon name to StatisticsCard
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
 
 // FIX: Define a comprehensive ICON_LOOKUP_MAP within this component file.
 // This ensures the actual component functions are local to this file's closure for rendering,

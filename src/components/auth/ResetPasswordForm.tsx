@@ -5,7 +5,7 @@ import { resetPasswordSchema, type ResetPasswordForm } from "~/types/auth";
 import api from "~/services/api";
 import { FormField, Alert, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
-import { LuLock } from "@qwikest/icons/lucide";
+import { LuLock } from "~/components/icons/lucide-optimized"; // Updated import path
 
 export default component$(() => {
   const error = useSignal<string | null>(null);

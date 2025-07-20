@@ -9,7 +9,7 @@ import {
   LuArrowLeft,
   LuUsers,
   LuSettings,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
 import { useLocation } from "@builder.io/qwik-city";
 
 export default component$(() => {

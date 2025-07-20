@@ -1,9 +1,9 @@
 import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
-import type { PosyanduDetail } from "~/types";
+import type { AdminPosyanduItem } from "~/types/admin-posyandu-management";
 
 export const useAdminPosyandu = () => {
-  const items = useSignal<PosyanduDetail[]>([]);
+  const items = useSignal<AdminPosyanduItem[]>([]);
   const loading = useSignal(false);
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
@@ -17,20 +17,24 @@ export const useAdminPosyandu = () => {
         limit?: number;
         page?: number;
         nama_posyandu?: string;
+        status?: "Aktif" | "Tidak Aktif" | "";
       } = {},
     ) => {
       loading.value = true;
       error.value = null;
       try {
-        const data = await adminService.listPosyandu({
+        const response = await adminService.listPosyandu({
           limit: params.limit ?? limit.value,
           page: params.page ?? page.value,
           nama_posyandu: params.nama_posyandu,
+          status: params.status,
         });
-        items.value = data.data;
-        total.value = data.meta?.total || 0;
-        page.value = data.meta?.currentPage || 1;
-        limit.value = data.meta?.limit || 10;
+
+        // Explicitly cast to expected type after receiving from API
+        items.value = response.data as AdminPosyanduItem[];
+        total.value = response.meta?.total || 0;
+        page.value = response.meta?.currentPage || 1;
+        limit.value = response.meta?.limit || 10;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data posyandu";
       } finally {
@@ -65,6 +69,7 @@ export const useAdminPosyandu = () => {
       nama_posyandu?: string;
       alamat?: string;
       no_telp?: string;
+      status?: "Aktif" | "Tidak Aktif";
     }) => {
       loading.value = true;
       error.value = null;

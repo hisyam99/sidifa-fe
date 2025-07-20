@@ -1,5 +1,6 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
+import { DebugSection } from "~/components/common";
 
 export default component$(() => {
   const location = useLocation();
@@ -18,8 +19,7 @@ export default component$(() => {
     <div class="container mx-auto p-8">
       <h1 class="text-2xl font-bold mb-6">🔍 Debug Reset Password Token</h1>
 
-      <div class="bg-base-200 p-6 rounded-lg mb-6">
-        <h2 class="text-lg font-semibold mb-4">URL Information</h2>
+      <DebugSection title="URL Information">
         <div class="space-y-2 text-sm">
           <div>
             <strong>Full URL:</strong>{" "}
@@ -40,10 +40,9 @@ export default component$(() => {
             </code>
           </div>
         </div>
-      </div>
+      </DebugSection>
 
-      <div class="bg-base-200 p-6 rounded-lg mb-6">
-        <h2 class="text-lg font-semibold mb-4">Token Information</h2>
+      <DebugSection title="Token Information">
         <div class="space-y-2 text-sm">
           <div>
             <strong>Token:</strong>{" "}
@@ -66,17 +65,15 @@ export default component$(() => {
             </span>
           </div>
         </div>
-      </div>
+      </DebugSection>
 
-      <div class="bg-base-200 p-6 rounded-lg mb-6">
-        <h2 class="text-lg font-semibold mb-4">All URL Parameters</h2>
+      <DebugSection title="All URL Parameters">
         <pre class="bg-base-300 p-4 rounded text-sm overflow-x-auto">
           {JSON.stringify(debugInfo.value.allParams, null, 2)}
         </pre>
-      </div>
+      </DebugSection>
 
-      <div class="bg-base-200 p-6 rounded-lg mb-6">
-        <h2 class="text-lg font-semibold mb-4">Test Links</h2>
+      <DebugSection title="Test Links">
         <div class="space-y-2">
           <a
             href="/auth/reset-password?token=test-token-123"
@@ -92,10 +89,9 @@ export default component$(() => {
             Test dengan token real
           </a>
         </div>
-      </div>
+      </DebugSection>
 
-      <div class="bg-base-200 p-6 rounded-lg">
-        <h2 class="text-lg font-semibold mb-4">Console Log</h2>
+      <DebugSection title="Console Log">
         <p class="text-sm text-base-content/70">
           Buka Developer Tools (F12) dan lihat tab Console untuk melihat log
           detail.
@@ -110,7 +106,7 @@ export default component$(() => {
         >
           Log Manual Debug Info
         </button>
-      </div>
+      </DebugSection>
     </div>
   );
 });

@@ -12,8 +12,8 @@ import {
   LuBarChart,
   LuLoader2,
   LuAlertCircle,
-} from "@qwikest/icons/lucide";
-import type { PosyanduDetail } from "~/types";
+} from "~/components/icons/lucide-optimized"; // Changed import source
+import type { PosyanduDetail } from "~/types/posyandu"; // Ensure correct import for PosyanduDetail
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -31,7 +31,7 @@ export default component$(() => {
     error.value = null;
     try {
       const response = await adminService.detailPosyandu(posyanduId);
-      posyanduData.value = response;
+      posyanduData.value = response as PosyanduDetail; // Explicitly cast response
     } catch (err: any) {
       error.value = extractErrorMessage(err);
     } finally {

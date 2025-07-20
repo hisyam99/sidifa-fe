@@ -1,77 +1,313 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { LuPlus } from "@qwikest/icons/lucide";
+import { useAuth } from "~/hooks";
+import { useAdminPsikolog } from "~/hooks/useAdminPsikolog"; // Assuming this hook exists
+
+import {
+  AdminPsikologListHeader,
+  AdminPsikologFilterControls,
+  AdminPsikologTable,
+  AdminPsikologForm,
+  AdminPsikologFormData,
+} from "~/components/admin/psikolog-management";
+import {
+  PaginationControls,
+  ConfirmationModal,
+  GenericLoadingSpinner,
+} from "~/components/common";
+import Alert from "~/components/ui/Alert";
+
+import type {
+  AdminPsikologItem,
+  AdminPsikologFilterOptions,
+} from "~/types/admin-psikolog-management";
+import type { PaginationMeta } from "~/types/posyandu"; // Reusing pagination meta
 
 export default component$(() => {
-  const dummyPsikolog = [
-    {
-      id: 1,
-      name: "Dr. Budi Santoso",
-      specialization: "Psikolog Anak",
-      phone: "081211112222",
-      email: "budi.s@example.com",
-    },
-    {
-      id: 2,
-      name: "Dr. Rina Wijaya",
-      specialization: "Psikolog Klinis",
-      phone: "081233334444",
-      email: "rina.w@example.com",
-    },
-    {
-      id: 3,
-      name: "Dr. Agus Setiawan",
-      specialization: "Psikolog Pendidikan",
-      phone: "081255556666",
-      email: "agus.s@example.com",
-    },
-  ];
+  const { isLoggedIn } = useAuth();
+  const {
+    items: psikologList,
+    loading,
+    error,
+    success,
+    total,
+    // Removed unused currentPageFromHook and limitFromHook
+    fetchList,
+    createItem,
+    updateItem,
+    deleteItem,
+    clearMessages,
+  } = useAdminPsikolog();
+
+  const filterOptions = useSignal<AdminPsikologFilterOptions>({
+    nama: "",
+    spesialisasi: "",
+    status: "",
+  });
+  const currentPage = useSignal(1);
+  const limit = useSignal(10);
+
+  const showCreateModal = useSignal(false);
+  const showEditModal = useSignal(false);
+  const showDeleteModal = useSignal(false);
+  const showToggleStatusModal = useSignal(false);
+  const selectedPsikolog = useSignal<AdminPsikologItem | null>(null);
+
+  const handleFetchPsikolog = $(async () => {
+    await fetchList({
+      limit: limit.value,
+      page: currentPage.value,
+      nama: filterOptions.value.nama || undefined,
+      spesialisasi: filterOptions.value.spesialisasi || undefined,
+      status: filterOptions.value.status || undefined,
+    });
+  });
+
+  useTask$(({ track }) => {
+    track(isLoggedIn);
+    track(() => filterOptions.value.nama);
+    track(() => filterOptions.value.spesialisasi);
+    track(() => filterOptions.value.status);
+    track(currentPage);
+    track(limit);
+
+    if (isLoggedIn.value) {
+      handleFetchPsikolog();
+    } else {
+      psikologList.value = [];
+    }
+  });
+
+  const handleFilterChange = $(() => {
+    currentPage.value = 1;
+  });
+
+  // Removed handleLimitChange as it was unused
+  /*
+  const handleLimitChange = $((event: Event) => {
+    const newLimit = parseInt((event.target as HTMLSelectElement).value);
+    if (newLimit !== limit.value) {
+      limit.value = newLimit;
+      currentPage.value = 1;
+    }
+  });
+  */
+
+  const handlePageChange = $((pageNumber: number) => {
+    if (meta.totalPage && (pageNumber < 1 || pageNumber > meta.totalPage))
+      return;
+    currentPage.value = pageNumber;
+  });
+
+  const openCreateModal = $(() => {
+    showCreateModal.value = true;
+    clearMessages();
+  });
+
+  const openEditModal = $((psikolog: AdminPsikologItem) => {
+    selectedPsikolog.value = psikolog;
+    showEditModal.value = true;
+    clearMessages();
+  });
+
+  const openDeleteModal = $((psikolog: AdminPsikologItem) => {
+    selectedPsikolog.value = psikolog;
+    showDeleteModal.value = true;
+    clearMessages();
+  });
+
+  const openToggleStatusModal = $((psikolog: AdminPsikologItem) => {
+    selectedPsikolog.value = psikolog;
+    showToggleStatusModal.value = true;
+    clearMessages();
+  });
+
+  const closeModals = $(() => {
+    showCreateModal.value = false;
+    showEditModal.value = false;
+    showDeleteModal.value = false;
+    showToggleStatusModal.value = false;
+    selectedPsikolog.value = null;
+    clearMessages();
+    handleFetchPsikolog();
+  });
+
+  const handleCreate = $(async (data: AdminPsikologFormData) => {
+    await createItem(data);
+    if (!error.value) {
+      closeModals();
+    }
+  });
+
+  const handleUpdate = $(async (data: AdminPsikologFormData) => {
+    if (!selectedPsikolog.value) return;
+    await updateItem({
+      id: selectedPsikolog.value.id,
+      ...data,
+    });
+    if (!error.value) {
+      closeModals();
+    }
+  });
+
+  const handleDelete = $(async () => {
+    if (!selectedPsikolog.value) return;
+    await deleteItem(selectedPsikolog.value.id);
+    if (!error.value) {
+      closeModals();
+    }
+  });
+
+  const handleToggleStatus = $(async () => {
+    if (!selectedPsikolog.value) return;
+    const newStatus =
+      selectedPsikolog.value.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+    await updateItem({
+      id: selectedPsikolog.value.id,
+      status: newStatus,
+      // Pass other required fields if your API needs full object for update
+      nama: selectedPsikolog.value.nama,
+      email: selectedPsikolog.value.email,
+      no_telp: selectedPsikolog.value.no_telp,
+      spesialisasi: selectedPsikolog.value.spesialisasi,
+    });
+    if (!error.value) {
+      closeModals();
+    }
+  });
+
+  const meta: PaginationMeta = {
+    totalData: total.value,
+    totalPage: Math.ceil(total.value / limit.value),
+    currentPage: currentPage.value,
+    limit: limit.value,
+  };
 
   return (
     <div>
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Manajemen Data Psikolog</h1>
-        <button class="btn btn-primary">
-          <LuPlus class="w-4 h-4 mr-2" />
-          Tambah Psikolog
+      <AdminPsikologListHeader
+        title="Manajemen Data Psikolog"
+        description="Kelola data psikolog yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
+      />
+
+      <div class="flex justify-end mb-6">
+        <button class="btn btn-primary" onClick$={openCreateModal}>
+          Tambah Psikolog Baru
         </button>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="table w-full">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nama Psikolog</th>
-              <th>Spesialisasi</th>
-              <th>No. Telepon</th>
-              <th>Email</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyPsikolog.map((psikolog) => (
-              <tr key={psikolog.id}>
-                <td>{psikolog.id}</td>
-                <td>{psikolog.name}</td>
-                <td>{psikolog.specialization}</td>
-                <td>{psikolog.phone}</td>
-                <td>{psikolog.email}</td>
-                <td class="flex gap-2">
-                  <button class="btn btn-sm btn-info">Edit</button>
-                  <button class="btn btn-sm btn-error">Hapus</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {error.value && <Alert type="error" message={error.value} />}
+      {success.value && <Alert type="success" message={success.value} />}
+
+      <AdminPsikologFilterControls
+        filterOptions={filterOptions}
+        onFilterChange$={handleFilterChange}
+      />
+
+      {loading.value ? (
+        <GenericLoadingSpinner />
+      ) : (
+        <AdminPsikologTable
+          items={psikologList.value}
+          page={currentPage.value}
+          limit={limit.value}
+          onViewDetail$={(item) => console.log(`View detail for ${item.id}`)}
+          onEdit$={openEditModal}
+          onDelete$={openDeleteModal}
+          onToggleStatus$={openToggleStatusModal}
+        />
+      )}
+
+      {meta.totalPage > 1 && (
+        <PaginationControls
+          meta={meta}
+          currentPage={currentPage.value}
+          onPageChange$={handlePageChange}
+        />
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal.value && (
+        <ConfirmationModal
+          isOpen={showCreateModal}
+          title="Tambah Psikolog Baru"
+          message=""
+          onConfirm$={$(() => {})}
+          onCancel$={closeModals}
+          confirmButtonText="Simpan"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-primary"
+        >
+          <AdminPsikologForm
+            onSubmit$={handleCreate}
+            loading={loading.value}
+            submitButtonText="Simpan Psikolog"
+          />
+        </ConfirmationModal>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal.value && selectedPsikolog.value && (
+        <ConfirmationModal
+          isOpen={showEditModal}
+          title="Edit Data Psikolog"
+          message=""
+          onConfirm$={$(() => {})}
+          onCancel$={closeModals}
+          confirmButtonText="Simpan Perubahan"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-primary"
+        >
+          <AdminPsikologForm
+            initialData={selectedPsikolog.value}
+            onSubmit$={handleUpdate}
+            loading={loading.value}
+            submitButtonText="Simpan Perubahan"
+          />
+        </ConfirmationModal>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal.value && selectedPsikolog.value && (
+        <ConfirmationModal
+          isOpen={showDeleteModal}
+          title="Konfirmasi Hapus Psikolog"
+          message={`Apakah Anda yakin ingin menghapus psikolog "${selectedPsikolog.value.nama}"? Tindakan ini tidak dapat dibatalkan.`}
+          onConfirm$={handleDelete}
+          onCancel$={closeModals}
+          confirmButtonText="Hapus"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-error"
+        />
+      )}
+
+      {/* Toggle Status Confirmation Modal */}
+      {showToggleStatusModal.value && selectedPsikolog.value && (
+        <ConfirmationModal
+          isOpen={showToggleStatusModal}
+          title="Konfirmasi Perubahan Status"
+          message={`Apakah Anda yakin ingin ${selectedPsikolog.value.status === "Aktif" ? "menonaktifkan" : "mengaktifkan"} psikolog "${selectedPsikolog.value.nama}"?`}
+          onConfirm$={handleToggleStatus}
+          onCancel$={closeModals}
+          confirmButtonText={
+            selectedPsikolog.value.status === "Aktif"
+              ? "Nonaktifkan"
+              : "Aktifkan"
+          }
+          cancelButtonText="Batal"
+          confirmButtonClass={
+            selectedPsikolog.value.status === "Aktif"
+              ? "btn-warning"
+              : "btn-success"
+          }
+        />
+      )}
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Manajemen Psikolog - Si-DIFA",
+  title: "Manajemen Psikolog - Si-DIFA Admin",
   meta: [
     {
       name: "description",

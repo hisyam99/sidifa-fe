@@ -4,16 +4,24 @@ import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
 import type { DocumentHead } from "@builder.io/qwik-city";
 
 import {
-  LuPlus,
-  LuPencil,
-  LuTrash,
-  LuLoader2,
-  LuSearch,
-  LuChevronLeft,
-  LuChevronRight,
-  LuX,
-} from "@qwikest/icons/lucide";
-import type { PosyanduDetail } from "~/types";
+  AdminPosyanduListHeader,
+  AdminPosyanduFilterControls,
+  AdminPosyanduTable,
+  AdminPosyanduForm,
+  AdminPosyanduFormData,
+} from "~/components/admin/posyandu-management";
+import {
+  PaginationControls,
+  ConfirmationModal,
+  GenericLoadingSpinner,
+} from "~/components/common";
+import Alert from "~/components/ui/Alert"; // Keeping the existing Alert component
+
+import type {
+  AdminPosyanduItem,
+  AdminPosyanduFilterOptions,
+} from "~/types/admin-posyandu-management";
+import type { PaginationMeta } from "~/types/posyandu"; // Reusing pagination meta
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -23,7 +31,7 @@ export default component$(() => {
     error,
     success,
     total,
-    page: currentPage,
+    // Removed unused currentPageFromHook and limitFromHook
     fetchList,
     createItem,
     updateItem,
@@ -31,79 +39,101 @@ export default component$(() => {
     clearMessages,
   } = useAdminPosyandu();
 
-  // Search and pagination
-  const searchName = useSignal("");
-  const selectedLimit = useSignal(10);
+  const filterOptions = useSignal<AdminPosyanduFilterOptions>({
+    nama_posyandu: "",
+    status: "",
+  });
+  const currentPage = useSignal(1); // Internal state for pagination
+  const limit = useSignal(10); // Internal state for limit
 
   // Modal states
   const showCreateModal = useSignal(false);
   const showEditModal = useSignal(false);
   const showDeleteModal = useSignal(false);
-  const selectedPosyandu = useSignal<PosyanduDetail | null>(null);
+  const showToggleStatusModal = useSignal(false); // New modal for status toggle
+  const selectedPosyandu = useSignal<AdminPosyanduItem | null>(null);
 
-  // Form states
-  const formData = useSignal({
-    nama_posyandu: "",
-    alamat: "",
-    no_telp: "",
-  });
+  // Form states - use signals directly, or initialData to form component
+  // const formData = useSignal<AdminPosyanduFormData>({ nama_posyandu: '', alamat: '', no_telp: '', status: 'Aktif' });
 
   const handleFetchPosyandu = $(async () => {
+    // console.log('Fetching posyandu with:', {
+    //   limit: limit.value,
+    //   page: currentPage.value,
+    //   nama_posyandu: filterOptions.value.nama_posyandu || undefined,
+    //   status: filterOptions.value.status || undefined,
+    // });
+
     await fetchList({
-      limit: selectedLimit.value,
+      limit: limit.value,
       page: currentPage.value,
-      nama_posyandu: searchName.value || undefined,
+      nama_posyandu: filterOptions.value.nama_posyandu || undefined,
+      status: filterOptions.value.status || undefined,
     });
   });
 
-  // Initial load
+  // Initial load and re-load on filter/pagination changes
   useTask$(({ track }) => {
     track(isLoggedIn);
+    track(() => filterOptions.value.nama_posyandu);
+    track(() => filterOptions.value.status);
+    track(currentPage);
+    track(limit);
+
     if (isLoggedIn.value) {
       handleFetchPosyandu();
+    } else {
+      posyanduList.value = []; // Clear list if not logged in
+      // error.value = "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
     }
   });
 
-  const handleSearch = $(async () => {
-    currentPage.value = 1;
-    await handleFetchPosyandu();
+  const handleFilterChange = $(() => {
+    currentPage.value = 1; // Reset page to 1 on any filter change
+    // handleFetchPosyandu will be triggered by useTask$
   });
 
-  const totalPages = Math.ceil(total.value / selectedLimit.value);
-
-  const handlePageChange = $(async (page: number) => {
-    if (page < 1 || (totalPages && page > totalPages)) return;
-    currentPage.value = page;
-    await handleFetchPosyandu();
+  // Removed handleLimitChange as it was unused
+  /*
+  const handleLimitChange = $((event: Event) => {
+    const newLimit = parseInt((event.target as HTMLSelectElement).value);
+    if (newLimit !== limit.value) {
+      limit.value = newLimit;
+      currentPage.value = 1; // Reset page to 1 on limit change
+      // handleFetchPosyandu will be triggered by useTask$
+    }
   });
+  */
 
-  const handleLimitChange = $(async (newLimit: number) => {
-    selectedLimit.value = newLimit;
-    currentPage.value = 1;
-    await handleFetchPosyandu();
+  const handlePageChange = $((pageNumber: number) => {
+    // Ensure meta is not null before accessing its properties
+    if (meta.totalPage && (pageNumber < 1 || pageNumber > meta.totalPage))
+      return;
+    currentPage.value = pageNumber;
+    // handleFetchPosyandu will be triggered by useTask$
   });
 
   // Modal handlers
   const openCreateModal = $(() => {
-    formData.value = { nama_posyandu: "", alamat: "", no_telp: "" };
     showCreateModal.value = true;
     clearMessages();
   });
 
-  const openEditModal = $((posyandu: PosyanduDetail) => {
+  const openEditModal = $((posyandu: AdminPosyanduItem) => {
     selectedPosyandu.value = posyandu;
-    formData.value = {
-      nama_posyandu: posyandu.nama_posyandu,
-      alamat: posyandu.alamat,
-      no_telp: posyandu.no_telp,
-    };
     showEditModal.value = true;
     clearMessages();
   });
 
-  const openDeleteModal = $((posyandu: PosyanduDetail) => {
+  const openDeleteModal = $((posyandu: AdminPosyanduItem) => {
     selectedPosyandu.value = posyandu;
     showDeleteModal.value = true;
+    clearMessages();
+  });
+
+  const openToggleStatusModal = $((posyandu: AdminPosyanduItem) => {
+    selectedPosyandu.value = posyandu;
+    showToggleStatusModal.value = true;
     clearMessages();
   });
 
@@ -111,23 +141,25 @@ export default component$(() => {
     showCreateModal.value = false;
     showEditModal.value = false;
     showDeleteModal.value = false;
+    showToggleStatusModal.value = false;
     selectedPosyandu.value = null;
     clearMessages();
+    handleFetchPosyandu(); // Re-fetch data after any CRUD operation
   });
 
   // Form handlers
-  const handleCreate = $(async () => {
-    await createItem(formData.value);
+  const handleCreate = $(async (data: AdminPosyanduFormData) => {
+    await createItem(data);
     if (!error.value) {
       closeModals();
     }
   });
 
-  const handleUpdate = $(async () => {
+  const handleUpdate = $(async (data: AdminPosyanduFormData) => {
     if (!selectedPosyandu.value) return;
     await updateItem({
       id: selectedPosyandu.value.id,
-      ...formData.value,
+      ...data,
     });
     if (!error.value) {
       closeModals();
@@ -142,381 +174,160 @@ export default component$(() => {
     }
   });
 
-  // Pagination logic: always center current page if possible
-  const getPaginationButtons = (currentPage: number, totalPages: number) => {
-    const buttons = [];
-    const maxButtons = 5;
-    if (totalPages <= maxButtons) {
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(i);
-      }
-    } else {
-      let startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
-      let endPage = startPage + maxButtons - 1;
-      if (endPage > totalPages) {
-        endPage = totalPages;
-        startPage = endPage - maxButtons + 1;
-      }
-      if (startPage > 1) {
-        buttons.push(1);
-        if (startPage > 2) buttons.push("...");
-      }
-      for (let i = startPage; i <= endPage; i++) {
-        buttons.push(i);
-      }
-      if (endPage < totalPages) {
-        if (endPage < totalPages - 1) buttons.push("...");
-        buttons.push(totalPages);
-      }
+  const handleToggleStatus = $(async () => {
+    if (!selectedPosyandu.value) return;
+    const newStatus =
+      selectedPosyandu.value.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+    await updateItem({
+      id: selectedPosyandu.value.id,
+      status: newStatus, // Only sending status for this specific action
+      // Pass other required fields if your API needs full object for update
+      nama_posyandu: selectedPosyandu.value.nama_posyandu,
+      alamat: selectedPosyandu.value.alamat,
+      no_telp: selectedPosyandu.value.no_telp,
+    });
+    if (!error.value) {
+      closeModals();
     }
-    return buttons;
+  });
+
+  // Pagination meta data for PaginationControls
+  const meta: PaginationMeta = {
+    totalData: total.value,
+    totalPage: Math.ceil(total.value / limit.value),
+    currentPage: currentPage.value,
+    limit: limit.value,
   };
 
   return (
     <div>
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Manajemen Data Posyandu</h1>
+      <AdminPosyanduListHeader
+        title="Manajemen Data Posyandu"
+        description="Kelola data posyandu yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
+      />
+
+      <div class="flex justify-end mb-6">
         <button class="btn btn-primary" onClick$={openCreateModal}>
-          <LuPlus class="w-4 h-4 mr-2" />
-          Tambah Posyandu
+          Tambah Posyandu Baru
         </button>
       </div>
 
-      {/* Alert Messages */}
-      {error.value && (
-        <div class="alert alert-error mb-6">
-          <LuX class="w-4 h-4" />
-          <span>{error.value}</span>
-        </div>
+      {error.value && <Alert type="error" message={error.value} />}
+      {success.value && <Alert type="success" message={success.value} />}
+
+      <AdminPosyanduFilterControls
+        filterOptions={filterOptions}
+        onFilterChange$={handleFilterChange}
+      />
+
+      {loading.value ? (
+        <GenericLoadingSpinner />
+      ) : (
+        <AdminPosyanduTable
+          items={posyanduList.value}
+          page={currentPage.value}
+          limit={limit.value}
+          onViewDetail$={(item) => console.log(`View detail for ${item.id}`)} // Implement actual detail page navigation/modal
+          onEdit$={openEditModal}
+          onDelete$={openDeleteModal}
+          onToggleStatus$={openToggleStatusModal}
+        />
       )}
 
-      {success.value && (
-        <div class="alert alert-success mb-6">
-          <span>{success.value}</span>
-        </div>
+      {meta.totalPage > 1 && (
+        <PaginationControls
+          meta={meta}
+          currentPage={currentPage.value}
+          onPageChange$={handlePageChange}
+        />
       )}
-
-      {/* Search and Filter */}
-      <div class="card bg-base-100 shadow-xl mb-6">
-        <div class="card-body">
-          <h2 class="card-title">Pencarian</h2>
-          <div class="flex flex-col md:flex-row gap-4">
-            <div class="form-control flex-1">
-              <label for="search-name" class="label">
-                <span class="label-text">Cari berdasarkan nama posyandu</span>
-              </label>
-              <div class="input-group">
-                <input
-                  id="search-name"
-                  type="text"
-                  placeholder="Masukkan nama posyandu..."
-                  class="input input-bordered flex-1"
-                  value={searchName.value}
-                  onInput$={(ev: any) => (searchName.value = ev.target.value)}
-                  onKeyUp$={(ev: any) => ev.key === "Enter" && handleSearch()}
-                />
-                <button class="btn btn-primary" onClick$={handleSearch}>
-                  <LuSearch class="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            <div class="form-control">
-              <label for="limit-select" class="label">
-                <span class="label-text">Limit per halaman</span>
-              </label>
-              <select
-                id="limit-select"
-                class="select select-bordered"
-                value={selectedLimit.value}
-                onChange$={(ev: any) => {
-                  handleLimitChange(parseInt(ev.target.value));
-                }}
-              >
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Data Table */}
-      <div class="card bg-base-100 shadow-xl relative">
-        <div class="card-body">
-          <h2 class="card-title">Daftar Posyandu</h2>
-
-          {/* Loading Overlay */}
-          {loading.value && (
-            <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center z-10">
-              <LuLoader2
-                class="animate-spin text-primary"
-                style={{ width: "32px", height: "32px" }}
-              />
-            </div>
-          )}
-
-          <div
-            class={`overflow-x-auto ${loading.value ? "pointer-events-none opacity-60" : ""}`}
-          >
-            <table class="table w-full">
-              <thead>
-                <tr>
-                  <th>Nama Posyandu</th>
-                  <th>Alamat</th>
-                  <th>No. Telp</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {posyanduList.value.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      class="text-center text-base-content/60 py-8"
-                    >
-                      Tidak ada data posyandu.
-                    </td>
-                  </tr>
-                ) : (
-                  posyanduList.value.map((posyandu) => (
-                    <tr key={posyandu.id}>
-                      <td class="font-medium">{posyandu.nama_posyandu}</td>
-                      <td>{posyandu.alamat}</td>
-                      <td>{posyandu.no_telp}</td>
-                      <td class="flex gap-2">
-                        <a
-                          href={`/admin/posyandu/${posyandu.id}`}
-                          class="btn btn-sm btn-primary"
-                        >
-                          Detail
-                        </a>
-                        <button
-                          class="btn btn-sm btn-info"
-                          onClick$={() => openEditModal(posyandu)}
-                        >
-                          <LuPencil class="w-4 h-4" />
-                          Edit
-                        </button>
-                        <button
-                          class="btn btn-sm btn-error"
-                          onClick$={() => openDeleteModal(posyandu)}
-                        >
-                          <LuTrash class="w-4 h-4" />
-                          Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div class="flex items-center justify-between mt-6">
-              <div class="text-sm text-base-content/70">
-                Menampilkan {posyanduList.value.length} dari {total.value}{" "}
-                posyandu
-              </div>
-              <div class="join">
-                <button
-                  class="join-item btn btn-sm"
-                  disabled={currentPage.value === 1}
-                  onClick$={() => handlePageChange(currentPage.value - 1)}
-                >
-                  <LuChevronLeft class="w-4 h-4" />
-                </button>
-                {getPaginationButtons(currentPage.value, totalPages).map(
-                  (page, idx) => (
-                    <button
-                      key={idx}
-                      class={`join-item btn btn-sm ${page === currentPage.value ? "btn-active" : ""} ${page === "..." ? "btn-disabled" : ""}`}
-                      disabled={page === "..."}
-                      onClick$={() =>
-                        typeof page === "number" && handlePageChange(page)
-                      }
-                    >
-                      {page}
-                    </button>
-                  ),
-                )}
-                <button
-                  class="join-item btn btn-sm"
-                  disabled={currentPage.value === totalPages}
-                  onClick$={() => handlePageChange(currentPage.value + 1)}
-                >
-                  <LuChevronRight class="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* Create Modal */}
       {showCreateModal.value && (
-        <div class="modal modal-open">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Tambah Posyandu Baru</h3>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Nama Posyandu</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Masukkan nama posyandu"
-                class="input input-bordered"
-                value={formData.value.nama_posyandu}
-                onInput$={(ev: any) =>
-                  (formData.value.nama_posyandu = ev.target.value)
-                }
-              />
-            </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Alamat</span>
-              </label>
-              <textarea
-                placeholder="Masukkan alamat posyandu"
-                class="textarea textarea-bordered"
-                value={formData.value.alamat}
-                onInput$={(ev: any) =>
-                  (formData.value.alamat = ev.target.value)
-                }
-              />
-            </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">No. Telepon</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Masukkan nomor telepon"
-                class="input input-bordered"
-                value={formData.value.no_telp}
-                onInput$={(ev: any) =>
-                  (formData.value.no_telp = ev.target.value)
-                }
-              />
-            </div>
-            <div class="modal-action">
-              <button class="btn" onClick$={closeModals}>
-                Batal
-              </button>
-              <button class="btn btn-primary" onClick$={handleCreate}>
-                {loading.value ? (
-                  <LuLoader2 class="w-4 h-4 animate-spin" />
-                ) : (
-                  "Simpan"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmationModal
+          isOpen={showCreateModal}
+          title="Tambah Posyandu Baru"
+          message=""
+          onConfirm$={$(() => {})}
+          onCancel$={closeModals}
+          confirmButtonText="Simpan"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-primary"
+        >
+          <AdminPosyanduForm
+            onSubmit$={handleCreate}
+            loading={loading.value}
+            submitButtonText="Simpan Posyandu"
+          />
+        </ConfirmationModal>
       )}
 
       {/* Edit Modal */}
-      {showEditModal.value && (
-        <div class="modal modal-open">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Edit Posyandu</h3>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Nama Posyandu</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Masukkan nama posyandu"
-                class="input input-bordered"
-                value={formData.value.nama_posyandu}
-                onInput$={(ev: any) =>
-                  (formData.value.nama_posyandu = ev.target.value)
-                }
-              />
-            </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Alamat</span>
-              </label>
-              <textarea
-                placeholder="Masukkan alamat posyandu"
-                class="textarea textarea-bordered"
-                value={formData.value.alamat}
-                onInput$={(ev: any) =>
-                  (formData.value.alamat = ev.target.value)
-                }
-              />
-            </div>
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">No. Telepon</span>
-              </label>
-              <input
-                type="text"
-                placeholder="Masukkan nomor telepon"
-                class="input input-bordered"
-                value={formData.value.no_telp}
-                onInput$={(ev: any) =>
-                  (formData.value.no_telp = ev.target.value)
-                }
-              />
-            </div>
-            <div class="modal-action">
-              <button class="btn" onClick$={closeModals}>
-                Batal
-              </button>
-              <button class="btn btn-primary" onClick$={handleUpdate}>
-                {loading.value ? (
-                  <LuLoader2 class="w-4 h-4 animate-spin" />
-                ) : (
-                  "Update"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+      {showEditModal.value && selectedPosyandu.value && (
+        <ConfirmationModal
+          isOpen={showEditModal}
+          title="Edit Data Posyandu"
+          message=""
+          onConfirm$={$(() => {})}
+          onCancel$={closeModals}
+          confirmButtonText="Simpan Perubahan"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-primary"
+        >
+          <AdminPosyanduForm
+            initialData={selectedPosyandu.value}
+            onSubmit$={handleUpdate}
+            loading={loading.value}
+            submitButtonText="Simpan Perubahan"
+          />
+        </ConfirmationModal>
       )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal.value && selectedPosyandu.value && (
-        <div class="modal modal-open">
-          <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Konfirmasi Hapus</h3>
-            <p>
-              Apakah Anda yakin ingin menghapus posyandu{" "}
-              <strong>{selectedPosyandu.value.nama_posyandu}</strong>?
-            </p>
-            <p class="text-sm text-base-content/70 mt-2">
-              Tindakan ini tidak dapat dibatalkan.
-            </p>
-            <div class="modal-action">
-              <button class="btn" onClick$={closeModals}>
-                Batal
-              </button>
-              <button class="btn btn-error" onClick$={handleDelete}>
-                {loading.value ? (
-                  <LuLoader2 class="w-4 h-4 animate-spin" />
-                ) : (
-                  "Hapus"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmationModal
+          isOpen={showDeleteModal}
+          title="Konfirmasi Hapus Posyandu"
+          message={`Apakah Anda yakin ingin menghapus posyandu "${selectedPosyandu.value.nama_posyandu}"? Tindakan ini tidak dapat dibatalkan.`}
+          onConfirm$={handleDelete}
+          onCancel$={closeModals}
+          confirmButtonText="Hapus"
+          cancelButtonText="Batal"
+          confirmButtonClass="btn-error"
+        />
+      )}
+
+      {/* Toggle Status Confirmation Modal */}
+      {showToggleStatusModal.value && selectedPosyandu.value && (
+        <ConfirmationModal
+          isOpen={showToggleStatusModal}
+          title="Konfirmasi Perubahan Status"
+          message={`Apakah Anda yakin ingin ${selectedPosyandu.value.status === "Aktif" ? "menonaktifkan" : "mengaktifkan"} posyandu "${selectedPosyandu.value.nama_posyandu}"?`}
+          onConfirm$={handleToggleStatus}
+          onCancel$={closeModals}
+          confirmButtonText={
+            selectedPosyandu.value.status === "Aktif"
+              ? "Nonaktifkan"
+              : "Aktifkan"
+          }
+          cancelButtonText="Batal"
+          confirmButtonClass={
+            selectedPosyandu.value.status === "Aktif"
+              ? "btn-warning"
+              : "btn-success"
+          }
+        />
       )}
     </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "Manajemen Posyandu - Si-DIFA",
+  title: "Manajemen Posyandu - Si-DIFA Admin",
   meta: [
     {
       name: "description",
-      content: "Halaman manajemen data Posyandu untuk admin Si-DIFA",
+      content: "Halaman manajemen data posyandu untuk admin Si-DIFA",
     },
   ],
 };

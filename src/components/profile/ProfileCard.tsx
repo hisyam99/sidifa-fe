@@ -3,96 +3,24 @@ import { useAuth } from "~/hooks";
 import {
   LuUser,
   LuMail,
-  LuHeart,
-  LuBrain,
   LuPencil,
   LuShield,
-  LuZap,
-  LuCheckCircle,
+  LuKey,
+  LuClock,
   LuLogOut,
+  LuFileText,
 } from "@qwikest/icons/lucide";
+import {
+  getRoleIcon,
+  getRoleColor,
+  getRoleDisplayName,
+  getActivityTypeClass,
+} from "~/utils/dashboard-utils";
+import { getRoleBenefitsData } from "~/data/profile-data";
+import { ProfileInfoItem, ProfileBenefitList, ProfileSection } from "./";
 
 export default component$(() => {
-  // 1. Hapus `checkAuthStatus` dan ganti dengan `refreshUserData`
   const { user, loading, error, refreshUserData, logout } = useAuth();
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case "kader":
-        return <LuHeart class="w-6 h-6" />;
-      case "psikolog":
-        return <LuBrain class="w-6 h-6" />;
-      default:
-        return <LuUser class="w-6 h-6" />;
-    }
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "kader":
-        return "bg-gradient-primary";
-      case "psikolog":
-        return "bg-gradient-secondary";
-      default:
-        return "bg-gradient-accent";
-    }
-  };
-
-  const getRoleDisplayName = (role: string) => {
-    switch (role) {
-      case "kader":
-        return "Kader Posyandu";
-      case "psikolog":
-        return "Psikolog";
-      default:
-        return "User";
-    }
-  };
-
-  const getRoleBenefits = (role: string) => {
-    if (role === "kader") {
-      return [
-        {
-          text: "Kelola data kesehatan masyarakat",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-        {
-          text: "Laporan dan statistik real-time",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-        {
-          text: "Akses ke layanan psikologis",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-      ];
-    } else if (role === "psikolog") {
-      return [
-        {
-          text: "Kelola jadwal konseling",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-        {
-          text: "Rekam medis pasien",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-        {
-          text: "Kolaborasi dengan posyandu",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-      ];
-    } else {
-      return [
-        {
-          text: "Akses ke informasi kesehatan",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-        {
-          text: "Layanan konseling",
-          icon: <LuCheckCircle class="w-4 h-4 text-success" />,
-        },
-      ];
-    }
-  };
 
   // Loading skeleton
   if (loading.value) {
@@ -140,8 +68,7 @@ export default component$(() => {
         <div class="card bg-base-100 shadow-lg">
           <div class="card-body text-center">
             <p class="text-error mb-4">{error.value}</p>
-            {/* 2. Ganti pemanggilan fungsi di onClick$ */}
-            <button class="btn btn-primary" onClick$={() => refreshUserData()}>
+            <button class="btn btn-primary" onClick$={refreshUserData}>
               Coba Lagi
             </button>
           </div>
@@ -165,26 +92,53 @@ export default component$(() => {
     );
   }
 
-  // Main profile dashboard layout
+  const RoleIcon = getRoleIcon(user.value.role);
+  const roleColorClass = getRoleColor(user.value.role);
+  const roleBenefits = getRoleBenefitsData(user.value.role);
+
+  // Sample recent activities (replace with actual data fetching)
+  const recentActivities = [
+    {
+      title: "Update Profil",
+      description: "Mengubah informasi kontak dan alamat.",
+      time: "2 jam yang lalu",
+      type: "info",
+    },
+    {
+      title: "Perubahan Password",
+      description: "Password akun berhasil diubah.",
+      time: "1 hari yang lalu",
+      type: "success",
+    },
+    {
+      title: "Login Baru",
+      description: "Login dari perangkat baru di lokasi Malang.",
+      time: "3 hari yang lalu",
+      type: "warning",
+    },
+  ];
+
   return (
     <div class="container mx-auto px-4 py-8">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <aside class="lg:col-span-1">
           <div class="card bg-base-100 shadow-lg">
-            <div class="card-body items-center">
-              <div
-                class={`${getRoleColor(user.value.role)} rounded-full w-24 h-24 mx-auto mb-4 flex items-center justify-center shadow-xl`}
-              >
-                <span class="text-3xl font-bold ">
-                  {user.value.email.charAt(0).toUpperCase()}
-                </span>
+            <div class="card-body items-center p-6">
+              <div class={`avatar placeholder mx-auto mb-4`}>
+                <div
+                  class={`w-24 rounded-full ${roleColorClass} text-primary-content`}
+                >
+                  <span class="text-3xl font-bold ">
+                    {user.value.email.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               </div>
               <h2 class="font-bold text-lg text-center mb-1 truncate w-full">
                 {user.value.email}
               </h2>
               <div class="badge badge-primary gap-2 mb-2">
-                {getRoleIcon(user.value.role)}
+                {RoleIcon && <RoleIcon class="w-4 h-4" />}
                 <span class="capitalize text-xs">
                   {getRoleDisplayName(user.value.role)}
                 </span>
@@ -198,91 +152,99 @@ export default component$(() => {
             <button class="btn btn-primary w-full gap-2">
               <LuPencil class="w-4 h-4" /> Edit Profil
             </button>
-            <button class="btn btn-outline w-full gap-2">
-              <LuShield class="w-4 h-4" /> Ubah Password
+            <button class="btn btn-secondary w-full gap-2">
+              <LuKey class="w-4 h-4" /> Ubah Password
             </button>
-            <button
-              class="btn btn-error w-full gap-2"
-              onClick$={() => logout()}
-            >
-              <LuLogOut class="w-4 h-4" /> Logout
+            <button class="btn btn-error w-full gap-2" onClick$={logout}>
+              <LuLogOut class="w-4 h-4" /> Keluar
             </button>
           </div>
+          <ProfileBenefitList benefits={roleBenefits} />
         </aside>
+
         {/* Main Content */}
-        <main class="lg:col-span-3">
-          <div class="card bg-base-100 shadow-lg mb-6">
-            <div class="card-body">
-              <h1 class="text-2xl md:text-3xl font-bold text-gradient-primary mb-2">
-                Profil Pengguna
-              </h1>
-              <p class="text-base-content/70 text-sm md:text-lg mb-4">
-                Informasi detail akun SIDIFA Anda
-              </p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 p-3 bg-base-200/50">
-                    <LuMail class="w-5 h-5 text-primary flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs text-base-content/60">Email</p>
-                      <p class="font-medium text-sm md:text-base truncate">
-                        {user.value.email}
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3 p-3 bg-base-200/50">
-                    <LuUser class="w-5 h-5 text-primary flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs text-base-content/60">ID Pengguna</p>
-                      <p class="font-medium text-sm md:text-base truncate">
-                        {user.value.id}
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3 p-3 bg-base-200/50">
-                    <LuShield class="w-5 h-5 text-primary flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs text-base-content/60">Role</p>
-                      <p class="font-medium text-sm md:text-base truncate capitalize">
-                        {getRoleDisplayName(user.value.role)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="space-y-4">
-                  <div class="flex items-center gap-3 p-3 bg-base-200/50">
-                    <LuCheckCircle class="w-5 h-5 text-success flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs text-base-content/60">Status Akun</p>
-                      <p class="font-medium text-sm md:text-base text-success">
-                        Aktif & Terverifikasi
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-3 p-3 bg-base-200/50">
-                    <LuZap class="w-5 h-5 text-accent flex-shrink-0" />
-                    <div class="flex-1 min-w-0">
-                      <p class="text-xs text-base-content/60">Manfaat Akun</p>
-                      <ul class="space-y-1 mt-1">
-                        {getRoleBenefits(user.value.role).map(
-                          (benefit, idx) => (
-                            <li
-                              key={`benefit-${benefit.text}-${idx}`}
-                              class="flex items-center gap-2"
-                            >
-                              {benefit.icon}
-                              <span>{benefit.text}</span>
-                            </li>
-                          ),
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+        <div class="lg:col-span-3 space-y-6">
+          <ProfileSection title="Informasi Akun" icon={LuUser}>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ProfileInfoItem
+                label="Email"
+                value={user.value.email}
+                icon={LuMail}
+              />
+              <ProfileInfoItem
+                label="Peran"
+                value={getRoleDisplayName(user.value.role)}
+                icon={RoleIcon}
+              />
+              {/* Tambahkan informasi lain seperti nama, alamat, dll. jika tersedia di user.value */}
+            </div>
+          </ProfileSection>
+
+          <ProfileSection title="Pengaturan Keamanan" icon={LuShield}>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between p-4 bg-base-100/50 backdrop-blur-sm rounded-lg">
+                <p class="text-base-content">Otentikasi Dua Faktor</p>
+                <input
+                  type="checkbox"
+                  class="toggle toggle-primary"
+                  checked={false}
+                />
+              </div>
+              <div class="flex items-center justify-between p-4 bg-base-100/50 backdrop-blur-sm rounded-lg">
+                <p class="text-base-content">Notifikasi Email</p>
+                <input
+                  type="checkbox"
+                  class="toggle toggle-primary"
+                  checked={true}
+                />
               </div>
             </div>
-          </div>
-        </main>
+          </ProfileSection>
+
+          <ProfileSection title="Riwayat Aktivitas" icon={LuClock}>
+            <div class="space-y-4">
+              {recentActivities.length > 0 ? (
+                recentActivities.map((activity, index) => (
+                  <div
+                    key={index}
+                    class="flex items-start gap-4 p-4 rounded-lg shadow-sm border border-base-200/50 hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div
+                      class={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getActivityTypeClass(activity.type)}`}
+                    >
+                      <LuClock class="w-5 h-5" />
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="font-semibold text-base-content mb-1">
+                        {activity.title}
+                      </h3>
+                      <p class="text-sm text-base-content/70 mb-1 leading-snug">
+                        {activity.description}
+                      </p>
+                      <div class="flex items-center text-xs text-base-content/50">
+                        <LuClock class="w-3 h-3 mr-1" />
+                        <span>{activity.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p class="text-center text-base-content/70 py-4">
+                  Belum ada riwayat aktivitas.
+                </p>
+              )}
+            </div>
+          </ProfileSection>
+
+          <ProfileSection title="Data & Export" icon={LuFileText}>
+            <div class="space-y-4">
+              <button class="btn btn-primary w-full">Export Data Profil</button>
+              <button class="btn btn-secondary w-full">
+                Unduh Rekam Medis (Khusus Psikolog/Kader)
+              </button>
+            </div>
+          </ProfileSection>
+        </div>
       </div>
     </div>
   );

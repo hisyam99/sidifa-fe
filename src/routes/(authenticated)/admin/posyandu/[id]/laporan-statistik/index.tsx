@@ -12,7 +12,7 @@ import {
   LuTrendingDown,
   LuUsers,
   LuClipboardList,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
 import type { PosyanduDetail } from "~/types";
 
 export default component$(() => {

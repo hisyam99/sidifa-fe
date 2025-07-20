@@ -1,41 +1,28 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { articlesData, ArticleItem } from "~/data/information-data"; // Import ArticleItem
+import { SearchBox } from "~/components/common";
+import { InformationArticleCard } from "~/components/information";
 
 export default component$(() => {
-  const articles = [
-    {
-      title: "Memahami Tumbuh Kembang Anak dengan Autisme",
-      category: "Panduan Orang Tua",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
-      excerpt:
-        "Panduan praktis bagi orang tua dan kader dalam mendampingi tumbuh kembang anak dengan spektrum autisme.",
-    },
-    {
-      title: "Tips Komunikasi Efektif dengan Anak Tuna Rungu",
-      category: "Komunikasi",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
-      excerpt:
-        "Pelajari cara membangun komunikasi yang hangat dan efektif dengan anak yang memiliki hambatan pendengaran.",
-    },
-    {
-      title: "Menciptakan Lingkungan Ramah Disabilitas di Rumah",
-      category: "Lingkungan Inklusif",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
-      excerpt:
-        "Beberapa penyesuaian sederhana di rumah yang dapat sangat membantu kemandirian individu berkebutuhan khusus.",
-    },
-    {
-      title: "Hak-Hak Penyandang Disabilitas di Indonesia",
-      category: "Advokasi",
-      image:
-        "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg",
-      excerpt:
-        "Pahami hak-hak dasar yang dimiliki oleh penyandang disabilitas sesuai dengan peraturan yang berlaku.",
-    },
-  ];
+  const searchTerm = useSignal("");
+  const displayedArticles = useSignal<ArticleItem[]>([]);
+
+  const filterArticles = $(() => {
+    const searchLower = searchTerm.value.toLowerCase();
+    return articlesData.filter((article: ArticleItem) => {
+      return (
+        article.title.toLowerCase().includes(searchLower) ||
+        article.excerpt.toLowerCase().includes(searchLower) ||
+        article.category.toLowerCase().includes(searchLower)
+      );
+    });
+  });
+
+  useTask$(async ({ track }) => {
+    track(() => searchTerm.value);
+    displayedArticles.value = await filterArticles();
+  });
 
   return (
     <div>
@@ -45,37 +32,33 @@ export default component$(() => {
       </p>
 
       <div class="mb-6">
-        <input
-          type="text"
+        <SearchBox
           placeholder="Cari artikel atau panduan..."
-          class="input input-bordered w-full max-w-sm"
+          value={searchTerm.value}
+          onInput$={(e) =>
+            (searchTerm.value = (e.target as HTMLInputElement).value)
+          }
+          onEnter$={$(() => {})}
         />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article) => (
-          <div
-            key={article.title}
-            class="card bg-base-100 shadow-xl image-full"
-          >
-            <figure>
-              <img
-                src={article.image}
-                alt={article.title}
-                width="400"
-                height="250"
-              />
-            </figure>
-            <div class="card-body">
-              <h2 class="card-title">{article.title}</h2>
-              <p>{article.excerpt}</p>
-              <div class="card-actions justify-end">
-                <div class="badge badge-outline">{article.category}</div>
-                <button class="btn btn-primary">Baca Selengkapnya</button>
-              </div>
-            </div>
-          </div>
-        ))}
+        {displayedArticles.value.length > 0 ? (
+          displayedArticles.value.map((article: ArticleItem) => ( // Use displayedArticles.value
+            <InformationArticleCard
+              key={article.title}
+              title={article.title}
+              category={article.category}
+              image={article.image}
+              excerpt={article.excerpt}
+              href={`/kader/informasi/${article.title.toLowerCase().replace(/\s/g, "-")}`}
+            />
+          ))
+        ) : (
+          <p class="col-span-full text-center text-base-content/70">
+            Tidak ada artikel yang cocok dengan pencarian Anda.
+          </p>
+        )}
       </div>
     </div>
   );

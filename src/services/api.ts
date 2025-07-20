@@ -178,12 +178,14 @@ export const adminService = {
     limit?: number;
     page?: number;
     nama_posyandu?: string;
+    status?: "Aktif" | "Tidak Aktif" | ""; // Added status filter
   }) {
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.nama_posyandu)
       queryParams.append("nama_posyandu", params.nama_posyandu);
+    if (params.status) queryParams.append("status", params.status); // Add status to query
 
     const response = await api.get(`/admin/posyandu?${queryParams.toString()}`);
     return response.data;
@@ -203,20 +205,66 @@ export const adminService = {
     nama_posyandu?: string;
     alamat?: string;
     no_telp?: string;
+    status?: "Aktif" | "Tidak Aktif"; // Added status to update data
   }) {
-    const response = await api.patch("/admin/posyandu", data);
+    const response = await api.patch(`/admin/posyandu/${data.id}`, data);
     return response.data;
   },
 
   async deletePosyandu(id: string) {
-    const response = await api.delete("/admin/posyandu", {
-      data: { id },
-    });
+    const response = await api.delete(`/admin/posyandu/${id}`);
     return response.data;
   },
 
   async detailPosyandu(id: string) {
+    // Moved and renamed from getPosyanduDetail
     const response = await api.get(`/admin/posyandu/detail/${id}`);
+    return response.data;
+  },
+
+  async listPsikolog(params: {
+    limit?: number;
+    page?: number;
+    nama?: string;
+    spesialisasi?: string;
+    status?: "Aktif" | "Tidak Aktif" | "";
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.nama) queryParams.append("nama", params.nama);
+    if (params.spesialisasi)
+      queryParams.append("spesialisasi", params.spesialisasi);
+    if (params.status) queryParams.append("status", params.status);
+
+    const response = await api.get(`/admin/psikolog?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  async createPsikolog(data: {
+    nama: string;
+    email: string;
+    no_telp: string;
+    spesialisasi: string;
+  }) {
+    const response = await api.post("/admin/psikolog", data);
+    return response.data;
+  },
+
+  async updatePsikolog(data: {
+    id: string;
+    nama?: string;
+    email?: string;
+    no_telp?: string;
+    spesialisasi?: string;
+    status?: "Aktif" | "Tidak Aktif";
+  }) {
+    const response = await api.patch(`/admin/psikolog/${data.id}`, data);
+    return response.data;
+  },
+
+  async deletePsikolog(id: string) {
+    const response = await api.delete(`/admin/psikolog/${id}`);
     return response.data;
   },
 };
@@ -249,12 +297,14 @@ export const informasiEdukasiAdminService = {
     page?: number;
     deskripsi?: string;
     judul?: string;
+    tipe?: string; // Added tipe parameter
   }) {
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.deskripsi) queryParams.append("deskripsi", params.deskripsi);
     if (params.judul) queryParams.append("judul", params.judul);
+    if (params.tipe) queryParams.append("tipe", params.tipe); // Append tipe to query params
     const response = await api.get(
       `/admin/informasi-edukasi?${queryParams.toString()}`,
     );
@@ -269,11 +319,13 @@ export const informasiEdukasiAdminService = {
     judul: string;
     tipe: string;
     deskripsi: string;
-    file_name: string;
-    role: string;
-    name: string;
+    file_url?: string; // Changed file_name to file_url and made it optional
   }) {
-    const response = await api.patch(`/admin/informasi-edukasi`, data);
+    const response = await api.patch(`/admin/informasi-edukasi`, {
+      ...data,
+      role: "admin", // Assuming role is always admin for update
+      name: "admin", // Assuming name is always admin for update
+    });
     return response.data;
   },
   async delete(id: string) {
@@ -286,11 +338,13 @@ export const informasiEdukasiAdminService = {
     judul: string;
     tipe: string;
     deskripsi: string;
-    file_name: string;
-    role: string;
-    name: string;
+    file_url?: string; // Changed file_name to file_url and made it optional
   }) {
-    const response = await api.post(`/admin/informasi-edukasi`, data);
+    const response = await api.post(`/admin/informasi-edukasi`, {
+      ...data,
+      role: "admin", // Assuming role is always admin for creation
+      name: "admin", // Assuming name is always admin for creation
+    });
     return response.data;
   },
 };

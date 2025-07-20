@@ -17,7 +17,7 @@ import {
   LuCheckCircle,
   LuClock,
   LuStar,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized"; // Changed import source
 
 export default component$(() => {
   const { user, logout } = useAuth();

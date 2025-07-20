@@ -1,9 +1,10 @@
 import { useSignal, $ } from "@builder.io/qwik";
 import { informasiEdukasiAdminService } from "~/services/api";
-import type { EducationalContent } from "~/types/content";
+import type { InformasiItem } from "~/types/informasi"; // Changed to InformasiItem
+import type { InformasiFormData } from "~/components/admin/information/InformasiForm"; // Import form data type
 
 export const useInformasiEdukasiAdmin = () => {
-  const items = useSignal<EducationalContent[]>([]);
+  const items = useSignal<InformasiItem[]>([]); // Changed to InformasiItem[]
   const loading = useSignal(false);
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
@@ -18,6 +19,7 @@ export const useInformasiEdukasiAdmin = () => {
         page?: number;
         deskripsi?: string;
         judul?: string;
+        tipe?: string; // Added tipe filter
       } = {},
     ) => {
       loading.value = true;
@@ -28,8 +30,9 @@ export const useInformasiEdukasiAdmin = () => {
           page: params.page ?? page.value,
           deskripsi: params.deskripsi,
           judul: params.judul,
+          tipe: params.tipe,
         });
-        items.value = data.data;
+        items.value = data.data as InformasiItem[]; // Cast to InformasiItem[]
         total.value = data.meta?.total || 0;
         page.value = data.meta?.currentPage || 1;
         limit.value = data.meta?.limit || 10;
@@ -45,7 +48,7 @@ export const useInformasiEdukasiAdmin = () => {
     loading.value = true;
     error.value = null;
     try {
-      return await informasiEdukasiAdminService.detail(id);
+      return (await informasiEdukasiAdminService.detail(id)) as InformasiItem; // Cast to InformasiItem
     } catch (err: any) {
       error.value = err.message || "Gagal memuat detail";
       return null;
@@ -54,7 +57,7 @@ export const useInformasiEdukasiAdmin = () => {
     }
   });
 
-  const updateItem = $(async (data: any) => {
+  const updateItem = $(async (data: InformasiFormData & { id: string }) => {
     loading.value = true;
     error.value = null;
     try {
@@ -80,7 +83,7 @@ export const useInformasiEdukasiAdmin = () => {
     }
   });
 
-  const createItem = $(async (data: any) => {
+  const createItem = $(async (data: InformasiFormData) => {
     loading.value = true;
     error.value = null;
     try {

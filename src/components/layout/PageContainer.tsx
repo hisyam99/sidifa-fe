@@ -5,7 +5,7 @@ interface PageContainerProps {
   centered?: boolean;
 }
 
-export default component$<PageContainerProps>(
+export const PageContainer = component$<PageContainerProps>(
   ({ class: className = "", centered = false }) => {
     return (
       <div
