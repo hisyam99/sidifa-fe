@@ -56,7 +56,9 @@ export default component$(() => {
           <SearchBox
             placeholder="Cari pertanyaan yang ingin dijawab..."
             value={searchTerm.value}
-            onInput$={$(e => searchTerm.value = (e.target as HTMLInputElement).value)}
+            onInput$={$(
+              (e) => (searchTerm.value = (e.target as HTMLInputElement).value),
+            )}
             onEnter$={$(() => {})}
           />
 

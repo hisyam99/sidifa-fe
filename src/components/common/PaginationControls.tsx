@@ -1,5 +1,8 @@
 import { component$, $, QRL } from "@builder.io/qwik";
-import { LuChevronLeft, LuChevronRight } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  LuChevronLeft,
+  LuChevronRight,
+} from "~/components/icons/lucide-optimized"; // Updated import path
 import type { PaginationMeta } from "~/types/posyandu"; // Use generic pagination meta if it becomes common
 
 interface PaginationControlsProps {

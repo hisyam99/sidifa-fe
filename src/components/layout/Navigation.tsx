@@ -1,7 +1,12 @@
 import { component$, $ } from "@builder.io/qwik";
 import { useNavigate } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
-import { LuMenu, LuLogOut, LuUser, LuSettings } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  LuMenu,
+  LuLogOut,
+  LuUser,
+  LuSettings,
+} from "~/components/icons/lucide-optimized"; // Updated import path
 import { BrandLogo, NavLink } from "~/components/common";
 import { generateNavigationLinks } from "~/utils/navigation-data";
 

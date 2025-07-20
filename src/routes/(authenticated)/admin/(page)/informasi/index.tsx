@@ -17,16 +17,8 @@ import type { InformasiItem, InformasiFilterOptions } from "~/types/informasi"; 
 import type { PaginationMeta } from "~/types/posyandu"; // Reusing pagination meta from posyandu
 
 export default component$(() => {
-  const {
-    items,
-    loading,
-    error,
-    success,
-    page,
-    limit,
-    fetchList,
-    deleteItem,
-  } = useInformasiEdukasiAdmin();
+  const { items, loading, error, success, page, limit, fetchList, deleteItem } =
+    useInformasiEdukasiAdmin();
   const nav = useNavigate();
 
   const filterOptions = useSignal<InformasiFilterOptions>({

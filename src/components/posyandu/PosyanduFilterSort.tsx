@@ -55,7 +55,9 @@ export const PosyanduFilterSort = component$(
               placeholder="Cari berdasarkan nama..."
               value={filterOptions.value.nama_posyandu || ""} // Ensure it's always a string
               onInput$={(e) =>
-                (filterOptions.value.nama_posyandu = (e.target as HTMLInputElement).value)
+                (filterOptions.value.nama_posyandu = (
+                  e.target as HTMLInputElement
+                ).value)
               }
               onEnter$={onFilterSortChange$}
               class="input-bordered"

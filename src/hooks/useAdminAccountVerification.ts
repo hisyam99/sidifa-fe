@@ -1,7 +1,6 @@
 import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
-import type { AdminVerificationItem } from "~/types/admin-account-verification"; // Removed unused import
-import type { User } from "~/types/admin"; // Import User type
+import type { AdminVerificationItem } from "~/types/admin-account-verification";
 
 export const useAdminAccountVerification = () => {
   const items = useSignal<AdminVerificationItem[]>([]);
@@ -19,7 +18,8 @@ export const useAdminAccountVerification = () => {
         page?: number;
         name?: string;
         role?: "admin" | "posyandu" | "psikolog" | "";
-        status?: "verified" | "unverified" | "";
+        verification?: "verified" | "unverified" | "";
+        orderBy?: "asc" | "desc" | "";
       } = {},
     ) => {
       loading.value = true;
@@ -29,24 +29,12 @@ export const useAdminAccountVerification = () => {
           limit: params.limit ?? limit.value,
           page: params.page ?? page.value,
           name: params.name,
-          // role and status filters might need mapping to backend API expectations
-          // For now, assume backend listUsers can filter by these directly or needs adjustments
+          role: params.role,
+          verification: params.verification,
+          orderBy: params.orderBy,
         });
 
-        // Filter response data by role and status manually if API doesn't support it directly
-        let filteredData = response.data;
-        if (params.role) {
-          filteredData = filteredData.filter(
-            (user: User) => user.role === params.role,
-          );
-        }
-        if (params.status) {
-          filteredData = filteredData.filter(
-            (user: User) => user.verification === params.status,
-          );
-        }
-
-        items.value = filteredData as AdminVerificationItem[];
+        items.value = response.data as AdminVerificationItem[];
         total.value = response.meta?.totalUsers || 0;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;

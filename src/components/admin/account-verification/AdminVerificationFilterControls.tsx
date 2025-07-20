@@ -5,6 +5,8 @@ import type { AdminVerificationFilterOptions } from "~/types/admin-account-verif
 interface AdminVerificationFilterControlsProps {
   filterOptions: Signal<AdminVerificationFilterOptions>;
   onFilterChange$: QRL<() => void>;
+  limit: Signal<number>;
+  onLimitChange$: QRL<(limit: number) => void>;
 }
 
 export const AdminVerificationFilterControls = component$(
@@ -18,10 +20,18 @@ export const AdminVerificationFilterControls = component$(
       { label: "Psikolog", value: "psikolog" },
     ];
 
-    const statusOptions = [
-      { label: "Semua Status", value: "" },
-      { label: "Terverifikasi", value: "verified" },
-      { label: "Belum Terverifikasi", value: "unverified" },
+    const orderByOptions = [
+      { label: "Default", value: "" },
+      { label: "Belum Terverifikasi", value: "asc" }, // Unverified first
+      { label: "Terverifikasi", value: "desc" }, // Verified first
+    ];
+
+    const limitOptions = [
+      { label: "5", value: 5 },
+      { label: "10", value: 10 },
+      { label: "20", value: 20 },
+      { label: "50", value: 50 },
+      { label: "100", value: 100 },
     ];
 
     return (
@@ -39,7 +49,9 @@ export const AdminVerificationFilterControls = component$(
               placeholder="Cari berdasarkan nama..."
               value={filterOptions.value.name || ""} // Ensure it's always a string
               onInput$={(e) =>
-                (filterOptions.value.name = (e.target as HTMLInputElement).value)
+                (filterOptions.value.name = (
+                  e.target as HTMLInputElement
+                ).value)
               }
               onEnter$={onFilterChange$}
               class="input-bordered"
@@ -67,22 +79,41 @@ export const AdminVerificationFilterControls = component$(
             </select>
           </div>
           <div class="form-control flex-1">
-            <label for="filter-status" class="label">
-              <span class="label-text">
-                Filter berdasarkan Status Verifikasi
-              </span>
+            <label for="order-by" class="label">
+              <span class="label-text">Urutkan Berdasarkan Verifikasi</span>
             </label>
             <select
-              id="filter-status"
+              id="order-by"
               class="select select-bordered w-full"
-              value={filterOptions.value.status}
+              value={filterOptions.value.orderBy}
               onChange$={(e) => {
-                filterOptions.value.status = (e.target as HTMLSelectElement)
-                  .value as "verified" | "unverified" | "";
+                filterOptions.value.orderBy = (e.target as HTMLSelectElement)
+                  .value as "asc" | "desc" | "";
                 onFilterChange$();
               }}
             >
-              {statusOptions.map((option) => (
+              {orderByOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div class="form-control flex-1">
+            <label for="limit-per-page" class="label">
+              <span class="label-text">Limit per Halaman</span>
+            </label>
+            <select
+              id="limit-per-page"
+              class="select select-bordered w-full"
+              value={props.limit.value}
+              onChange$={(e) => {
+                props.onLimitChange$(
+                  parseInt((e.target as HTMLSelectElement).value),
+                );
+              }}
+            >
+              {limitOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>

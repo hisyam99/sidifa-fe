@@ -1,4 +1,10 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useTask$,
+  useComputed$,
+  $,
+} from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { useAdminAccountVerification } from "~/hooks/useAdminAccountVerification";
@@ -39,10 +45,19 @@ export default component$(() => {
   const filterOptions = useSignal<AdminVerificationFilterOptions>({
     name: "",
     role: "",
-    status: "",
+    orderBy: "",
   });
   const currentPage = useSignal(1);
   const limit = useSignal(10);
+
+  const meta = useComputed$<PaginationMeta>(() => {
+    return {
+      totalData: total.value,
+      totalPage: Math.ceil(total.value / limit.value),
+      currentPage: currentPage.value,
+      limit: limit.value,
+    };
+  });
 
   const showDetailModal = useSignal(false);
   const showVerifyModal = useSignal(false);
@@ -55,7 +70,7 @@ export default component$(() => {
       page: currentPage.value,
       name: filterOptions.value.name || undefined,
       role: filterOptions.value.role || undefined,
-      status: filterOptions.value.status || undefined,
+      orderBy: filterOptions.value.orderBy || undefined,
     });
   });
 
@@ -63,7 +78,6 @@ export default component$(() => {
     track(isLoggedIn);
     track(() => filterOptions.value.name);
     track(() => filterOptions.value.role);
-    track(() => filterOptions.value.status);
     track(currentPage);
     track(limit);
 
@@ -76,12 +90,22 @@ export default component$(() => {
 
   const handleFilterChange = $(() => {
     currentPage.value = 1;
+    handleFetchVerificationList();
   });
 
   const handlePageChange = $((pageNumber: number) => {
-    if (meta.totalPage && (pageNumber < 1 || pageNumber > meta.totalPage))
+    if (
+      meta.value.totalPage &&
+      (pageNumber < 1 || pageNumber > meta.value.totalPage)
+    )
       return;
     currentPage.value = pageNumber;
+  });
+
+  const handleLimitChange = $((newLimit: number) => {
+    limit.value = newLimit;
+    currentPage.value = 1; // Reset to first page when limit changes
+    handleFetchVerificationList();
   });
 
   const openDetailModal = $((account: AdminVerificationItem) => {
@@ -129,13 +153,6 @@ export default component$(() => {
     }
   });
 
-  const meta: PaginationMeta = {
-    totalData: total.value,
-    totalPage: Math.ceil(total.value / limit.value),
-    currentPage: currentPage.value,
-    limit: limit.value,
-  };
-
   return (
     <div>
       <AdminVerificationListHeader
@@ -149,6 +166,8 @@ export default component$(() => {
       <AdminVerificationFilterControls
         filterOptions={filterOptions}
         onFilterChange$={handleFilterChange}
+        limit={limit}
+        onLimitChange$={handleLimitChange}
       />
 
       {loading.value ? (
@@ -164,9 +183,9 @@ export default component$(() => {
         />
       )}
 
-      {meta.totalPage > 1 && (
+      {meta.value.totalPage > 1 && (
         <PaginationControls
-          meta={meta}
+          meta={meta.value}
           currentPage={currentPage.value}
           onPageChange$={handlePageChange}
         />

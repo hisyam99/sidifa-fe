@@ -8,7 +8,8 @@ import { sessionUtils } from "~/utils/auth";
 //   // No specific props needed beyond children, as it handles its own auth logic
 // }
 
-export const AdminOnlyContent = component$(() => { // Removed props parameter
+export const AdminOnlyContent = component$(() => {
+  // Removed props parameter
   const { user, isLoggedIn } = useAuth();
   const nav = useNavigate();
   const isClient = useSignal(false);

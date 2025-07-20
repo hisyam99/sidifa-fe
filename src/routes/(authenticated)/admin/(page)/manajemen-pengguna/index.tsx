@@ -5,10 +5,7 @@ import {
   UserFilterControls,
 } from "~/components/admin/user-management";
 import type { UserItem, RoleFilterOption } from "~/types/user-management";
-import {
-  GenericLoadingSpinner,
-  ConfirmationModal,
-} from "~/components/common";
+import { GenericLoadingSpinner, ConfirmationModal } from "~/components/common";
 
 export default component$(() => {
   const dummyUsers: UserItem[] = [

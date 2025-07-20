@@ -1,7 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { SignupPsikologForm, SignupHeroContent } from "~/components/auth";
 import { useAuthRedirect } from "~/hooks/useAuthRedirect";
-import { LuBrain, LuUsers, LuShield } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  LuBrain,
+  LuUsers,
+  LuShield,
+} from "~/components/icons/lucide-optimized"; // Updated import path
 
 export default component$(() => {
   useAuthRedirect();

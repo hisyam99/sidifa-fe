@@ -32,8 +32,8 @@ export const AdminVerificationDetailCard = component$(
           </div>
           <div>
             <b>Status Verifikasi:</b>{" "}
-            <span class={`badge ${getStatusBadgeClass(item.status)}`}>
-              {item.status === "verified"
+            <span class={`badge ${getStatusBadgeClass(item.verification)}`}>
+              {item.verification === "verified"
                 ? "Terverifikasi"
                 : "Belum Terverifikasi"}
             </span>
@@ -41,12 +41,12 @@ export const AdminVerificationDetailCard = component$(
           {/* Add more detail fields here as needed, e.g., document links */}
         </div>
         <div class="flex gap-2 mt-4">
-          {item.status === "unverified" && onVerify$ && (
+          {item.verification === "unverified" && onVerify$ && (
             <button class="btn btn-success" onClick$={() => onVerify$(item)}>
               Verifikasi Akun
             </button>
           )}
-          {item.status === "verified" && onUnverify$ && (
+          {item.verification === "verified" && onUnverify$ && (
             <button class="btn btn-warning" onClick$={() => onUnverify$(item)}>
               Batalkan Verifikasi
             </button>

@@ -44,16 +44,20 @@ export default component$(() => {
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayedArticles.value.length > 0 ? (
-          displayedArticles.value.map((article: ArticleItem) => ( // Use displayedArticles.value
-            <InformationArticleCard
-              key={article.title}
-              title={article.title}
-              category={article.category}
-              image={article.image}
-              excerpt={article.excerpt}
-              href={`/kader/informasi/${article.title.toLowerCase().replace(/\s/g, "-")}`}
-            />
-          ))
+          displayedArticles.value.map(
+            (
+              article: ArticleItem, // Use displayedArticles.value
+            ) => (
+              <InformationArticleCard
+                key={article.title}
+                title={article.title}
+                category={article.category}
+                image={article.image}
+                excerpt={article.excerpt}
+                href={`/kader/informasi/${article.title.toLowerCase().replace(/\s/g, "-")}`}
+              />
+            ),
+          )
         ) : (
           <p class="col-span-full text-center text-base-content/70">
             Tidak ada artikel yang cocok dengan pencarian Anda.

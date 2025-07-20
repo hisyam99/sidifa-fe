@@ -1,5 +1,9 @@
 import { component$, QRL } from "@builder.io/qwik";
-import { LuMapPin, LuBuilding, LuShare } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  LuMapPin,
+  LuBuilding,
+  LuShare,
+} from "~/components/icons/lucide-optimized"; // Updated import path
 
 interface JobCardProps {
   title: string;

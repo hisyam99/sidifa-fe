@@ -1,4 +1,4 @@
-import { component$, Signal } from "@builder.io/qwik";
+import { component$, Signal, QRL } from "@builder.io/qwik";
 import { LuLoader2 } from "~/components/icons/lucide-optimized"; // Updated import path
 import type { PosyanduItem } from "~/types/posyandu";
 
@@ -6,6 +6,7 @@ interface PosyanduTableProps {
   posyanduList: Signal<PosyanduItem[]>;
   loading: Signal<boolean>;
   error: Signal<string | null>;
+  onRegister$?: QRL<(posyanduId: string) => Promise<void>>;
 }
 
 export const PosyanduTable = component$((props: PosyanduTableProps) => {
@@ -60,9 +61,22 @@ export const PosyanduTable = component$((props: PosyanduTableProps) => {
                     <td>{posyandu.no_telp}</td>
                     <td>
                       <div class="flex gap-2">
-                        <button class="btn btn-primary btn-sm">Lihat</button>
-                        <button class="btn btn-secondary btn-sm">Edit</button>
-                        <button class="btn btn-error btn-sm">Hapus</button>
+                        {posyandu.isRegistered ? (
+                          <button class="btn btn-secondary btn-sm" disabled>
+                            Terdaftar
+                          </button>
+                        ) : (
+                          <button
+                            class="btn btn-secondary btn-sm"
+                            onClick$={async () => {
+                              if (props.onRegister$) {
+                                await props.onRegister$(posyandu.id);
+                              }
+                            }}
+                          >
+                            Daftar
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

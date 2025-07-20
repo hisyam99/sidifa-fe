@@ -24,7 +24,9 @@ export const AdminPosyanduFilterControls = component$(
               placeholder="Masukkan nama posyandu..."
               value={filterOptions.value.nama_posyandu || ""} // Ensure it's always a string
               onInput$={(e) =>
-                (filterOptions.value.nama_posyandu = (e.target as HTMLInputElement).value)
+                (filterOptions.value.nama_posyandu = (
+                  e.target as HTMLInputElement
+                ).value)
               }
               onEnter$={onFilterChange$}
               class="input-bordered"

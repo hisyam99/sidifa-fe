@@ -1,4 +1,5 @@
-export interface ArticleItem { // Export the interface
+export interface ArticleItem {
+  // Export the interface
   title: string;
   category: string;
   image: string;

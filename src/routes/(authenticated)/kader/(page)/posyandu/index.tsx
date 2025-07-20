@@ -6,7 +6,7 @@ import {
   PosyanduFilterSort,
   PosyanduTable,
 } from "~/components/posyandu";
-import { PaginationControls } from "~/components/common";
+import { PaginationControls, GenericLoadingSpinner } from "~/components/common";
 import type {
   PosyanduItem,
   PaginationMeta,
@@ -46,6 +46,20 @@ export default component$(() => {
       meta.value = response.meta;
     } catch (err: any) {
       error.value = err.message || "Gagal memuat data posyandu.";
+    } finally {
+      loading.value = false;
+    }
+  });
+
+  const registerToPosyandu = $(async (posyanduId: string) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      await kaderService.registerKaderPosyandu(posyanduId);
+      alert("Berhasil mendaftar ke posyandu");
+      fetchPosyandu(); // Refresh the list
+    } catch (err: any) {
+      error.value = err.message || "Gagal mendaftar ke posyandu";
     } finally {
       loading.value = false;
     }
@@ -103,11 +117,16 @@ export default component$(() => {
         onLimitChange$={handleLimitChange}
       />
 
-      <PosyanduTable
-        posyanduList={posyanduList}
-        loading={loading}
-        error={error}
-      />
+      {loading.value ? (
+        <GenericLoadingSpinner />
+      ) : (
+        <PosyanduTable
+          posyanduList={posyanduList}
+          loading={loading}
+          error={error}
+          onRegister$={registerToPosyandu}
+        />
+      )}
 
       {meta.value && meta.value.totalPage > 1 && (
         <PaginationControls

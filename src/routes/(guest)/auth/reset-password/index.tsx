@@ -1,7 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { ResetPasswordForm, AuthInfoContent } from "~/components/auth";
 import { useAuthRedirect } from "~/hooks/useAuthRedirect";
-import { LuLock, LuShield, LuCheckCircle } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  LuLock,
+  LuShield,
+  LuCheckCircle,
+} from "~/components/icons/lucide-optimized"; // Updated import path
 
 export default component$(() => {
   useAuthRedirect();

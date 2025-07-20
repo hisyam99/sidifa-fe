@@ -151,12 +151,17 @@ export const adminService = {
     limit?: number;
     page?: number;
     name?: string;
+    role?: string;
+    verification?: string;
     orderBy?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.name) queryParams.append("name", params.name);
+    if (params.role) queryParams.append("role", params.role);
+    if (params.verification)
+      queryParams.append("verification", params.verification);
     if (params.orderBy) queryParams.append("orderBy", params.orderBy);
 
     const response = await api.get(
@@ -207,12 +212,12 @@ export const adminService = {
     no_telp?: string;
     status?: "Aktif" | "Tidak Aktif"; // Added status to update data
   }) {
-    const response = await api.patch(`/admin/posyandu/${data.id}`, data);
+    const response = await api.patch(`/admin/posyandu`, data);
     return response.data;
   },
 
   async deletePosyandu(id: string) {
-    const response = await api.delete(`/admin/posyandu/${id}`);
+    const response = await api.delete(`/admin/posyandu`, { data: { id } });
     return response.data;
   },
 
@@ -282,6 +287,18 @@ export const kaderService = {
       queryParams.append("nama_posyandu", params.nama_posyandu);
     if (params.page) queryParams.append("page", params.page.toString());
     const response = await api.get(`/kader/posyandu?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  async getPosyanduDetail(params: { id: string }) {
+    const response = await api.get(`/kader/posyandu/detail`, { data: params });
+    return response.data;
+  },
+
+  async registerKaderPosyandu(posyandu_id: string) {
+    const response = await api.post(`/kader/register-kader-posyandu`, {
+      posyandu_id,
+    });
     return response.data;
   },
 };

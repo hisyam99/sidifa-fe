@@ -3,7 +3,11 @@ export interface PosyanduItem {
   nama_posyandu: string;
   alamat: string;
   no_telp: string;
-  // Tambahkan properti lain yang relevan dari API jika ada
+  users_id?: string;
+  created_at: string;
+  updated_at: string | null;
+  deleted_at: string | null;
+  isRegistered?: boolean; // Indicates if the current kader is registered to this posyandu
 }
 
 export interface PosyanduDetail extends PosyanduItem {

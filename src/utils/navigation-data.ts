@@ -125,7 +125,13 @@ export const generateNavigationLinks = (
     authenticatedNavigation.forEach((item) => {
       if (!item.roles) {
         links.push(item);
-      } else if (userRole && item.roles.includes(userRole as "guest" | "user" | "admin" | "kader" | "psikolog")) { // Explicitly cast to valid role type
+      } else if (
+        userRole &&
+        item.roles.includes(
+          userRole as "guest" | "user" | "admin" | "kader" | "psikolog",
+        )
+      ) {
+        // Explicitly cast to valid role type
         links.push(item);
       }
     });

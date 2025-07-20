@@ -12,10 +12,10 @@ interface AdminVerificationTableProps {
 
 export const AdminVerificationTable = component$(
   (props: AdminVerificationTableProps) => {
-    const { items, page, limit, onViewDetail$, onVerify$, onUnverify$ } = props;
+    const { items, onViewDetail$, onVerify$, onUnverify$ } = props;
 
-    const getStatusBadgeClass = (status: "verified" | "unverified") => {
-      return status === "verified" ? "badge-success" : "badge-warning";
+    const getStatusBadgeClass = (verification: "verified" | "unverified") => {
+      return verification === "verified" ? "badge-success" : "badge-warning";
     };
 
     return (
@@ -26,7 +26,6 @@ export const AdminVerificationTable = component$(
         <table class="table table-zebra w-full">
           <thead>
             <tr>
-              <th>No</th>
               <th>Nama</th>
               <th>Email</th>
               <th>Peran</th>
@@ -37,20 +36,21 @@ export const AdminVerificationTable = component$(
           <tbody>
             {items.length === 0 ? (
               <tr>
-                <td colSpan={6} class="text-center text-base-content/60 py-8">
+                <td colSpan={5} class="text-center text-base-content/60 py-8">
                   Tidak ada data akun untuk verifikasi.
                 </td>
               </tr>
             ) : (
-              items.map((item: AdminVerificationItem, idx: number) => (
+              items.map((item: AdminVerificationItem) => (
                 <tr key={item.id}>
-                  <td>{(page - 1) * limit + idx + 1}</td>
                   <td class="font-medium">{item.name}</td>
                   <td>{item.email}</td>
                   <td>{item.role}</td>
                   <td>
-                    <span class={`badge ${getStatusBadgeClass(item.status)}`}>
-                      {item.status === "verified"
+                    <span
+                      class={`badge ${getStatusBadgeClass(item.verification)}`}
+                    >
+                      {item.verification === "verified"
                         ? "Terverifikasi"
                         : "Belum Terverifikasi"}
                     </span>
@@ -65,7 +65,7 @@ export const AdminVerificationTable = component$(
                           Lihat Detail
                         </button>
                       )}
-                      {item.status === "unverified" && onVerify$ && (
+                      {item.verification === "unverified" && onVerify$ && (
                         <button
                           class="btn btn-sm btn-success"
                           onClick$={() => onVerify$(item)}
@@ -73,7 +73,7 @@ export const AdminVerificationTable = component$(
                           Verifikasi
                         </button>
                       )}
-                      {item.status === "verified" && onUnverify$ && (
+                      {item.verification === "verified" && onUnverify$ && (
                         <button
                           class="btn btn-sm btn-warning"
                           onClick$={() => onUnverify$(item)}
