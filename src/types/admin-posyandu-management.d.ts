@@ -4,7 +4,10 @@ export interface AdminPosyanduItem {
   alamat: string;
   no_telp: string;
   status: "Aktif" | "Tidak Aktif";
-  // Add other relevant properties
+  users_id?: string;
+  created_at?: string;
+  updated_at?: string | null;
+  deleted_at?: string | null;
 }
 
 export interface AdminPosyanduFilterOptions {

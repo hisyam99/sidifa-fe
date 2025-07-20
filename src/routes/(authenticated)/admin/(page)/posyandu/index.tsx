@@ -1,4 +1,10 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useTask$,
+  useComputed$,
+  $,
+} from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
 import type { DocumentHead } from "@builder.io/qwik-city";
@@ -9,19 +15,16 @@ import {
   AdminPosyanduTable,
   AdminPosyanduForm,
   AdminPosyanduFormData,
+  AdminPosyanduDetailCard,
 } from "~/components/admin/posyandu-management";
-import {
-  PaginationControls,
-  ConfirmationModal,
-  GenericLoadingSpinner,
-} from "~/components/common";
+import { PaginationControls, ConfirmationModal } from "~/components/common";
 import Alert from "~/components/ui/Alert"; // Keeping the existing Alert component
 
 import type {
   AdminPosyanduItem,
   AdminPosyanduFilterOptions,
 } from "~/types/admin-posyandu-management";
-import type { PaginationMeta } from "~/types/posyandu"; // Reusing pagination meta
+import type { PaginationMeta } from "~/types/posyandu";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -31,7 +34,6 @@ export default component$(() => {
     error,
     success,
     total,
-    // Removed unused currentPageFromHook and limitFromHook
     fetchList,
     createItem,
     updateItem,
@@ -43,74 +45,70 @@ export default component$(() => {
     nama_posyandu: "",
     status: "",
   });
-  const currentPage = useSignal(1); // Internal state for pagination
-  const limit = useSignal(10); // Internal state for limit
+  const currentPageLocal = useSignal(1);
+  const limit = useSignal(10);
+
+  // Reactive meta calculation
+  const meta = useComputed$<PaginationMeta>(() => {
+    return {
+      totalData: total.value,
+      totalPage: Math.ceil(total.value / limit.value),
+      currentPage: currentPageLocal.value,
+      limit: limit.value,
+    };
+  });
 
   // Modal states
   const showCreateModal = useSignal(false);
   const showEditModal = useSignal(false);
   const showDeleteModal = useSignal(false);
-  const showToggleStatusModal = useSignal(false); // New modal for status toggle
+  const showDetailModal = useSignal(false);
+  const showToggleStatusModal = useSignal(false);
   const selectedPosyandu = useSignal<AdminPosyanduItem | null>(null);
 
-  // Form states - use signals directly, or initialData to form component
-  // const formData = useSignal<AdminPosyanduFormData>({ nama_posyandu: '', alamat: '', no_telp: '', status: 'Aktif' });
-
   const handleFetchPosyandu = $(async () => {
-    // console.log('Fetching posyandu with:', {
-    //   limit: limit.value,
-    //   page: currentPage.value,
-    //   nama_posyandu: filterOptions.value.nama_posyandu || undefined,
-    //   status: filterOptions.value.status || undefined,
-    // });
+    console.log("Fetching posyandu with filters:", {
+      limit: limit.value,
+      page: currentPageLocal.value,
+      nama_posyandu: filterOptions.value.nama_posyandu,
+    });
 
     await fetchList({
       limit: limit.value,
-      page: currentPage.value,
+      page: currentPageLocal.value,
       nama_posyandu: filterOptions.value.nama_posyandu || undefined,
-      status: filterOptions.value.status || undefined,
     });
   });
 
   // Initial load and re-load on filter/pagination changes
   useTask$(({ track }) => {
     track(isLoggedIn);
-    track(() => filterOptions.value.nama_posyandu);
-    track(() => filterOptions.value.status);
-    track(currentPage);
+    track(currentPageLocal);
     track(limit);
 
     if (isLoggedIn.value) {
       handleFetchPosyandu();
-    } else {
-      posyanduList.value = []; // Clear list if not logged in
-      // error.value = "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
     }
   });
 
-  const handleFilterChange = $(() => {
-    currentPage.value = 1; // Reset page to 1 on any filter change
-    // handleFetchPosyandu will be triggered by useTask$
+  const handleFilterChange = $(async () => {
+    currentPageLocal.value = 1; // Reset page to 1 on any filter change
+    await handleFetchPosyandu(); // Fetch data with new filter
   });
-
-  // Removed handleLimitChange as it was unused
-  /*
-  const handleLimitChange = $((event: Event) => {
-    const newLimit = parseInt((event.target as HTMLSelectElement).value);
-    if (newLimit !== limit.value) {
-      limit.value = newLimit;
-      currentPage.value = 1; // Reset page to 1 on limit change
-      // handleFetchPosyandu will be triggered by useTask$
-    }
-  });
-  */
 
   const handlePageChange = $((pageNumber: number) => {
-    // Ensure meta is not null before accessing its properties
-    if (meta.totalPage && (pageNumber < 1 || pageNumber > meta.totalPage))
+    if (
+      meta.value.totalPage &&
+      (pageNumber < 1 || pageNumber > meta.value.totalPage)
+    )
       return;
-    currentPage.value = pageNumber;
-    // handleFetchPosyandu will be triggered by useTask$
+    currentPageLocal.value = pageNumber;
+  });
+
+  const handleLimitChange = $((newLimit: number) => {
+    limit.value = newLimit;
+    currentPageLocal.value = 1; // Reset to first page when limit changes
+    handleFetchPosyandu();
   });
 
   // Modal handlers
@@ -131,6 +129,12 @@ export default component$(() => {
     clearMessages();
   });
 
+  const openDetailModal = $((posyandu: AdminPosyanduItem) => {
+    selectedPosyandu.value = posyandu;
+    showDetailModal.value = true;
+    clearMessages();
+  });
+
   const openToggleStatusModal = $((posyandu: AdminPosyanduItem) => {
     selectedPosyandu.value = posyandu;
     showToggleStatusModal.value = true;
@@ -141,28 +145,46 @@ export default component$(() => {
     showCreateModal.value = false;
     showEditModal.value = false;
     showDeleteModal.value = false;
+    showDetailModal.value = false;
     showToggleStatusModal.value = false;
     selectedPosyandu.value = null;
     clearMessages();
-    handleFetchPosyandu(); // Re-fetch data after any CRUD operation
   });
 
   // Form handlers
   const handleCreate = $(async (data: AdminPosyanduFormData) => {
-    await createItem(data);
-    if (!error.value) {
-      closeModals();
+    try {
+      // Extract only the required fields for creation
+      const createData = {
+        nama_posyandu: data.nama_posyandu,
+        alamat: data.alamat,
+        no_telp: data.no_telp,
+      };
+      await createItem(createData);
+      if (!error.value) {
+        closeModals();
+      }
+    } catch (err) {
+      console.error("Error creating posyandu:", err);
     }
   });
 
   const handleUpdate = $(async (data: AdminPosyanduFormData) => {
     if (!selectedPosyandu.value) return;
-    await updateItem({
-      id: selectedPosyandu.value.id,
-      ...data,
-    });
-    if (!error.value) {
-      closeModals();
+    try {
+      // Extract only the required fields for update
+      const updateData = {
+        id: selectedPosyandu.value.id,
+        nama_posyandu: data.nama_posyandu,
+        alamat: data.alamat,
+        no_telp: data.no_telp,
+      };
+      await updateItem(updateData);
+      if (!error.value) {
+        closeModals();
+      }
+    } catch (err) {
+      console.error("Error updating posyandu:", err);
     }
   });
 
@@ -176,28 +198,24 @@ export default component$(() => {
 
   const handleToggleStatus = $(async () => {
     if (!selectedPosyandu.value) return;
-    const newStatus =
-      selectedPosyandu.value.status === "Aktif" ? "Tidak Aktif" : "Aktif";
-    await updateItem({
-      id: selectedPosyandu.value.id,
-      status: newStatus, // Only sending status for this specific action
-      // Pass other required fields if your API needs full object for update
-      nama_posyandu: selectedPosyandu.value.nama_posyandu,
-      alamat: selectedPosyandu.value.alamat,
-      no_telp: selectedPosyandu.value.no_telp,
-    });
-    if (!error.value) {
-      closeModals();
+    try {
+      const newStatus: "Aktif" | "Tidak Aktif" =
+        selectedPosyandu.value.status === "Aktif" ? "Tidak Aktif" : "Aktif";
+      const updateData = {
+        id: selectedPosyandu.value.id,
+        nama_posyandu: selectedPosyandu.value.nama_posyandu,
+        alamat: selectedPosyandu.value.alamat,
+        no_telp: selectedPosyandu.value.no_telp,
+        status: newStatus,
+      };
+      await updateItem(updateData);
+      if (!error.value) {
+        closeModals();
+      }
+    } catch (err) {
+      console.error("Error toggling status:", err);
     }
   });
-
-  // Pagination meta data for PaginationControls
-  const meta: PaginationMeta = {
-    totalData: total.value,
-    totalPage: Math.ceil(total.value / limit.value),
-    currentPage: currentPage.value,
-    limit: limit.value,
-  };
 
   return (
     <div>
@@ -218,26 +236,25 @@ export default component$(() => {
       <AdminPosyanduFilterControls
         filterOptions={filterOptions}
         onFilterChange$={handleFilterChange}
+        limit={limit}
+        onLimitChange$={handleLimitChange}
       />
 
-      {loading.value ? (
-        <GenericLoadingSpinner />
-      ) : (
-        <AdminPosyanduTable
-          items={posyanduList.value}
-          page={currentPage.value}
-          limit={limit.value}
-          onViewDetail$={(item) => console.log(`View detail for ${item.id}`)} // Implement actual detail page navigation/modal
-          onEdit$={openEditModal}
-          onDelete$={openDeleteModal}
-          onToggleStatus$={openToggleStatusModal}
-        />
-      )}
+      <AdminPosyanduTable
+        items={posyanduList.value}
+        page={currentPageLocal.value}
+        limit={limit.value}
+        loading={loading.value}
+        onViewDetail$={openDetailModal}
+        onEdit$={openEditModal}
+        onDelete$={openDeleteModal}
+        onToggleStatus$={openToggleStatusModal}
+      />
 
-      {meta.totalPage > 1 && (
+      {meta.value.totalPage > 1 && (
         <PaginationControls
-          meta={meta}
-          currentPage={currentPage.value}
+          meta={meta.value}
+          currentPage={currentPageLocal.value}
           onPageChange$={handlePageChange}
         />
       )}
@@ -250,9 +267,10 @@ export default component$(() => {
           message=""
           onConfirm$={$(() => {})}
           onCancel$={closeModals}
-          confirmButtonText="Simpan"
-          cancelButtonText="Batal"
-          confirmButtonClass="btn-primary"
+          confirmButtonText=""
+          cancelButtonText="Tutup"
+          confirmButtonClass="hidden"
+          cancelButtonClass="btn-ghost"
         >
           <AdminPosyanduForm
             onSubmit$={handleCreate}
@@ -270,9 +288,10 @@ export default component$(() => {
           message=""
           onConfirm$={$(() => {})}
           onCancel$={closeModals}
-          confirmButtonText="Simpan Perubahan"
-          cancelButtonText="Batal"
-          confirmButtonClass="btn-primary"
+          confirmButtonText=""
+          cancelButtonText="Tutup"
+          confirmButtonClass="hidden"
+          cancelButtonClass="btn-ghost"
         >
           <AdminPosyanduForm
             initialData={selectedPosyandu.value}
@@ -295,6 +314,37 @@ export default component$(() => {
           cancelButtonText="Batal"
           confirmButtonClass="btn-error"
         />
+      )}
+
+      {/* Detail Modal */}
+      {showDetailModal.value && selectedPosyandu.value && (
+        <ConfirmationModal
+          isOpen={showDetailModal}
+          title="Detail Posyandu"
+          message=""
+          onConfirm$={$(() => {})}
+          onCancel$={closeModals}
+          confirmButtonText=""
+          cancelButtonText="Tutup"
+          confirmButtonClass="hidden"
+          cancelButtonClass="btn-ghost"
+        >
+          <AdminPosyanduDetailCard
+            item={selectedPosyandu.value}
+            onEdit$={$((id: string) => {
+              const item = posyanduList.value.find((p) => p.id === id);
+              if (item) openEditModal(item);
+            })}
+            onDelete$={$((id: string) => {
+              const item = posyanduList.value.find((p) => p.id === id);
+              if (item) openDeleteModal(item);
+            })}
+            onToggleStatus$={$((id: string) => {
+              const item = posyanduList.value.find((p) => p.id === id);
+              if (item) openToggleStatusModal(item);
+            })}
+          />
+        </ConfirmationModal>
       )}
 
       {/* Toggle Status Confirmation Modal */}
@@ -323,11 +373,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Manajemen Posyandu - Si-DIFA Admin",
+  title: "Manajemen Posyandu - Si-DIFA",
   meta: [
     {
       name: "description",
-      content: "Halaman manajemen data posyandu untuk admin Si-DIFA",
+      content: "Halaman manajemen data Posyandu untuk admin Si-DIFA",
     },
   ],
 };

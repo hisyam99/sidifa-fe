@@ -23,26 +23,44 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
     submitButtonText = "Simpan",
   } = props;
 
-  const formState = useSignal<AdminPosyanduFormData>(
-    initialData || {
-      nama_posyandu: "",
-      alamat: "",
-      no_telp: "",
-      status: "Aktif",
-    },
-  );
+  const formState = useSignal<AdminPosyanduFormData>({
+    nama_posyandu: "",
+    alamat: "",
+    no_telp: "",
+    status: "Aktif",
+  });
 
-  // Update formState if initialData changes (e.g., when editing different items)
+  // Update formState when initialData changes
   useTask$(({ track }) => {
     track(() => initialData);
     if (initialData) {
-      formState.value = { ...initialData };
+      formState.value = {
+        nama_posyandu: initialData.nama_posyandu || "",
+        alamat: initialData.alamat || "",
+        no_telp: initialData.no_telp || "",
+        status: initialData.status || "Aktif",
+      };
+    } else {
+      // Reset form for create mode
+      formState.value = {
+        nama_posyandu: "",
+        alamat: "",
+        no_telp: "",
+        status: "Aktif",
+      };
     }
   });
 
   const handleSubmit = $(async (event: Event) => {
     event.preventDefault();
     await onSubmit$(formState.value);
+  });
+
+  const updateField = $((field: keyof AdminPosyanduFormData, value: string) => {
+    formState.value = {
+      ...formState.value,
+      [field]: value,
+    };
   });
 
   return (
@@ -59,9 +77,7 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
           class="input input-bordered w-full"
           value={formState.value.nama_posyandu}
           onInput$={(e) =>
-            (formState.value.nama_posyandu = (
-              e.target as HTMLInputElement
-            ).value)
+            updateField("nama_posyandu", (e.target as HTMLInputElement).value)
           }
           required
         />
@@ -74,7 +90,7 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
           class="textarea textarea-bordered w-full"
           value={formState.value.alamat}
           onInput$={(e) =>
-            (formState.value.alamat = (e.target as HTMLTextAreaElement).value)
+            updateField("alamat", (e.target as HTMLTextAreaElement).value)
           }
           required
         />
@@ -88,7 +104,7 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
           class="input input-bordered w-full"
           value={formState.value.no_telp}
           onInput$={(e) =>
-            (formState.value.no_telp = (e.target as HTMLInputElement).value)
+            updateField("no_telp", (e.target as HTMLInputElement).value)
           }
           required
         />
@@ -101,9 +117,7 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
           class="select select-bordered w-full"
           value={formState.value.status}
           onChange$={(e) =>
-            (formState.value.status = (e.target as HTMLSelectElement).value as
-              | "Aktif"
-              | "Tidak Aktif")
+            updateField("status", (e.target as HTMLSelectElement).value)
           }
           required
         >

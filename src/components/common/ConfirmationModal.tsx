@@ -1,4 +1,4 @@
-import { component$, Signal, QRL } from "@builder.io/qwik";
+import { component$, Signal, QRL, Slot } from "@builder.io/qwik";
 
 interface ConfirmationModalProps {
   isOpen: Signal<boolean>;
@@ -31,16 +31,24 @@ export const ConfirmationModal = component$((props: ConfirmationModalProps) => {
 
   return (
     <div class="modal modal-open modal-bottom sm:modal-middle">
-      <div class="modal-box">
+      <div class="modal-box max-w-2xl">
         <h3 class="font-bold text-lg mb-2">{title}</h3>
-        <p class="py-4 text-base-content/70">{message}</p>
+        {message && <p class="py-4 text-base-content/70">{message}</p>}
+
+        {/* Slot untuk children content seperti form */}
+        <div class="py-4">
+          <Slot />
+        </div>
+
         <div class="modal-action">
           <button class={`btn ${cancelButtonClass}`} onClick$={onCancel$}>
             {cancelButtonText}
           </button>
-          <button class={`btn ${confirmButtonClass}`} onClick$={onConfirm$}>
-            {confirmButtonText}
-          </button>
+          {confirmButtonText && (
+            <button class={`btn ${confirmButtonClass}`} onClick$={onConfirm$}>
+              {confirmButtonText}
+            </button>
+          )}
         </div>
       </div>
     </div>

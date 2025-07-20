@@ -28,7 +28,7 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     icon: LuKey,
   },
   {
-    href: "/admin/manajemen-posyandu",
+    href: "/admin/posyandu",
     label: "Manajemen Posyandu",
     icon: LuBuilding,
   },

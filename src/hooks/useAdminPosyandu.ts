@@ -17,7 +17,6 @@ export const useAdminPosyandu = () => {
         limit?: number;
         page?: number;
         nama_posyandu?: string;
-        status?: "Aktif" | "Tidak Aktif" | "";
       } = {},
     ) => {
       loading.value = true;
@@ -27,16 +26,19 @@ export const useAdminPosyandu = () => {
           limit: params.limit ?? limit.value,
           page: params.page ?? page.value,
           nama_posyandu: params.nama_posyandu,
-          status: params.status,
         });
 
-        // Explicitly cast to expected type after receiving from API
-        items.value = response.data as AdminPosyanduItem[];
-        total.value = response.meta?.total || 0;
+        // Transform response to AdminPosyanduItem format
+        items.value = (response.data || []).map((item: any) => ({
+          ...item,
+          status: item.deleted_at ? "Tidak Aktif" : "Aktif",
+        })) as AdminPosyanduItem[];
+        total.value = response.meta?.count || 0;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data posyandu";
+        items.value = [];
       } finally {
         loading.value = false;
       }
@@ -52,7 +54,13 @@ export const useAdminPosyandu = () => {
       loading.value = true;
       error.value = null;
       try {
-        await adminService.createPosyandu(data);
+        // Only send required fields for creation
+        const createData = {
+          nama_posyandu: data.nama_posyandu,
+          alamat: data.alamat,
+          no_telp: data.no_telp,
+        };
+        await adminService.createPosyandu(createData);
         success.value = "Berhasil menambah posyandu";
         await fetchList(); // Refresh the list
       } catch (err: any) {
@@ -74,7 +82,14 @@ export const useAdminPosyandu = () => {
       loading.value = true;
       error.value = null;
       try {
-        await adminService.updatePosyandu(data);
+        // Only send fields that can be updated
+        const updateData = {
+          id: data.id,
+          nama_posyandu: data.nama_posyandu,
+          alamat: data.alamat,
+          no_telp: data.no_telp,
+        };
+        await adminService.updatePosyandu(updateData);
         success.value = "Berhasil memperbarui posyandu";
         await fetchList(); // Refresh the list
       } catch (err: any) {

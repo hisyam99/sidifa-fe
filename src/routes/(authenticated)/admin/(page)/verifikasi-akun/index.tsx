@@ -15,11 +15,7 @@ import {
   AdminVerificationTable,
   AdminVerificationDetailCard,
 } from "~/components/admin/account-verification";
-import {
-  PaginationControls,
-  ConfirmationModal,
-  GenericLoadingSpinner,
-} from "~/components/common";
+import { PaginationControls, ConfirmationModal } from "~/components/common";
 import Alert from "~/components/ui/Alert";
 
 import type {
@@ -170,18 +166,15 @@ export default component$(() => {
         onLimitChange$={handleLimitChange}
       />
 
-      {loading.value ? (
-        <GenericLoadingSpinner />
-      ) : (
-        <AdminVerificationTable
-          items={verificationList.value}
-          page={currentPage.value}
-          limit={limit.value}
-          onViewDetail$={openDetailModal}
-          onVerify$={openVerifyModal}
-          onUnverify$={openUnverifyModal}
-        />
-      )}
+      <AdminVerificationTable
+        items={verificationList.value}
+        page={currentPage.value}
+        limit={limit.value}
+        loading={loading.value}
+        onViewDetail$={openDetailModal}
+        onVerify$={openVerifyModal}
+        onUnverify$={openUnverifyModal}
+      />
 
       {meta.value.totalPage > 1 && (
         <PaginationControls

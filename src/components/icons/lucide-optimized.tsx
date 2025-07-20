@@ -62,6 +62,7 @@ import {
   LuYoutube as LucideLuYoutube, // Added
   LuZap as LucideLuZap, // Added
   LuClock as LucideLuClock, // Added LuClock
+  LuTrash as LucideLuTrash, // Added LuTrash
 } from "@qwikest/icons/lucide";
 
 export const LuCheckCircle = component$((props: SVGProps<SVGSVGElement>) => (
@@ -250,3 +251,6 @@ export const LuZap = component$((props: SVGProps<SVGSVGElement>) => (
 export const LuClock = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuClock {...props} />
 )); // Added LuClock
+export const LuTrash = component$((props: SVGProps<SVGSVGElement>) => (
+  <LucideLuTrash {...props} />
+)); // Added LuTrash

@@ -151,8 +151,8 @@ export const adminService = {
     limit?: number;
     page?: number;
     name?: string;
-    role?: string;
-    verification?: string;
+    role?: "admin" | "posyandu" | "psikolog" | "";
+    verification?: "verified" | "unverified" | "";
     orderBy?: string;
   }) {
     const queryParams = new URLSearchParams();
@@ -183,14 +183,12 @@ export const adminService = {
     limit?: number;
     page?: number;
     nama_posyandu?: string;
-    status?: "Aktif" | "Tidak Aktif" | ""; // Added status filter
   }) {
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.nama_posyandu)
       queryParams.append("nama_posyandu", params.nama_posyandu);
-    if (params.status) queryParams.append("status", params.status); // Add status to query
 
     const response = await api.get(`/admin/posyandu?${queryParams.toString()}`);
     return response.data;
@@ -210,23 +208,24 @@ export const adminService = {
     nama_posyandu?: string;
     alamat?: string;
     no_telp?: string;
-    status?: "Aktif" | "Tidak Aktif"; // Added status to update data
   }) {
-    const response = await api.patch(`/admin/posyandu`, data);
+    const response = await api.patch("/admin/posyandu", data);
     return response.data;
   },
 
   async deletePosyandu(id: string) {
-    const response = await api.delete(`/admin/posyandu`, { data: { id } });
+    const response = await api.delete("/admin/posyandu", {
+      data: { id },
+    });
     return response.data;
   },
 
   async detailPosyandu(id: string) {
-    // Moved and renamed from getPosyanduDetail
     const response = await api.get(`/admin/posyandu/detail/${id}`);
     return response.data;
   },
 
+  // Admin Psikolog CRUD operations
   async listPsikolog(params: {
     limit?: number;
     page?: number;
@@ -314,14 +313,14 @@ export const informasiEdukasiAdminService = {
     page?: number;
     deskripsi?: string;
     judul?: string;
-    tipe?: string; // Added tipe parameter
+    tipe?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.deskripsi) queryParams.append("deskripsi", params.deskripsi);
     if (params.judul) queryParams.append("judul", params.judul);
-    if (params.tipe) queryParams.append("tipe", params.tipe); // Append tipe to query params
+    if (params.tipe) queryParams.append("tipe", params.tipe);
     const response = await api.get(
       `/admin/informasi-edukasi?${queryParams.toString()}`,
     );
@@ -333,16 +332,14 @@ export const informasiEdukasiAdminService = {
   },
   async update(data: {
     id: string;
-    judul: string;
-    tipe: string;
-    deskripsi: string;
-    file_url?: string; // Changed file_name to file_url and made it optional
+    judul?: string;
+    tipe?: string;
+    deskripsi?: string;
+    file_name?: string;
+    role?: string;
+    name?: string;
   }) {
-    const response = await api.patch(`/admin/informasi-edukasi`, {
-      ...data,
-      role: "admin", // Assuming role is always admin for update
-      name: "admin", // Assuming name is always admin for update
-    });
+    const response = await api.patch(`/admin/informasi-edukasi`, data);
     return response.data;
   },
   async delete(id: string) {
@@ -355,13 +352,11 @@ export const informasiEdukasiAdminService = {
     judul: string;
     tipe: string;
     deskripsi: string;
-    file_url?: string; // Changed file_name to file_url and made it optional
+    file_name?: string;
+    role?: string;
+    name?: string;
   }) {
-    const response = await api.post(`/admin/informasi-edukasi`, {
-      ...data,
-      role: "admin", // Assuming role is always admin for creation
-      name: "admin", // Assuming name is always admin for creation
-    });
+    const response = await api.post(`/admin/informasi-edukasi`, data);
     return response.data;
   },
 };
