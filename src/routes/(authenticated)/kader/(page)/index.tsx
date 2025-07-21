@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
+import { $ } from "@builder.io/qwik";
 import {
   LuClipboardList,
   LuBriefcase,
@@ -18,25 +19,25 @@ export default component$(() => {
     {
       href: "/kader/posyandu",
       label: "List Posyandu",
-      icon: LuClipboardList,
+      icon: $(LuClipboardList),
       desc: "Lihat dan kelola seluruh posyandu yang Anda akses.",
     },
     {
       href: "/kader/lowongan",
       label: "Lowongan",
-      icon: LuBriefcase,
+      icon: $(LuBriefcase),
       desc: "Temukan informasi lowongan terbaru untuk kader.",
     },
     {
       href: "/kader/informasi",
       label: "Informasi",
-      icon: LuBookOpen,
+      icon: $(LuBookOpen),
       desc: "Akses materi edukasi dan informasi penting.",
     },
     {
       href: "/dashboard/profile",
       label: "Profil Saya",
-      icon: LuUser,
+      icon: $(LuUser),
       desc: "Lihat dan edit profil Anda.",
     },
   ];

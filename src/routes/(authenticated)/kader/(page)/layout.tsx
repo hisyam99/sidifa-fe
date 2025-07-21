@@ -2,7 +2,6 @@ import { component$, Slot } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { ProfileOverviewCard, SidebarStatCard } from "~/components/dashboard";
-import { Breadcrumbs } from "~/components/layout";
 
 export default component$(() => {
   useCheckRole(["kader"]);
@@ -16,8 +15,7 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <main class="container mx-auto p-4 md:p-8">
-        <Breadcrumbs />
+      <main>
         <div class="flex flex-col lg:flex-row gap-8">
           {/* Sidebar kiri */}
           <aside class="w-full lg:w-1/4 flex flex-col gap-4">
