@@ -33,7 +33,8 @@ export default component$(() => {
     loading,
     error,
     success,
-    total,
+    totalData,
+    totalPage,
     fetchList,
     createItem,
     updateItem,
@@ -51,8 +52,8 @@ export default component$(() => {
   // Reactive meta calculation
   const meta = useComputed$<PaginationMeta>(() => {
     return {
-      totalData: total.value,
-      totalPage: Math.ceil(total.value / limit.value),
+      totalData: totalData.value,
+      totalPage: totalPage.value,
       currentPage: currentPageLocal.value,
       limit: limit.value,
     };

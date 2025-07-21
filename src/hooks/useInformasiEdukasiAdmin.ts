@@ -60,11 +60,19 @@ export const useInformasiEdukasiAdmin = () => {
   const updateItem = $(async (data: InformasiFormData & { id: string }) => {
     loading.value = true;
     error.value = null;
+    success.value = null;
     try {
-      await informasiEdukasiAdminService.update(data);
+      await informasiEdukasiAdminService.update({
+        id: data.id,
+        judul: data.judul,
+        tipe: data.tipe,
+        deskripsi: data.deskripsi,
+        file: data.file,
+      });
       success.value = "Berhasil memperbarui informasi edukasi";
     } catch (err: any) {
       error.value = err.message || "Gagal memperbarui data";
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -73,11 +81,13 @@ export const useInformasiEdukasiAdmin = () => {
   const deleteItem = $(async (id: string) => {
     loading.value = true;
     error.value = null;
+    success.value = null;
     try {
       await informasiEdukasiAdminService.delete(id);
       success.value = "Berhasil menghapus informasi edukasi";
     } catch (err: any) {
       error.value = err.message || "Gagal menghapus data";
+      throw err;
     } finally {
       loading.value = false;
     }
@@ -86,11 +96,18 @@ export const useInformasiEdukasiAdmin = () => {
   const createItem = $(async (data: InformasiFormData) => {
     loading.value = true;
     error.value = null;
+    success.value = null;
     try {
-      await informasiEdukasiAdminService.create(data);
+      await informasiEdukasiAdminService.create({
+        judul: data.judul,
+        tipe: data.tipe,
+        deskripsi: data.deskripsi,
+        file: data.file,
+      });
       success.value = "Berhasil menambah informasi edukasi";
     } catch (err: any) {
       error.value = err.message || "Gagal menambah data";
+      throw err;
     } finally {
       loading.value = false;
     }

@@ -7,7 +7,8 @@ export const useAdminAccountVerification = () => {
   const loading = useSignal(false);
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
-  const total = useSignal<number>(0);
+  const totalData = useSignal<number>(0);
+  const totalPages = useSignal<number>(1);
   const page = useSignal<number>(1);
   const limit = useSignal<number>(10);
 
@@ -35,7 +36,8 @@ export const useAdminAccountVerification = () => {
         });
 
         items.value = response.data as AdminVerificationItem[];
-        total.value = response.meta?.totalUsers || 0;
+        totalData.value = response.meta?.totalData || 0;
+        totalPages.value = response.meta?.totalPage || 1;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
       } catch (err: any) {
@@ -84,7 +86,8 @@ export const useAdminAccountVerification = () => {
     loading,
     error,
     success,
-    total,
+    totalData,
+    totalPages,
     page,
     limit,
     fetchList,

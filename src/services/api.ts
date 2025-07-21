@@ -335,11 +335,20 @@ export const informasiEdukasiAdminService = {
     judul?: string;
     tipe?: string;
     deskripsi?: string;
-    file_name?: string;
-    role?: string;
-    name?: string;
+    file?: File;
   }) {
-    const response = await api.patch(`/admin/informasi-edukasi`, data);
+    const formData = new FormData();
+    formData.append("id", data.id);
+    if (data.judul) formData.append("judul", data.judul);
+    if (data.tipe) formData.append("tipe", data.tipe);
+    if (data.deskripsi) formData.append("deskripsi", data.deskripsi);
+    if (data.file) formData.append("file", data.file);
+
+    const response = await api.patch(`/admin/informasi-edukasi`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
   async delete(id: string) {
@@ -352,11 +361,19 @@ export const informasiEdukasiAdminService = {
     judul: string;
     tipe: string;
     deskripsi: string;
-    file_name?: string;
-    role?: string;
-    name?: string;
+    file?: File;
   }) {
-    const response = await api.post(`/admin/informasi-edukasi`, data);
+    const formData = new FormData();
+    formData.append("judul", data.judul);
+    formData.append("tipe", data.tipe);
+    formData.append("deskripsi", data.deskripsi);
+    if (data.file) formData.append("file", data.file);
+
+    const response = await api.post(`/admin/informasi-edukasi`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 };

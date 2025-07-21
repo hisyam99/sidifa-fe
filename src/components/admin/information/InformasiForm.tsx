@@ -5,7 +5,8 @@ export interface InformasiFormData {
   judul: string;
   tipe: string;
   deskripsi: string;
-  file_url?: string; // Changed file_name to file_url
+  file?: File;
+  file_url?: string; // For displaying existing file URL
 }
 
 interface InformasiFormProps {
@@ -28,13 +29,25 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
       judul: "",
       tipe: "",
       deskripsi: "",
-      file_url: "", // Changed file_name to file_url
+      file_url: "",
     },
   );
 
+  const selectedFile = useSignal<File | null>(null);
+
   const handleSubmit = $(async (event: Event) => {
     event.preventDefault();
-    await onSubmit$(formState.value);
+    const submitData = {
+      ...formState.value,
+      file: selectedFile.value || undefined,
+    };
+    await onSubmit$(submitData);
+  });
+
+  const handleFileChange = $((event: Event) => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    selectedFile.value = file || null;
   });
 
   return (
@@ -56,14 +69,20 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         <label class="label">
           <span class="label-text">Tipe</span>
         </label>
-        <input
-          class="input input-bordered w-full"
+        <select
+          class="select select-bordered w-full"
           value={formState.value.tipe}
-          onInput$={(e) =>
-            (formState.value.tipe = (e.target as HTMLInputElement).value)
+          onChange$={(e) =>
+            (formState.value.tipe = (e.target as HTMLSelectElement).value)
           }
           required
-        />
+        >
+          <option value="">Pilih Tipe</option>
+          <option value="artikel">Artikel</option>
+          <option value="panduan">Panduan</option>
+          <option value="video">Video</option>
+          <option value="infografis">Infografis</option>
+        </select>
       </div>
       <div>
         <label class="label">
@@ -82,15 +101,30 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
       </div>
       <div>
         <label class="label">
-          <span class="label-text">URL File (Opsional)</span>
+          <span class="label-text">Upload File (Opsional)</span>
         </label>
         <input
-          class="input input-bordered w-full"
-          value={formState.value.file_url}
-          onInput$={(e) =>
-            (formState.value.file_url = (e.target as HTMLInputElement).value)
-          }
+          type="file"
+          class="file-input file-input-bordered w-full"
+          accept="image/*,.pdf,.doc,.docx"
+          onChange$={handleFileChange}
         />
+        {selectedFile.value && (
+          <div class="mt-2 text-sm text-base-content/70">
+            File terpilih: {selectedFile.value.name}
+          </div>
+        )}
+        {formState.value.file_url && !selectedFile.value && (
+          <div class="mt-2">
+            <a
+              href={formState.value.file_url}
+              target="_blank"
+              class="link link-primary text-sm"
+            >
+              File saat ini: Lihat File
+            </a>
+          </div>
+        )}
       </div>
       <button class="btn btn-primary w-full" type="submit" disabled={loading}>
         {loading ? (

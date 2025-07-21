@@ -39,15 +39,19 @@ export default component$(() => {
   const handleSubmit = $(async (data: InformasiFormData) => {
     const id = loc.params.id;
     if (!id) return;
-    await updateItem({
-      id,
-      judul: data.judul,
-      tipe: data.tipe,
-      deskripsi: data.deskripsi,
-      file_url: data.file_url || "", // Ensure file_url is always a string
-    });
-    if (!error.value) {
-      nav(`/admin/informasi/${id}`);
+    try {
+      await updateItem({
+        id,
+        judul: data.judul,
+        tipe: data.tipe,
+        deskripsi: data.deskripsi,
+        file: data.file,
+      });
+      if (!error.value) {
+        nav(`/admin/informasi/${id}`);
+      }
+    } catch {
+      // Error is already handled in updateItem function
     }
   });
 

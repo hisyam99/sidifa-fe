@@ -12,14 +12,18 @@ export default component$(() => {
   const nav = useNavigate();
 
   const handleSubmit = $(async (data: InformasiFormData) => {
-    await createItem({
-      judul: data.judul,
-      tipe: data.tipe,
-      deskripsi: data.deskripsi,
-      file_url: data.file_url, // Changed from file_name to file_url
-    });
-    if (!error.value) {
-      nav(`/admin/informasi`);
+    try {
+      await createItem({
+        judul: data.judul,
+        tipe: data.tipe,
+        deskripsi: data.deskripsi,
+        file: data.file,
+      });
+      if (!error.value) {
+        nav(`/admin/informasi`);
+      }
+    } catch {
+      // Error is already handled in createItem function
     }
   });
 

@@ -31,7 +31,8 @@ export default component$(() => {
     loading,
     error,
     success,
-    total,
+    totalData,
+    totalPages, // <-- import this
     fetchList,
     verifyAccount,
     unverifyAccount,
@@ -48,8 +49,8 @@ export default component$(() => {
 
   const meta = useComputed$<PaginationMeta>(() => {
     return {
-      totalData: total.value,
-      totalPage: Math.ceil(total.value / limit.value),
+      totalData: totalData.value,
+      totalPage: totalPages.value, // <-- use totalPages from hook
       currentPage: currentPage.value,
       limit: limit.value,
     };
@@ -176,7 +177,7 @@ export default component$(() => {
         onUnverify$={openUnverifyModal}
       />
 
-      {meta.value.totalPage > 1 && (
+      {meta.value && meta.value.totalPage > 1 && (
         <PaginationControls
           meta={meta.value}
           currentPage={currentPage.value}

@@ -7,7 +7,8 @@ export const useAdminPosyandu = () => {
   const loading = useSignal(false);
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
-  const total = useSignal<number>(0);
+  const totalData = useSignal<number>(0);
+  const totalPage = useSignal<number>(1);
   const page = useSignal<number>(1);
   const limit = useSignal<number>(10);
 
@@ -33,7 +34,8 @@ export const useAdminPosyandu = () => {
           ...item,
           status: item.deleted_at ? "Tidak Aktif" : "Aktif",
         })) as AdminPosyanduItem[];
-        total.value = response.meta?.count || 0;
+        totalData.value = response.meta?.count || 0;
+        totalPage.value = response.meta?.totalPage || 1;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
       } catch (err: any) {
@@ -124,7 +126,8 @@ export const useAdminPosyandu = () => {
     loading,
     error,
     success,
-    total,
+    totalData,
+    totalPage,
     page,
     limit,
     fetchList,
