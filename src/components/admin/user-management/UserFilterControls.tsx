@@ -24,12 +24,13 @@ export const UserFilterControls = component$(
             <SearchBox
               id="search-user"
               placeholder="Cari berdasarkan nama atau email..."
-              value={searchQuery} // Changed from bind:value to value
+              value={searchQuery}
               onInput$={(e) =>
                 (searchQuery.value = (e.target as HTMLInputElement).value)
-              } // Added onInput$
+              }
               onEnter$={onFilterChange$}
-              class="input-bordered"
+              size="md"
+              variant="default"
             />
           </div>
           <div class="form-control flex-1">

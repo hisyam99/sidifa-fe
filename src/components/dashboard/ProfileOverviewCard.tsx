@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { getRoleDisplayName, getRoleColor } from "~/utils/dashboard-utils";
+import { getRoleDisplayName } from "~/utils/dashboard-utils";
 
 interface ProfileOverviewCardProps {
   userName: string;
@@ -10,7 +10,7 @@ interface ProfileOverviewCardProps {
 export const ProfileOverviewCard = component$(
   (props: ProfileOverviewCardProps) => {
     const { userName, userRole, userEmail } = props;
-    const roleColorClass = getRoleColor(userRole);
+    const roleColorClass = getRoleDisplayName(userRole);
 
     return (
       <div class="card bg-base-100 shadow-lg">

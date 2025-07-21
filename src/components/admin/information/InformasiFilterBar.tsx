@@ -28,14 +28,15 @@ export const InformasiFilterBar = component$(
             <SearchBox
               id="filter-judul"
               placeholder="Cari berdasarkan judul..."
-              value={filterOptions.value.judul || ""} // Ensure it's always a string
+              value={filterOptions.value.judul || ""}
               onInput$={(e) =>
                 (filterOptions.value.judul = (
                   e.target as HTMLInputElement
                 ).value)
               }
               onEnter$={onFilterChange$}
-              class="input-bordered"
+              size="md"
+              variant="floating"
             />
           </div>
           <div class="form-control flex-1">
@@ -45,14 +46,15 @@ export const InformasiFilterBar = component$(
             <SearchBox
               id="filter-deskripsi"
               placeholder="Cari berdasarkan deskripsi..."
-              value={filterOptions.value.deskripsi || ""} // Ensure it's always a string
+              value={filterOptions.value.deskripsi || ""}
               onInput$={(e) =>
                 (filterOptions.value.deskripsi = (
                   e.target as HTMLInputElement
                 ).value)
               }
               onEnter$={onFilterChange$}
-              class="input-bordered"
+              size="md"
+              variant="floating"
             />
           </div>
           <div class="form-control flex-1">

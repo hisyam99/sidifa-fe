@@ -1,6 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { Navigation } from "~/components/layout"; // Use the unified Navigation
+import { NavigationKader } from "~/components/layout"; // Use the unified Navigation
 import { Breadcrumbs } from "~/components/layout"; // Import from unified layout index
 
 export default component$(() => {
@@ -8,7 +8,7 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <Navigation />
+      <NavigationKader />
       <main class="container mx-auto p-4 md:p-8">
         <Breadcrumbs />
         <Slot />

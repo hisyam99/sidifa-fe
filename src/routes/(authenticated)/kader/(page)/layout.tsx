@@ -2,7 +2,6 @@ import { component$, Slot } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { ProfileOverviewCard, SidebarStatCard } from "~/components/dashboard";
-import { Navigation } from "~/components/layout";
 import { Breadcrumbs } from "~/components/layout";
 
 export default component$(() => {
@@ -17,7 +16,6 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <Navigation />
       <main class="container mx-auto p-4 md:p-8">
         <Breadcrumbs />
         <div class="flex flex-col lg:flex-row gap-8">

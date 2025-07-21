@@ -53,14 +53,15 @@ export const PosyanduFilterSort = component$(
             <SearchBox
               id="search-name"
               placeholder="Cari berdasarkan nama..."
-              value={filterOptions.value.nama_posyandu || ""} // Ensure it's always a string
+              value={filterOptions.value.nama_posyandu || ""}
               onInput$={(e) =>
                 (filterOptions.value.nama_posyandu = (
                   e.target as HTMLInputElement
                 ).value)
               }
               onEnter$={onFilterSortChange$}
-              class="input-bordered"
+              size="sm"
+              variant="minimal"
             />
           </div>
           <div class="form-control">

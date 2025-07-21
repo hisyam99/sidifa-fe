@@ -22,14 +22,15 @@ export const AdminPsikologFilterControls = component$(
             <SearchBox
               id="search-name"
               placeholder="Masukkan nama psikolog..."
-              value={filterOptions.value.nama || ""} // Ensure it's always a string
+              value={filterOptions.value.nama || ""}
               onInput$={(e) =>
                 (filterOptions.value.nama = (
                   e.target as HTMLInputElement
                 ).value)
               }
               onEnter$={onFilterChange$}
-              class="input-bordered"
+              size="lg"
+              variant="default"
             />
           </div>
           <div class="form-control flex-1">
