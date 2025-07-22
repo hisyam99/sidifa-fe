@@ -1,7 +1,7 @@
 import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useNavigate } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
-// import { GenericLoadingSpinner } from "./GenericLoadingSpinner";
+import { GenericLoadingSpinner } from "./GenericLoadingSpinner";
 
 interface RoleProtectedContentProps {
   allowedRoles: string[];
@@ -43,9 +43,9 @@ export const RoleProtectedContent = component$(
       }
     });
 
-    // if (!isClient.value || loading.value) {
-    //   return <GenericLoadingSpinner />;
-    // }
+    if (!isClient.value || loading.value) {
+      return <GenericLoadingSpinner />;
+    }
 
     if (!hasAccess.value) {
       return null; // Redirection handled by useTask$, or will show "Akses Ditolak" by specific component

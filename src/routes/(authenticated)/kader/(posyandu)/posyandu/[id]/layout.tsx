@@ -1,6 +1,6 @@
 import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { RoleProtectedContent } from "~/components/common/RoleProtectedContent";
+import { useCheckRole } from "~/hooks/useCheckRole";
 import { sessionUtils } from "~/utils/auth";
 import {
   LuBarChart,
@@ -15,6 +15,8 @@ export default component$(() => {
   const isClient = useSignal(false);
   const isAuthenticated = useSignal(false);
   const location = useLocation();
+
+  useCheckRole(["kader"]);
 
   // Client-side hydration dan update auth state
   useTask$(({ track }) => {
@@ -60,60 +62,58 @@ export default component$(() => {
   ];
 
   return (
-    <RoleProtectedContent allowedRoles={["kader"]}>
-      <div class="min-h-screen bg-base-200/60">
-        <div class="drawer lg:drawer-open">
-          <input
-            id="drawer-posyandu-detail"
-            type="checkbox"
-            class="drawer-toggle"
-          />
-          <div class="drawer-content flex flex-col p-4 md:p-8">
-            <label
-              for="drawer-posyandu-detail"
-              class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
-            >
-              <LuBarChart />
-              Buka Menu
-            </label>
-            <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
-              <Slot />
-            </main>
-          </div>
-          <aside class="drawer-side">
-            <label
-              for="drawer-posyandu-detail"
-              aria-label="close sidebar"
-              class="drawer-overlay"
-            ></label>
-            <ul class="menu p-4 w-80 min-h-full bg-base-100 lg:bg-transparent text-base-content">
-              <li class="text-xl font-bold p-4 hidden lg:block">
-                Detail Posyandu
-              </li>
-              {menuItems.map((item) => (
-                <li
-                  key={item.href}
-                  class={location.url.pathname === item.href ? "bordered" : ""}
-                >
-                  <a href={item.href}>
-                    <item.icon />
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-              <li class="mt-8">
-                <a
-                  href="/kader/posyandu"
-                  class="btn btn-outline btn-primary w-full flex items-center gap-2"
-                >
-                  <LuArrowLeft />
-                  Kembali ke List Posyandu
+    <div class="min-h-screen bg-base-200/60">
+      <div class="drawer lg:drawer-open">
+        <input
+          id="drawer-posyandu-detail"
+          type="checkbox"
+          class="drawer-toggle"
+        />
+        <div class="drawer-content flex flex-col p-4 md:p-8">
+          <label
+            for="drawer-posyandu-detail"
+            class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
+          >
+            <LuBarChart />
+            Buka Menu
+          </label>
+          <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
+            <Slot />
+          </main>
+        </div>
+        <aside class="drawer-side">
+          <label
+            for="drawer-posyandu-detail"
+            aria-label="close sidebar"
+            class="drawer-overlay"
+          ></label>
+          <ul class="menu p-4 w-80 min-h-full bg-base-100 lg:bg-transparent text-base-content">
+            <li class="text-xl font-bold p-4 hidden lg:block">
+              Detail Posyandu
+            </li>
+            {menuItems.map((item) => (
+              <li
+                key={item.href}
+                class={location.url.pathname === item.href ? "bordered" : ""}
+              >
+                <a href={item.href}>
+                  <item.icon />
+                  {item.label}
                 </a>
               </li>
-            </ul>
-          </aside>
-        </div>
+            ))}
+            <li class="mt-8">
+              <a
+                href="/kader/posyandu"
+                class="btn btn-outline btn-primary w-full flex items-center gap-2"
+              >
+                <LuArrowLeft />
+                Kembali ke List Posyandu
+              </a>
+            </li>
+          </ul>
+        </aside>
       </div>
-    </RoleProtectedContent>
+    </div>
   );
 });
