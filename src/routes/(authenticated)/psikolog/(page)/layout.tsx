@@ -3,7 +3,7 @@ import { RoleProtectedContent } from "~/components/common";
 
 export default component$(() => {
   return (
-    <RoleProtectedContent allowedRoles={["psikolog"]}>
+    <RoleProtectedContent allowedRoles={["psikolog", "admin"]}>
       <Slot />
     </RoleProtectedContent>
   );
