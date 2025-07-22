@@ -34,11 +34,17 @@ export default component$<FormFieldProps>(
           {...props}
           type={type}
           placeholder={placeholder}
-          class={`input input-bordered w-full ${field.error ? "input-error" : ""} ${className}`}
+          class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
+          aria-invalid={field.error ? "true" : "false"}
+          aria-describedby={field.error ? `${props.name}-error` : undefined}
+          // Auto-focus pada field yang error
+          autoFocus={field.error ? true : undefined}
         />
         {field.error && (
           <label class="label">
-            <span class="label-text-alt text-error">{field.error}</span>
+            <span class="label-text-alt text-error" id={`${props.name}-error`}>
+              {field.error}
+            </span>
           </label>
         )}
       </div>

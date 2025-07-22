@@ -78,6 +78,14 @@ Komponen UI dasar yang dapat digunakan kembali di seluruh aplikasi:
 - `LoadingSpinner`: Komponen loading spinner
 - `Card`: Komponen card wrapper
 
+### 1.1. Common Components (`src/components/common/`)
+
+Komponen umum yang dapat digunakan kembali:
+
+- `SearchBox`: Komponen search input yang fleksibel dengan berbagai size dan variant
+- `BrandLogo`: Komponen logo brand SIDIFA
+- `NavLink`: Komponen link navigasi yang dapat digunakan kembali
+
 ### 2. Layout Components (`src/components/layout/`)
 
 Komponen layout yang digunakan di seluruh aplikasi:
@@ -122,6 +130,9 @@ Komponen yang spesifik untuk fitur tertentu:
 // Import komponen UI
 import { FormField, Alert, LoadingSpinner, Card } from "~/components/ui";
 
+// Import komponen common
+import { SearchBox, BrandLogo, NavLink } from "~/components/common";
+
 // Import komponen layout
 import { PageContainer, Navigation } from "~/components/layout";
 
@@ -148,6 +159,68 @@ export default component$(() => {
   );
 });
 ```
+
+## Contoh Penggunaan SearchBox
+
+```typescript
+import { component$, useSignal } from "@builder.io/qwik";
+import { SearchBox } from "~/components/common";
+
+export default component$(() => {
+  const searchValue = useSignal("");
+  const filterValue = useSignal("");
+
+  return (
+    <div class="space-y-4">
+      {/* SearchBox dengan size default dan variant default */}
+      <SearchBox
+        placeholder="Cari sesuatu..."
+        value={searchValue}
+        onInput$={(e) => searchValue.value = (e.target as HTMLInputElement).value}
+        onEnter$={() => console.log("Search for:", searchValue.value)}
+      />
+
+      {/* SearchBox kecil dengan variant minimal */}
+      <SearchBox
+        placeholder="Filter data..."
+        value={filterValue}
+        onInput$={(e) => filterValue.value = (e.target as HTMLInputElement).value}
+        size="sm"
+        variant="minimal"
+      />
+
+      {/* SearchBox besar dengan variant floating */}
+      <SearchBox
+        placeholder="Pencarian utama..."
+        value={searchValue}
+        onInput$={(e) => searchValue.value = (e.target as HTMLInputElement).value}
+        size="lg"
+        variant="floating"
+      />
+    </div>
+  );
+});
+```
+
+### Varian SearchBox
+
+**Size Variants:**
+
+- `sm`: Kecil, cocok untuk filter atau ruang terbatas
+- `md`: Medium, ukuran default yang balanced
+- `lg`: Besar, cocok untuk pencarian utama
+
+**Visual Variants:**
+
+- `default`: Styling standar dengan shadow dan border
+- `minimal`: Tampilan minimal dengan border tipis
+- `floating`: Tampilan modern dengan backdrop blur
+
+**Props Tambahan:**
+
+- `disabled`: Untuk menonaktifkan input
+- `class`: Untuk menambah custom CSS classes
+- `onEnter$`: Callback ketika user menekan Enter
 
 ## Keuntungan Refactoring
 

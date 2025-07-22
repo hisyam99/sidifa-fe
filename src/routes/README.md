@@ -14,7 +14,7 @@ src/routes/
 │   │   └── index.tsx           # /auth/login
 │   ├── signup/
 │   │   ├── posyandu/
-│   │   │   └── index.tsx       # /auth/signup/posyandu
+│   │   │   └── index.tsx       # /auth/signup/kader
 │   │   └── psikolog/
 │   │       └── index.tsx       # /auth/signup/psikolog
 │   ├── forgot-password/
@@ -29,7 +29,7 @@ src/routes/
 │   └── ...
 └── [legacy routes]             # Redirect routes for backward compatibility
     ├── login/index.tsx         # Redirects to /auth/login
-    ├── signup-posyandu/index.tsx # Redirects to /auth/signup/posyandu
+    ├── signup-posyandu/index.tsx # Redirects to /auth/signup/kader
     ├── signup-psikolog/index.tsx # Redirects to /auth/signup/psikolog
     ├── forgot-password/index.tsx # Redirects to /auth/forgot-password
     ├── reset-password/index.tsx  # Redirects to /auth/reset-password
@@ -47,7 +47,7 @@ src/routes/
 
 - **Layout**: Header + Footer dengan background gray-50
 - **Login**: `/auth/login`
-- **Signup Posyandu**: `/auth/signup/posyandu`
+- **Signup Posyandu**: `/auth/signup/kader`
 - **Signup Psikolog**: `/auth/signup/psikolog`
 - **Forgot Password**: `/auth/forgot-password`
 - **Reset Password**: `/auth/reset-password`
@@ -102,7 +102,7 @@ Dashboard Layout (dashboard/layout.tsx)
 | Old URL            | New URL                 | Status      |
 | ------------------ | ----------------------- | ----------- |
 | `/login`           | `/auth/login`           | ✅ Redirect |
-| `/signup-posyandu` | `/auth/signup/posyandu` | ✅ Redirect |
+| `/signup-posyandu` | `/auth/signup/kader`    | ✅ Redirect |
 | `/signup-psikolog` | `/auth/signup/psikolog` | ✅ Redirect |
 | `/forgot-password` | `/auth/forgot-password` | ✅ Redirect |
 | `/reset-password`  | `/auth/reset-password`  | ✅ Redirect |

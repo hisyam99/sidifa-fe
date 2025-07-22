@@ -1,2 +1,6 @@
-export { default as WelcomeCard } from "./WelcomeCard";
-export { default as SignupCards } from "./SignupCards";
+export * from "./WelcomeCard";
+export * from "./SignupCards";
+export * from "./StatisticCard";
+export * from "./HomeFeatureCard";
+export * from "./TestimonialCard";
+export * from "./FAQItem";

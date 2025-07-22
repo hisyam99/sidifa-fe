@@ -9,7 +9,7 @@ import {
 } from "valibot";
 
 // Signup Posyandu schema
-export const signupPosyanduSchema = object({
+export const signupKaderSchema = object({
   name: pipe(string(), minLength(1, "Nama harus diisi")),
   email: pipe(string(), email("Email tidak valid")),
   password: pipe(
@@ -20,9 +20,12 @@ export const signupPosyanduSchema = object({
       "Password harus mengandung huruf besar dan angka",
     ),
   ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
+  ),
   no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
-  nama_posyandu: pipe(string(), minLength(1, "Nama posyandu harus diisi")),
-  lokasi: pipe(string(), minLength(1, "Lokasi harus diisi")),
+  jabatan: pipe(string(), minLength(1, "Jabatan harus diisi")),
 });
 
 // Signup Psikolog schema
@@ -36,6 +39,10 @@ export const signupPsikologSchema = object({
       /^(?=.*[A-Z])(?=.*\d).+$/,
       "Password harus mengandung huruf besar dan angka",
     ),
+  ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
   ),
   no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
   spesialis: pipe(string(), minLength(1, "Spesialis harus diisi")),
@@ -64,10 +71,14 @@ export const resetPasswordSchema = object({
       "Password harus mengandung huruf besar dan angka",
     ),
   ),
+  confirmPassword: pipe(
+    string(),
+    minLength(1, "Konfirmasi password harus diisi"),
+  ),
 });
 
 // Type exports
-export type SignupPosyanduForm = InferInput<typeof signupPosyanduSchema>;
+export type SignupKaderForm = InferInput<typeof signupKaderSchema>;
 export type SignupPsikologForm = InferInput<typeof signupPsikologSchema>;
 export type LoginForm = InferInput<typeof loginSchema>;
 export type ForgotPasswordForm = InferInput<typeof forgotPasswordSchema>;
