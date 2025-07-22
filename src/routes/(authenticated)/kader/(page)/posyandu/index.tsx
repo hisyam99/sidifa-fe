@@ -1,5 +1,6 @@
-import { component$, useSignal, useTask$, $ } from "@qwik.dev/core";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
+import { usePagination } from "~/hooks/usePagination";
 import { kaderService } from "~/services/api";
 import {
   PosyanduListHeader,
@@ -19,8 +20,6 @@ export default component$(() => {
   const meta = useSignal<PaginationMeta | null>(null);
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
-  const currentPage = useSignal(1);
-  const limit = useSignal(10);
 
   const filterOptions = useSignal<PosyanduFilterOptions>({
     nama_posyandu: "",
@@ -32,23 +31,36 @@ export default component$(() => {
 
   const { isLoggedIn } = useAuth();
 
-  const fetchPosyandu = $(async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const response = await kaderService.getKaderPosyanduList({
-        limit: limit.value,
-        page: currentPage.value,
-        nama_posyandu: filterOptions.value.nama_posyandu || undefined, // Use filterOptions
-        // Add sort options if API supports
-      });
-      posyanduList.value = response.data;
-      meta.value = response.meta;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat data posyandu.";
-    } finally {
-      loading.value = false;
-    }
+  // Use the reusable pagination hook
+  const {
+    currentPage,
+    currentLimit: limit,
+    // meta: paginationMeta, (not used)
+    handlePageChange,
+    handleLimitChange,
+    resetPage,
+  } = usePagination<PosyanduFilterOptions>({
+    initialPage: 1,
+    initialLimit: 10,
+    fetchList: $(async (params) => {
+      loading.value = true;
+      error.value = null;
+      try {
+        const response = await kaderService.getKaderPosyanduList({
+          ...params,
+          // Add sort options if API supports
+        });
+        posyanduList.value = response.data;
+        meta.value = response.meta;
+      } catch (err: any) {
+        error.value = err.message || "Gagal memuat data posyandu.";
+      } finally {
+        loading.value = false;
+      }
+    }),
+    total: meta as any, // Not used for this API, but required by hook signature
+    filters: filterOptions,
+    dependencies: [isLoggedIn, sortOptions],
   });
 
   const registerToPosyandu = $(async (posyanduId: string) => {
@@ -57,7 +69,12 @@ export default component$(() => {
     try {
       await kaderService.registerKaderPosyandu(posyanduId);
       alert("Berhasil mendaftar ke posyandu");
-      fetchPosyandu(); // Refresh the list
+      // Refresh the list
+      await kaderService.getKaderPosyanduList({
+        limit: limit.value,
+        page: currentPage.value,
+        ...filterOptions.value,
+      });
     } catch (err: any) {
       error.value = err.message || "Gagal mendaftar ke posyandu";
     } finally {
@@ -65,41 +82,8 @@ export default component$(() => {
     }
   });
 
-  useTask$(({ track }) => {
-    track(isLoggedIn); // Re-run when isLoggedIn changes
-    track(() => filterOptions.value.nama_posyandu); // Track filter changes
-    track(() => filterOptions.value.status); // Track filter changes
-    track(() => sortOptions.value.sortBy); // Track sort changes
-    track(currentPage); // Track page changes
-    track(limit); // Track limit changes
-
-    if (isLoggedIn.value) {
-      fetchPosyandu();
-    } else {
-      posyanduList.value = [];
-      meta.value = null;
-      error.value =
-        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
-      loading.value = false;
-    }
-  });
-
-  const handlePageChange = $((page: number) => {
-    if (meta.value && (page < 1 || page > meta.value.totalPage)) return;
-    currentPage.value = page;
-    // fetchPosyandu will be triggered by useTask$ reacting to currentPage changes
-  });
-
   const handleFilterSortChange = $(() => {
-    currentPage.value = 1; // Reset page to 1 on filter/sort change
-    // fetchPosyandu will be triggered by useTask$ reacting to filter/sort changes
-  });
-
-  const handleLimitChange = $((event: Event) => {
-    const target = event.target as HTMLSelectElement;
-    limit.value = parseInt(target.value);
-    currentPage.value = 1;
-    // fetchPosyandu will be triggered by useTask$ reacting to limit changes
+    resetPage();
   });
 
   return (
@@ -110,11 +94,15 @@ export default component$(() => {
       />
 
       <PosyanduFilterSort
-        filterOptions={filterOptions} // Pass filterOptions signal
-        sortOptions={sortOptions} // Pass sortOptions signal
+        filterOptions={filterOptions}
+        sortOptions={sortOptions}
         onFilterSortChange$={handleFilterSortChange}
         limit={limit}
-        onLimitChange$={handleLimitChange}
+        onLimitChange$={$((event: Event) => {
+          const target = event.target as HTMLSelectElement;
+          const newLimit = parseInt(target.value);
+          handleLimitChange(newLimit);
+        })}
       />
 
       {loading.value ? (

@@ -1,13 +1,8 @@
-import {
-  component$,
-  useSignal,
-  useTask$,
-  useComputed$,
-  $,
-} from "@qwik.dev/core";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import type { DocumentHead } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import { useAdminAccountVerification } from "~/hooks/useAdminAccountVerification";
+import { usePagination } from "~/hooks/usePagination";
 
 import {
   AdminVerificationListHeader,
@@ -22,7 +17,6 @@ import type {
   AdminVerificationItem,
   AdminVerificationFilterOptions,
 } from "~/types/admin-account-verification";
-import type { PaginationMeta } from "~/types/posyandu"; // Reusing pagination meta
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -44,16 +38,26 @@ export default component$(() => {
     role: "",
     orderBy: "",
   });
-  const currentPage = useSignal(1);
-  const limit = useSignal(10);
-
-  const meta = useComputed$<PaginationMeta>(() => {
-    return {
-      totalData: totalData.value,
-      totalPage: totalPages.value, // <-- use totalPages from hook
-      currentPage: currentPage.value,
-      limit: limit.value,
-    };
+  // Use the reusable pagination hook
+  const {
+    currentPage,
+    currentLimit: limit,
+    meta,
+    handlePageChange,
+    handleLimitChange,
+    resetPage,
+  } = usePagination<AdminVerificationFilterOptions>({
+    initialPage: 1,
+    initialLimit: 10,
+    fetchList: $((params) => {
+      if (isLoggedIn.value) {
+        fetchList(params);
+      }
+    }),
+    total: totalData,
+    totalPage: totalPages,
+    filters: filterOptions,
+    dependencies: [isLoggedIn],
   });
 
   const showDetailModal = useSignal(false);
@@ -61,49 +65,12 @@ export default component$(() => {
   const showUnverifyModal = useSignal(false);
   const selectedAccount = useSignal<AdminVerificationItem | null>(null);
 
-  const handleFetchVerificationList = $(async () => {
-    await fetchList({
-      limit: limit.value,
-      page: currentPage.value,
-      name: filterOptions.value.name || undefined,
-      role: filterOptions.value.role || undefined,
-      orderBy: filterOptions.value.orderBy || undefined,
-    });
-  });
-
-  useTask$(({ track }) => {
-    track(isLoggedIn);
-    track(() => filterOptions.value.name);
-    track(() => filterOptions.value.role);
-    track(currentPage);
-    track(limit);
-
-    if (isLoggedIn.value) {
-      handleFetchVerificationList();
-    } else {
-      verificationList.value = [];
-    }
-  });
-
+  // Filter change handler resets page and triggers fetch
   const handleFilterChange = $(() => {
-    currentPage.value = 1;
-    handleFetchVerificationList();
+    resetPage();
   });
 
-  const handlePageChange = $((pageNumber: number) => {
-    if (
-      meta.value.totalPage &&
-      (pageNumber < 1 || pageNumber > meta.value.totalPage)
-    )
-      return;
-    currentPage.value = pageNumber;
-  });
-
-  const handleLimitChange = $((newLimit: number) => {
-    limit.value = newLimit;
-    currentPage.value = 1; // Reset to first page when limit changes
-    handleFetchVerificationList();
-  });
+  // (removed obsolete handleLimitChange)
 
   const openDetailModal = $((account: AdminVerificationItem) => {
     selectedAccount.value = account;
@@ -129,7 +96,6 @@ export default component$(() => {
     showUnverifyModal.value = false;
     selectedAccount.value = null;
     clearMessages();
-    handleFetchVerificationList();
   });
 
   const handleVerifyAccount = $(async () => {

@@ -1,13 +1,8 @@
-import {
-  component$,
-  useSignal,
-  useTask$,
-  useComputed$,
-  $,
-} from "@qwik.dev/core";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import type { DocumentHead } from "@qwik.dev/router";
 import { useAuth } from "~/hooks/useAuth";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
+import { usePagination } from "~/hooks/usePagination";
 import Alert from "~/components/ui/Alert";
 import { useNavigate } from "@qwik.dev/router";
 import {
@@ -39,61 +34,36 @@ export default component$(() => {
     deskripsi: "",
     tipe: "",
   });
-  const currentPage = useSignal(1);
-  const currentLimit = useSignal(10);
   const deleteId = useSignal<string | null>(null);
   const showDeleteModal = useSignal(false);
 
   const nav = useNavigate();
 
-  const meta = useComputed$(() => ({
-    totalData: total.value,
-    totalPage:
-      totalPage.value || Math.ceil(total.value / currentLimit.value) || 1,
-    currentPage: currentPage.value,
-    limit: currentLimit.value,
-  }));
-
-  // Centralized fetch handler
-  const handleFetchList = $(() => {
-    if (isLoggedIn.value) {
-      fetchList({
-        limit: currentLimit.value,
-        page: currentPage.value,
-        judul: filterOptions.value.judul || undefined,
-        deskripsi: filterOptions.value.deskripsi || undefined,
-        tipe: filterOptions.value.tipe || undefined,
-      });
-    }
+  // Use the reusable pagination hook
+  const {
+    currentPage,
+    currentLimit,
+    meta,
+    handlePageChange,
+    handleLimitChange,
+    resetPage,
+  } = usePagination<InformasiFilterOptions>({
+    initialPage: 1,
+    initialLimit: 10,
+    fetchList: $((params) => {
+      if (isLoggedIn.value) {
+        fetchList(params);
+      }
+    }),
+    total,
+    totalPage,
+    filters: filterOptions,
+    dependencies: [isLoggedIn],
   });
 
-  // Fetch data on mount and when dependencies change
-  useTask$(({ track }) => {
-    track(isLoggedIn);
-    track(() => filterOptions.value.judul);
-    track(() => filterOptions.value.deskripsi);
-    track(() => filterOptions.value.tipe);
-    track(currentPage);
-    track(currentLimit);
-
-    handleFetchList();
-  });
-
+  // Filter change handler resets page and triggers fetch
   const handleFilterChange = $(() => {
-    currentPage.value = 1;
-    handleFetchList();
-  });
-
-  const handleLimitChange = $((newLimit: number) => {
-    currentLimit.value = newLimit;
-    currentPage.value = 1;
-    handleFetchList();
-  });
-
-  const handlePageChange = $((newPage: number) => {
-    if (meta.value && (newPage < 1 || newPage > meta.value.totalPage)) return;
-    currentPage.value = newPage;
-    handleFetchList();
+    resetPage();
   });
 
   const handleDeleteClick = $((id: string) => {
@@ -112,9 +82,7 @@ export default component$(() => {
           fetchList({
             limit: currentLimit.value,
             page: currentPage.value,
-            judul: filterOptions.value.judul || undefined,
-            deskripsi: filterOptions.value.deskripsi || undefined,
-            tipe: filterOptions.value.tipe || undefined,
+            ...filterOptions.value,
           });
         }
       } catch {

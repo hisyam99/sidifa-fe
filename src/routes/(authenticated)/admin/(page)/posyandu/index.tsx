@@ -1,12 +1,7 @@
-import {
-  component$,
-  useSignal,
-  useTask$,
-  useComputed$,
-  $,
-} from "@qwik.dev/core";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
+import { usePagination } from "~/hooks/usePagination";
 import type { DocumentHead } from "@qwik.dev/router";
 
 import {
@@ -24,7 +19,6 @@ import type {
   AdminPosyanduItem,
   AdminPosyanduFilterOptions,
 } from "~/types/admin-posyandu-management";
-import type { PaginationMeta } from "~/types/posyandu";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -46,17 +40,26 @@ export default component$(() => {
     nama_posyandu: "",
     status: "",
   });
-  const currentPageLocal = useSignal(1);
-  const limit = useSignal(10);
-
-  // Reactive meta calculation
-  const meta = useComputed$<PaginationMeta>(() => {
-    return {
-      totalData: totalData.value,
-      totalPage: totalPage.value,
-      currentPage: currentPageLocal.value,
-      limit: limit.value,
-    };
+  // Use the reusable pagination hook
+  const {
+    currentPage: currentPageLocal,
+    currentLimit: limit,
+    meta,
+    handlePageChange,
+    handleLimitChange,
+    resetPage,
+  } = usePagination<AdminPosyanduFilterOptions>({
+    initialPage: 1,
+    initialLimit: 10,
+    fetchList: $((params) => {
+      if (isLoggedIn.value) {
+        fetchList(params);
+      }
+    }),
+    total: totalData,
+    totalPage,
+    filters: filterOptions,
+    dependencies: [isLoggedIn],
   });
 
   // Modal states
@@ -67,49 +70,9 @@ export default component$(() => {
   const showToggleStatusModal = useSignal(false);
   const selectedPosyandu = useSignal<AdminPosyanduItem | null>(null);
 
-  const handleFetchPosyandu = $(async () => {
-    console.log("Fetching posyandu with filters:", {
-      limit: limit.value,
-      page: currentPageLocal.value,
-      nama_posyandu: filterOptions.value.nama_posyandu,
-    });
-
-    await fetchList({
-      limit: limit.value,
-      page: currentPageLocal.value,
-      nama_posyandu: filterOptions.value.nama_posyandu || undefined,
-    });
-  });
-
-  // Initial load and re-load on filter/pagination changes
-  useTask$(({ track }) => {
-    track(isLoggedIn);
-    track(currentPageLocal);
-    track(limit);
-
-    if (isLoggedIn.value) {
-      handleFetchPosyandu();
-    }
-  });
-
-  const handleFilterChange = $(async () => {
-    currentPageLocal.value = 1; // Reset page to 1 on any filter change
-    await handleFetchPosyandu(); // Fetch data with new filter
-  });
-
-  const handlePageChange = $((pageNumber: number) => {
-    if (
-      meta.value.totalPage &&
-      (pageNumber < 1 || pageNumber > meta.value.totalPage)
-    )
-      return;
-    currentPageLocal.value = pageNumber;
-  });
-
-  const handleLimitChange = $((newLimit: number) => {
-    limit.value = newLimit;
-    currentPageLocal.value = 1; // Reset to first page when limit changes
-    handleFetchPosyandu();
+  // Filter change handler resets page and triggers fetch
+  const handleFilterChange = $(() => {
+    resetPage();
   });
 
   // Modal handlers
