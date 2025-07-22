@@ -4,8 +4,8 @@ import {
   useTask$,
   useComputed$,
   $,
-} from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+} from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import { useAdminAccountVerification } from "~/hooks/useAdminAccountVerification";
 

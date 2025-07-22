@@ -1,4 +1,4 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import {
   LuMenu,
@@ -11,7 +11,7 @@ import {
   LuHeart,
   LuBrain,
 } from "~/components/icons/lucide-optimized";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 
 export const NavigationAuth = component$(() => {
   const { user, logout } = useAuth();

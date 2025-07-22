@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import { NavLink } from "~/components/common";
 import { generateNavigationLinks } from "~/utils/navigation-data";
 import { LuLogOut } from "~/components/icons/lucide-optimized"; // Updated import path

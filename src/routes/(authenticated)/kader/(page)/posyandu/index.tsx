@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { kaderService } from "~/services/api";
 import {

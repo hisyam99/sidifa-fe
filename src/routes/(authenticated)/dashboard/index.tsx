@@ -1,7 +1,7 @@
-import { component$, $, useTask$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { component$, $, useTask$ } from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import {
   DashboardHeader,
   RecentActivityCard,

@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { NavigationKader } from "~/components/layout"; // Use the unified Navigation
 import { Breadcrumbs } from "~/components/layout"; // Import from unified layout index

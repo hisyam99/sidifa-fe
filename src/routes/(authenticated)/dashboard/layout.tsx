@@ -1,4 +1,4 @@
-import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
+import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
 import { DashboardSkeletonLoader } from "~/components/common";

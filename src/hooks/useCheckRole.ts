@@ -1,4 +1,4 @@
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import { useAuth } from "./useAuth";
 import { type UserRole } from "~/utils/auth";
 

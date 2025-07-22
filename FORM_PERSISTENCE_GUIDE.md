@@ -210,7 +210,7 @@ Untuk memastikan solusi bekerja dengan baik:
 
 - `@modular-forms/qwik`: `^0.29.1`
 - `valibot`: `^1.1.0`
-- `@builder.io/qwik`: `^1.14.1`
+- `@qwik.dev/core`: `^1.14.1`
 
 ## Catatan Penting
 

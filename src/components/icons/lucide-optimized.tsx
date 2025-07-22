@@ -1,4 +1,4 @@
-import { component$, SVGProps } from "@builder.io/qwik";
+import { component$, SVGProps } from "@qwik.dev/core";
 import {
   LuCheckCircle as LucideLuCheckCircle,
   LuBarChart as LucideLuBarChart,

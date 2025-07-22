@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import type { AdminPsikologItem } from "~/types/admin-psikolog-management";
 
 interface AdminPsikologTableProps {

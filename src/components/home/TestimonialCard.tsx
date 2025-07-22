@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { LuStar } from "~/components/icons/lucide-optimized"; // Updated import path
 
 interface TestimonialCardProps {

@@ -1,4 +1,4 @@
-import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
+import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { sessionUtils } from "~/utils/auth";
@@ -8,7 +8,7 @@ import {
   LuLineChart,
   LuArrowLeft,
 } from "@qwikest/icons/lucide";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@qwik.dev/router";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();

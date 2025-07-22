@@ -1,8 +1,8 @@
-import { component$, useTask$, useSignal, $ } from "@builder.io/qwik";
+import { component$, useTask$, useSignal, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
-import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { useNavigate, useLocation } from "@qwik.dev/router";
 import { InformasiDetailCard } from "~/components/admin/information";
 import { GenericLoadingSpinner, ConfirmationModal } from "~/components/common";
 import type { InformasiItem } from "~/types/informasi";

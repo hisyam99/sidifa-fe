@@ -1,5 +1,5 @@
-import { component$, $ } from "@builder.io/qwik";
-import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { component$, $ } from "@qwik.dev/core";
+import { useNavigate, useLocation } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import {
   LuMenu,

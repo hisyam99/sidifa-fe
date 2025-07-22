@@ -1,4 +1,4 @@
-import { useSignal, $, type QRL } from "@builder.io/qwik";
+import { useSignal, $, type QRL } from "@qwik.dev/core";
 
 /**
  * Hook untuk mengelola persistensi data form.

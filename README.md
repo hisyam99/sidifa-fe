@@ -68,7 +68,7 @@ bun run dev
 ```bash
 cd backend
 npm install
-npm run start:dev
+bun start:dev
 ```
 
 ## 📁 Project Structure
@@ -212,3 +212,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Valibot](https://valibot.dev/) - For the lightweight validation
 - [DaisyUI](https://daisyui.com/) - For the beautiful components
 - [NestJS](https://nestjs.com/) - For the robust backend framework
+
+## Bun Server
+
+This app has a minimal [Bun server](https://bun.sh/docs/api/http) implementation. After running a full build, you can preview the build using the command:
+
+```
+bun run serve
+```
+
+Then visit [http://localhost:3000/](http://localhost:3000/)

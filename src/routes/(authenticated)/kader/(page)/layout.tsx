@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { ProfileOverviewCard, SidebarStatCard } from "~/components/dashboard";

@@ -1,4 +1,4 @@
-import { useSignal, $ } from "@builder.io/qwik";
+import { useSignal, $ } from "@qwik.dev/core";
 import { adminService } from "~/services/api";
 import type { AdminPsikologItem } from "~/types/admin-psikolog-management";
 

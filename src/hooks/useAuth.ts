@@ -1,5 +1,5 @@
-import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useSignal, useVisibleTask$, $, isServer } from "@qwik.dev/core";
+import { useNavigate } from "@qwik.dev/router";
 import { profileService, authService } from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
 import { isRateLimitError, isAuthError } from "~/utils/error";

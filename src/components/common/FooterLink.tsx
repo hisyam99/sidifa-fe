@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 
 interface FooterLinkProps {
   href?: string;

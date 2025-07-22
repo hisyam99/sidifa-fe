@@ -1,4 +1,4 @@
-import { component$, Signal, QRL, Slot } from "@builder.io/qwik";
+import { component$, Signal, QRL, Slot } from "@qwik.dev/core";
 
 interface ConfirmationModalProps {
   isOpen: Signal<boolean>;

@@ -1,4 +1,4 @@
-import { component$, QRL, Signal } from "@builder.io/qwik";
+import { component$, QRL, Signal } from "@qwik.dev/core";
 import { LuSearch } from "~/components/icons/lucide-optimized";
 
 export interface SearchBoxProps {

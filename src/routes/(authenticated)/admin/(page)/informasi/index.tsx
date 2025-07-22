@@ -4,12 +4,12 @@ import {
   useSignal,
   useComputed$,
   $,
-} from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city"; // Corrected DocumentHead import
-import { useAuth } from "~/hooks";
+} from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router"; // Corrected DocumentHead import
+// import { useAuth } from "~/hooks"; // Removed for SSG compatibility
 import { informasiEdukasiAdminService } from "~/services/api";
 import Alert from "~/components/ui/Alert";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import {
   InformasiTable,
   InformasiFilterBar,
@@ -39,7 +39,6 @@ export default component$(() => {
   const deleteId = useSignal<string | null>(null);
   const showDeleteModal = useSignal(false);
 
-  const { isLoggedIn } = useAuth();
   const nav = useNavigate();
 
   const meta = useComputed$(() => ({
@@ -87,23 +86,14 @@ export default component$(() => {
   });
 
   useTask$(({ track }) => {
-    track(isLoggedIn);
     track(() => filterOptions.value.judul);
     track(() => filterOptions.value.deskripsi);
     track(() => filterOptions.value.tipe);
     track(currentPage);
     track(limit);
 
-    if (isLoggedIn.value) {
-      fetchInformasi();
-    } else {
-      items.value = [];
-      totalData.value = 0;
-      totalPages.value = 1;
-      error.value =
-        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
-      loading.value = false;
-    }
+    // Always fetch data for SSG - auth will be handled by middleware
+    fetchInformasi();
   });
 
   const handleFilterChange = $(() => {

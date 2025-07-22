@@ -1,4 +1,4 @@
-import { component$, Signal, QRL } from "@builder.io/qwik";
+import { component$, Signal, QRL } from "@qwik.dev/core";
 import { LuLoader2 } from "~/components/icons/lucide-optimized"; // Updated import path
 import type { PosyanduItem } from "~/types/posyandu";
 

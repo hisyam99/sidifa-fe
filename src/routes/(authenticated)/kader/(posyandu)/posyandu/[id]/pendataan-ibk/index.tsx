@@ -8,9 +8,9 @@ import {
   useTask$,
   Component,
   SVGProps,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { useAuth } from "~/hooks"; // Add this import
-import type { DocumentHead } from "@builder.io/qwik-city";
+import type { DocumentHead } from "@qwik.dev/router";
 import { FormWizard, type WizardStep, IBKCard } from "~/components/ui";
 import type { IBKRecord, IBKRegistrationForm, DisabilityType } from "~/types";
 import {

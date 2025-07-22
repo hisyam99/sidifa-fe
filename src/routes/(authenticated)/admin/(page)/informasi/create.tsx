@@ -1,7 +1,7 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $ } from "@qwik.dev/core";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import {
   InformasiForm,
   InformasiFormData,

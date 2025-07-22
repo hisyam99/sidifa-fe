@@ -1,5 +1,5 @@
-import { component$, QRL } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { component$, QRL } from "@qwik.dev/core";
+import { useLocation } from "@qwik.dev/router";
 
 interface SidebarMenuItemProps {
   href: string;

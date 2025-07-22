@@ -4,10 +4,10 @@ import {
   useTask$,
   useComputed$,
   $,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import type { DocumentHead } from "@qwik.dev/router";
 
 import {
   AdminPosyanduListHeader,

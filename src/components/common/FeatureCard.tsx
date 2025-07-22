@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
 interface FeatureCardProps {
   icon: any; // Lucide icon component

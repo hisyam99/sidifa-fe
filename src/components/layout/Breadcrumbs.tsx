@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { component$ } from "@qwik.dev/core";
+import { useLocation } from "@qwik.dev/router";
 import { getPrettyBreadcrumbName } from "~/utils/breadcrumb-utils";
 
 export const Breadcrumbs = component$(() => {

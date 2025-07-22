@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { Navigation, Breadcrumbs, SidebarMenuItem } from "~/components/layout";
 import { getPsikologMenuItems } from "~/data/psikolog-navigation-data";

@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { $ } from "@builder.io/qwik";
+import { $ } from "@qwik.dev/core";
 import {
   LuClipboardList,
   LuBriefcase,
