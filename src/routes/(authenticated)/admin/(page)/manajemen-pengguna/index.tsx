@@ -6,6 +6,7 @@ import {
 } from "~/components/admin/user-management";
 import type { UserItem, RoleFilterOption } from "~/types/user-management";
 import { GenericLoadingSpinner, ConfirmationModal } from "~/components/common";
+import { QSuspense } from "~/integrations/react/Suspense";
 
 export default component$(() => {
   const dummyUsers: UserItem[] = [
@@ -161,15 +162,13 @@ export default component$(() => {
         onFilterChange$={handleFilterChange}
       />
 
-      {loading.value ? (
-        <GenericLoadingSpinner />
-      ) : (
+      <QSuspense fallback={<GenericLoadingSpinner />}>
         <UserManagementTable
           users={users.value}
           onEdit$={handleEditUser}
           onToggleStatus$={handleToggleStatusClick}
         />
-      )}
+      </QSuspense>
 
       {error.value && (
         <div class="alert alert-error mt-4">

@@ -16,6 +16,7 @@ import {
   GenericLoadingSpinner,
 } from "~/components/common";
 import Alert from "~/components/ui/Alert";
+import { QSuspense } from "~/integrations/react/Suspense";
 
 import type {
   AdminPsikologItem,
@@ -204,9 +205,7 @@ export default component$(() => {
         onFilterChange$={handleFilterChange}
       />
 
-      {loading.value ? (
-        <GenericLoadingSpinner />
-      ) : (
+      <QSuspense fallback={<GenericLoadingSpinner />}>
         <AdminPsikologTable
           items={psikologList.value}
           page={currentPage.value}
@@ -216,7 +215,7 @@ export default component$(() => {
           onDelete$={openDeleteModal}
           onToggleStatus$={openToggleStatusModal}
         />
-      )}
+      </QSuspense>
 
       {meta.totalPage > 1 && (
         <PaginationControls
