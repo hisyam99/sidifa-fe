@@ -43,6 +43,7 @@ export default component$(() => {
     initialPage: 1,
     initialLimit: 10,
     fetchList: $(async (params) => {
+      if (!isLoggedIn.value) return; // Prevent fetch during SSG or unauthenticated
       loading.value = true;
       error.value = null;
       try {
