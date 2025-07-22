@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@qwik.dev/core";
+import { component$, useSignal, useComputed$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { usePagination } from "~/hooks/usePagination";
 import { kaderService } from "~/services/api";
@@ -20,6 +20,10 @@ export default component$(() => {
   const meta = useSignal<PaginationMeta | null>(null);
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
+
+  // Fix: computed signals for total and totalPage
+  const totalDataSignal = useComputed$(() => meta.value?.totalData ?? 0);
+  const totalPageSignal = useComputed$(() => meta.value?.totalPage ?? 1);
 
   const filterOptions = useSignal<PosyanduFilterOptions>({
     nama_posyandu: "",
@@ -59,7 +63,8 @@ export default component$(() => {
         loading.value = false;
       }
     }),
-    total: meta as any, // Not used for this API, but required by hook signature
+    total: totalDataSignal,
+    totalPage: totalPageSignal,
     filters: filterOptions,
     dependencies: [isLoggedIn, sortOptions],
   });

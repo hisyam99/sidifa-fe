@@ -116,7 +116,7 @@ export const NavigationPsikolog = component$(() => {
               <div class="divider my-0"></div>
               <li>
                 <a
-                  href="/dashboard/profile"
+                  href="/kader/profile"
                   class="flex items-center gap-3 hover:bg-primary/10"
                 >
                   <LuUser class="w-4 h-4 text-primary" />
@@ -125,7 +125,7 @@ export const NavigationPsikolog = component$(() => {
               </li>
               <li>
                 <a
-                  href="/dashboard/settings"
+                  href="/kader/settings"
                   class="flex items-center gap-3 hover:bg-primary/10"
                 >
                   <LuSettings class="w-4 h-4 text-primary" />
