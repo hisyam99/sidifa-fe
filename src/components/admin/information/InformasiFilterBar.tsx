@@ -5,11 +5,13 @@ import type { InformasiFilterOptions } from "~/types/informasi";
 interface InformasiFilterBarProps {
   filterOptions: Signal<InformasiFilterOptions>;
   onFilterChange$: QRL<() => void>;
+  limit?: Signal<number>;
+  onLimitChange$?: QRL<(newLimit: number) => void>;
 }
 
 export const InformasiFilterBar = component$(
   (props: InformasiFilterBarProps) => {
-    const { filterOptions, onFilterChange$ } = props;
+    const { filterOptions, onFilterChange$, limit, onLimitChange$ } = props;
 
     const typeOptions = [
       { label: "Semua Tipe", value: "" },
@@ -82,7 +84,31 @@ export const InformasiFilterBar = component$(
             </select>
           </div>
         </div>
-        <div class="flex justify-end mt-4">
+        <div class="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
+          {limit && onLimitChange$ && (
+            <div class="form-control w-40">
+              <label for="limit-select" class="label">
+                <span class="label-text">Tampilkan per halaman</span>
+              </label>
+              <select
+                id="limit-select"
+                class="select select-bordered"
+                value={limit.value}
+                onChange$={(e) => {
+                  const newLimit = Number(
+                    (e.target as HTMLSelectElement).value,
+                  );
+                  onLimitChange$(newLimit);
+                }}
+              >
+                {[10, 20, 50].map((val) => (
+                  <option key={val} value={val.toString()}>
+                    {`${val} data`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <button class="btn btn-primary" onClick$={onFilterChange$}>
             Terapkan Filter
           </button>

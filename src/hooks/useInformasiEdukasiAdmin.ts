@@ -11,6 +11,7 @@ export const useInformasiEdukasiAdmin = () => {
   const total = useSignal<number>(0);
   const page = useSignal<number>(1);
   const limit = useSignal<number>(10);
+  const totalPage = useSignal<number>(1);
 
   const fetchList = $(
     async (
@@ -36,6 +37,10 @@ export const useInformasiEdukasiAdmin = () => {
         total.value = data.meta?.total || 0;
         page.value = data.meta?.currentPage || 1;
         limit.value = data.meta?.limit || 10;
+        totalPage.value =
+          data.meta?.totalPage ||
+          Math.ceil((data.meta?.total || 0) / (data.meta?.limit || 10)) ||
+          1;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data";
       } finally {
@@ -126,5 +131,6 @@ export const useInformasiEdukasiAdmin = () => {
     updateItem,
     deleteItem,
     createItem,
+    totalPage,
   };
 };

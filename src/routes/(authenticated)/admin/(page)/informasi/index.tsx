@@ -1,14 +1,13 @@
 import {
   component$,
-  useTask$,
   useSignal,
+  useTask$,
   useComputed$,
   $,
 } from "@qwik.dev/core";
-import { useVisibleTask$ } from "@qwik.dev/core";
-import type { DocumentHead } from "@qwik.dev/router"; // Corrected DocumentHead import
-// import { useAuth } from "~/hooks"; // Removed for SSG compatibility
-import { informasiEdukasiAdminService } from "~/services/api";
+import type { DocumentHead } from "@qwik.dev/router";
+import { useAuth } from "~/hooks/useAuth";
+import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
 import { useNavigate } from "@qwik.dev/router";
 import {
@@ -20,97 +19,81 @@ import {
   ConfirmationModal,
   GenericLoadingSpinner,
 } from "~/components/common";
-import type { InformasiItem, InformasiFilterOptions } from "~/types/informasi"; // Import InformasiFilterOptions
+import type { InformasiItem, InformasiFilterOptions } from "~/types/informasi";
 
 export default component$(() => {
-  const items = useSignal<InformasiItem[]>([]);
-  const totalData = useSignal<number>(0);
-  const totalPages = useSignal<number>(1);
-  const currentPage = useSignal(1);
-  const limit = useSignal(10);
-  const loading = useSignal(true);
-  const error = useSignal<string | null>(null);
-  const success = useSignal<string | null>(null);
+  const { isLoggedIn } = useAuth();
+  const {
+    items,
+    loading,
+    error,
+    success,
+    total,
+    fetchList,
+    deleteItem,
+    totalPage,
+  } = useInformasiEdukasiAdmin();
 
   const filterOptions = useSignal<InformasiFilterOptions>({
     judul: "",
     deskripsi: "",
     tipe: "",
   });
+  const currentPage = useSignal(1);
+  const currentLimit = useSignal(10);
   const deleteId = useSignal<string | null>(null);
   const showDeleteModal = useSignal(false);
 
   const nav = useNavigate();
 
   const meta = useComputed$(() => ({
-    totalData: totalData.value,
-    totalPage: totalPages.value,
+    totalData: total.value,
+    totalPage:
+      totalPage.value || Math.ceil(total.value / currentLimit.value) || 1,
     currentPage: currentPage.value,
-    limit: limit.value,
+    limit: currentLimit.value,
   }));
 
-  const fetchInformasi = $(async () => {
-    loading.value = true;
-    error.value = null;
-    success.value = null;
-    try {
-      const response = await informasiEdukasiAdminService.list({
-        limit: limit.value,
+  // Centralized fetch handler
+  const handleFetchList = $(() => {
+    if (isLoggedIn.value) {
+      fetchList({
+        limit: currentLimit.value,
         page: currentPage.value,
         judul: filterOptions.value.judul || undefined,
         deskripsi: filterOptions.value.deskripsi || undefined,
         tipe: filterOptions.value.tipe || undefined,
       });
-      items.value = response.data;
-      totalData.value = response.meta?.totalData || 0;
-      totalPages.value = response.meta?.totalPage || 1;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat data informasi edukasi.";
-    } finally {
-      loading.value = false;
     }
   });
 
-  const deleteInformasi = $(async (id: string) => {
-    loading.value = true;
-    error.value = null;
-    success.value = null;
-    try {
-      await informasiEdukasiAdminService.delete(id);
-      success.value = "Berhasil menghapus informasi edukasi";
-      await fetchInformasi(); // Refresh the list
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus data";
-    } finally {
-      loading.value = false;
-    }
-  });
-
+  // Fetch data on mount and when dependencies change
   useTask$(({ track }) => {
+    track(isLoggedIn);
     track(() => filterOptions.value.judul);
     track(() => filterOptions.value.deskripsi);
     track(() => filterOptions.value.tipe);
     track(currentPage);
-    track(limit);
+    track(currentLimit);
 
-    // Always fetch data for SSG/SSR
-    fetchInformasi();
-  });
-
-  // Ensure client-side fetch after hydration (fix stuck loading)
-  useVisibleTask$(async () => {
-    await fetchInformasi();
+    handleFetchList();
   });
 
   const handleFilterChange = $(() => {
-    currentPage.value = 1; // Reset page to 1 on filter change
-    // fetchInformasi will be triggered by useTask$ reacting to page/filter changes
+    currentPage.value = 1;
+    handleFetchList();
+  });
+
+  const handleLimitChange = $((newLimit: number) => {
+    currentLimit.value = newLimit;
+    currentPage.value = 1;
+    handleFetchList();
   });
 
   const handlePageChange = $((newPage: number) => {
     if (meta.value && (newPage < 1 || newPage > meta.value.totalPage)) return;
     currentPage.value = newPage;
-    // fetchInformasi will be triggered by useTask$ reacting to currentPage changes
+    handleFetchList();
   });
 
   const handleDeleteClick = $((id: string) => {
@@ -121,11 +104,20 @@ export default component$(() => {
   const handleConfirmDelete = $(async () => {
     if (deleteId.value) {
       try {
-        await deleteInformasi(deleteId.value);
+        await deleteItem(deleteId.value);
         showDeleteModal.value = false;
         deleteId.value = null;
+        // Refresh list after delete
+        if (isLoggedIn.value) {
+          fetchList({
+            limit: currentLimit.value,
+            page: currentPage.value,
+            judul: filterOptions.value.judul || undefined,
+            deskripsi: filterOptions.value.deskripsi || undefined,
+            tipe: filterOptions.value.tipe || undefined,
+          });
+        }
       } catch {
-        // Error is already handled in deleteInformasi function
         showDeleteModal.value = false;
         deleteId.value = null;
       }
@@ -258,8 +250,10 @@ export default component$(() => {
       </div>
 
       <InformasiFilterBar
-        filterOptions={filterOptions} // Changed to filterOptions
+        filterOptions={filterOptions}
         onFilterChange$={handleFilterChange}
+        limit={currentLimit}
+        onLimitChange$={handleLimitChange}
       />
 
       {error.value && <Alert type="error" message={error.value} />}
@@ -271,7 +265,7 @@ export default component$(() => {
         <InformasiTable
           items={items.value}
           page={currentPage.value}
-          limit={limit.value}
+          limit={currentLimit.value}
         >
           {items.value.map((item: InformasiItem) => (
             <>
