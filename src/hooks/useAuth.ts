@@ -24,6 +24,10 @@ export const useAuth = () => {
   const nav = useNavigate();
 
   const checkAuthStatus = $(async (forceCheck = false) => {
+    // Prevent API calls during SSG/server
+    if (isServer) {
+      return;
+    }
     // Prevent multiple simultaneous checks
     if (globalAuthState.isChecking && !forceCheck) {
       return;
@@ -90,6 +94,10 @@ export const useAuth = () => {
   });
 
   const logout = $(async () => {
+    // Prevent API calls during SSG/server
+    if (isServer) {
+      return;
+    }
     try {
       await authService.logout();
     } catch (err) {
@@ -108,6 +116,10 @@ export const useAuth = () => {
   });
 
   const refreshUserData = $(async () => {
+    // Prevent API calls during SSG/server
+    if (isServer) {
+      return;
+    }
     await checkAuthStatus(true); // Force check
   });
 

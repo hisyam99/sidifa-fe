@@ -5,6 +5,7 @@ import {
   useComputed$,
   $,
 } from "@qwik.dev/core";
+import { useVisibleTask$ } from "@qwik.dev/core";
 import type { DocumentHead } from "@qwik.dev/router"; // Corrected DocumentHead import
 // import { useAuth } from "~/hooks"; // Removed for SSG compatibility
 import { informasiEdukasiAdminService } from "~/services/api";
@@ -92,8 +93,13 @@ export default component$(() => {
     track(currentPage);
     track(limit);
 
-    // Always fetch data for SSG - auth will be handled by middleware
+    // Always fetch data for SSG/SSR
     fetchInformasi();
+  });
+
+  // Ensure client-side fetch after hydration (fix stuck loading)
+  useVisibleTask$(async () => {
+    await fetchInformasi();
   });
 
   const handleFilterChange = $(() => {

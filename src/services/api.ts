@@ -121,6 +121,13 @@ api.interceptors.response.use(
 // Profile service
 export const profileService = {
   async getProfile() {
+    // Prevent API calls during SSG/server
+    if (typeof process !== "undefined" && process.env && process.env.SSR) {
+      return null;
+    }
+    if (typeof window === "undefined") {
+      return null;
+    }
     const response = await api.get("/auth/me");
     return response.data;
   },
@@ -129,6 +136,13 @@ export const profileService = {
 // Auth service
 export const authService = {
   async logout() {
+    // Prevent API calls during SSG/server
+    if (typeof process !== "undefined" && process.env && process.env.SSR) {
+      return null;
+    }
+    if (typeof window === "undefined") {
+      return null;
+    }
     // Saat logout, reset status csrf agar diambil ulang jika login lagi.
     csrfFetched = false;
     csrfTokenValue = null;
@@ -136,10 +150,24 @@ export const authService = {
     return response.data;
   },
   async refresh() {
+    // Prevent API calls during SSG/server
+    if (typeof process !== "undefined" && process.env && process.env.SSR) {
+      return null;
+    }
+    if (typeof window === "undefined") {
+      return null;
+    }
     const response = await api.post("/auth/refresh");
     return response.data;
   },
   async login(data: any) {
+    // Prevent API calls during SSG/server
+    if (typeof process !== "undefined" && process.env && process.env.SSR) {
+      return null;
+    }
+    if (typeof window === "undefined") {
+      return null;
+    }
     const response = await api.post("/auth/login", data);
     return response.data;
   },
@@ -155,6 +183,13 @@ export const adminService = {
     verification?: "verified" | "unverified" | "";
     orderBy?: string;
   }) {
+    // Prevent API calls during SSG/server
+    if (typeof process !== "undefined" && process.env && process.env.SSR) {
+      return [];
+    }
+    if (typeof window === "undefined") {
+      return [];
+    }
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
@@ -315,6 +350,19 @@ export const informasiEdukasiAdminService = {
     judul?: string;
     tipe?: string;
   }) {
+    // Prevent API calls during SSG/server
+    if (
+      (typeof process !== "undefined" && process.env && process.env.SSR) ||
+      typeof window === "undefined"
+    ) {
+      return {
+        data: [],
+        meta: {
+          totalData: 0,
+          totalPage: 1,
+        },
+      };
+    }
     const queryParams = new URLSearchParams();
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.page) queryParams.append("page", params.page.toString());
@@ -327,6 +375,13 @@ export const informasiEdukasiAdminService = {
     return response.data;
   },
   async detail(id: string) {
+    // Prevent API calls during SSG/server
+    if (
+      (typeof process !== "undefined" && process.env && process.env.SSR) ||
+      typeof window === "undefined"
+    ) {
+      return null;
+    }
     const response = await api.get(`/admin/informasi-edukasi/detail/${id}`);
     return response.data;
   },
@@ -337,6 +392,13 @@ export const informasiEdukasiAdminService = {
     deskripsi?: string;
     file?: File;
   }) {
+    // Prevent API calls during SSG/server
+    if (
+      (typeof process !== "undefined" && process.env && process.env.SSR) ||
+      typeof window === "undefined"
+    ) {
+      return null;
+    }
     const formData = new FormData();
     formData.append("id", data.id);
     if (data.judul) formData.append("judul", data.judul);
@@ -352,6 +414,13 @@ export const informasiEdukasiAdminService = {
     return response.data;
   },
   async delete(id: string) {
+    // Prevent API calls during SSG/server
+    if (
+      (typeof process !== "undefined" && process.env && process.env.SSR) ||
+      typeof window === "undefined"
+    ) {
+      return null;
+    }
     const response = await api.delete(`/admin/informasi-edukasi`, {
       data: { id },
     });
@@ -363,6 +432,13 @@ export const informasiEdukasiAdminService = {
     deskripsi: string;
     file?: File;
   }) {
+    // Prevent API calls during SSG/server
+    if (
+      (typeof process !== "undefined" && process.env && process.env.SSR) ||
+      typeof window === "undefined"
+    ) {
+      return null;
+    }
     const formData = new FormData();
     formData.append("judul", data.judul);
     formData.append("tipe", data.tipe);
