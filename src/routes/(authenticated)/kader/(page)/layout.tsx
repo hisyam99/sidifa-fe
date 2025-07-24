@@ -1,10 +1,8 @@
 import { component$, Slot } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { useCheckRole } from "~/hooks/useCheckRole";
 import { ProfileOverviewCard, SidebarStatCard } from "~/components/dashboard";
 
 export default component$(() => {
-  useCheckRole(["kader"]);
   const { user } = useAuth();
 
   // Placeholder stats

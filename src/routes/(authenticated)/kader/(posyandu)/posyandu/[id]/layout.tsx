@@ -1,7 +1,5 @@
-import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
-import { useAuth } from "~/hooks";
+import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { sessionUtils } from "~/utils/auth";
 import {
   LuBarChart,
   LuClipboardList,
@@ -11,36 +9,9 @@ import {
 import { useLocation } from "@qwik.dev/router";
 
 export default component$(() => {
-  const { isLoggedIn } = useAuth();
-  const isClient = useSignal(false);
-  const isAuthenticated = useSignal(false);
   const location = useLocation();
 
   useCheckRole(["kader"]);
-
-  // Client-side hydration dan update auth state
-  useTask$(({ track }) => {
-    track(isLoggedIn); // Re-run when isLoggedIn changes
-
-    isClient.value = true;
-    const storedAuth = sessionUtils.getAuthStatus();
-    const hasUserProfile = !!sessionUtils.getUserProfile();
-    isAuthenticated.value = storedAuth === true && hasUserProfile;
-  });
-
-  // Show skeleton loading hanya saat SSR atau initial load
-  if (!isClient.value) {
-    return (
-      <div class="flex justify-center items-center min-h-screen">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  // Let the auth hook handle redirects setelah client hydration
-  if (!isAuthenticated.value) {
-    return null; // The auth hook will redirect
-  }
 
   // Extract posyanduId from the URL
   const pathParts = location.url.pathname.split("/");
@@ -48,18 +19,24 @@ export default component$(() => {
   const base = `/kader/posyandu/${posyanduId}`;
 
   const menuItems = [
-    { href: base, label: "Dashboard", icon: LuBarChart },
+    { href: base, label: "Dashboard", icon: "LuBarChart" },
     {
       href: `${base}/laporan-statistik`,
       label: "Laporan Statistik",
-      icon: LuLineChart,
+      icon: "LuLineChart",
     },
     {
       href: `${base}/pendataan-ibk`,
       label: "Pendataan IBK",
-      icon: LuClipboardList,
+      icon: "LuClipboardList",
     },
   ];
+
+  const iconMap = {
+    LuBarChart,
+    LuLineChart,
+    LuClipboardList,
+  };
 
   return (
     <div class="min-h-screen bg-base-200/60">
@@ -97,7 +74,8 @@ export default component$(() => {
                 class={location.url.pathname === item.href ? "bordered" : ""}
               >
                 <a href={item.href}>
-                  <item.icon />
+                  {iconMap[item.icon as keyof typeof iconMap] &&
+                    iconMap[item.icon as keyof typeof iconMap]({})}
                   {item.label}
                 </a>
               </li>
