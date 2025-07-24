@@ -1,7 +1,7 @@
 import { Field } from "@modular-forms/qwik";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 
-export function IBKDisabilitasStep({ form }: { form: any }) {
+export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
   return (
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Field of={form} name="odgj">

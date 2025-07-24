@@ -43,8 +43,79 @@ export default component$<FormFieldModularProps>(
     pattern,
     accept,
     maxLength,
-    onInput$,
   }) => {
+    let inputElement = null;
+    if (type === "select" && options) {
+      inputElement = (
+        <select
+          {...props}
+          value={field.value ?? ""}
+          class={`select select-bordered w-full focus-ring ${field.error ? "select-error" : ""} ${className}`}
+          aria-invalid={field.error ? "true" : "false"}
+          aria-describedby={field.error ? `${props.name}-error` : undefined}
+          onInput$={props.onInput$}
+          onBlur$={props.onBlur$}
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      );
+    } else if (type === "textarea") {
+      inputElement = (
+        <textarea
+          {...props}
+          value={field.value ?? ""}
+          class={`textarea textarea-bordered w-full focus-ring ${field.error ? "textarea-error" : ""} ${className}`}
+          placeholder={placeholder}
+          rows={rows}
+          aria-invalid={field.error ? "true" : "false"}
+          aria-describedby={field.error ? `${props.name}-error` : undefined}
+          maxLength={maxLength}
+          onInput$={props.onInput$}
+          onBlur$={props.onBlur$}
+        />
+      );
+    } else if (type === "file") {
+      inputElement = (
+        <input
+          {...props}
+          type="file"
+          placeholder={placeholder}
+          class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
+          aria-invalid={field.error ? "true" : "false"}
+          aria-describedby={field.error ? `${props.name}-error` : undefined}
+          accept={accept}
+          onInput$={props.onInput$}
+          onBlur$={props.onBlur$}
+          autoFocus={field.error ? true : undefined}
+        />
+      );
+    } else {
+      inputElement = (
+        <input
+          {...props}
+          type={type}
+          value={field.value ?? ""}
+          placeholder={placeholder}
+          class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
+          aria-invalid={field.error ? "true" : "false"}
+          aria-describedby={field.error ? `${props.name}-error` : undefined}
+          min={min}
+          max={max}
+          inputMode={inputMode}
+          pattern={pattern}
+          accept={accept}
+          maxLength={maxLength}
+          onInput$={props.onInput$}
+          onBlur$={props.onBlur$}
+          autoFocus={field.error ? true : undefined}
+        />
+      );
+    }
+
     return (
       <div class="form-control w-full">
         {label && (
@@ -55,48 +126,7 @@ export default component$<FormFieldModularProps>(
             </span>
           </label>
         )}
-        {type === "select" && options ? (
-          <select
-            {...props}
-            class={`select select-bordered w-full focus-ring ${field.error ? "select-error" : ""} ${className}`}
-            aria-invalid={field.error ? "true" : "false"}
-            aria-describedby={field.error ? `${props.name}-error` : undefined}
-          >
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        ) : type === "textarea" ? (
-          <textarea
-            {...props}
-            class={`textarea textarea-bordered w-full focus-ring ${field.error ? "textarea-error" : ""} ${className}`}
-            placeholder={placeholder}
-            rows={rows}
-            aria-invalid={field.error ? "true" : "false"}
-            aria-describedby={field.error ? `${props.name}-error` : undefined}
-            maxLength={maxLength}
-            onInput$={onInput$}
-          />
-        ) : (
-          <input
-            {...props}
-            type={type}
-            placeholder={placeholder}
-            class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
-            aria-invalid={field.error ? "true" : "false"}
-            aria-describedby={field.error ? `${props.name}-error` : undefined}
-            min={min}
-            max={max}
-            inputMode={inputMode}
-            pattern={pattern}
-            accept={accept}
-            maxLength={maxLength}
-            onInput$={onInput$}
-            autoFocus={field.error ? true : undefined}
-          />
-        )}
+        {inputElement}
         {helper && (
           <label class="label">
             <span class="label-text-alt text-base-content/60">{helper}</span>

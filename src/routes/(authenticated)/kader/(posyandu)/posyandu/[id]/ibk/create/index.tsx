@@ -180,14 +180,49 @@ export default component$(() => {
     success.value = null;
     try {
       const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        if (key === "file" && value instanceof File) {
-          formData.append("file", value);
-        } else if (key !== "file" && value !== undefined && value !== "") {
-          formData.append(key, value as any);
-        }
-      });
+
+      // Map form fields to API field names
+      formData.append("nama", values.nama);
+      formData.append("nik", values.nik);
+      formData.append("tempat_lahir", values.tempat_lahir);
+      formData.append("tanggal_lahir", values.tanggal_lahir);
+      if (values.file instanceof File) {
+        formData.append("file_foto", values.file);
+      }
+      formData.append("jenis_kelamin", values.jenis_kelamin);
+      formData.append("agama", values.agama);
+      formData.append("umur", values.umur);
+      formData.append("alamat", values.alamat);
+      formData.append("no_telp", values.no_telp);
+      formData.append("nama_wali", values.nama_wali);
+      formData.append("no_telp_wali", values.no_telp_wali);
       formData.append("posyanduId", posyanduId);
+
+      // Step 2: Asesmen Psikologi
+      formData.append("total_iq", values.total_iq);
+      formData.append("kategori_iq", values.kategori_iq);
+      formData.append("tipe_kepribadian", values.tipe_kepribadian);
+      formData.append("deskripsi_kepribadian", values.deskripsi_kepribadian);
+      formData.append("catatan_psikolog", values.catatan_psikolog);
+      formData.append("rekomendasi_intervensi", values.rekomendasi_intervensi);
+
+      // Step 3: Disabilitas
+      formData.append("odgj", values.odgj);
+      formData.append("hasil_diagnosa", values.hasil_diagnosa);
+      formData.append("jenis_bantuan", values.jenis_bantuan);
+      formData.append("riwayat_terapi", values.riwayat_terapi);
+      formData.append("potensi", values.potensi);
+      formData.append("minat", values.minat);
+      formData.append("bakat", values.bakat);
+      formData.append("keterampilan", values.keterampilan);
+
+      // Step 4: Kunjungan
+      formData.append("pekerjaan", values.pekerjaan);
+      formData.append("pendidikan", values.pendidikan);
+      formData.append("status_perkawinan", values.status_perkawinan);
+      formData.append("titik_koordinat", values.titik_koordinat);
+      formData.append("keterangan_tambahan", values.keterangan_tambahan);
+
       await ibkService.createIbk(formData);
       success.value = "Data IBK berhasil disimpan.";
       setTimeout(() => nav(`/kader/(page)/posyandu`), 1500);
