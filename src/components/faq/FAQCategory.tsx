@@ -30,7 +30,7 @@ export const FAQCategory = component$((props: FAQCategoryProps) => {
         <div class="space-y-4">
           {category.qa.map((item, qaIndex) => (
             <FAQItem
-              key={qaIndex}
+              key={`${category.judul}-${item.pertanyaan}`}
               question={item.pertanyaan}
               answer={item.jawaban}
               index={categoryIndex * 100 + qaIndex} // Unique index for checkbox id

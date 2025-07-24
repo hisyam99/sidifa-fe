@@ -1,36 +1,31 @@
-import { component$, Slot, useSignal, useTask$ } from "@qwik.dev/core";
-import { useLocation } from "@qwik.dev/router";
+import { component$, Slot } from "@qwik.dev/core";
 import { NavigationKader, Breadcrumbs } from "~/components/layout";
 import { RoleProtectedContent } from "~/components/common/RoleProtectedContent";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
 export default component$(() => {
   // Track navigation for global loading overlay
-  const location = useLocation();
-  const isNavigating = useSignal(false);
-  const prevPath = useSignal(location.url.pathname);
+  // const location = useLocation();
+  // const isNavigating = useSignal(false);
+  // const prevPath = useSignal(location.url.pathname);
 
-  useTask$(({ track }) => {
-    const currentPath = track(() => location.url.pathname);
-    if (prevPath.value !== currentPath) {
-      isNavigating.value = true;
-      setTimeout(() => {
-        isNavigating.value = false;
-        prevPath.value = currentPath;
-      }, 350);
-    }
-  });
+  // useTask$(({ track }) => {
+  //   const currentPath = track(() => location.url.pathname);
+  //   if (prevPath.value !== currentPath) {
+  //     isNavigating.value = true;
+  //     setTimeout(() => {
+  //       isNavigating.value = false;
+  //       prevPath.value = currentPath;
+  //     }, 350);
+  //   }
+  // });
 
   return (
     <div class="min-h-screen bg-base-200/60">
       <NavigationKader />
       <RoleProtectedContent allowedRoles={["kader", "admin"]}>
         <div class="relative">
-          {isNavigating.value && (
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
-              <span class="loading loading-spinner loading-lg text-primary"></span>
-            </div>
-          )}
+          {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}
           <main class="container mx-auto p-4 md:p-8 transition-all duration-300">
             <Breadcrumbs />
             <AnimatedPageContainer>

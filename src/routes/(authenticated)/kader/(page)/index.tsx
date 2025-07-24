@@ -1,12 +1,11 @@
-import { component$ } from "@qwik.dev/core";
+import { $, component$ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { $ } from "@qwik.dev/core";
 import {
   LuClipboardList,
   LuBriefcase,
   LuBookOpen,
   LuUser,
-} from "@qwikest/icons/lucide";
+} from "~/components/icons/lucide-optimized";
 import {
   RoleDashboardHeader,
   DashboardQuickLinkCard,
@@ -19,7 +18,7 @@ export default component$(() => {
     {
       href: "/kader/posyandu",
       label: "List Posyandu",
-      icon: $(LuClipboardList),
+      icon: LuClipboardList,
       desc: "Lihat dan kelola seluruh posyandu yang Anda akses.",
     },
     {
@@ -56,7 +55,7 @@ export default component$(() => {
             key={link.href}
             href={link.href}
             label={link.label}
-            icon={link.icon}
+            icon={link.icon as any}
             description={link.desc}
           />
         ))}

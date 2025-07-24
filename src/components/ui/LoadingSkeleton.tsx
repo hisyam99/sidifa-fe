@@ -1,4 +1,5 @@
 import { component$ } from "@qwik.dev/core";
+import { Spinner } from "./Spinner";
 
 export const LoadingSkeleton = component$(() => {
   return (
@@ -47,9 +48,5 @@ export const LoadingSkeleton = component$(() => {
 });
 
 export const SimpleLoadingSpinner = component$(() => {
-  return (
-    <div class="flex justify-center items-center min-h-screen">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-    </div>
-  );
+  return <Spinner class="min-h-screen" size="w-12 h-12" />;
 });

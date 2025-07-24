@@ -41,7 +41,7 @@ export const PosyanduFilterSort = component$(
     ];
 
     return (
-      <div class="mb-6 p-6 bg-base-100 rounded-lg shadow-md">
+      <div class="card mb-6 p-6 bg-base-100 shadow-md">
         <h2 class="card-title text-xl font-bold mb-4">
           Filter & Urutkan Posyandu
         </h2>

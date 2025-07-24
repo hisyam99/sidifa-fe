@@ -27,7 +27,7 @@ export default component$(() => {
       sessionUtils.setAuthStatus(true);
       // Fetch user profile
       const profile = await profileService.getProfile();
-      if (profile && profile.role) {
+      if (profile?.role) {
         sessionUtils.setUserProfile(profile);
         let redirectTo = "/dashboard";
         if (profile.role === "admin") redirectTo = "/admin";

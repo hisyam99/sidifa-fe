@@ -54,7 +54,7 @@ export default component$(() => {
             <LuBarChart />
             Buka Menu
           </label>
-          <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
+          <main class="card bg-base-100 p-6 shadow-lg">
             <Slot />
           </main>
         </div>
@@ -81,6 +81,14 @@ export default component$(() => {
               </li>
             ))}
             <li class="mt-8">
+              <a
+                href={`/kader/posyandu/${posyanduId}/ibk/create`}
+                class="btn btn-primary w-full flex items-center gap-2"
+              >
+                Tambah IBK
+              </a>
+            </li>
+            <li class="mt-4">
               <a
                 href="/kader/posyandu"
                 class="btn btn-outline btn-primary w-full flex items-center gap-2"

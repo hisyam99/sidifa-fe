@@ -11,195 +11,83 @@ import {
   LuHeart,
   LuBrain,
 } from "~/components/icons/lucide-optimized";
-import { useNavigate } from "@qwik.dev/router";
+import { useNavigate, useLocation } from "@qwik.dev/router";
 
 export const NavigationAuth = component$(() => {
   const { user, logout } = useAuth();
   const nav = useNavigate();
+  const location = useLocation();
 
   const handleLogout = $(async () => {
     await logout();
     nav("/auth/login");
   });
 
+  // Build menuItems for desktop and mobile
+  const menuItems = [
+    { href: "/", label: "Beranda", icon: LuHome },
+    { href: "/faq", label: "FAQ", icon: LuHelpCircle },
+    { href: "/dashboard", label: "Dashboard", icon: LuBarChart },
+    { href: "/dashboard/profile", label: "Profil", icon: LuUser },
+    ...(user.value?.role === "admin"
+      ? [{ href: "/admin", label: "Dashboard Admin", icon: LuBarChart }]
+      : []),
+    ...(user.value?.role === "kader"
+      ? [{ href: "/kader", label: "Dashboard Kader", icon: LuHeart }]
+      : []),
+    ...(user.value?.role === "psikolog"
+      ? [{ href: "/psikolog", label: "Dashboard Psikolog", icon: LuBrain }]
+      : []),
+    { href: "/dashboard/settings", label: "Pengaturan", icon: LuSettings },
+  ];
+
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
-      <div class="container mx-auto px-4 flex items-center justify-between">
-        <div class="navbar-start">
-          <div class="dropdown">
-            <button
-              class="btn btn-ghost btn-circle lg:hidden focus-ring"
-              aria-label="Buka menu navigasi"
-            >
-              <LuMenu class="w-6 h-6 text-base-content" />
-            </button>
-            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
-              <li>
-                <a href="/" class="flex items-center gap-3 hover:bg-primary/10">
-                  <LuHome class="w-5 h-5 text-primary" />
-                  <span class="font-medium">Beranda</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/faq"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuHelpCircle class="w-5 h-5 text-primary" />
-                  <span class="font-medium">FAQ</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/dashboard"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuBarChart class="w-5 h-5 text-primary" />
-                  <span class="font-medium">Dashboard</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/dashboard/profile"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuUser class="w-5 h-5 text-primary" />
-                  <span class="font-medium">Profil</span>
-                </a>
-              </li>
-              {user.value?.role === "admin" && (
-                <li>
-                  <a
-                    href="/admin"
-                    class="flex items-center gap-3 hover:bg-primary/10"
-                  >
-                    <LuBarChart class="w-5 h-5 text-primary" />
-                    <span class="font-medium">Dashboard Admin</span>
-                  </a>
-                </li>
-              )}
-              {user.value?.role === "kader" && (
-                <li>
-                  <a
-                    href="/kader"
-                    class="flex items-center gap-3 hover:bg-primary/10"
-                  >
-                    <LuHeart class="w-5 h-5 text-primary" />
-                    <span class="font-medium">Dashboard Kader</span>
-                  </a>
-                </li>
-              )}
-              {user.value?.role === "psikolog" && (
-                <li>
-                  <a
-                    href="/psikolog"
-                    class="flex items-center gap-3 hover:bg-primary/10"
-                  >
-                    <LuBrain class="w-5 h-5 text-primary" />
-                    <span class="font-medium">Dashboard Psikolog</span>
-                  </a>
-                </li>
-              )}
-              <li>
-                <a
-                  href="/dashboard/settings"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuSettings class="w-5 h-5 text-primary" />
-                  <span class="font-medium">Pengaturan</span>
-                </a>
-              </li>
-            </ul>
+      <div class="container mx-auto px-4 flex items-center min-w-0">
+        {/* Logo di kiri */}
+        <a
+          href="/"
+          class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300 flex-shrink-0"
+        >
+          <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
+            <LuHeart class="w-6 h-6" />
           </div>
-          <a
-            href="/"
-            class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300"
-          >
-            <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
-              <LuHeart class="w-6 h-6" />
-            </div>
-            <div class="flex flex-col items-start">
-              <span class="font-bold text-gradient-primary">SIDIFA</span>
-              <span class="text-xs text-base-content/60 font-medium">
-                Sistem Informasi Difabel
-              </span>
-            </div>
-          </a>
-        </div>
-        <div class="navbar-end">
-          <div class="hidden lg:flex items-center gap-2 mr-4">
-            <a
-              href="/"
-              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-            >
-              <LuHome class="w-4 h-4 text-primary" />
-              Beranda
-            </a>
-            <a
-              href="/faq"
-              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-            >
-              <LuHelpCircle class="w-4 h-4 text-primary" />
-              FAQ
-            </a>
-            <a
-              href="/dashboard"
-              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-            >
-              <LuBarChart class="w-4 h-4 text-primary" />
-              Dashboard
-            </a>
-            <a
-              href="/dashboard/profile"
-              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-            >
-              <LuUser class="w-4 h-4 text-primary" />
-              Profil
-            </a>
-            {user.value?.role === "admin" && (
-              <a
-                href="/admin"
-                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-              >
-                <LuBarChart class="w-4 h-4 text-primary" />
-                Dashboard Admin
-              </a>
-            )}
-            {user.value?.role === "kader" && (
-              <a
-                href="/kader"
-                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-              >
-                <LuHeart class="w-4 h-4 text-primary" />
-                Dashboard Kader
-              </a>
-            )}
-            {user.value?.role === "psikolog" && (
-              <a
-                href="/psikolog"
-                class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-              >
-                <LuBrain class="w-4 h-4 text-primary" />
-                Dashboard Psikolog
-              </a>
-            )}
-            <a
-              href="/dashboard/settings"
-              class="btn btn-ghost btn-sm gap-2 hover:bg-primary/10 transition-all duration-300"
-            >
-              <LuSettings class="w-4 h-4 text-primary" />
-              Pengaturan
-            </a>
+          <div class="flex flex-col items-start">
+            <span class="font-bold text-gradient-primary">SIDIFA</span>
+            <span class="text-xs text-base-content/60 font-medium">
+              Sistem Informasi Difabel
+            </span>
           </div>
+        </a>
+        {/* Kanan: menuItems desktop, avatar, hamburger mobile */}
+        <div class="ml-auto flex items-center gap-2">
+          {/* MenuItems utama desktop */}
+          <div class="hidden lg:flex items-center gap-2">
+            {menuItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
+                  location.url.pathname === item.href
+                    ? " font-bold text-primary"
+                    : ""
+                }`}
+              >
+                <item.icon class="w-4 h-4 text-primary" />
+                <span class="truncate">{item.label}</span>
+              </a>
+            ))}
+          </div>
+          {/* Avatar/login */}
           <div class="dropdown dropdown-end">
             <button class="btn btn-ghost btn-circle avatar focus-ring">
-              <div class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300">
-                <div class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
+              <span class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 inline-flex items-center justify-center">
+                <span class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
                   <span class="text-sm font-bold">
                     {user.value?.email?.charAt(0).toUpperCase() || "U"}
                   </span>
-                </div>
-              </div>
+                </span>
+              </span>
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-56 border border-base-200/50">
               <li class="menu-title">
@@ -248,6 +136,33 @@ export const NavigationAuth = component$(() => {
                   <span class="font-medium">Keluar</span>
                 </button>
               </li>
+            </ul>
+          </div>
+          {/* Hamburger mobile menu - setelah avatar */}
+          <div class="dropdown dropdown-end lg:hidden">
+            <button
+              class="btn btn-ghost btn-circle"
+              tabIndex={0}
+              aria-label="Buka menu navigasi"
+            >
+              <LuMenu class="w-6 h-6 text-base-content" />
+            </button>
+            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
+              {menuItems.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    class={`flex items-center gap-3 hover:bg-primary/10${
+                      location.url.pathname === item.href
+                        ? " font-bold text-primary"
+                        : ""
+                    }`}
+                  >
+                    <item.icon class="w-5 h-5 text-primary" />
+                    <span class="font-medium">{item.label}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

@@ -15,7 +15,10 @@ export const TestimonialCard = component$((props: TestimonialCardProps) => {
     <div class="card bg-base-100 shadow-md p-6 lg:p-8">
       <div class="flex items-center mb-4">
         {Array.from({ length: stars }).map((_, i) => (
-          <LuStar key={`star-${i}`} class="w-5 h-5 text-warning fill-warning" />
+          <LuStar
+            key={`star-${name}-${i}`}
+            class="w-5 h-5 text-warning fill-warning"
+          />
         ))}
       </div>
       <p class="text-base-content/70 text-lg italic mb-6 leading-relaxed">

@@ -357,7 +357,7 @@ export default component$(() => {
   });
 
   return (
-    <main class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+    <main class="min-h-screen">
       <div class="container mx-auto px-4 py-8">
         {/* Page Header (no changes needed here) */}
         <div class="flex items-center justify-between mb-8">

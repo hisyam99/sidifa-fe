@@ -1,13 +1,13 @@
 import { Component, SVGProps } from "@qwik.dev/core";
 import {
   LuHome,
-  LuUser,
   LuUsers,
   LuBuilding,
   LuKey,
   LuSettings,
   LuClipboardList,
   LuBookOpen,
+  LuBrain,
 } from "~/components/icons/lucide-optimized"; // Changed import source
 
 interface AdminMenuItem {
@@ -33,14 +33,19 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     icon: LuBuilding,
   },
   {
-    href: "/admin/manajemen-psikolog",
-    label: "Manajemen Psikolog",
-    icon: LuUser,
+    href: "/admin/manajemen-kader",
+    label: "Manajemen Kader",
+    icon: LuUsers,
   },
   {
-    href: "/admin/manajemen-pengguna",
-    label: "Manajemen Pengguna",
-    icon: LuUsers,
+    href: "/admin/manajemen-psikolog",
+    label: "Manajemen Psikolog",
+    icon: LuBrain,
+  },
+  {
+    href: "/admin/informasi",
+    label: "Informasi dan Edukasi",
+    icon: LuBookOpen,
   },
   {
     href: "/admin/laporan-sistem",
@@ -48,12 +53,7 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     icon: LuClipboardList,
   },
   {
-    href: "/admin/materi-edukasi",
-    label: "Materi Edukasi",
-    icon: LuBookOpen,
-  },
-  {
-    href: "/dashboard/settings", // Reusing general settings page
+    href: "/dashboard/settings",
     label: "Pengaturan",
     icon: LuSettings,
   },

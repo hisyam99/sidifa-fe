@@ -1,5 +1,5 @@
 import { component$, Signal, QRL } from "@qwik.dev/core";
-import { LuLoader2 } from "~/components/icons/lucide-optimized"; // Updated import path
+import { Spinner } from "../ui/Spinner";
 import type { PosyanduItem } from "~/types/posyandu";
 import { useNavigate } from "@qwik.dev/router";
 
@@ -25,14 +25,7 @@ export const PosyanduTable = component$((props: PosyanduTableProps) => {
           </div>
         )}
 
-        {loading.value && (
-          <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center z-10">
-            <LuLoader2
-              class="animate-spin text-primary"
-              style={{ width: "32px", height: "32px" }}
-            />
-          </div>
-        )}
+        {loading.value && <Spinner overlay />}
 
         <div
           class={`overflow-x-auto ${loading.value ? "pointer-events-none opacity-60" : ""}`}
@@ -65,16 +58,16 @@ export const PosyanduTable = component$((props: PosyanduTableProps) => {
                       <div class="flex gap-2">
                         {posyandu.isRegistered ? (
                           <button
-                            class="btn btn-info btn-sm"
+                            class="btn btn-info btn-sm w-24"
                             onClick$={() =>
-                              nav(`/kader/posyandu/${posyandu.id}/ibk/create`)
+                              nav(`/kader/posyandu/${posyandu.id}`)
                             }
                           >
                             View
                           </button>
                         ) : (
                           <button
-                            class="btn btn-secondary btn-sm"
+                            class="btn btn-secondary btn-sm w-24"
                             onClick$={async () => {
                               if (props.onRegister$) {
                                 await props.onRegister$(posyandu.id);

@@ -6,6 +6,7 @@ import {
   LuCircle,
   LuAlertCircle,
 } from "@qwikest/icons/lucide";
+import { Spinner } from "./Spinner";
 
 export interface WizardStep {
   id: string;
@@ -52,6 +53,18 @@ export default component$<FormWizardProps>(
     const currentStepData = steps[currentStep];
     const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 
+    // Extract button icon for submit and next
+    let submitButtonIcon = null;
+    if (isLoading.value) {
+      submitButtonIcon = <Spinner size="w-5 h-5" />;
+    }
+    let nextButtonIcon = null;
+    if (isLoading.value) {
+      nextButtonIcon = <Spinner size="w-5 h-5" />;
+    } else {
+      nextButtonIcon = <LuChevronRight class="w-4 h-4" />;
+    }
+
     return (
       <div class={`w-full ${className}`}>
         {/* Progress Bar */}
@@ -83,6 +96,38 @@ export default component$<FormWizardProps>(
               const isCompleted = step.isCompleted || index < currentStep;
               const isClickable = allowSkipSteps || index <= currentStep;
 
+              let stepCircleContent;
+              if (isCompleted && !isCurrent) {
+                stepCircleContent = <LuCheck class="w-6 h-6" />;
+              } else if (
+                step.isRequired &&
+                !step.isValid &&
+                index < currentStep
+              ) {
+                stepCircleContent = (
+                  <LuAlertCircle class="w-6 h-6 text-warning" />
+                );
+              } else {
+                stepCircleContent = (
+                  <span class="text-sm font-semibold">{index + 1}</span>
+                );
+              }
+
+              let stepCircleClass =
+                "relative z-10 w-12 h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 ";
+              if (isCurrent) {
+                stepCircleClass +=
+                  "border-primary bg-primary text-white scale-110 shadow-lg ";
+              } else if (isCompleted) {
+                stepCircleClass += "border-primary bg-primary text-white ";
+              } else {
+                stepCircleClass +=
+                  "border-base-300 bg-base-100 text-base-content/50 hover:border-primary/50 ";
+              }
+              if (!isClickable) {
+                stepCircleClass += "cursor-not-allowed opacity-50 ";
+              }
+
               return (
                 <div
                   key={step.id}
@@ -102,13 +147,7 @@ export default component$<FormWizardProps>(
 
                   {/* Step Circle */}
                   <div
-                    class={`relative z-10 w-12 h-12 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 ${
-                      isCurrent
-                        ? "border-primary bg-primary text-white scale-110 shadow-lg"
-                        : isCompleted
-                          ? "border-primary bg-primary text-white"
-                          : "border-base-300 bg-base-100 text-base-content/50 hover:border-primary/50"
-                    } ${!isClickable ? "cursor-not-allowed opacity-50" : ""}`}
+                    class={stepCircleClass}
                     onClick$={$(() => {
                       // Step navigation disabled for now to avoid serialization issues
                       // If you want to enable step navigation:
@@ -117,15 +156,7 @@ export default component$<FormWizardProps>(
                       // }
                     })}
                   >
-                    {isCompleted && !isCurrent ? (
-                      <LuCheck class="w-6 h-6" />
-                    ) : step.isRequired &&
-                      !step.isValid &&
-                      index < currentStep ? (
-                      <LuAlertCircle class="w-6 h-6 text-warning" />
-                    ) : (
-                      <span class="text-sm font-semibold">{index + 1}</span>
-                    )}
+                    {stepCircleContent}
                   </div>
 
                   {/* Step Label */}
@@ -205,9 +236,7 @@ export default component$<FormWizardProps>(
                   (currentStepData?.isRequired && !currentStepData?.isValid)
                 }
               >
-                {isLoading.value ? (
-                  <span class="loading loading-spinner loading-sm"></span>
-                ) : null}
+                {submitButtonIcon}
                 {submitLabel}
               </button>
             ) : (
@@ -220,11 +249,7 @@ export default component$<FormWizardProps>(
                   (currentStepData?.isRequired && !currentStepData?.isValid)
                 }
               >
-                {isLoading.value ? (
-                  <span class="loading loading-spinner loading-sm"></span>
-                ) : (
-                  <LuChevronRight class="w-4 h-4" />
-                )}
+                {nextButtonIcon}
                 {nextLabel}
               </button>
             )}

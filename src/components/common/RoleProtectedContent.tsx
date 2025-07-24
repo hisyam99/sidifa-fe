@@ -1,7 +1,7 @@
 import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useNavigate } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
-import { GenericLoadingSpinner } from "./GenericLoadingSpinner";
+import { Spinner } from "../ui/Spinner";
 
 interface RoleProtectedContentProps {
   allowedRoles: string[];
@@ -44,7 +44,11 @@ export const RoleProtectedContent = component$(
     });
 
     if (!isClient.value || loading.value) {
-      return <GenericLoadingSpinner />;
+      return (
+        <div class="min-h-screen flex items-center justify-center">
+          <Spinner overlay />
+        </div>
+      );
     }
 
     if (!hasAccess.value) {
