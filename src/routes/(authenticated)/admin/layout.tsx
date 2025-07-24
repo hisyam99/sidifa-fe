@@ -8,6 +8,7 @@ import {
 } from "~/components/layout";
 import { getAdminMenuItems } from "~/data/admin-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
+import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
 export default component$(() => {
   useCheckRole(["admin"]);
@@ -38,7 +39,7 @@ export default component$(() => {
         <div class="drawer-content flex flex-col p-4 md:p-8 relative">
           {/* Global loading overlay */}
           {isNavigating.value && (
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity animate-fade-in">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
               <span class="loading loading-spinner loading-lg text-primary"></span>
             </div>
           )}
@@ -50,9 +51,11 @@ export default component$(() => {
             Buka Menu
           </label>
           <Breadcrumbs />
-          <main class="bg-base-100 p-6 rounded-2xl shadow-lg transition-all duration-300 animate-fade-in-up">
-            <Slot />
-          </main>
+          <AnimatedPageContainer>
+            <main class="bg-base-100 p-6 rounded-2xl shadow-lg transition-all duration-300">
+              <Slot />
+            </main>
+          </AnimatedPageContainer>
         </div>
         <aside class="drawer-side z-40">
           <label

@@ -1,4 +1,5 @@
 import { component$, Slot } from "@qwik.dev/core";
+import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 import { useAuth } from "~/hooks";
 import { ProfileOverviewCard, SidebarStatCard } from "~/components/dashboard";
 
@@ -43,7 +44,9 @@ export default component$(() => {
           </aside>
           {/* Konten utama */}
           <div class="flex-1">
-            <Slot />
+            <AnimatedPageContainer>
+              <Slot />
+            </AnimatedPageContainer>
           </div>
         </div>
       </main>

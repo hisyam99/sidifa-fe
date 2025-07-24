@@ -145,6 +145,10 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+/* Page transition animation */
+.page-transition {
+  animation: fadeInUp 0.5s ease-out;
+}
 
 /* Glass Morphism Effect */
 .glass {

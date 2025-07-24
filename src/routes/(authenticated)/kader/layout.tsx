@@ -2,6 +2,7 @@ import { component$, Slot, useSignal, useTask$ } from "@qwik.dev/core";
 import { useLocation } from "@qwik.dev/router";
 import { NavigationKader, Breadcrumbs } from "~/components/layout";
 import { RoleProtectedContent } from "~/components/common/RoleProtectedContent";
+import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
 export default component$(() => {
   // Track navigation for global loading overlay
@@ -26,13 +27,15 @@ export default component$(() => {
       <RoleProtectedContent allowedRoles={["kader", "admin"]}>
         <div class="relative">
           {isNavigating.value && (
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity animate-fade-in">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
               <span class="loading loading-spinner loading-lg text-primary"></span>
             </div>
           )}
-          <main class="container mx-auto p-4 md:p-8 transition-all duration-300 animate-fade-in-up">
+          <main class="container mx-auto p-4 md:p-8 transition-all duration-300">
             <Breadcrumbs />
-            <Slot />
+            <AnimatedPageContainer>
+              <Slot />
+            </AnimatedPageContainer>
           </main>
         </div>
       </RoleProtectedContent>
