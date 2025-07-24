@@ -78,6 +78,7 @@ export default component$(() => {
   const posyandu = useSignal<PosyanduDetail | null>(null);
   const posyanduError = useSignal<string | null>(null);
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
     track(() => posyanduId);
     loading.value = true;

@@ -44,31 +44,72 @@ export default component$<FormFieldModularProps>(
     accept,
     maxLength,
   }) => {
-    let inputElement = null;
-    if (type === "select" && options) {
-      inputElement = (
+    // --- Helper functions for rendering different input types ---
+
+    function getInputClass(
+      type: string,
+      error: boolean,
+      className: string = "",
+    ): string {
+      let base = "";
+      if (type === "select") {
+        base = "select select-bordered w-full focus-ring";
+      } else if (type === "textarea") {
+        base = "textarea textarea-bordered w-full focus-ring";
+      } else if (type === "file") {
+        base = "input input-bordered w-full focus-ring";
+      } else {
+        base = "input input-bordered w-full focus-ring";
+      }
+
+      let errorClass = "";
+      if (type === "select") {
+        if (error) errorClass = "select-error";
+      } else if (type === "textarea") {
+        if (error) errorClass = "textarea-error";
+      } else if (error) errorClass = "input-error";
+
+      return `${base} ${errorClass} ${className || ""}`.trim();
+    }
+
+    function renderSelect(
+      props: any,
+      field: any,
+      options: Option[],
+      className: string = "",
+    ) {
+      return (
         <select
           {...props}
           value={field.value ?? ""}
-          class={`select select-bordered w-full focus-ring ${field.error ? "select-error" : ""} ${className}`}
+          class={getInputClass("select", field.error, className)}
           aria-invalid={field.error ? "true" : "false"}
           aria-describedby={field.error ? `${props.name}-error` : undefined}
           onInput$={props.onInput$}
           onBlur$={props.onBlur$}
         >
-          {options.map((opt) => (
+          {options.map((opt: Option) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
         </select>
       );
-    } else if (type === "textarea") {
-      inputElement = (
+    }
+
+    function renderTextarea(
+      props: any,
+      field: any,
+      placeholder: string,
+      rows: number,
+      className: string = "",
+      maxLength?: number,
+    ) {
+      return (
         <textarea
           {...props}
           value={field.value ?? ""}
-          class={`textarea textarea-bordered w-full focus-ring ${field.error ? "textarea-error" : ""} ${className}`}
+          class={getInputClass("textarea", field.error, className)}
           placeholder={placeholder}
           rows={rows}
           aria-invalid={field.error ? "true" : "false"}
@@ -78,13 +119,21 @@ export default component$<FormFieldModularProps>(
           onBlur$={props.onBlur$}
         />
       );
-    } else if (type === "file") {
-      inputElement = (
+    }
+
+    function renderFileInput(
+      props: any,
+      field: any,
+      placeholder: string,
+      className: string = "",
+      accept?: string,
+    ) {
+      return (
         <input
           {...props}
           type="file"
           placeholder={placeholder}
-          class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
+          class={getInputClass("file", field.error, className)}
           aria-invalid={field.error ? "true" : "false"}
           aria-describedby={field.error ? `${props.name}-error` : undefined}
           accept={accept}
@@ -93,14 +142,44 @@ export default component$<FormFieldModularProps>(
           autoFocus={field.error ? true : undefined}
         />
       );
-    } else {
-      inputElement = (
+    }
+
+    // Use an options object to reduce parameter count and improve clarity
+    interface DefaultInputOptions {
+      props: any;
+      field: any;
+      type: string;
+      placeholder: string;
+      className?: string;
+      min?: number;
+      max?: number;
+      inputMode?: string;
+      pattern?: string;
+      accept?: string;
+      maxLength?: number;
+    }
+
+    function renderDefaultInput(opts: DefaultInputOptions) {
+      const {
+        props,
+        field,
+        type,
+        placeholder,
+        className = "",
+        min,
+        max,
+        inputMode,
+        pattern,
+        accept,
+        maxLength,
+      } = opts;
+      return (
         <input
           {...props}
           type={type}
           value={field.value ?? ""}
           placeholder={placeholder}
-          class={`input input-bordered w-full focus-ring ${field.error ? "input-error" : ""} ${className}`}
+          class={getInputClass("input", field.error, className)}
           aria-invalid={field.error ? "true" : "false"}
           aria-describedby={field.error ? `${props.name}-error` : undefined}
           min={min}
@@ -114,6 +193,46 @@ export default component$<FormFieldModularProps>(
           autoFocus={field.error ? true : undefined}
         />
       );
+    }
+
+    // --- Main render logic ---
+    // Always ensure className is a string
+    const safeClassName = typeof className === "string" ? className : "";
+
+    let inputElement = null;
+    if (type === "select" && options) {
+      inputElement = renderSelect(props, field, options, safeClassName);
+    } else if (type === "textarea") {
+      inputElement = renderTextarea(
+        props,
+        field,
+        placeholder ?? "",
+        rows,
+        safeClassName ?? "",
+        maxLength,
+      );
+    } else if (type === "file") {
+      inputElement = renderFileInput(
+        props,
+        field,
+        placeholder ?? "",
+        safeClassName ?? "",
+        accept,
+      );
+    } else {
+      inputElement = renderDefaultInput({
+        props,
+        field,
+        type,
+        placeholder: placeholder ?? "",
+        className: safeClassName ?? "",
+        min,
+        max,
+        inputMode,
+        pattern,
+        accept,
+        maxLength,
+      });
     }
 
     return (
