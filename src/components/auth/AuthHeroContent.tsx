@@ -11,7 +11,7 @@ export const AuthHeroContent = component$((props: AuthHeroContentProps) => {
   const { title, description } = props;
 
   return (
-    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-8 lg:p-12 xl:p-16">
+    <div class="min-h-screen hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-8 lg:p-12 xl:p-16">
       <div class="flex flex-col justify-center w-full max-w-lg mx-auto">
         <div class="text-center lg:text-left mb-8">
           <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold text-gradient-primary mb-4">

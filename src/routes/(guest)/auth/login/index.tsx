@@ -15,7 +15,7 @@ export default component$(() => {
 
       {/* Right Side - Form (Full width on mobile, half width on desktop) */}
       <div class="flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12">
-        <div class="w-full">
+        <div class="w-full max-w-lg mx-auto">
           <LoginForm />
         </div>
       </div>

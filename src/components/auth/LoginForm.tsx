@@ -51,7 +51,7 @@ export default component$(() => {
   });
 
   return (
-    <Card class="w-full max-w-md mx-auto">
+    <Card class="w-full mx-auto">
       <div class="text-center mb-8">
         <div class="bg-gradient-primary rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center shadow-xl">
           <LuArrowRight class="w-8 h-8" />
@@ -131,7 +131,7 @@ export default component$(() => {
         <span class="text-base-content/70">Belum punya akun?</span>
         <div class="flex flex-col sm:flex-row gap-2 justify-center mt-1">
           <a href="/auth/signup/kader" class="link link-primary font-medium">
-            Daftar Posyandu
+            Daftar Kader
           </a>
           <span class="text-base-content/40">|</span>
           <a href="/auth/signup/psikolog" class="link link-primary font-medium">

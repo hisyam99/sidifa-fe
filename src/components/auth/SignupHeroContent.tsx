@@ -5,8 +5,6 @@ import { AuthRequirementsList } from "./AuthRequirementsList";
 interface SignupHeroContentProps {
   title: string;
   description: string;
-  heroIcon: any; // Lucide icon component
-  heroIconBgClass: string; // e.g., "bg-gradient-primary"
   heroTitleGradientClass: string; // e.g., "text-gradient-primary"
   benefits: {
     icon: any;
@@ -19,25 +17,13 @@ interface SignupHeroContentProps {
 }
 
 export const SignupHeroContent = component$((props: SignupHeroContentProps) => {
-  const {
-    title,
-    description,
-    heroIcon: HeroIcon,
-    heroIconBgClass,
-    heroTitleGradientClass,
-    benefits,
-    requirements,
-  } = props;
+  const { title, description, heroTitleGradientClass, benefits, requirements } =
+    props;
 
   return (
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-8 lg:p-12 xl:p-16">
       <div class="flex flex-col justify-center w-full max-w-lg mx-auto">
         <div class="text-center lg:text-left mb-8">
-          <div
-            class={`${heroIconBgClass} rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-xl`}
-          >
-            <HeroIcon class="w-10 h-10" />
-          </div>
           <h1
             class={`text-3xl lg:text-4xl xl:text-5xl font-bold ${heroTitleGradientClass} mb-4`}
           >

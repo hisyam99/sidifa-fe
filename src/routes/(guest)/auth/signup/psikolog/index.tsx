@@ -48,8 +48,6 @@ export default component$(() => {
       <SignupHeroContent
         title="Bergabung sebagai Psikolog"
         description="Daftarkan diri Anda sebagai psikolog untuk memberikan layanan kesehatan mental yang berkualitas bagi penyandang disabilitas."
-        heroIcon={LuBrain}
-        heroIconBgClass="bg-gradient-secondary"
         heroTitleGradientClass="text-gradient-secondary"
         benefits={psikologBenefits}
         requirements={psikologRequirements}
@@ -57,7 +55,7 @@ export default component$(() => {
 
       {/* Right Side - Form (Full width on mobile, half width on desktop) */}
       <div class="flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12">
-        <div class="w-full max-w-md">
+        <div class="w-full">
           <SignupPsikologForm />
         </div>
       </div>

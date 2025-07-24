@@ -46,7 +46,7 @@ export default component$(() => {
   });
 
   return (
-    <Card class="w-full max-w-2xl mx-auto">
+    <Card class="w-full mx-auto">
       <div class="text-center mb-8">
         <div class="bg-primary text-primary-content rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center shadow-xl">
           <LuBrain class="w-8 h-8" />

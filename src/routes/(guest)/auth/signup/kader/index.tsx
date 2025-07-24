@@ -2,7 +2,6 @@ import { component$ } from "@qwik.dev/core";
 import { SignupKaderForm, SignupHeroContent } from "~/components/auth";
 import { useAuthRedirect } from "~/hooks/useAuthRedirect";
 import {
-  LuStethoscope,
   LuUsers,
   LuShield,
   LuHeart,
@@ -48,8 +47,6 @@ export default component$(() => {
       <SignupHeroContent
         title="Bergabung sebagai Kader Posyandu"
         description="Daftar sebagai kader posyandu untuk mengelola data kesehatan masyarakat dan memberikan layanan inklusif bagi penyandang disabilitas."
-        heroIcon={LuStethoscope}
-        heroIconBgClass="bg-gradient-primary"
         heroTitleGradientClass="text-gradient-primary"
         benefits={kaderBenefits}
         requirements={kaderRequirements}
@@ -57,7 +54,7 @@ export default component$(() => {
 
       {/* Right Side - Form (Full width on mobile, half width on desktop) */}
       <div class="flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12">
-        <div class="w-full max-w-md">
+        <div class="w-full mx-auto">
           <SignupKaderForm />
         </div>
       </div>
