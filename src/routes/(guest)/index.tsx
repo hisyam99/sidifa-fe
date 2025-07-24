@@ -20,7 +20,7 @@ import {
   LuTrendingUp,
   LuGlobe,
   LuStethoscope,
-} from "~/components/icons/lucide-optimized"; // Changed import source
+} from "~/components/icons/lucide-optimized";
 import { SectionHeader, AnimatedBackground } from "~/components/common";
 
 export default component$(() => {
@@ -83,7 +83,7 @@ export default component$(() => {
       <AnimatedBackground />
 
       {/* Hero Section */}
-      <section class="relative z-10 py-12 lg:py-20">
+      <section class="py-12 lg:py-20">
         <div class="container mx-auto px-4">
           <div class="text-center mb-16 animate-fade-in-up">
             <div class="bg-gradient-primary rounded-full w-24 h-24 lg:w-32 lg:h-32 shadow-2xl mx-auto mb-8 flex items-center justify-center">
@@ -135,7 +135,7 @@ export default component$(() => {
       </section>
 
       {/* Statistics Section */}
-      <section class="py-16 lg:py-20 relative z-10">
+      <section class="">
         <div class="container mx-auto px-4">
           <SectionHeader
             title="Dampak Positif SIDIFA"
@@ -155,24 +155,24 @@ export default component$(() => {
               icon={LuHeart}
               value="4"
               description="Posyandu Aktif"
-              iconBgGradientClass="bg-gradient-secondary"
-              valueTextColorClass="text-gradient-secondary"
+              iconBgGradientClass="bg-gradient-primary"
+              valueTextColorClass="text-gradient-primary"
               title="Posyandu Aktif"
             />
             <StatisticCard
               icon={LuBrain}
               value="100+"
               description="Kader Terlatih"
-              iconBgGradientClass="bg-gradient-accent"
-              valueTextColorClass="text-gradient-accent"
+              iconBgGradientClass="bg-gradient-primary"
+              valueTextColorClass="text-gradient-primary"
               title="Kader Terlatih"
             />
             <StatisticCard
               icon={LuTrendingUp}
               value="70%"
               description="Peningkatan Efisiensi"
-              iconBgGradientClass="bg-primary"
-              valueTextColorClass="text-primary"
+              iconBgGradientClass="bg-gradient-primary"
+              valueTextColorClass="text-gradient-primary"
               title="Peningkatan Efisiensi"
             />
           </div>
@@ -180,7 +180,7 @@ export default component$(() => {
       </section>
 
       {/* Features Section */}
-      <section class="py-16 lg:py-20 relative z-10">
+      <section class="py-16 lg:py-20  ">
         <div class="container mx-auto px-4">
           <SectionHeader
             title="Fitur Unggulan"
@@ -208,8 +208,8 @@ export default component$(() => {
               icon={LuGlobe}
               title="Akses Universal"
               description="SIDIFA dirancang agar mudah diakses oleh semua orang, termasuk penyandang disabilitas, dengan antarmuka yang intuitif."
-              iconBgGradientClass="bg-gradient-accent"
-              titleTextColorClass="text-gradient-accent"
+              iconBgGradientClass="bg-gradient-primary"
+              titleTextColorClass="text-gradient-primary"
               badgeText="Inklusif"
             />
           </div>
@@ -217,7 +217,7 @@ export default component$(() => {
       </section>
 
       {/* Testimonials Section */}
-      <section class="py-16 lg:py-20 relative z-10">
+      <section class="py-16 lg:py-20  ">
         <div class="container mx-auto px-4">
           <SectionHeader
             title="Apa Kata Mereka?"
@@ -239,7 +239,7 @@ export default component$(() => {
       </section>
 
       {/* Call-to-Action (CTA) Section */}
-      <section class="py-16 lg:py-20 relative z-10">
+      <section class="">
         <div class="container mx-auto px-4 text-center">
           <div class="card bg-gradient-to-br from-primary to-secondary text-primary-content shadow-xl p-8 lg:p-12 animate-fade-in-up">
             <h2 class="text-3xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -249,28 +249,30 @@ export default component$(() => {
               Mulai tingkatkan layanan kesehatan dan dukungan untuk penyandang
               disabilitas dengan platform terdepan kami.
             </p>
-            <a
-              href="/auth/signup/kader"
-              class="btn btn-secondary btn-lg gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-            >
-              <LuStethoscope class="w-5 h-5" />
-              Daftar Sebagai Kader Posyandu
-              <LuArrowRight class="w-5 h-5" />
-            </a>
-            <a
-              href="/auth/signup/psikolog"
-              class="btn btn-accent btn-lg gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 mt-4 md:mt-0 md:ml-4"
-            >
-              <LuBrain class="w-5 h-5" />
-              Daftar Sebagai Psikolog
-              <LuArrowRight class="w-5 h-5" />
-            </a>
+            <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 w-full max-w-2xl mx-auto">
+              <a
+                href="/auth/signup/kader"
+                class="btn btn-secondary btn-lg shadow-lg hover:shadow-xl transition-all duration-300 flex-1 min-w-[220px] flex items-center justify-center gap-3 px-6 py-3"
+              >
+                <LuStethoscope class="w-5 h-5" />
+                <span class="mx-1">Daftar Sebagai Kader</span>
+                <LuArrowRight class="w-5 h-5" />
+              </a>
+              <a
+                href="/auth/signup/psikolog"
+                class="btn btn-accent btn-lg shadow-lg hover:shadow-xl transition-all duration-300 flex-1 min-w-[220px] flex items-center justify-center gap-3 px-6 py-3"
+              >
+                <LuBrain class="w-5 h-5" />
+                <span class="mx-1">Daftar Sebagai Psikolog</span>
+                <LuArrowRight class="w-5 h-5" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* FAQs Section */}
-      <section class="py-16 lg:py-20 relative z-10">
+      <section class="py-16 lg:py-20  ">
         <div class="container mx-auto px-4">
           <SectionHeader
             title="Pertanyaan yang Sering Diajukan"

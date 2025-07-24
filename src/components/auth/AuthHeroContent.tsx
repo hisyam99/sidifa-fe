@@ -1,12 +1,5 @@
 import { component$ } from "@qwik.dev/core";
-import {
-  LuHeart,
-  LuShield,
-  LuZap,
-  LuUsers,
-  LuBrain,
-} from "~/components/icons/lucide-optimized"; // Changed import source
-import { StatisticCard } from "~/components/home";
+import { LuHeart, LuShield, LuZap } from "~/components/icons/lucide-optimized"; // Changed import source
 import { AuthFeatureItem } from "./AuthFeatureItem";
 
 interface AuthHeroContentProps {
@@ -21,9 +14,6 @@ export const AuthHeroContent = component$((props: AuthHeroContentProps) => {
     <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-8 lg:p-12 xl:p-16">
       <div class="flex flex-col justify-center w-full max-w-lg mx-auto">
         <div class="text-center lg:text-left mb-8">
-          <div class="bg-gradient-primary rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-xl">
-            <LuHeart class="w-10 h-10" />
-          </div>
           <h1 class="text-3xl lg:text-4xl xl:text-5xl font-bold text-gradient-primary mb-4">
             {title}
           </h1>
@@ -59,34 +49,6 @@ export const AuthHeroContent = component$((props: AuthHeroContentProps) => {
               description="Antarmuka yang intuitif dan mudah digunakan di semua perangkat."
               iconBgClass="bg-accent/10"
               iconColorClass="text-accent"
-            />
-          </div>
-
-          {/* Stats */}
-          <div class="grid grid-cols-3 gap-4 mt-8">
-            <StatisticCard
-              icon={LuUsers}
-              value="500+"
-              description="Penyandang Disabilitas"
-              iconBgGradientClass="bg-primary"
-              valueTextColorClass="text-primary"
-              title="Penyandang Disabilitas"
-            />
-            <StatisticCard
-              icon={LuHeart}
-              value="4"
-              description="Posyandu Aktif"
-              iconBgGradientClass="bg-secondary"
-              valueTextColorClass="text-secondary"
-              title="Posyandu Aktif"
-            />
-            <StatisticCard
-              icon={LuBrain}
-              value="100+"
-              description="Kader Terlatih"
-              iconBgGradientClass="bg-accent"
-              valueTextColorClass="text-accent"
-              title="Kader Terlatih"
             />
           </div>
         </div>

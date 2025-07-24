@@ -43,7 +43,7 @@ export default component$(() => {
   ];
 
   return (
-    <div class="min-h-[calc(100vh-120px)] flex flex-col lg:flex-row">
+    <div class="min-h-screen flex flex-col lg:flex-row">
       {/* Left Side - Content (Hidden on mobile, visible on desktop) */}
       <SignupHeroContent
         title="Bergabung sebagai Kader Posyandu"

@@ -52,17 +52,17 @@ import {
   LuPhone as LucideLuPhone,
   LuEye as LucideLuEye,
   LuFilter as LucideLuFilter,
-  LuBriefcase as LucideLuBriefcase, // Added
-  LuCheck as LucideLuCheck, // Added
-  LuFacebook as LucideLuFacebook, // Added
-  LuInstagram as LucideLuInstagram, // Added
-  LuTwitter as LucideLuTwitter, // Added
-  LuUserCheck as LucideLuUserCheck, // Added
-  LuX as LucideLuX, // Added
-  LuYoutube as LucideLuYoutube, // Added
-  LuZap as LucideLuZap, // Added
-  LuClock as LucideLuClock, // Added LuClock
-  LuTrash as LucideLuTrash, // Added LuTrash
+  LuBriefcase as LucideLuBriefcase,
+  LuCheck as LucideLuCheck,
+  LuFacebook as LucideLuFacebook,
+  LuInstagram as LucideLuInstagram,
+  LuTwitter as LucideLuTwitter,
+  LuUserCheck as LucideLuUserCheck,
+  LuX as LucideLuX,
+  LuYoutube as LucideLuYoutube,
+  LuZap as LucideLuZap,
+  LuClock as LucideLuClock,
+  LuTrash as LucideLuTrash,
 } from "@qwikest/icons/lucide";
 
 export const LuCheckCircle = component$((props: SVGProps<SVGSVGElement>) => (
@@ -223,34 +223,34 @@ export const LuFilter = component$((props: SVGProps<SVGSVGElement>) => (
 ));
 export const LuBriefcase = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuBriefcase {...props} />
-)); // Added
+));
 export const LuCheck = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuCheck {...props} />
-)); // Added
+));
 export const LuFacebook = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuFacebook {...props} />
-)); // Added
+));
 export const LuInstagram = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuInstagram {...props} />
-)); // Added
+));
 export const LuTwitter = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuTwitter {...props} />
-)); // Added
+));
 export const LuUserCheck = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuUserCheck {...props} />
-)); // Added
+));
 export const LuX = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuX {...props} />
-)); // Added
+));
 export const LuYoutube = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuYoutube {...props} />
-)); // Added
+));
 export const LuZap = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuZap {...props} />
-)); // Added
+));
 export const LuClock = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuClock {...props} />
-)); // Added LuClock
+));
 export const LuTrash = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuTrash {...props} />
-)); // Added LuTrash
+));

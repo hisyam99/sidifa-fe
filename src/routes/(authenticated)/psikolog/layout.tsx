@@ -1,8 +1,13 @@
 import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { Navigation, Breadcrumbs, SidebarMenuItem } from "~/components/layout";
+import {
+  Breadcrumbs,
+  SidebarMenuItem,
+  NavigationPsikolog,
+} from "~/components/layout";
 import { getPsikologMenuItems } from "~/data/psikolog-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
+import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
 export default component$(() => {
   // const location = useLocation(); // Removed unused variable
@@ -12,7 +17,7 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <Navigation />
+      <NavigationPsikolog />
       <div class="drawer lg:drawer-open">
         <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:p-8">
@@ -24,9 +29,11 @@ export default component$(() => {
             Buka Menu
           </label>
           <Breadcrumbs />
-          <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
-            <Slot />
-          </main>
+          <AnimatedPageContainer>
+            <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
+              <Slot />
+            </main>
+          </AnimatedPageContainer>
         </div>
         <aside class="drawer-side z-40">
           <label

@@ -6,7 +6,7 @@ export default component$(() => {
   useAuthRedirect();
 
   return (
-    <div class="min-h-[calc(100vh-120px)] flex flex-col lg:flex-row">
+    <div class="flex flex-col lg:flex-row">
       {/* Left Side - Content (Hidden on mobile, visible on desktop) */}
       <AuthHeroContent
         title="Selamat Datang Kembali"
@@ -15,7 +15,7 @@ export default component$(() => {
 
       {/* Right Side - Form (Full width on mobile, half width on desktop) */}
       <div class="flex-1 flex items-center justify-center p-4 lg:p-8 xl:p-12">
-        <div class="w-full max-w-md">
+        <div class="w-full">
           <LoginForm />
         </div>
       </div>

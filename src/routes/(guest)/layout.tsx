@@ -5,7 +5,9 @@ export default component$(() => {
   return (
     <>
       <NavigationGuest />
-      <Slot />
+      <div class="min-h-screen">
+        <Slot />
+      </div>
     </>
   );
 });

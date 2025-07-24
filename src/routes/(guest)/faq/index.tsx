@@ -35,7 +35,7 @@ export default component$(() => {
   });
 
   return (
-    <main class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+    <main class="bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
       {/* Hero Section */}
       <section class="relative py-16 lg:py-20">
         <div class="container mx-auto px-4">

@@ -11,7 +11,7 @@ interface AuthFeatureItemProps {
 export const AuthFeatureItem = component$((props: AuthFeatureItemProps) => {
   const { icon: Icon, title, description, iconBgClass, iconColorClass } = props;
   return (
-    <div class="flex items-start gap-4 p-4 bg-base-100/50 backdrop-blur-sm rounded-lg">
+    <div class="card flex-row items-start gap-4 p-4 bg-base-100/50 backdrop-blur-sm">
       <div class={`${iconBgClass} p-2 rounded-md`}>
         <Icon class={`w-5 h-5 ${iconColorClass}`} />
       </div>

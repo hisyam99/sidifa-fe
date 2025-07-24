@@ -5,9 +5,6 @@ import {
   LuMenu,
   LuHome,
   LuUser,
-  LuUsers,
-  LuBuilding,
-  LuKey,
   LuSettings,
   LuLogOut,
   LuBarChart,
@@ -23,25 +20,7 @@ export const NavigationAdmin = component$(() => {
     nav("/auth/login");
   });
 
-  const menuItems = [
-    { href: "/admin/", label: "Dashboard", icon: LuHome },
-    { href: "/admin/verifikasi-akun/", label: "Verifikasi Akun", icon: LuKey },
-    {
-      href: "/admin/manajemen-posyandu/",
-      label: "Manajemen Posyandu",
-      icon: LuBuilding,
-    },
-    {
-      href: "/admin/manajemen-psikolog/",
-      label: "Manajemen Psikolog",
-      icon: LuUser,
-    },
-    {
-      href: "/admin/manajemen-pengguna/",
-      label: "Manajemen Pengguna",
-      icon: LuUsers,
-    },
-  ];
+  const menuItems = [{ href: "/admin/", label: "Dashboard", icon: LuHome }];
 
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
@@ -100,9 +79,13 @@ export const NavigationAdmin = component$(() => {
             <button class="btn btn-ghost btn-circle avatar focus-ring">
               <span class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 inline-flex items-center justify-center">
                 <span class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
-                  <span class="text-sm font-bold">
-                    {user.value?.email?.charAt(0).toUpperCase() || "U"}
-                  </span>
+                  {user.value?.email ? (
+                    <span class="text-sm font-bold">
+                      {user.value.email.charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <span class="skeleton rounded-full"></span>
+                  )}
                 </span>
               </span>
             </button>

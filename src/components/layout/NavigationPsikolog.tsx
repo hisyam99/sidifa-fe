@@ -87,13 +87,13 @@ export const NavigationPsikolog = component$(() => {
           </div>
           <div class="dropdown dropdown-end">
             <button class="btn btn-ghost btn-circle avatar focus-ring">
-              <div class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300">
-                <div class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
+              <span class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 inline-flex items-center justify-center">
+                <span class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
                   <span class="text-sm font-bold">
                     {user.value?.email?.charAt(0).toUpperCase() || "U"}
                   </span>
-                </div>
-              </div>
+                </span>
+              </span>
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-56 border border-base-200/50">
               <li class="menu-title">

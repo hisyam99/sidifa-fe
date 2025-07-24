@@ -1,6 +1,5 @@
 import { component$ } from "@qwik.dev/core";
 import {
-  LuHeart,
   LuMail,
   LuPhone,
   LuMapPin,
@@ -8,13 +7,9 @@ import {
   LuInstagram,
   LuTwitter,
   LuYoutube,
-  LuUsers,
-  LuShield,
-  LuZap,
 } from "~/components/icons/lucide-optimized"; // Changed import source
 import {
   ContactItem,
-  FeatureCard,
   FooterLink,
   FooterSection,
   SocialButton,
@@ -27,15 +22,8 @@ export const SidifaFooter = component$(() => {
         {/* Main Footer Content */}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
-          <FooterSection
-            title="SIDIFA"
-            gradientClass="text-gradient-primary"
-            textAlign="center"
-          >
+          <div class="text-left">
             <div class="flex items-center justify-center lg:justify-start mb-4">
-              <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
-                <LuHeart class="w-6 h-6" />
-              </div>
               <div class="flex flex-col items-start">
                 <span class="font-bold text-xl text-gradient-primary">
                   SIDIFA
@@ -50,7 +38,7 @@ export const SidifaFooter = component$(() => {
               memberikan layanan konseling yang terintegrasi untuk penyandang
               disabilitas.
             </p>
-          </FooterSection>
+          </div>
 
           {/* Quick Links */}
           <FooterSection
@@ -97,33 +85,11 @@ export const SidifaFooter = component$(() => {
           </FooterSection>
         </div>
 
-        {/* Features Section */}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <FeatureCard
-            icon={LuUsers}
-            title="Layanan Inklusif"
-            description="Mendukung semua kalangan"
-          />
-          <FeatureCard
-            icon={LuShield}
-            title="Keamanan Data"
-            description="Terlindungi dan terpercaya"
-          />
-          <FeatureCard
-            icon={LuZap}
-            title="Akses Cepat"
-            description="Real-time dan responsif"
-          />
-        </div>
-
-        {/* Divider */}
-        <div class="divider"></div>
-
         {/* Bottom Section */}
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
           <aside class="text-center md:text-left">
             <p class="text-sm text-base-content/60">
-              Copyright © 2024 SIDIFA - All rights reserved
+              Copyright © 2025 SIDIFA - All rights reserved
             </p>
           </aside>
           <nav class="flex gap-4">
