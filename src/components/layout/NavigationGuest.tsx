@@ -55,7 +55,7 @@ export const NavigationGuest = component$(() => {
       ? [
           {
             href: "/auth/signup/kader",
-            label: "Daftar Posyandu",
+            label: "Daftar Kader",
             icon: LuStethoscope,
           },
           {

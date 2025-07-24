@@ -21,7 +21,7 @@ export const AdminPosyanduTable = component$(
       onViewDetail$,
       onEdit$,
       onDelete$,
-      onToggleStatus$,
+      // onToggleStatus$,
     } = props;
 
     const getStatusBadgeClass = (status: string) => {
@@ -97,7 +97,7 @@ export const AdminPosyanduTable = component$(
                               Edit
                             </button>
                           )}
-                          {onToggleStatus$ && (
+                          {/* {onToggleStatus$ && (
                             <button
                               class="btn btn-sm btn-warning"
                               onClick$={() => onToggleStatus$(item)}
@@ -106,7 +106,7 @@ export const AdminPosyanduTable = component$(
                                 ? "Nonaktifkan"
                                 : "Aktifkan"}
                             </button>
-                          )}
+                          )} */}
                           {onDelete$ && (
                             <button
                               class="btn btn-sm btn-error"

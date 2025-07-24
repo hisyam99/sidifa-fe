@@ -66,8 +66,14 @@ export default component$(() => {
   const selectedAccount = useSignal<AdminVerificationItem | null>(null);
 
   // Filter change handler resets page and triggers fetch
-  const handleFilterChange = $(() => {
-    resetPage();
+  const handleFilterChange = $(async () => {
+    await resetPage();
+    // After resetting page, force fetch in case page is already 1
+    fetchList({
+      ...filterOptions.value,
+      page: 1,
+      limit: limit.value,
+    });
   });
 
   // (removed obsolete handleLimitChange)

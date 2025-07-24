@@ -19,7 +19,7 @@ export const StatisticCard = component$((props: StatisticCardProps) => {
     valueTextColorClass,
   } = props;
   return (
-    <div class="text-center p-6 bg-base-200/50 rounded-lg shadow-md">
+    <div class="card text-center p-6 bg-base-100 shadow-md">
       <div
         class={`${iconBgGradientClass} rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center shadow-lg`}
       >

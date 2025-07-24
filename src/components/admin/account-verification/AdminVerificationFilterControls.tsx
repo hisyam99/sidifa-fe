@@ -1,6 +1,7 @@
-import { component$, Signal, QRL } from "@qwik.dev/core";
+import { component$, Signal, QRL, $ } from "@qwik.dev/core";
 import { SearchBox } from "~/components/common";
 import type { AdminVerificationFilterOptions } from "~/types/admin-account-verification";
+import { useDebouncer } from "~/utils/debouncer";
 
 interface AdminVerificationFilterControlsProps {
   filterOptions: Signal<AdminVerificationFilterOptions>;
@@ -16,7 +17,7 @@ export const AdminVerificationFilterControls = component$(
     const roleOptions = [
       { label: "Semua Peran", value: "" },
       { label: "Admin", value: "admin" },
-      { label: "Posyandu", value: "posyandu" },
+      { label: "Kader", value: "kader" },
       { label: "Psikolog", value: "psikolog" },
     ];
 
@@ -33,6 +34,14 @@ export const AdminVerificationFilterControls = component$(
       { label: "50", value: 50 },
       { label: "100", value: 100 },
     ];
+
+    // Debounced filter trigger for search input
+    const debouncedFilter = useDebouncer(
+      $(() => {
+        onFilterChange$();
+      }),
+      500, // 500ms debounce, adjust as needed
+    );
 
     return (
       <div class="mb-6 p-6 bg-base-100 rounded-lg shadow-md">
@@ -53,13 +62,11 @@ export const AdminVerificationFilterControls = component$(
             <SearchBox
               id="search-name"
               placeholder="Cari berdasarkan nama..."
-              value={filterOptions.value.name || ""} // Ensure it's always a string
-              onInput$={(e) =>
-                (filterOptions.value.name = (
-                  e.target as HTMLInputElement
-                ).value)
-              }
-              onEnter$={onFilterChange$}
+              value={filterOptions.value.name || ""}
+              onInput$={(e) => {
+                filterOptions.value.name = (e.target as HTMLInputElement).value;
+                debouncedFilter();
+              }}
               class="input-bordered input-md h-12 w-full"
             />
           </div>
@@ -132,6 +139,7 @@ export const AdminVerificationFilterControls = component$(
                 props.onLimitChange$(
                   parseInt((e.target as HTMLSelectElement).value),
                 );
+                onFilterChange$();
               }}
             >
               {limitOptions.map((option) => (
@@ -182,13 +190,11 @@ export const AdminVerificationFilterControls = component$(
             <SearchBox
               id="search-name"
               placeholder="Cari berdasarkan nama..."
-              value={filterOptions.value.name || ""} // Ensure it's always a string
-              onInput$={(e) =>
-                (filterOptions.value.name = (
-                  e.target as HTMLInputElement
-                ).value)
-              }
-              onEnter$={onFilterChange$}
+              value={filterOptions.value.name || ""}
+              onInput$={(e) => {
+                filterOptions.value.name = (e.target as HTMLInputElement).value;
+                debouncedFilter();
+              }}
               class="input-bordered input-md h-12 w-full"
             />
           </div>
@@ -237,6 +243,7 @@ export const AdminVerificationFilterControls = component$(
                 props.onLimitChange$(
                   parseInt((e.target as HTMLSelectElement).value),
                 );
+                onFilterChange$();
               }}
             >
               {limitOptions.map((option) => (

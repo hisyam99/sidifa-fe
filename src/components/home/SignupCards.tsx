@@ -21,13 +21,13 @@ export const SignupCards = component$(() => {
           </div>
 
           <h2 class="card-title text-3xl font-bold text-gradient-primary mb-4 justify-center">
-            Posyandu
+            Kader Posyandu
           </h2>
 
           <p class="text-base-content/70 mb-8 text-lg leading-relaxed">
-            Daftar sebagai Posyandu untuk mengelola data kesehatan masyarakat
-            dan memberikan layanan kesehatan terpadu yang inklusif untuk
-            penyandang disabilitas.
+            Daftar sebagai Kader Posyandu untuk mengelola data kesehatan
+            masyarakat dan memberikan layanan kesehatan terpadu yang inklusif
+            untuk penyandang disabilitas.
           </p>
 
           {/* Features */}
@@ -52,7 +52,7 @@ export const SignupCards = component$(() => {
               class="btn-hero inline-flex items-center gap-3"
             >
               <LuPlus class="w-5 h-5" />
-              Daftar Posyandu
+              Daftar Kader
               <LuArrowRight class="w-4 h-4" />
             </a>
           </div>

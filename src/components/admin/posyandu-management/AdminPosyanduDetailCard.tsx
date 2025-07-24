@@ -10,7 +10,7 @@ interface AdminPosyanduDetailCardProps {
 
 export const AdminPosyanduDetailCard = component$(
   (props: AdminPosyanduDetailCardProps) => {
-    const { item, onEdit$, onDelete$, onToggleStatus$ } = props;
+    const { item, onEdit$, onDelete$ /*onToggleStatus$*/ } = props;
 
     const getStatusBadgeClass = (status: string) => {
       return status === "Aktif" ? "badge-success" : "badge-error";
@@ -102,14 +102,14 @@ export const AdminPosyanduDetailCard = component$(
               Edit
             </button>
           )}
-          {onToggleStatus$ && (
+          {/* {onToggleStatus$ && (
             <button
               class="btn btn-warning"
               onClick$={() => onToggleStatus$(item.id, item.status)}
             >
               {item.status === "Aktif" ? "Nonaktifkan" : "Aktifkan"}
             </button>
-          )}
+          )} */}
           {onDelete$ && (
             <button class="btn btn-error" onClick$={() => onDelete$(item.id)}>
               Hapus
