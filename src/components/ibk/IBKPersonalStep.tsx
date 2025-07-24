@@ -1,4 +1,5 @@
 import { Field } from "@modular-forms/qwik";
+import { $ } from "@qwik.dev/core";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 
 export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
@@ -20,7 +21,20 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
-            props={props}
+            props={{
+              ...props,
+              maxLength: 16,
+              inputMode: "numeric",
+              pattern: "\\d*",
+              onInput$: $((e: any) => {
+                // Only allow digits and max 16 chars
+                let value = e.target.value.replace(/\D/g, "");
+                if (value.length > 16) value = value.slice(0, 16);
+                e.target.value = value;
+                // If using modular-forms, also update the field value in the form state
+                if (props.onInput$) props.onInput$(e);
+              }),
+            }}
             type="text"
             label="NIK*"
             placeholder="16 digit NIK"

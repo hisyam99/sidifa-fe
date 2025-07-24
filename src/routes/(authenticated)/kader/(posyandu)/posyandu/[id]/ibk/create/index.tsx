@@ -3,16 +3,7 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@qwik.dev/router";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
-import {
-  object,
-  string,
-  minLength,
-  maxLength,
-  nonEmpty,
-  custom,
-  pipe,
-  InferOutput,
-} from "valibot";
+import { object, string, nonEmpty, custom, pipe, InferOutput } from "valibot";
 import { IBKPersonalStep } from "~/components/ibk/IBKPersonalStep";
 import { IBKPsikologiStep } from "~/components/ibk/IBKPsikologiStep";
 import { IBKDisabilitasStep } from "~/components/ibk/IBKDisabilitasStep";
@@ -23,13 +14,14 @@ const ibkSchema = object({
   nama: pipe(string(), nonEmpty("Nama wajib diisi")),
   nik: pipe(
     string(),
-    minLength(16, "NIK harus 16 digit"),
-    maxLength(16, "NIK harus 16 digit"),
     custom((val: any) => /^\d{16}$/.test(val), "NIK harus 16 digit angka"),
   ),
   tempat_lahir: string(),
   tanggal_lahir: pipe(string(), nonEmpty("Tanggal lahir wajib diisi")),
-  file: custom((val) => val instanceof File, "Foto wajib diupload"),
+  file: custom(
+    (val) => val === undefined || val instanceof File,
+    "Foto harus berupa file gambar jika diisi",
+  ),
   jenis_kelamin: pipe(string(), nonEmpty("Jenis kelamin wajib diisi")),
   agama: pipe(string(), nonEmpty("Agama wajib diisi")),
   umur: pipe(string(), nonEmpty("Umur wajib diisi")),
@@ -165,7 +157,7 @@ export default component$(() => {
       "nama",
       "nik",
       "tanggal_lahir",
-      "file",
+      // "file", // file is now optional, so do not block step navigation if not filled
       "jenis_kelamin",
       "agama",
       "umur",
