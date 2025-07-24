@@ -8,6 +8,7 @@ export interface PosyanduItem {
   updated_at: string | null;
   deleted_at: string | null;
   isRegistered?: boolean; // Indicates if the current kader is registered to this posyandu
+  is_registered?: boolean; // Kompatibilitas dengan API snake_case
 }
 
 export interface PosyanduDetail extends PosyanduItem {

@@ -454,4 +454,15 @@ export const informasiEdukasiAdminService = {
   },
 };
 
+export const ibkService = {
+  async createIbk(formData: FormData) {
+    const response = await api.post("/kader/pendataan-ibk", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+};
+
 export default api;

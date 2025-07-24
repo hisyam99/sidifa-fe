@@ -55,7 +55,11 @@ export default component$(() => {
           ...params,
           // Add sort options if API supports
         });
-        posyanduList.value = response.data;
+        // Map is_registered (API) ke isRegistered (camelCase)
+        posyanduList.value = response.data.map((item: PosyanduItem) => ({
+          ...item,
+          isRegistered: item.is_registered ?? false,
+        }));
         meta.value = response.meta;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data posyandu.";

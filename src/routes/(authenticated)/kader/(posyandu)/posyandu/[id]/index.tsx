@@ -1,7 +1,7 @@
 // File: /sidifa-fev2/src/routes/posyandu/index.tsx
 
 import { component$, useSignal, useTask$ } from "@qwik.dev/core";
-import { useAuth } from "~/hooks"; // Add this import
+import { useAuth } from "~/hooks/useAuth";
 import { useLocation } from "@qwik.dev/router";
 import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
@@ -42,7 +42,11 @@ export default component$(() => {
     <div class="max-w-xl mx-auto mt-8 card bg-base-100 shadow-xl p-6">
       <h1 class="text-2xl font-bold mb-4">Detail Posyandu</h1>
       {loading.value && <div>Loading...</div>}
-      {error.value && <div class="alert alert-error mb-4">{error.value}</div>}
+      {error.value && (
+        <div class="alert alert-error mb-4" role="alert">
+          {error.value}
+        </div>
+      )}
       {data.value && !loading.value && !error.value && (
         <div class="space-y-3">
           <div>
@@ -64,6 +68,11 @@ export default component$(() => {
             <b>Dibuat pada:</b>{" "}
             {new Date(data.value.created_at).toLocaleString()}
           </div>
+        </div>
+      )}
+      {!data.value && !loading.value && !error.value && (
+        <div class="alert alert-warning" role="alert">
+          Data tidak ditemukan atau tidak tersedia.
         </div>
       )}
     </div>

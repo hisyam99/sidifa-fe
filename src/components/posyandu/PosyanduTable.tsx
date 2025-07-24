@@ -1,6 +1,7 @@
 import { component$, Signal, QRL } from "@qwik.dev/core";
 import { LuLoader2 } from "~/components/icons/lucide-optimized"; // Updated import path
 import type { PosyanduItem } from "~/types/posyandu";
+import { useNavigate } from "@qwik.dev/router";
 
 interface PosyanduTableProps {
   posyanduList: Signal<PosyanduItem[]>;
@@ -11,6 +12,7 @@ interface PosyanduTableProps {
 
 export const PosyanduTable = component$((props: PosyanduTableProps) => {
   const { posyanduList, loading, error } = props;
+  const nav = useNavigate();
 
   return (
     <div class="card bg-base-100 shadow-xl relative">
@@ -62,8 +64,13 @@ export const PosyanduTable = component$((props: PosyanduTableProps) => {
                     <td>
                       <div class="flex gap-2">
                         {posyandu.isRegistered ? (
-                          <button class="btn btn-secondary btn-sm" disabled>
-                            Terdaftar
+                          <button
+                            class="btn btn-info btn-sm"
+                            onClick$={() =>
+                              nav(`/kader/posyandu/${posyandu.id}/ibk/create`)
+                            }
+                          >
+                            View
                           </button>
                         ) : (
                           <button
