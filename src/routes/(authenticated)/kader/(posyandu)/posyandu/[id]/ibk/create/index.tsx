@@ -1,7 +1,7 @@
-import { component$, useSignal, $ } from "@qwik.dev/core";
+import { component$, useSignal, $, useVisibleTask$ } from "@qwik.dev/core";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@qwik.dev/router";
-import { ibkService } from "~/services/api";
+import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import {
   object,
@@ -63,8 +63,6 @@ const ibkSchema = object({
 
 type IBKForm = InferOutput<typeof ibkSchema>;
 
-import { useTask$ } from "@qwik.dev/core";
-import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
 
 export default component$(() => {
@@ -80,7 +78,7 @@ export default component$(() => {
   const posyandu = useSignal<PosyanduDetail | null>(null);
   const posyanduError = useSignal<string | null>(null);
 
-  useTask$(async ({ track }) => {
+  useVisibleTask$(async ({ track }) => {
     track(() => posyanduId);
     loading.value = true;
     posyanduError.value = null;
