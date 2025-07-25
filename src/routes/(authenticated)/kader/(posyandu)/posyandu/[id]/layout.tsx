@@ -1,6 +1,6 @@
 import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { LuBarChart, LuArrowLeft } from "@qwikest/icons/lucide";
+import { LuBarChart, LuArrowLeft } from "~/components/icons/lucide-optimized";
 import { Sidebar } from "~/components/common/Sidebar";
 import { useLocation } from "@qwik.dev/router";
 
@@ -17,14 +17,14 @@ export default component$(() => {
   const menuItems = [
     { href: base, label: "Dashboard", icon: "LuBarChart" },
     {
-      href: `${base}/laporan-statistik`,
-      label: "Laporan Statistik",
-      icon: "LuLineChart",
-    },
-    {
       href: `${base}/pendataan-ibk`,
       label: "Pendataan IBK",
       icon: "LuClipboardList",
+    },
+    {
+      href: `${base}/laporan-statistik`,
+      label: "Laporan Statistik",
+      icon: "LuLineChart",
     },
   ];
 

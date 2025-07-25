@@ -7,3 +7,5 @@ export { default as IBKCard } from "./IBKCard";
 export { default as StatisticsCard } from "./StatisticsCard";
 export { default as FormWizard, type WizardStep } from "./FormWizard";
 export { default as JobCard } from "./JobCard";
+export * from "./Avatar";
+export * from "./AvatarMenu";

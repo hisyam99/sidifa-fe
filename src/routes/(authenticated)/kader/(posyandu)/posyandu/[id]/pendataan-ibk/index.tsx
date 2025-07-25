@@ -358,7 +358,7 @@ export default component$(() => {
 
   return (
     <main class="min-h-screen">
-      <div class="container mx-auto px-4 py-8">
+      <div class="container mx-auto">
         {/* Page Header (no changes needed here) */}
         <div class="flex items-center justify-between mb-8">
           <div>

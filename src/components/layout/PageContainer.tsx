@@ -10,7 +10,7 @@ export const PageContainer = component$<PageContainerProps>(
     return (
       <div
         class={`min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5 py-8 overflow-x-hidden overflow-y-auto ${
-          centered ? "flex items-center justify-center" : ""
+          centered ? "flex" : ""
         } ${className}`}
       >
         <Slot />

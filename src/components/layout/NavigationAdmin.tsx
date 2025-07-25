@@ -5,10 +5,10 @@ import {
   LuHome,
   LuUser,
   LuSettings,
-  LuLogOut,
   LuBarChart,
   LuMenu,
 } from "~/components/icons/lucide-optimized";
+import { AvatarMenu } from "../ui";
 
 export const NavigationAdmin = component$(() => {
   const { user, logout } = useAuth();
@@ -60,65 +60,19 @@ export const NavigationAdmin = component$(() => {
             ))}
           </div>
           {/* Avatar/login */}
-          <div class="dropdown dropdown-end">
-            <button class="btn btn-ghost btn-circle avatar focus-ring">
-              <span class="w-10 h-10 rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300 inline-flex items-center justify-center">
-                <span class="bg-gradient-primary rounded-full w-10 h-10 flex items-center justify-center">
-                  <span class="text-sm font-bold">
-                    {user.value?.email?.charAt(0).toUpperCase() || "U"}
-                  </span>
-                </span>
-              </span>
-            </button>
-            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-56 border border-base-200/50">
-              <li class="menu-title">
-                <div class="flex items-center gap-3 p-2">
-                  <div class="bg-gradient-primary rounded-full w-8 h-8 flex items-center justify-center">
-                    <span class="text-xs font-bold">
-                      {user.value?.email?.charAt(0).toUpperCase() || "U"}
-                    </span>
-                  </div>
-                  <div class="flex flex-col">
-                    <span class="font-medium text-sm">
-                      {user.value?.email || "User"}
-                    </span>
-                    <span class="text-xs text-base-content/60 capitalize">
-                      Admin
-                    </span>
-                  </div>
-                </div>
-              </li>
-              <div class="divider my-0"></div>
-              <li>
-                <a
-                  href="/admin/profile"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuUser class="w-4 h-4 text-primary" />
-                  <span class="font-medium">Profil</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/admin/settings"
-                  class="flex items-center gap-3 hover:bg-primary/10"
-                >
-                  <LuSettings class="w-4 h-4 text-primary" />
-                  <span class="font-medium">Pengaturan</span>
-                </a>
-              </li>
-              <div class="divider my-1"></div>
-              <li>
-                <button
-                  onClick$={handleLogout}
-                  class="flex items-center gap-3 hover:bg-error/10 text-error"
-                >
-                  <LuLogOut class="w-4 h-4" />
-                  <span class="font-medium">Keluar</span>
-                </button>
-              </li>
-            </ul>
-          </div>
+          <AvatarMenu
+            email={user.value?.email}
+            role="Admin"
+            menuItems={[
+              { href: "/admin/profile", label: "Profil", icon: LuUser },
+              {
+                href: "/admin/settings",
+                label: "Pengaturan",
+                icon: LuSettings,
+              },
+            ]}
+            onLogout={handleLogout}
+          />
           {/* Hamburger mobile menu - setelah avatar */}
           <div class="dropdown dropdown-end lg:hidden">
             <button

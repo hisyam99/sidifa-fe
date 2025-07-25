@@ -20,7 +20,11 @@ export const ProfileOverviewCard = component$(
               class={`w-24 rounded-full ${roleColorClass} text-primary-content`}
             >
               <span class="text-3xl font-bold">
-                {userName?.charAt(0).toUpperCase() || "U"}
+                {userName ? (
+                  userName.charAt(0).toUpperCase()
+                ) : (
+                  <div class="skeleton w-full h-full rounded-full"></div>
+                )}
               </span>
             </div>
           </div>

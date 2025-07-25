@@ -25,7 +25,7 @@ export default component$(() => {
   // Loading skeleton
   if (loading.value) {
     return (
-      <div class="container mx-auto px-4 py-8">
+      <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar skeleton */}
           <div class="lg:col-span-1">
@@ -64,7 +64,7 @@ export default component$(() => {
   // Error state
   if (error.value) {
     return (
-      <div class="container mx-auto px-4 py-8">
+      <div class="container mx-auto px-4">
         <div class="card bg-base-100 shadow-lg">
           <div class="card-body text-center">
             <p class="text-error mb-4">{error.value}</p>
@@ -119,7 +119,7 @@ export default component$(() => {
   ];
 
   return (
-    <div class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Sidebar */}
         <aside class="lg:col-span-1">
@@ -130,7 +130,11 @@ export default component$(() => {
                   class={`w-24 rounded-full ${roleColorClass} text-primary-content`}
                 >
                   <span class="text-3xl font-bold ">
-                    {user.value.email.charAt(0).toUpperCase()}
+                    {user.value.email ? (
+                      user.value.email.charAt(0).toUpperCase()
+                    ) : (
+                      <div class="skeleton w-full h-full rounded-full"></div>
+                    )}
                   </span>
                 </div>
               </div>
