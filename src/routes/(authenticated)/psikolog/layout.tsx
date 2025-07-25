@@ -41,7 +41,8 @@ export default component$(() => {
             aria-label="close sidebar"
             class="drawer-overlay"
           ></label>
-          <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content">
+          <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content pt-16">
+            {/* pt-16 ensures sidebar starts below navbar (navbar height = 4rem) */}
             <li class="text-xl font-bold p-4 hidden lg:block">
               Si-DIFA Psikolog
             </li>
