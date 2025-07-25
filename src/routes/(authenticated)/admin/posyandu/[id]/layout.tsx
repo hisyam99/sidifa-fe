@@ -11,6 +11,7 @@ import {
   LuSettings,
 } from "~/components/icons/lucide-optimized"; // Changed import source
 import { useLocation } from "@qwik.dev/router";
+import { Sidebar } from "~/components/common/Sidebar";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -93,38 +94,22 @@ export default component$(() => {
             <Slot />
           </main>
         </div>
-        <aside class="drawer-side">
-          <label
-            for="drawer-posyandu-detail"
-            aria-label="close sidebar"
-            class="drawer-overlay"
-          ></label>
-          <ul class="menu p-4 w-80 min-h-full bg-base-100 lg:bg-transparent text-base-content">
-            <li class="text-xl font-bold p-4 hidden lg:block">
-              Detail Posyandu (Admin)
-            </li>
-            {menuItems.map((item) => (
-              <li
-                key={item.href}
-                class={location.url.pathname === item.href ? "bordered" : ""}
-              >
-                <a href={item.href}>
-                  <item.icon />
-                  {item.label}
-                </a>
-              </li>
-            ))}
-            <li class="mt-8">
-              <a
-                href="/admin/manajemen-posyandu"
-                class="btn btn-outline btn-primary w-full flex items-center gap-2"
-              >
-                <LuArrowLeft />
-                Kembali ke List Posyandu
-              </a>
-            </li>
-          </ul>
-        </aside>
+        <Sidebar
+          title="Detail Posyandu (Admin)"
+          menuItems={menuItems}
+          drawerId="drawer-posyandu-detail"
+          ptClass="pt-16"
+        >
+          <li class="mt-8">
+            <a
+              href="/admin/manajemen-posyandu"
+              class="btn btn-outline btn-primary w-full flex items-center gap-2"
+            >
+              <LuArrowLeft />
+              Kembali ke List Posyandu
+            </a>
+          </li>
+        </Sidebar>
       </div>
     </div>
   );

@@ -1,11 +1,8 @@
 import { component$, Slot, useSignal, useTask$ } from "@qwik.dev/core";
 import { useLocation } from "@qwik.dev/router";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import {
-  Breadcrumbs,
-  SidebarMenuItem,
-  NavigationAdmin,
-} from "~/components/layout";
+import { Breadcrumbs, NavigationAdmin } from "~/components/layout";
+import { Sidebar } from "~/components/common/Sidebar";
 import { getAdminMenuItems } from "~/data/admin-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
@@ -57,25 +54,12 @@ export default component$(() => {
             </main>
           </AnimatedPageContainer>
         </div>
-        <aside class="drawer-side z-40">
-          <label
-            for="my-drawer-2"
-            aria-label="close sidebar"
-            class="drawer-overlay"
-          ></label>
-          <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content pt-16">
-            {/* pt-16 ensures sidebar starts below navbar (navbar height = 4rem) */}
-            <li class="text-xl font-bold p-4 hidden lg:block">Si-DIFA Admin</li>
-            {menuItems.map((item) => (
-              <SidebarMenuItem
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                icon={item.icon}
-              />
-            ))}
-          </ul>
-        </aside>
+        <Sidebar
+          title="Si-DIFA Admin"
+          menuItems={menuItems}
+          drawerId="my-drawer-2"
+          ptClass="pt-16"
+        />
       </div>
     </div>
   );

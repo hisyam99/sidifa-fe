@@ -1,3 +1,21 @@
+/* TopLoader styles for Qwik v2 */
+.qwik-toploader-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #2299dd;
+  box-shadow:
+    0 0 10px #2299dd,
+    0 0 5px #2299dd;
+  z-index: 1600;
+  pointer-events: none;
+  transition:
+    width 0.2s ease,
+    opacity 0.4s ease,
+    background 0.2s,
+    box-shadow 0.2s;
+}
 @import "tailwindcss";
 @plugin "daisyui" {
   root: ":root";

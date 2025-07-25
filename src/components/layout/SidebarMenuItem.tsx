@@ -1,18 +1,22 @@
 import { component$, QRL } from "@qwik.dev/core";
 import { useLocation } from "@qwik.dev/router";
+import * as LucideIcons from "~/components/icons/lucide-optimized";
+
+const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;
 
 interface SidebarMenuItemProps {
   href: string;
   label: string;
-  icon: any; // Lucide icon component
+  icon: string; // Sekarang string, bukan any
   onClick$?: QRL<() => void>;
 }
 
 export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
-  const { href, label, icon: Icon, onClick$ } = props;
+  const { href, label, icon, onClick$ } = props;
   const location = useLocation();
 
   const isActive = location.url.pathname === href;
+  const Icon = icon ? ICON_LOOKUP_MAP[icon] : null;
 
   return (
     <li class={isActive ? "bordered" : ""}>

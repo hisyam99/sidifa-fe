@@ -1,10 +1,7 @@
 import { component$, Slot } from "@qwik.dev/core";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import {
-  Breadcrumbs,
-  SidebarMenuItem,
-  NavigationPsikolog,
-} from "~/components/layout";
+import { Breadcrumbs, NavigationPsikolog } from "~/components/layout";
+import { Sidebar } from "~/components/common/Sidebar";
 import { getPsikologMenuItems } from "~/data/psikolog-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
@@ -35,27 +32,12 @@ export default component$(() => {
             </main>
           </AnimatedPageContainer>
         </div>
-        <aside class="drawer-side z-40">
-          <label
-            for="my-drawer-4"
-            aria-label="close sidebar"
-            class="drawer-overlay"
-          ></label>
-          <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content pt-16">
-            {/* pt-16 ensures sidebar starts below navbar (navbar height = 4rem) */}
-            <li class="text-xl font-bold p-4 hidden lg:block">
-              Si-DIFA Psikolog
-            </li>
-            {menuItems.map((item) => (
-              <SidebarMenuItem
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                icon={item.icon}
-              />
-            ))}
-          </ul>
-        </aside>
+        <Sidebar
+          title="Si-DIFA Psikolog"
+          menuItems={menuItems}
+          drawerId="my-drawer-4"
+          ptClass="pt-16"
+        />
       </div>
     </div>
   );
