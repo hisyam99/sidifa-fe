@@ -1,0 +1,64 @@
+name: Deploy Frontend with Docker
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    environment: production # Use an environment if you have one configured for production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub (or other registry)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/sidifa-fe:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "--- Navigating to deployment directory ---"
+            # Adjust this path to where your compose.yaml is located on the remote server
+            cd ${{ secrets.DEPLOY_PATH }} # Deployment path is now taken from GitHub secret
+
+            # Pilih engine (podman/docker) dari secret, default ke podman jika tidak di-set
+            ENGINE=${{ secrets.CONTAINER_ENGINE }}
+            if [ -z "$ENGINE" ]; then
+              ENGINE="docker"
+            fi
+
+            echo "--- Menggunakan engine: $ENGINE ---"
+
+            echo "--- Pulling latest Docker image ---"
+            $ENGINE compose -f compose.yaml pull sidifa-fe # Assuming 'sidifa-fe' is your service name in compose.yaml
+
+            echo "--- Stopping and removing old container if exists ---"
+            $ENGINE compose -f compose.yaml down || true # '|| true' prevents failure if container doesn't exist
+
+            echo "--- Starting new container with latest image ---"
+            $ENGINE compose -f compose.yaml up -d --remove-orphans # --remove-orphans removes services not defined in compose.yaml anymore
+
+            echo "--- Deployment complete ---"
