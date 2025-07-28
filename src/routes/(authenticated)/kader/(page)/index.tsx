@@ -34,7 +34,7 @@ export default component$(() => {
       desc: "Akses materi edukasi dan informasi penting.",
     },
     {
-      href: "/dashboard/profile",
+      href: "/kader/profile",
       label: "Profil Saya",
       icon: $(LuUser),
       desc: "Lihat dan edit profil Anda.",
