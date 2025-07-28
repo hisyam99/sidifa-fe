@@ -14,6 +14,7 @@ import {
 } from "~/components/admin/posyandu-management";
 import { PaginationControls, ConfirmationModal } from "~/components/common";
 import Alert from "~/components/ui/Alert"; // Keeping the existing Alert component
+import Spinner from "~/components/ui/Spinner";
 
 import type {
   AdminPosyanduItem,
@@ -182,7 +183,8 @@ export default component$(() => {
   });
 
   return (
-    <div>
+    <div class="relative">
+      {loading.value && <Spinner overlay={true} />}
       <AdminPosyanduListHeader
         title="Manajemen Data Posyandu"
         description="Kelola data posyandu yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
