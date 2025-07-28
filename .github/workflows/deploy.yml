@@ -64,6 +64,12 @@ jobs:
             echo "--- Stopping and removing old container if exists ---"
             "$ENGINE" compose -f compose.yaml down || true
 
+            # Remove sidifa-fe container if it exists
+            if "$ENGINE" ps -a --format '{{.Names}}' | grep -wq sidifa-fe; then
+              echo "--- Removing existing sidifa-fe container ---"
+              "$ENGINE" rm -f sidifa-fe || true
+            fi
+
             echo "--- Starting new container with latest image ---"
             "$ENGINE" compose -f compose.yaml up -d --remove-orphans
 
