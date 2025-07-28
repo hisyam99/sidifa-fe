@@ -41,25 +41,25 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             bash -c '
-            echo "--- Navigating to deployment directory ---"
-            # Adjust this path to where your compose.yaml is located on the remote server
-            cd ${{ secrets.DEPLOY_PATH }} # Deployment path is now taken from GitHub secret
-
-            # Pilih engine (podman/docker) dari secret, default ke podman jika tidak di-set
-            ENGINE=${{ secrets.CONTAINER_ENGINE }}
+            # Get the CONTAINER_ENGINE secret or default to docker
+            ENGINE="${{ secrets.CONTAINER_ENGINE }}"
             if [ -z "$ENGINE" ]; then
               ENGINE="docker"
             fi
 
+            echo "--- Navigating to deployment directory ---"
+            cd ${{ secrets.DEPLOY_PATH }}
+
             echo "--- Menggunakan engine: $ENGINE ---"
 
             echo "--- Pulling latest Docker image ---"
-            $ENGINE compose -f compose.yaml pull sidifa-fe # Assuming 'sidifa-fe' is your service name in compose.yaml
+            "$ENGINE" compose -f compose.yaml pull sidifa-fe
 
             echo "--- Stopping and removing old container if exists ---"
-            $ENGINE compose -f compose.yaml down || true # '|| true' prevents failure if container doesn't exist
+            "$ENGINE" compose -f compose.yaml down || true
 
             echo "--- Starting new container with latest image ---"
-            $ENGINE compose -f compose.yaml up -d --remove-orphans # --remove-orphans removes services not defined in compose.yaml anymore
+            "$ENGINE" compose -f compose.yaml up -d --remove-orphans
 
             echo "--- Deployment complete ---"
+            '
