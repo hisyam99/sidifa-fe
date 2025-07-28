@@ -1,6 +1,6 @@
 import { component$, QRL } from "@qwik.dev/core";
-import { LuLoader2 } from "~/components/icons/lucide-optimized";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
+import Spinner from "~/components/ui/Spinner";
 
 interface AdminVerificationTableProps {
   items: AdminVerificationItem[];
@@ -34,14 +34,7 @@ export const AdminVerificationTable = component$(
           </h2>
 
           {/* Loading Overlay */}
-          {loading && (
-            <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center z-10">
-              <LuLoader2
-                class="animate-spin text-primary"
-                style={{ width: "32px", height: "32px" }}
-              />
-            </div>
-          )}
+          {loading && <Spinner overlay={true} />}
 
           <div
             class={`overflow-x-auto ${loading ? "pointer-events-none opacity-60" : ""}`}
