@@ -40,6 +40,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            bash -c '
             echo "--- Navigating to deployment directory ---"
             # Adjust this path to where your compose.yaml is located on the remote server
             cd ${{ secrets.DEPLOY_PATH }} # Deployment path is now taken from GitHub secret
