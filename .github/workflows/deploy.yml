@@ -50,6 +50,25 @@ jobs:
             echo "--- Navigating to deployment directory ---"
             cd ${{ secrets.DEPLOY_PATH }}
 
+            # --- BEST PRACTICE: Backup existing .env file ---
+            if [ -f .env ]; then
+              echo "--- Backing up existing .env file ---"
+              mv .env .env.bak_"$(date +%Y%m%d_%H%M%S)"
+            else
+              echo "--- No existing .env file found to backup ---"
+            fi
+
+            echo "--- Creating new .env file from secrets ---"
+            cat > .env <<EOF
+            ORIGIN="${{ secrets.ORIGIN }}"
+            PUBLIC_BASE_URL="${{ secrets.PUBLIC_BASE_URL }}"
+            PUBLIC_API_URL="${{ secrets.PUBLIC_API_URL }}"
+            DOCKER_IMAGE_REGISTRY="${{ secrets.DOCKER_IMAGE_REGISTRY }}"
+            DOCKER_IMAGE_REPO="${{ secrets.DOCKER_IMAGE_REPO }}"
+            DOCKER_IMAGE_TAG="${{ secrets.DOCKER_IMAGE_TAG }}"
+            OUTSIDE_PORT="${{ secrets.OUTSIDE_PORT }}"
+            EOF
+
             echo "--- Menggunakan engine: $ENGINE ---"
 
             echo "--- Pulling latest Docker image ---"

@@ -7,6 +7,13 @@
 # Development
 node_modules
 .env
+.env.local
+.env.backup
+.env.production
+.env.development
+.env.test
+.env.staging
+.env.bak*
 *.local
 
 # Cache

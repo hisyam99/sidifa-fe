@@ -4,7 +4,6 @@ set -e
 
 BUILD_DIR=./dist
 
-# Simpan nilai dari ENV ke variabel lokal (urutan diubah)
 ORIGIN_URL=${ORIGIN}
 BASE_URL=${PUBLIC_BASE_URL}
 API_URL=${PUBLIC_API_URL}
