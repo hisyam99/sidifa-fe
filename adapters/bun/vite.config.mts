@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { bunServerAdapter } from "@qwik.dev/router/adapters/bun-server/vite";
 import { _TextEncoderStream_polyfill } from "@qwik.dev/router/middleware/request-handler";
 import { extendConfig } from "@qwik.dev/router/vite";
