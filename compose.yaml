@@ -2,10 +2,10 @@ name: sidifa-fe
 services:
   sidifa-fe:
     build: .
-    image: sidifa-fe:latest
+    image: ${DOCKER_IMAGE_REGISTRY}/${DOCKER_IMAGE_REPO}:${DOCKER_IMAGE_TAG}
     container_name: sidifa-fe
     ports:
-      - 3000:3000
+      - ${OUTSIDE_PORT}:3000
     env_file:
       - ./.env
     restart: unless-stopped

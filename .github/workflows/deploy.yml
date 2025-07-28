@@ -53,6 +53,12 @@ jobs:
             echo "--- Menggunakan engine: $ENGINE ---"
 
             echo "--- Pulling latest Docker image ---"
+            REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
+            if [ -z "$REGISTRY" ]; then
+              REGISTRY="docker.io"
+            fi
+            "$ENGINE" pull "$REGISTRY/${{ secrets.DOCKER_USERNAME }}/sidifa-fe:latest"
+
             "$ENGINE" compose -f compose.yaml pull sidifa-fe
 
             echo "--- Stopping and removing old container if exists ---"
