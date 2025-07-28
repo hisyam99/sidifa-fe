@@ -2,6 +2,7 @@
  * This is the base config for vite.
  * When building, the adapter config is used which loads this file and extends it.
  */
+import "dotenv/config";
 import { qwikVite } from "@qwik.dev/core/optimizer";
 import { qwikRouter } from "@qwik.dev/router/vite";
 import { defineConfig, type UserConfig } from "vite";
@@ -57,7 +58,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
         // Don't cache the server response in dev mode
         "Cache-Control": "public, max-age=0",
       },
-      allowedHosts: ["sidifa-dev.bits.my.id"],
+      allowedHosts: [process.env.PUBLIC_BASE_URL || "__PUBLIC_BASE_URL__"],
     },
     preview: {
       headers: {
@@ -77,18 +78,18 @@ export default defineConfig(({ command, mode }): UserConfig => {
  */
 function errorOnDuplicatesPkgDeps(
   devDependencies: PkgDep,
-  dependencies: PkgDep,
+  dependencies: PkgDep
 ) {
   let msg = "";
   // Create an array 'duplicateDeps' by filtering devDependencies.
   // If a dependency also exists in dependencies, it is considered a duplicate.
   const duplicateDeps = Object.keys(devDependencies).filter(
-    (dep) => dependencies[dep],
+    (dep) => dependencies[dep]
   );
 
   // include any known qwik packages
   const qwikPkg = Object.keys(dependencies).filter((value) =>
-    /qwik/i.test(value),
+    /qwik/i.test(value)
   );
 
   // any errors for missing "qwik-router-config"
