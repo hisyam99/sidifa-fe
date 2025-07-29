@@ -12,9 +12,9 @@ echo ">> Substituting environment variables in $BUILD_DIR"
 
 # Ganti placeholder dengan urutan baru
 find $BUILD_DIR -type f \( -name '*.js' -o -name '*.html' \) -exec sed -i \
-  -e "s|__ORIGIN__|${ORIGIN_URL}|g" \
-  -e "s|__PUBLIC_BASE_URL__|${BASE_URL}|g" \
-  -e "s|__PUBLIC_API_URL__|${API_URL}|g" {} +
+  -e "s|__ORIGIN__|${ORIGIN_URL}|gi" \
+  -e "s|__PUBLIC_BASE_URL__|${BASE_URL}|gi" \
+  -e "s|__PUBLIC_API_URL__|${API_URL}|gi" {} +
 
 echo ">> Substitution complete. Starting server..."
 
