@@ -22,6 +22,8 @@ RUN bun install --frozen-lockfile
 
 COPY . .
 
+ENV DOCKER_BUILD_ENV=true
+
 RUN bun run build
 
 FROM node:alpine AS final
