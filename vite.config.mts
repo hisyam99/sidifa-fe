@@ -58,7 +58,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
         // Don't cache the server response in dev mode
         "Cache-Control": "public, max-age=0",
       },
-      allowedHosts: [process.env.PUBLIC_BASE_URL || "localhost:3000"],
+      allowedHosts: [process.env.PUBLIC_BASE_URL || "__PUBLIC_BASE_URL__"],
     },
     preview: {
       headers: {
