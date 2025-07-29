@@ -22,9 +22,6 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  * Note that Vite normally starts from `index.html` but the qwikRouter plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
-  const publicBaseUrlValue = process.env.DOCKER_BUILD_ENV
-    ? "__PUBLIC_BASE_URL__"
-    : process.env.PUBLIC_BASE_URL || "";
   return {
     plugins: [
       qwikRouter(),
@@ -61,7 +58,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
         // Don't cache the server response in dev mode
         "Cache-Control": "public, max-age=0",
       },
-      allowedHosts: [publicBaseUrlValue],
+      allowedHosts: [process.env.PUBLIC_BASE_URL || "localhost:3000"],
     },
     preview: {
       headers: {

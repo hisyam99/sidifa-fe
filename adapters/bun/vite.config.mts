@@ -8,10 +8,6 @@ import baseConfig from "../../vite.config.mts";
 globalThis.TextEncoderStream ||= _TextEncoderStream_polyfill;
 
 export default extendConfig(baseConfig, () => {
-  const ssgOrigin = process.env.DOCKER_BUILD_ENV
-    ? "__PUBLIC_BASE_URL__"
-    : process.env.PUBLIC_BASE_URL;
-
   return {
     build: {
       ssr: true,
@@ -28,7 +24,7 @@ export default extendConfig(baseConfig, () => {
             "/auth/reset-password", // Exclude reset-password karena butuh dynamic token
             "/auth/reset-password/*", // Exclude semua sub-routes juga
           ],
-          origin: ssgOrigin,
+          origin: process.env.PUBLIC_BASE_URL,
           maxWorkers: 1, // Limit Workers to 1, otherwise SSG will hang when compiling Qwik City app with `bun run --bun build`.
         },
       }),
