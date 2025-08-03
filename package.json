@@ -1,6 +1,6 @@
 {
-  "name": "my-qwik-basic-starter",
-  "description": "Demo app with sample routes",
+  "name": "si-difa",
+  "description": "SI-DIFA: Sistem Informasi Difabel",
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
   },
