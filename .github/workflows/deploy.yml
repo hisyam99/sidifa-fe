@@ -68,10 +68,6 @@ jobs:
             DOCKER_IMAGE_TAG="${{ secrets.DOCKER_IMAGE_TAG }}"
             OUTSIDE_PORT="${{ secrets.OUTSIDE_PORT }}"
             EOF
-            echo "--- .env file contents ---"
-            cat .env
-
-            echo "--- Menggunakan engine: $ENGINE ---"
 
             echo "--- Pulling latest Docker image ---"
             REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
