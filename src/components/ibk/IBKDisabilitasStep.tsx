@@ -4,7 +4,7 @@ import FormFieldModular from "~/components/ui/FormFieldModular";
 export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
   return (
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Field of={form} name="odgj">
+      <Field of={form} name="odgj" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -15,7 +15,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="hasil_diagnosa">
+      <Field of={form} name="hasil_diagnosa" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -26,7 +26,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="jenis_bantuan">
+      <Field of={form} name="jenis_bantuan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -37,7 +37,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="riwayat_terapi">
+      <Field of={form} name="riwayat_terapi" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -48,7 +48,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="potensi">
+      <Field of={form} name="potensi" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -58,7 +58,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="minat">
+      <Field of={form} name="minat" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -68,7 +68,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="bakat">
+      <Field of={form} name="bakat" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -78,7 +78,7 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="keterampilan">
+      <Field of={form} name="keterampilan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}

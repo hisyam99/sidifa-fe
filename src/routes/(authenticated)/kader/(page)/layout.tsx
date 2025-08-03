@@ -1,4 +1,4 @@
-import { component$, Slot } from "@qwik.dev/core";
+import { component$, Slot } from "@builder.io/qwik";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 import { useAuth } from "~/hooks";
 import { LuUser } from "~/components/icons/lucide-optimized";

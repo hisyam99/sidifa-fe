@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@qwik.dev/core";
+import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";

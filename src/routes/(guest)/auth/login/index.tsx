@@ -1,4 +1,4 @@
-import { component$ } from "@qwik.dev/core";
+import { component$ } from "@builder.io/qwik";
 import { LoginForm, AuthHeroContent } from "~/components/auth";
 import { useAuthRedirect } from "~/hooks/useAuthRedirect";
 

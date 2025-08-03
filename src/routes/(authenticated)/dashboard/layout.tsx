@@ -1,6 +1,6 @@
-import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
+import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
-import { useNavigate } from "@qwik.dev/router";
+import { useNavigate } from "@builder.io/qwik-city";
 import { DashboardSkeletonLoader } from "~/components/common";
 import { NavigationGuest } from "~/components/layout";
 

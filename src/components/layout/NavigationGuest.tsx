@@ -1,4 +1,4 @@
-import { component$, useTask$, useSignal } from "@qwik.dev/core";
+import { component$, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
 import {
@@ -11,7 +11,7 @@ import {
   LuBarChart,
   LuHeart,
 } from "~/components/icons/lucide-optimized";
-import { useLocation } from "@qwik.dev/router";
+import { useLocation } from "@builder.io/qwik-city";
 
 export const NavigationGuest = component$(() => {
   const { isLoggedIn, user } = useAuth();

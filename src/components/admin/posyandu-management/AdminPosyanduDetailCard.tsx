@@ -1,4 +1,4 @@
-import { component$, QRL } from "@qwik.dev/core";
+import { component$, QRL } from "@builder.io/qwik";
 import type { AdminPosyanduItem } from "~/types/admin-posyandu-management";
 
 interface AdminPosyanduDetailCardProps {

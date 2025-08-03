@@ -169,17 +169,14 @@ export default component$<FormWrapperProps>(({ options, onSubmit$, class: classN
 ## Keuntungan Solusi
 
 1. **User Experience yang Lebih Baik**
-
    - User tidak perlu mengisi ulang form yang sudah diisi
    - Validasi real-time memberikan feedback segera
 
 2. **Accessibility**
-
    - Mendukung screen reader
    - Keyboard navigation yang lebih baik
 
 3. **Performance**
-
    - Validasi hanya dijalankan ketika diperlukan
    - Tidak ada re-render yang tidak perlu
 
@@ -192,15 +189,12 @@ export default component$<FormWrapperProps>(({ options, onSubmit$, class: classN
 Untuk memastikan solusi bekerja dengan baik:
 
 1. **Test Case 1:** Isi form login dengan email yang salah format
-
    - Expected: Error muncul, password field tidak reset
 
 2. **Test Case 2:** Isi form signup dengan password yang tidak memenuhi kriteria
-
    - Expected: Error muncul, field lain tidak reset
 
 3. **Test Case 3:** Submit form dengan field yang kosong
-
    - Expected: Error muncul, field yang sudah diisi tidak reset
 
 4. **Test Case 4:** Test dengan screen reader
@@ -210,7 +204,7 @@ Untuk memastikan solusi bekerja dengan baik:
 
 - `@modular-forms/qwik`: `^0.29.1`
 - `valibot`: `^1.1.0`
-- `@qwik.dev/core`: `^1.14.1`
+- `@builder.io/qwik`: `^1.14.1`
 
 ## Catatan Penting
 

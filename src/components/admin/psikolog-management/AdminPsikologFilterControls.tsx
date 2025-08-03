@@ -1,4 +1,4 @@
-import { component$, Signal, QRL } from "@qwik.dev/core";
+import { component$, Signal, QRL } from "@builder.io/qwik";
 import { SearchBox } from "~/components/common";
 import type { AdminPsikologFilterOptions } from "~/types/admin-psikolog-management";
 

@@ -1,5 +1,5 @@
-import { component$, useSignal, $, useTask$ } from "@qwik.dev/core";
-import type { DocumentHead } from "@qwik.dev/router";
+import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import { LuHelpCircle } from "~/components/icons/lucide-optimized"; // Updated import path
 import { SearchBox } from "~/components/common";
 import { FAQCategory } from "~/components/faq";

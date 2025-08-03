@@ -1,4 +1,4 @@
-import { component$, Slot } from "@qwik.dev/core";
+import { component$, Slot } from "@builder.io/qwik";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { Breadcrumbs, NavigationPsikolog } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";

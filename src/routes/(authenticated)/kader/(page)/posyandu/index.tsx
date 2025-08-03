@@ -1,4 +1,4 @@
-import { component$, useSignal, useComputed$, $ } from "@qwik.dev/core";
+import { component$, useSignal, useComputed$, $ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { usePagination } from "~/hooks/usePagination";
 import { kaderService } from "~/services/api";

@@ -1,4 +1,4 @@
-import { useSignal, $ } from "@qwik.dev/core";
+import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
 

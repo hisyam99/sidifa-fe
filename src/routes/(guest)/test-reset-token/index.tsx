@@ -1,5 +1,5 @@
-import { component$, useSignal } from "@qwik.dev/core";
-import { useLocation } from "@qwik.dev/router";
+import { component$, useSignal } from "@builder.io/qwik";
+import { useLocation } from "@builder.io/qwik-city";
 import { DebugSection } from "~/components/common";
 
 export default component$(() => {

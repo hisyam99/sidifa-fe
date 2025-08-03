@@ -1,4 +1,4 @@
-import { component$, $, QRL } from "@qwik.dev/core";
+import { component$, $, QRL } from "@builder.io/qwik";
 import { patientsListForForm } from "~/data/assessment-report-data";
 
 interface AssessmentReportFormProps {

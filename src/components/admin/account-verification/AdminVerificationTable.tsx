@@ -1,4 +1,4 @@
-import { component$, QRL } from "@qwik.dev/core";
+import { component$, QRL } from "@builder.io/qwik";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
 import Spinner from "~/components/ui/Spinner";
 

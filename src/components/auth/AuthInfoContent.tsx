@@ -1,4 +1,4 @@
-import { component$ } from "@qwik.dev/core";
+import { component$ } from "@builder.io/qwik";
 import { AuthProcessStep } from "./AuthProcessStep";
 import { AuthSecurityTip } from "./AuthSecurityTip";
 

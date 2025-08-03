@@ -1,8 +1,8 @@
-import { component$, Slot } from "@qwik.dev/core";
+import { component$, Slot } from "@builder.io/qwik";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { LuBarChart, LuArrowLeft } from "~/components/icons/lucide-optimized";
 import { Sidebar } from "~/components/common/Sidebar";
-import { useLocation } from "@qwik.dev/router";
+import { useLocation } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const location = useLocation();

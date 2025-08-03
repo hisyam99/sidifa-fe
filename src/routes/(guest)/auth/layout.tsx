@@ -1,5 +1,5 @@
-import { component$, Slot } from "@qwik.dev/core";
-import type { RequestHandler } from "@qwik.dev/router";
+import { component$, Slot } from "@builder.io/qwik";
+import type { RequestHandler } from "@builder.io/qwik-city";
 import { AnimatedBackground } from "~/components/common";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 

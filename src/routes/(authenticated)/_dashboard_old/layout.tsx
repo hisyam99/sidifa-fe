@@ -1,4 +1,4 @@
-import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
+import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { sessionUtils } from "~/utils/auth";
 

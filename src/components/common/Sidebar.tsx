@@ -1,4 +1,4 @@
-import { component$, Slot } from "@qwik.dev/core";
+import { component$, Slot } from "@builder.io/qwik";
 import { SidebarMenuItem } from "~/components/layout/SidebarMenuItem";
 
 export interface SidebarMenuItemType {

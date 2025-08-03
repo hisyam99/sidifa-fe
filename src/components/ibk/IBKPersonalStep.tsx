@@ -1,11 +1,11 @@
 import { Field } from "@modular-forms/qwik";
-import { $ } from "@qwik.dev/core";
+import { $ } from "@builder.io/qwik";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 
 export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
   return (
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Field of={form} name="nama">
+      <Field of={form} name="nama" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -17,7 +17,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="nik">
+      <Field of={form} name="nik" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -42,7 +42,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="tempat_lahir">
+      <Field of={form} name="tempat_lahir" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -53,7 +53,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="tanggal_lahir">
+      <Field of={form} name="tanggal_lahir" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -64,7 +64,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="file">
+      <Field of={form} name="file" type="File">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -76,7 +76,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="jenis_kelamin">
+      <Field of={form} name="jenis_kelamin" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -92,7 +92,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="agama">
+      <Field of={form} name="agama" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -103,7 +103,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="umur">
+      <Field of={form} name="umur" type="number">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -116,7 +116,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="alamat">
+      <Field of={form} name="alamat" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -127,7 +127,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="no_telp">
+      <Field of={form} name="no_telp" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -138,7 +138,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="nama_wali">
+      <Field of={form} name="nama_wali" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -149,7 +149,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="no_telp_wali">
+      <Field of={form} name="no_telp_wali" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}

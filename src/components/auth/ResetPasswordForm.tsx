@@ -1,5 +1,5 @@
-import { component$, useSignal, $ } from "@qwik.dev/core";
-import { useLocation } from "@qwik.dev/router";
+import { component$, useSignal, $ } from "@builder.io/qwik";
+import { useLocation } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { resetPasswordSchema, type ResetPasswordForm } from "~/types/auth";
 import api from "~/services/api";

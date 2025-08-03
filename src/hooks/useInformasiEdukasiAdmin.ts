@@ -1,4 +1,4 @@
-import { useSignal, $ } from "@qwik.dev/core";
+import { useSignal, $ } from "@builder.io/qwik";
 import { informasiEdukasiAdminService } from "~/services/api";
 import type { InformasiItem } from "~/types/informasi"; // Changed to InformasiItem
 import type { InformasiFormData } from "~/components/admin/information/InformasiForm"; // Import form data type

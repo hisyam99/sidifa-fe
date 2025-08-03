@@ -1,4 +1,4 @@
-import { component$ } from "@qwik.dev/core";
+import { component$ } from "@builder.io/qwik";
 import type { AppointmentItem } from "~/data/psikolog-dashboard-data";
 
 interface UpcomingAppointmentCardProps {

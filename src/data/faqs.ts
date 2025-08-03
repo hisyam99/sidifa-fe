@@ -1,4 +1,4 @@
-import { Component, SVGProps } from "@qwik.dev/core";
+import { Component, SVGProps } from "@builder.io/qwik";
 import {
   LuUsers,
   LuStethoscope,

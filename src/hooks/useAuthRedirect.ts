@@ -1,5 +1,5 @@
-import { useVisibleTask$, isServer } from "@qwik.dev/core";
-import { useNavigate } from "@qwik.dev/router";
+import { useVisibleTask$, isServer } from "@builder.io/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
 import { sessionUtils } from "~/utils/auth";
 
 export const useAuthRedirect = () => {

@@ -1,4 +1,4 @@
-import { component$, Slot, useSignal, $, QRL } from "@qwik.dev/core";
+import { component$, Slot, useSignal, $, QRL } from "@builder.io/qwik";
 import {
   LuCheck,
   LuChevronLeft,

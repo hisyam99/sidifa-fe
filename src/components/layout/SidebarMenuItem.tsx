@@ -1,5 +1,5 @@
-import { component$, QRL } from "@qwik.dev/core";
-import { useLocation } from "@qwik.dev/router";
+import { component$, QRL } from "@builder.io/qwik";
+import { useLocation } from "@builder.io/qwik-city";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 
 const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;

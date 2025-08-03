@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 import { Suspense, type ReactNode } from "react";
-import { qwikify$ } from "@qwik.dev/react";
+import { qwikify$ } from "@builder.io/qwik-react";
 
 // Qwikified Suspense wrapper for smooth loading transitions
 type SuspenseWrapperProps = {

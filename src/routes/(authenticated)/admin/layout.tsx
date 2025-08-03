@@ -1,5 +1,5 @@
-import { component$, Slot, useSignal, useTask$ } from "@qwik.dev/core";
-import { useLocation } from "@qwik.dev/router";
+import { component$, Slot, useSignal, useTask$ } from "@builder.io/qwik";
+import { useLocation } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { Breadcrumbs, NavigationAdmin } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";

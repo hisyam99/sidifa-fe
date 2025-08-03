@@ -4,7 +4,7 @@ import FormFieldModular from "~/components/ui/FormFieldModular";
 export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
   return (
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Field of={form} name="total_iq">
+      <Field of={form} name="total_iq" type="number">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -16,7 +16,7 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="kategori_iq">
+      <Field of={form} name="kategori_iq" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -26,7 +26,7 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="tipe_kepribadian">
+      <Field of={form} name="tipe_kepribadian" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -36,7 +36,7 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="deskripsi_kepribadian">
+      <Field of={form} name="deskripsi_kepribadian" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -47,7 +47,7 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="catatan_psikolog">
+      <Field of={form} name="catatan_psikolog" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -58,7 +58,7 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="rekomendasi_intervensi">
+      <Field of={form} name="rekomendasi_intervensi" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}

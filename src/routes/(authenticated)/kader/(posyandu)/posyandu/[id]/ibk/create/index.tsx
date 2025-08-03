@@ -1,6 +1,6 @@
-import { component$, useSignal, $, useVisibleTask$ } from "@qwik.dev/core";
+import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
-import { useNavigate, useLocation } from "@qwik.dev/router";
+import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import { object, string, nonEmpty, custom, pipe, InferOutput } from "valibot";
@@ -53,7 +53,9 @@ const ibkSchema = object({
   keterangan_tambahan: string(),
 });
 
-type IBKForm = InferOutput<typeof ibkSchema>;
+type IBKForm = Omit<InferOutput<typeof ibkSchema>, "file"> & {
+  file: (File & { __no_serialize__: true }) | null | undefined;
+};
 
 import type { PosyanduDetail } from "~/types";
 import { GenericLoadingSpinner } from "~/components/common/GenericLoadingSpinner";
@@ -94,7 +96,7 @@ export default component$(() => {
         nik: "",
         tempat_lahir: "",
         tanggal_lahir: "",
-        file: undefined,
+        file: null as (File & { __no_serialize__: true }) | null,
         jenis_kelamin: "",
         agama: "",
         umur: "",

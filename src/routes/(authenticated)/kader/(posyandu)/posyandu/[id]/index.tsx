@@ -1,8 +1,8 @@
 // File: /sidifa-fev2/src/routes/posyandu/index.tsx
 
-import { component$, useSignal, useTask$ } from "@qwik.dev/core";
+import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks/useAuth";
-import { useLocation } from "@qwik.dev/router";
+import { useLocation } from "@builder.io/qwik-city";
 import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
 import { extractErrorMessage } from "~/utils/error";

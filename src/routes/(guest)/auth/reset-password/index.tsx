@@ -1,4 +1,4 @@
-import { component$ } from "@qwik.dev/core";
+import { component$ } from "@builder.io/qwik";
 import { ResetPasswordForm, AuthInfoContent } from "~/components/auth";
 import { useAuthRedirect } from "~/hooks/useAuthRedirect";
 import {

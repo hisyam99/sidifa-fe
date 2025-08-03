@@ -1,10 +1,10 @@
-import { component$, useSignal, $ } from "@qwik.dev/core";
-import type { DocumentHead } from "@qwik.dev/router";
+import { component$, useSignal, $ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import { usePagination } from "~/hooks/usePagination";
 import Alert from "~/components/ui/Alert";
-import { useNavigate } from "@qwik.dev/router";
+import { useNavigate } from "@builder.io/qwik-city";
 import {
   InformasiTable,
   InformasiFilterBar,

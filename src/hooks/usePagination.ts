@@ -5,7 +5,7 @@ import {
   $,
   type QRL,
   type Signal,
-} from "@qwik.dev/core";
+} from "@builder.io/qwik";
 
 /**
  * Pagination meta type (can be extended as needed)

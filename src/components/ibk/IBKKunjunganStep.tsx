@@ -4,7 +4,7 @@ import FormFieldModular from "~/components/ui/FormFieldModular";
 export function IBKKunjunganStep({ form }: Readonly<{ form: any }>) {
   return (
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Field of={form} name="pekerjaan">
+      <Field of={form} name="pekerjaan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -15,7 +15,7 @@ export function IBKKunjunganStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="pendidikan">
+      <Field of={form} name="pendidikan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -26,7 +26,7 @@ export function IBKKunjunganStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="status_perkawinan">
+      <Field of={form} name="status_perkawinan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -44,7 +44,7 @@ export function IBKKunjunganStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="titik_koordinat">
+      <Field of={form} name="titik_koordinat" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}
@@ -56,7 +56,7 @@ export function IBKKunjunganStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="keterangan_tambahan">
+      <Field of={form} name="keterangan_tambahan" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}

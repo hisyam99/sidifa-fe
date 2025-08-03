@@ -1,4 +1,4 @@
-import { component$ } from "@qwik.dev/core";
+import { component$ } from "@builder.io/qwik";
 import { LuHeart } from "~/components/icons/lucide-optimized"; // Updated import path
 
 interface BrandLogoProps {

@@ -1,6 +1,6 @@
 // File: /sidifa-fev2/src/components/ui/StatisticsCard.tsx
 
-import { component$, QRL, type FunctionComponent } from "@qwik.dev/core";
+import { component$, QRL, type FunctionComponent } from "@builder.io/qwik";
 import {
   LuTrendingUp,
   LuTrendingDown,

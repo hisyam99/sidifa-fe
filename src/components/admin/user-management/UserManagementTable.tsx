@@ -1,4 +1,4 @@
-import { component$, QRL } from "@qwik.dev/core";
+import { component$, QRL } from "@builder.io/qwik";
 import type { UserItem } from "~/types/user-management";
 
 interface UserManagementTableProps {

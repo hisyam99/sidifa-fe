@@ -1,5 +1,5 @@
-import { component$, useSignal, useTask$, $ } from "@qwik.dev/core";
-import type { DocumentHead } from "@qwik.dev/router";
+import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { useAdminPsikolog } from "~/hooks/useAdminPsikolog"; // Assuming this hook exists
 
