@@ -14,7 +14,7 @@ export default extendConfig(baseConfig, () => {
       rollupOptions: {
         input: ["src/entry.bun.ts", "@qwik-city-plan"],
       },
-      minify: false,
+      minify: true,
     },
     plugins: [
       bunServerAdapter({
