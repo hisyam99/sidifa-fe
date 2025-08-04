@@ -122,9 +122,6 @@ api.interceptors.response.use(
 export const profileService = {
   async getProfile() {
     // Prevent API calls during SSG/server
-    if ((typeof process !== "undefined" && process.env) || process.env.SSR) {
-      return null;
-    }
     if (typeof window === "undefined") {
       return null;
     }
@@ -137,9 +134,6 @@ export const profileService = {
 export const authService = {
   async logout() {
     // Prevent API calls during SSG/server
-    if ((typeof process !== "undefined" && process.env) || process.env.SSR) {
-      return null;
-    }
     if (typeof window === "undefined") {
       return null;
     }
@@ -151,9 +145,6 @@ export const authService = {
   },
   async refresh() {
     // Prevent API calls during SSG/server
-    if (typeof process !== "undefined" && process.env && process.env.SSR) {
-      return null;
-    }
     if (typeof window === "undefined") {
       return null;
     }
@@ -162,9 +153,6 @@ export const authService = {
   },
   async login(data: any) {
     // Prevent API calls during SSG/server
-    if ((typeof process !== "undefined" && process.env) || process.env.SSR) {
-      return null;
-    }
     if (typeof window === "undefined") {
       return null;
     }
@@ -184,9 +172,6 @@ export const adminService = {
     orderBy?: string;
   }) {
     // Prevent API calls during SSG/server
-    if ((typeof process !== "undefined" && process.env) || process.env.SSR) {
-      return [];
-    }
     if (typeof window === "undefined") {
       return [];
     }
@@ -352,8 +337,6 @@ export const informasiEdukasiAdminService = {
   }) {
     // Prevent API calls during SSG/server
     if (
-      (typeof process !== "undefined" && process.env) ||
-      process.env.SSR ||
       typeof window === "undefined"
     ) {
       return {
@@ -378,8 +361,6 @@ export const informasiEdukasiAdminService = {
   async detail(id: string) {
     // Prevent API calls during SSG/server
     if (
-      (typeof process !== "undefined" && process.env) ||
-      process.env.SSR ||
       typeof window === "undefined"
     ) {
       return null;
@@ -396,8 +377,6 @@ export const informasiEdukasiAdminService = {
   }) {
     // Prevent API calls during SSG/server
     if (
-      (typeof process !== "undefined" && process.env) ||
-      process.env.SSR ||
       typeof window === "undefined"
     ) {
       return null;
@@ -419,8 +398,6 @@ export const informasiEdukasiAdminService = {
   async delete(id: string) {
     // Prevent API calls during SSG/server
     if (
-      (typeof process !== "undefined" && process.env) ||
-      process.env.SSR ||
       typeof window === "undefined"
     ) {
       return null;
@@ -438,8 +415,6 @@ export const informasiEdukasiAdminService = {
   }) {
     // Prevent API calls during SSG/server
     if (
-      (typeof process !== "undefined" && process.env) ||
-      process.env.SSR ||
       typeof window === "undefined"
     ) {
       return null;
