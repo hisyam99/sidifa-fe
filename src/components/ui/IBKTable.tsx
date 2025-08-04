@@ -30,7 +30,7 @@ export const IBKTable = component$((props: IBKTableProps) => {
       )}
       <div class="overflow-x-auto">
         <div class="max-h-[60vh] overflow-y-auto">
-          <table class="table table-xs md:table-md table-pin-cols w-full">
+          <table class="table table-xs xl:table-md table-pin-cols w-full">
             <thead>
               <tr>
                 <th class="sticky top-0 z-20 bg-base-100">NIK</th>
@@ -53,13 +53,32 @@ export const IBKTable = component$((props: IBKTableProps) => {
                 ibkList.value.map((ibk) => (
                   <tr key={ibk.personal_data.id}>
                     <td>{ibk.personal_data.nik}</td>
-                    <td>{ibk.personal_data.nama_lengkap}</td>
-                    <td>
+                    <td
+                      class="max-w-[160px] line-clamp-2 break-words whitespace-normal"
+                      style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"
+                      title={ibk.personal_data.nama_lengkap}
+                    >
+                      {ibk.personal_data.nama_lengkap}
+                    </td>
+                    <td
+                      class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap"
+                      title={
+                        ibk.personal_data.gender === "laki-laki"
+                          ? "Laki-laki"
+                          : "Perempuan"
+                      }
+                    >
                       {ibk.personal_data.gender === "laki-laki"
                         ? "Laki-laki"
                         : "Perempuan"}
                     </td>
-                    <td>{ibk.personal_data.alamat_lengkap}</td>
+                    <td
+                      class="max-w-[160px] line-clamp-2 break-words whitespace-normal"
+                      style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"
+                      title={ibk.personal_data.alamat_lengkap}
+                    >
+                      {ibk.personal_data.alamat_lengkap}
+                    </td>
                     <th class="table-pin-col">
                       <div class="flex gap-2">
                         {onViewDetail$ && (
@@ -67,10 +86,10 @@ export const IBKTable = component$((props: IBKTableProps) => {
                             class="btn btn-ghost btn-xs md:btn-sm"
                             onClick$={() => onViewDetail$(ibk)}
                           >
-                            <span class="inline md:hidden">
+                            <span class="inline xl:hidden">
                               <LuEye class="w-4 h-4" />
                             </span>
-                            <span class="hidden md:inline">Lihat Detail</span>
+                            <span class="hidden xl:inline">Lihat Detail</span>
                           </button>
                         )}
                         {onEdit$ && (
@@ -78,10 +97,10 @@ export const IBKTable = component$((props: IBKTableProps) => {
                             class="btn btn-primary btn-xs md:btn-sm"
                             onClick$={() => onEdit$(ibk)}
                           >
-                            <span class="inline md:hidden">
+                            <span class="inline xl:hidden">
                               <LuPencil class="w-4 h-4" />
                             </span>
-                            <span class="hidden md:inline">Edit</span>
+                            <span class="hidden xl:inline">Edit</span>
                           </button>
                         )}
                       </div>

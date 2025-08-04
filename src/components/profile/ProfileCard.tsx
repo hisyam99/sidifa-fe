@@ -168,23 +168,33 @@ export default component$(() => {
 
         {/* Main Content */}
         <div class="lg:col-span-3 space-y-6">
-          <ProfileSection title="Informasi Akun" icon={LuUser}>
+          <ProfileSection
+            title="Informasi Akun"
+            icon={<LuUser class="w-5 h-5 text-primary" />}
+          >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ProfileInfoItem
                 label="Email"
                 value={user.value.email}
-                icon={LuMail}
+                icon={<LuMail class="w-5 h-5 text-primary" />}
               />
               <ProfileInfoItem
                 label="Peran"
                 value={getRoleDisplayName(user.value.role)}
-                icon={RoleIcon}
+                icon={
+                  RoleIcon ? (
+                    <RoleIcon class="w-5 h-5 text-primary" />
+                  ) : undefined
+                }
               />
               {/* Tambahkan informasi lain seperti nama, alamat, dll. jika tersedia di user.value */}
             </div>
           </ProfileSection>
 
-          <ProfileSection title="Pengaturan Keamanan" icon={LuShield}>
+          <ProfileSection
+            title="Pengaturan Keamanan"
+            icon={<LuShield class="w-5 h-5 text-primary" />}
+          >
             <div class="space-y-4">
               <div class="flex items-center justify-between p-4 bg-base-100/50 backdrop-blur-sm rounded-lg">
                 <p class="text-base-content">Otentikasi Dua Faktor</p>
@@ -205,7 +215,10 @@ export default component$(() => {
             </div>
           </ProfileSection>
 
-          <ProfileSection title="Riwayat Aktivitas" icon={LuClock}>
+          <ProfileSection
+            title="Riwayat Aktivitas"
+            icon={<LuClock class="w-5 h-5 text-primary" />}
+          >
             <div class="space-y-4">
               {recentActivities.length > 0 ? (
                 recentActivities.map((activity, index) => (
@@ -240,7 +253,10 @@ export default component$(() => {
             </div>
           </ProfileSection>
 
-          <ProfileSection title="Data & Export" icon={LuFileText}>
+          <ProfileSection
+            title="Data & Export"
+            icon={<LuFileText class="w-5 h-5 text-primary" />}
+          >
             <div class="space-y-4">
               <button class="btn btn-primary w-full">Export Data Profil</button>
               <button class="btn btn-secondary w-full">
