@@ -451,6 +451,10 @@ export const ibkService = {
     );
     return response.data;
   },
+  async getIbkDetail(id: string) {
+    const response = await api.get(`/kader/pendataan-ibk/detail/${id}`);
+    return response.data;
+  },
 };
 
 export default api;

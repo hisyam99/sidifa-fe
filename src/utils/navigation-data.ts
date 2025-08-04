@@ -86,7 +86,7 @@ export const authenticatedNavigation: NavItem[] = [
   // Kader specific links
   {
     label: "Data Posyandu",
-    href: "/kader/data-posyandu",
+    href: "/kader/posyandu",
     icon: LuClipboardList,
     roles: ["kader"],
   },
