@@ -11,7 +11,9 @@ import {
 } from "@builder.io/qwik";
 import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { FormWizard, type WizardStep, IBKCard } from "~/components/ui";
+import { FormWizard, type WizardStep } from "~/components/ui";
+import { IBKTable } from "~/components/ui";
+import { PaginationControls } from "~/components/common";
 import type { IBKRecord, IBKRegistrationForm, DisabilityType } from "~/types";
 import {
   LuSearch,
@@ -27,6 +29,10 @@ import {
   LuActivity,
   // Ensure all necessary icons are imported
 } from "~/components/icons/lucide-optimized"; // Changed import source
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { ibkService } from "~/services/api";
+import { LoadingSpinner, Alert } from "~/components/ui";
+import { useDebouncer } from "~/utils/debouncer";
 
 // FIX: Create an ICON_MAP to dynamically select components by string name
 const PENDATAAN_IBK_ICON_MAP: {
@@ -47,65 +53,116 @@ const PENDATAAN_IBK_ICON_MAP: {
 };
 
 export default component$(() => {
-  const searchQuery = useSignal("");
+  const search = useSignal("");
   const showAddForm = useSignal(false);
   const currentStep = useSignal(0);
-  const selectedIBK = useSignal<IBKRecord | null>(null);
   const showIBKDetail = useSignal(false);
+  const loading = useSignal(false);
+  const error = useSignal<string | null>(null);
+  const location = useLocation();
+  const page = useSignal(1);
+  const limit = useSignal(5);
+  const total = useSignal(0);
+  const totalPages = useSignal(1);
+  const navigate = useNavigate();
+
+  // Search/filter state
+  const genderFilter = useSignal("");
+  // Modal state
+  const showDetailModal = useSignal(false);
+  const selectedIBK = useSignal<IBKRecord | null>(null);
+
+  const limitOptions = ["5", "10", "20", "50", "100"];
+
+  // Extract posyanduId from route params
+  const posyanduId = location.params.id;
+  console.log("POSYANDU ID", posyanduId);
+
+  const existingIBK = useSignal<IBKRecord[]>([]);
 
   const { isLoggedIn } = useAuth(); // Get isLoggedIn
 
-  // Mock data for existing IBK (no changes needed here)
-  const existingIBK = useStore<IBKRecord[]>([
-    {
-      personal_data: {
-        id: "ibk-1",
-        nama_lengkap: "Ahmad Rizki Pratama",
-        nik: "3374012345678901",
-        tempat_lahir: "Semarang",
-        tanggal_lahir: "2018-05-15",
-        gender: "laki-laki",
-        agama: "Islam",
-        alamat_lengkap: "Jl. Bedali Raya No. 123",
-        rt_rw: "003/002",
-        kecamatan: "Bedali",
-        kabupaten: "Semarang",
-        provinsi: "Jawa Tengah",
-        kode_pos: "50188",
-        no_telp: "082334567890",
-        nama_ayah: "Bambang Sutrisno",
-        nama_ibu: "Sari Wulandari",
-        created_at: "2024-01-05T10:00:00Z",
-        updated_at: "2024-01-10T15:30:00Z",
-      },
-      disability_info: {
-        ibk_id: "ibk-1",
-        jenis_disabilitas: ["intelektual"],
-        deskripsi_kondisi: "Keterlambatan perkembangan kognitif ringan",
-        tingkat_keparahan: "ringan",
-        created_at: "2024-01-05T10:00:00Z",
-        updated_at: "2024-01-05T10:00:00Z",
-      },
-      visit_history: [
-        {
-          ibk_id: "ibk-1",
-          kader_id: "kader-1",
-          tanggal_kunjungan: "2024-01-08",
-          keluhan_utama: "Perkembangan bicara masih terlambat",
-          perkembangan_bahasa: "terlambat",
-          intervensi_diberikan: ["stimulasi_bicara", "terapi_wicara"],
-          catatan_kader: "Anak menunjukkan kemajuan dalam interaksi sosial",
-          created_at: "2024-01-08T14:00:00Z",
-          updated_at: "2024-01-08T14:00:00Z",
+  // Fetch IBK list from backend
+  const fetchIbkList = $(async () => {
+    if (!isLoggedIn.value || !posyanduId) {
+      if (!posyanduId) {
+        error.value =
+          "ID Posyandu tidak ditemukan. Anda akan diarahkan ke daftar posyandu.";
+        setTimeout(() => navigate("/kader/data-posyandu"), 2000);
+        loading.value = false;
+      }
+      return;
+    }
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await ibkService.getIbkListByPosyandu({
+        posyanduId,
+        page: page.value,
+        limit: limit.value,
+        orderBy: "created_at",
+      });
+      existingIBK.value = (res.data || []).map((item: any) => ({
+        personal_data: {
+          id: item.id,
+          nama_lengkap: item.nama,
+          nik: String(item.nik),
+          tempat_lahir: "-", // not provided
+          tanggal_lahir: "", // not provided
+          gender:
+            item.jenis_kelamin?.toLowerCase() === "laki-laki"
+              ? "laki-laki"
+              : "perempuan",
+          agama: "", // not provided
+          alamat_lengkap: item.alamat,
+          rt_rw: "", // not provided
+          kecamatan: "", // not provided
+          kabupaten: "", // not provided
+          provinsi: "", // not provided
+          kode_pos: "", // not provided
+          no_telp: "", // not provided
+          nama_ayah: "", // not provided
+          nama_ibu: "", // not provided
+          created_at: item.created_at,
+          updated_at: item.updated_at || "",
         },
-      ],
-      posyandu_id: "posyandu-bedali",
-      status: "active",
-      total_kunjungan: 3,
-      last_visit: "2024-01-08",
-      next_scheduled_visit: "2024-01-15",
-    },
-  ]);
+        disability_info: undefined,
+        visit_history: [],
+        posyandu_id: posyanduId,
+        status: "active", // or use item.status if available
+        total_kunjungan: 0,
+        last_visit: undefined,
+        next_scheduled_visit: undefined,
+      }));
+      total.value = res.meta?.totalData || 0;
+      totalPages.value = res.meta?.totalPage || 1;
+      console.log(
+        "IBK meta:",
+        res.meta,
+        "total:",
+        total.value,
+        "totalPages:",
+        totalPages.value,
+        "limit:",
+        limit.value,
+      );
+    } catch (err: any) {
+      error.value =
+        err?.message || "Gagal memuat data IBK. Pastikan ID Posyandu benar.";
+      setTimeout(() => navigate("/kader/data-posyandu"), 2000);
+    } finally {
+      loading.value = false;
+    }
+  });
+
+  useTask$(({ track }) => {
+    track(() => posyanduId);
+    track(() => page.value);
+    track(() => limit.value);
+    track(() => isLoggedIn.value);
+    if (!isLoggedIn.value) return;
+    fetchIbkList();
+  });
 
   // Form data store (no changes needed here)
   const formData = useStore<IBKRegistrationForm>({
@@ -262,7 +319,7 @@ export default component$(() => {
     } else {
       console.log("Not logged in, not fetching IBK data.");
       // Clear any data if not logged in, or show appropriate message
-      existingIBK.splice(0, existingIBK.length);
+      existingIBK.value.splice(0, existingIBK.value.length);
     }
   });
 
@@ -329,14 +386,6 @@ export default component$(() => {
   });
 
   // IBK actions (no changes needed here)
-  const handleViewIBK = $((id: string) => {
-    const ibk = existingIBK.find((i) => i.personal_data.id === id);
-    if (ibk) {
-      selectedIBK.value = ibk;
-      showIBKDetail.value = true;
-    }
-  });
-
   const handleEditIBK = $((id: string) => {
     console.log("Edit IBK:", id);
     // Load IBK data into form and show edit mode
@@ -356,6 +405,45 @@ export default component$(() => {
     }
   });
 
+  // Filtered IBK list (in-memory, for now)
+  const filteredIBK = useSignal<IBKRecord[]>([]);
+  useTask$(({ track }) => {
+    track(() => existingIBK.value);
+    track(() => search.value);
+    track(() => genderFilter.value);
+    let data = existingIBK.value;
+    if (search.value) {
+      const q = search.value.toLowerCase();
+      data = data.filter(
+        (ibk) =>
+          ibk.personal_data.nama_lengkap.toLowerCase().includes(q) ||
+          ibk.personal_data.nik.includes(q),
+      );
+    }
+    if (genderFilter.value) {
+      data = data.filter(
+        (ibk) => ibk.personal_data.gender === genderFilter.value,
+      );
+    }
+    filteredIBK.value = data;
+  });
+  // Modal handlers
+  const handleViewDetail = $((ibk: IBKRecord) => {
+    selectedIBK.value = ibk;
+    showDetailModal.value = true;
+  });
+  const handleEdit = $((ibk: IBKRecord) => {
+    alert("Edit IBK: " + ibk.personal_data.nama_lengkap);
+  });
+
+  const debouncedFetch = useDebouncer(
+    $(async () => {
+      page.value = 1;
+      await fetchIbkList();
+    }),
+    400,
+  );
+
   return (
     <main class="min-h-screen">
       <div class="container mx-auto">
@@ -369,6 +457,7 @@ export default component$(() => {
               Kelola data individu berkebutuhan khusus dengan sistem
               terintegrasi
             </p>
+            <p>Posyandu ID: {posyanduId}</p>
           </div>
 
           <button
@@ -380,88 +469,150 @@ export default component$(() => {
           </button>
         </div>
 
-        {!showAddForm.value ? (
+        {/* Loading and Error States */}
+        {loading.value && (
+          <div class="flex justify-center items-center py-16">
+            <LoadingSpinner />
+          </div>
+        )}
+        {error.value && (
+          <div class="py-4 flex flex-col items-center gap-2">
+            <Alert type="error" message={error.value} />
+            <button
+              class="btn btn-primary"
+              onClick$={() => navigate("/kader/data-posyandu")}
+            >
+              Kembali ke Daftar Posyandu
+            </button>
+          </div>
+        )}
+
+        {/* IBK List */}
+        {!loading.value && !error.value && !showAddForm.value && (
           <>
-            {/* Search and Filter Section (no changes needed here) */}
-            <div class="card bg-base-100 shadow-lg border border-base-200/50 mb-8">
-              <div class="card-body">
-                <h2 class="card-title text-xl mb-4">Cari Data IBK</h2>
-
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
-                  <div class="flex-1 relative">
-                    <LuSearch class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
-                    <input
-                      type="text"
-                      class="input input-bordered w-full pl-12"
-                      placeholder="Cari berdasarkan nama atau NIK..."
-                      value={searchQuery.value}
-                      onInput$={(e) => {
-                        searchQuery.value = (
-                          e.target as HTMLInputElement
-                        ).value;
-                      }}
-                    />
-                  </div>
-
-                  <button class="btn btn-ghost gap-2">
-                    <LuFilter class="w-5 h-5" />
-                    Filter
-                  </button>
+            <div class="gap-4">
+              {/* IBKFilterControls */}
+              <div class="flex flex-col md:flex-row gap-4 mb-4 items-end w-full">
+                <div class="w-full md:w-auto flex-1">
+                  <label class="label">
+                    <span class="label-text">Cari Nama/NIK</span>
+                  </label>
+                  <input
+                    class="input input-bordered w-full"
+                    type="text"
+                    placeholder="Cari berdasarkan nama atau NIK..."
+                    value={search.value}
+                    onInput$={(e) => {
+                      search.value = (e.target as HTMLInputElement).value;
+                      debouncedFetch();
+                    }}
+                  />
                 </div>
-
-                {/* Quick Stats (no changes needed here) */}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div class="stat bg-primary/10 rounded-lg">
-                    <div class="stat-value text-primary text-2xl">
-                      {existingIBK.length}
-                    </div>
-                    <div class="stat-title">Total IBK</div>
-                  </div>
-                  <div class="stat bg-success/10 rounded-lg">
-                    <div class="stat-value text-success text-2xl">
-                      {
-                        existingIBK.filter((ibk) => ibk.status === "active")
-                          .length
-                      }
-                    </div>
-                    <div class="stat-title">Aktif</div>
-                  </div>
-                  <div class="stat bg-warning/10 rounded-lg">
-                    <div class="stat-value text-warning text-2xl">
-                      {
-                        existingIBK.filter(
-                          (ibk) => ibk.visit_history.length === 0,
-                        ).length
-                      }
-                    </div>
-                    <div class="stat-title">Butuh Kunjungan</div>
-                  </div>
-                  <div class="stat bg-info/10 rounded-lg">
-                    <div class="stat-value text-info text-2xl">
-                      {
-                        existingIBK.filter((ibk) => ibk.next_scheduled_visit)
-                          .length
-                      }
-                    </div>
-                    <div class="stat-title">Jadwal Berikutnya</div>
-                  </div>
+                <div class="w-full md:w-auto">
+                  <label class="label">
+                    <span class="label-text">Jenis Kelamin</span>
+                  </label>
+                  <select
+                    class="select select-bordered w-full"
+                    value={genderFilter.value}
+                    onChange$={(e) => {
+                      genderFilter.value = (
+                        e.target as HTMLSelectElement
+                      ).value;
+                      page.value = 1;
+                      fetchIbkList();
+                    }}
+                  >
+                    <option value="">Semua</option>
+                    <option value="laki-laki">Laki-laki</option>
+                    <option value="perempuan">Perempuan</option>
+                  </select>
+                </div>
+                <div class="w-full md:w-auto">
+                  <label class="label">
+                    <span class="label-text">Limit per Halaman</span>
+                  </label>
+                  <select
+                    class="select select-bordered w-full"
+                    value={String(limit.value)}
+                    onChange$={(e) => {
+                      limit.value = parseInt(
+                        (e.target as HTMLSelectElement).value,
+                      );
+                      page.value = 1;
+                      fetchIbkList();
+                    }}
+                  >
+                    {limitOptions.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-            </div>
-
-            {/* IBK List (no changes needed here) */}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {existingIBK.map((ibk) => (
-                <IBKCard
-                  key={ibk.personal_data.id}
-                  ibk={ibk}
-                  onView$={handleViewIBK}
-                  onEdit$={handleEditIBK}
+              <IBKTable
+                ibkList={filteredIBK}
+                loading={loading}
+                error={error}
+                onViewDetail$={handleViewDetail}
+                onEdit$={handleEdit}
+              />
+              {totalPages.value > 1 && (
+                <PaginationControls
+                  meta={{
+                    totalData: total.value,
+                    totalPage: totalPages.value,
+                    currentPage: page.value,
+                    limit: limit.value,
+                  }}
+                  currentPage={page.value}
+                  onPageChange$={(newPage) => (page.value = newPage)}
                 />
-              ))}
+              )}
+              {/* Detail Modal */}
+              {showDetailModal.value && selectedIBK.value && (
+                <div class="modal modal-open">
+                  <div class="modal-box max-w-lg">
+                    <h3 class="font-bold text-lg mb-4">Detail Data IBK</h3>
+                    <div class="space-y-2">
+                      <div>
+                        <b>NIK:</b> {selectedIBK.value.personal_data.nik}
+                      </div>
+                      <div>
+                        <b>Nama:</b>{" "}
+                        {selectedIBK.value.personal_data.nama_lengkap}
+                      </div>
+                      <div>
+                        <b>Jenis Kelamin:</b>{" "}
+                        {selectedIBK.value.personal_data.gender === "laki-laki"
+                          ? "Laki-laki"
+                          : "Perempuan"}
+                      </div>
+                      <div>
+                        <b>Alamat:</b>{" "}
+                        {selectedIBK.value.personal_data.alamat_lengkap}
+                      </div>
+                      {/* Add more fields as needed */}
+                    </div>
+                    <div class="modal-action">
+                      <button
+                        class="btn btn-ghost"
+                        onClick$={() => (showDetailModal.value = false)}
+                      >
+                        Tutup
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-backdrop"
+                    onClick$={() => (showDetailModal.value = false)}
+                  ></div>
+                </div>
+              )}
             </div>
 
-            {existingIBK.length === 0 && (
+            {existingIBK.value.length === 0 && (
               <div class="text-center py-16">
                 <LuUsers class="w-24 h-24 text-base-content/30 mx-auto mb-6" />
                 <h3 class="text-2xl font-bold text-base-content/70 mb-4">
@@ -480,8 +631,10 @@ export default component$(() => {
               </div>
             )}
           </>
-        ) : (
-          /* Multi-Step Form (no changes needed here, only the wizardSteps definition changed) */
+        )}
+
+        {/* Multi-Step Form (no changes needed here, only the wizardSteps definition changed) */}
+        {showAddForm.value && (
           <div class="max-w-4xl mx-auto">
             <FormWizard
               steps={wizardSteps}

@@ -433,6 +433,22 @@ export const ibkService = {
     });
     return response.data;
   },
+  async getIbkListByPosyandu(params: {
+    posyanduId: string;
+    page?: number;
+    limit?: number;
+    orderBy?: string;
+  }) {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.orderBy) queryParams.append("orderBy", params.orderBy);
+    if (params.posyanduId) queryParams.append("posyanduId", params.posyanduId);
+    const response = await api.get(
+      `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`,
+    );
+    return response.data;
+  },
 };
 
 export default api;
