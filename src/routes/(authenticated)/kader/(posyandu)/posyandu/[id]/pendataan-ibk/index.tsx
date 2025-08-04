@@ -470,24 +470,26 @@ export default component$(() => {
     <main>
       <div class="container mx-auto">
         {/* Page Header (no changes needed here) */}
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h1 class="text-3xl lg:text-4xl font-bold text-gradient-primary mb-2">
+        <div class="flex flex-col gap-4 mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gradient-primary mb-2 break-words whitespace-normal">
               Pusat Pendataan dan Monitoring IBK
             </h1>
-            <p class="text-base-content/70 text-lg">
+            <p class="text-base-content/70 text-base sm:text-lg">
               Kelola data individu berkebutuhan khusus dengan sistem
               terintegrasi
             </p>
-            <p>Posyandu ID: {posyanduId}</p>
+            <p class="break-words whitespace-normal">
+              Posyandu ID: {posyanduId}
+            </p>
           </div>
-
           <button
-            class="btn btn-primary gap-2 shadow-lg"
+            class="btn btn-primary gap-2 shadow-lg w-full sm:w-auto"
             onClick$={handleAddNew}
           >
             <LuPlus class="w-5 h-5" />
-            Tambah Data IBK
+            <span class="hidden xs:inline">Tambah Data IBK</span>
+            <span class="inline xs:hidden">Tambah</span>
           </button>
         </div>
 
