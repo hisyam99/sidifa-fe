@@ -336,9 +336,7 @@ export const informasiEdukasiAdminService = {
     tipe?: string;
   }) {
     // Prevent API calls during SSG/server
-    if (
-      typeof window === "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return {
         data: [],
         meta: {
@@ -360,9 +358,7 @@ export const informasiEdukasiAdminService = {
   },
   async detail(id: string) {
     // Prevent API calls during SSG/server
-    if (
-      typeof window === "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return null;
     }
     const response = await api.get(`/admin/informasi-edukasi/detail/${id}`);
@@ -376,9 +372,7 @@ export const informasiEdukasiAdminService = {
     file?: File;
   }) {
     // Prevent API calls during SSG/server
-    if (
-      typeof window === "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return null;
     }
     const formData = new FormData();
@@ -397,9 +391,7 @@ export const informasiEdukasiAdminService = {
   },
   async delete(id: string) {
     // Prevent API calls during SSG/server
-    if (
-      typeof window === "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return null;
     }
     const response = await api.delete(`/admin/informasi-edukasi`, {
@@ -414,9 +406,7 @@ export const informasiEdukasiAdminService = {
     file?: File;
   }) {
     // Prevent API calls during SSG/server
-    if (
-      typeof window === "undefined"
-    ) {
+    if (typeof window === "undefined") {
       return null;
     }
     const formData = new FormData();

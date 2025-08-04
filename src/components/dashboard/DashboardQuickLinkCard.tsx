@@ -1,16 +1,15 @@
-import { component$ } from "@builder.io/qwik";
-import type { QRL, SVGProps } from "@builder.io/qwik";
+import { component$, type Component, type SVGProps } from "@builder.io/qwik";
 
 interface DashboardQuickLinkCardProps {
   href: string;
   label: string;
-  icon: QRL<(props: SVGProps<SVGSVGElement>) => any>;
+  icon: Component<SVGProps<SVGSVGElement>>;
   description: string;
 }
 
 export const DashboardQuickLinkCard = component$(
   (props: DashboardQuickLinkCardProps) => {
-    const { href, label, icon, description } = props;
+    const { href, label, icon: Icon, description } = props;
     return (
       <a
         href={href}
@@ -18,7 +17,7 @@ export const DashboardQuickLinkCard = component$(
       >
         <div class="card-body flex flex-col items-center text-center">
           <div class="mb-4">
-            {icon && icon({ class: "w-6 h-6 text-primary" })}
+            {Icon && <Icon class="w-6 h-6 text-primary" />}
           </div>
           <h2 class="card-title text-lg font-semibold group-hover:text-primary">
             {label}
