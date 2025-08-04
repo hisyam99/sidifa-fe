@@ -13,28 +13,28 @@ interface IBKTableProps {
 export const IBKTable = component$((props: IBKTableProps) => {
   const { ibkList, error, onViewDetail$, onEdit$, loading } = props;
   return (
-    <div class="overflow-x-auto card bg-base-100 shadow-xl p-6">
+    <div class="overflow-x-auto bg-base-100 p-2 md:card md:p-6 md:shadow-xl">
       <h2
         id="ibk-table-title"
         tabIndex={-1}
-        class="card-title text-xl font-bold mb-4"
+        class="text-lg font-bold mb-2 md:card-title md:text-xl md:mb-4"
       >
         Daftar IBK
       </h2>
       {loading?.value && <Spinner overlay />}
       {error.value && (
-        <div class="alert alert-error mb-4">
+        <div class="alert alert-error mb-2 md:mb-4">
           <span>{error.value}</span>
         </div>
       )}
-      <table class="table w-full">
+      <table class="table table-xs md:table-md table-pin-rows table-pin-cols w-full">
         <thead>
           <tr>
-            <th>NIK</th>
-            <th>Nama</th>
-            <th>Jenis Kelamin</th>
-            <th>Alamat</th>
-            <th>Aksi</th>
+            <th class="table-pin-row">NIK</th>
+            <th class="table-pin-row">Nama</th>
+            <th class="table-pin-row">Jenis Kelamin</th>
+            <th class="table-pin-row">Alamat</th>
+            <th class="table-pin-col table-pin-row">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -47,7 +47,7 @@ export const IBKTable = component$((props: IBKTableProps) => {
           ) : (
             ibkList.value.map((ibk) => (
               <tr key={ibk.personal_data.id}>
-                <td class="font-mono">{ibk.personal_data.nik}</td>
+                <td>{ibk.personal_data.nik}</td>
                 <td>{ibk.personal_data.nama_lengkap}</td>
                 <td>
                   {ibk.personal_data.gender === "laki-laki"
@@ -55,11 +55,11 @@ export const IBKTable = component$((props: IBKTableProps) => {
                     : "Perempuan"}
                 </td>
                 <td>{ibk.personal_data.alamat_lengkap}</td>
-                <td>
+                <th class="table-pin-col">
                   <div class="flex gap-2">
                     {onViewDetail$ && (
                       <button
-                        class="btn btn-ghost btn-sm"
+                        class="btn btn-ghost btn-xs md:btn-sm"
                         onClick$={() => onViewDetail$(ibk)}
                       >
                         Lihat Detail
@@ -67,14 +67,14 @@ export const IBKTable = component$((props: IBKTableProps) => {
                     )}
                     {onEdit$ && (
                       <button
-                        class="btn btn-primary btn-sm"
+                        class="btn btn-primary btn-xs md:btn-sm"
                         onClick$={() => onEdit$(ibk)}
                       >
                         Edit
                       </button>
                     )}
                   </div>
-                </td>
+                </th>
               </tr>
             ))
           )}
