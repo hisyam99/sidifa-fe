@@ -1,6 +1,7 @@
 import { component$, QRL, Signal } from "@builder.io/qwik";
 import type { IBKRecord } from "~/types/ibk";
 import { Spinner } from "./Spinner";
+import { LuEye, LuPencil } from "~/components/icons/lucide-optimized";
 
 interface IBKTableProps {
   ibkList: Signal<IBKRecord[]>;
@@ -27,59 +28,71 @@ export const IBKTable = component$((props: IBKTableProps) => {
           <span>{error.value}</span>
         </div>
       )}
-      <table class="table table-xs md:table-md table-pin-rows table-pin-cols w-full">
-        <thead>
-          <tr>
-            <th class="table-pin-row">NIK</th>
-            <th class="table-pin-row">Nama</th>
-            <th class="table-pin-row">Jenis Kelamin</th>
-            <th class="table-pin-row">Alamat</th>
-            <th class="table-pin-col table-pin-row">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ibkList.value.length === 0 && !error.value ? (
-            <tr>
-              <td colSpan={5} class="text-center text-base-content/60 py-8">
-                Tidak ada data IBK.
-              </td>
-            </tr>
-          ) : (
-            ibkList.value.map((ibk) => (
-              <tr key={ibk.personal_data.id}>
-                <td>{ibk.personal_data.nik}</td>
-                <td>{ibk.personal_data.nama_lengkap}</td>
-                <td>
-                  {ibk.personal_data.gender === "laki-laki"
-                    ? "Laki-laki"
-                    : "Perempuan"}
-                </td>
-                <td>{ibk.personal_data.alamat_lengkap}</td>
-                <th class="table-pin-col">
-                  <div class="flex gap-2">
-                    {onViewDetail$ && (
-                      <button
-                        class="btn btn-ghost btn-xs md:btn-sm"
-                        onClick$={() => onViewDetail$(ibk)}
-                      >
-                        Lihat Detail
-                      </button>
-                    )}
-                    {onEdit$ && (
-                      <button
-                        class="btn btn-primary btn-xs md:btn-sm"
-                        onClick$={() => onEdit$(ibk)}
-                      >
-                        Edit
-                      </button>
-                    )}
-                  </div>
+      <div class="overflow-x-auto">
+        <div class="max-h-[60vh] overflow-y-auto">
+          <table class="table table-xs md:table-md table-pin-cols w-full">
+            <thead>
+              <tr>
+                <th class="sticky top-0 z-20 bg-base-100">NIK</th>
+                <th class="sticky top-0 z-20 bg-base-100">Nama</th>
+                <th class="sticky top-0 z-20 bg-base-100">Jenis Kelamin</th>
+                <th class="sticky top-0 z-20 bg-base-100">Alamat</th>
+                <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
+                  Aksi
                 </th>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {ibkList.value.length === 0 && !error.value ? (
+                <tr>
+                  <td colSpan={5} class="text-center text-base-content/60 py-8">
+                    Tidak ada data IBK.
+                  </td>
+                </tr>
+              ) : (
+                ibkList.value.map((ibk) => (
+                  <tr key={ibk.personal_data.id}>
+                    <td>{ibk.personal_data.nik}</td>
+                    <td>{ibk.personal_data.nama_lengkap}</td>
+                    <td>
+                      {ibk.personal_data.gender === "laki-laki"
+                        ? "Laki-laki"
+                        : "Perempuan"}
+                    </td>
+                    <td>{ibk.personal_data.alamat_lengkap}</td>
+                    <th class="table-pin-col">
+                      <div class="flex gap-2">
+                        {onViewDetail$ && (
+                          <button
+                            class="btn btn-ghost btn-xs md:btn-sm"
+                            onClick$={() => onViewDetail$(ibk)}
+                          >
+                            <span class="inline md:hidden">
+                              <LuEye class="w-4 h-4" />
+                            </span>
+                            <span class="hidden md:inline">Lihat Detail</span>
+                          </button>
+                        )}
+                        {onEdit$ && (
+                          <button
+                            class="btn btn-primary btn-xs md:btn-sm"
+                            onClick$={() => onEdit$(ibk)}
+                          >
+                            <span class="inline md:hidden">
+                              <LuPencil class="w-4 h-4" />
+                            </span>
+                            <span class="hidden md:inline">Edit</span>
+                          </button>
+                        )}
+                      </div>
+                    </th>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 });
