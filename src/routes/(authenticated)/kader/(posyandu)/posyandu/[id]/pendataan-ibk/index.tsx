@@ -11,8 +11,14 @@ import {
 } from "@builder.io/qwik";
 import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { FormWizard, type WizardStep } from "~/components/ui";
-import { IBKTable } from "~/components/ui";
+import {
+  FormWizard,
+  IBKTable,
+  IBKTableSkeleton,
+  LoadingSpinner,
+  Alert,
+  type WizardStep,
+} from "~/components/ui";
 import { PaginationControls } from "~/components/common";
 import type { IBKRecord, IBKRegistrationForm, DisabilityType } from "~/types";
 import {
@@ -31,7 +37,6 @@ import {
 } from "~/components/icons/lucide-optimized"; // Changed import source
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
-import { LoadingSpinner, Alert } from "~/components/ui";
 import { useDebouncer } from "~/utils/debouncer";
 
 // FIX: Create an ICON_MAP to dynamically select components by string name
@@ -82,6 +87,8 @@ export default component$(() => {
   console.log("POSYANDU ID", posyanduId);
 
   const existingIBK = useSignal<IBKRecord[]>([]);
+  const tableRef = useSignal<HTMLDivElement | undefined>(undefined);
+  const hasInteracted = useSignal(false);
 
   const { isLoggedIn } = useAuth(); // Get isLoggedIn
 
@@ -166,6 +173,17 @@ export default component$(() => {
     track(() => isLoggedIn.value);
     if (!isLoggedIn.value) return;
     fetchIbkList();
+  });
+
+  useTask$(({ track }) => {
+    track(() => page.value);
+    const loadingVal = track(() => loading.value);
+    // Scroll ke atas hanya saat loading selesai (false) dan page berubah
+    if (hasInteracted.value && !loadingVal && tableRef.value) {
+      setTimeout(() => {
+        tableRef.value?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    }
   });
 
   // Form data store (no changes needed here)
@@ -495,7 +513,7 @@ export default component$(() => {
         {/* IBK List */}
         {!loading.value && !error.value && !showAddForm.value && (
           <>
-            <div class="gap-4">
+            <div class="gap-4" ref={tableRef}>
               {/* IBKFilterControls */}
               <div class="flex flex-col md:flex-row gap-4 mb-4 items-end w-full">
                 <div class="w-full md:w-auto flex-1">
@@ -556,13 +574,17 @@ export default component$(() => {
                   </select>
                 </div>
               </div>
-              <IBKTable
-                ibkList={filteredIBK}
-                loading={loading}
-                error={error}
-                onViewDetail$={handleViewDetail}
-                onEdit$={handleEdit}
-              />
+              {loading.value ? (
+                <IBKTableSkeleton />
+              ) : (
+                <IBKTable
+                  ibkList={filteredIBK}
+                  loading={loading}
+                  error={error}
+                  onViewDetail$={handleViewDetail}
+                  onEdit$={handleEdit}
+                />
+              )}
               {totalPages.value > 1 && (
                 <PaginationControls
                   meta={{
@@ -572,7 +594,16 @@ export default component$(() => {
                     limit: limit.value,
                   }}
                   currentPage={page.value}
-                  onPageChange$={(newPage) => (page.value = newPage)}
+                  onPageChange$={(newPage) => {
+                    hasInteracted.value = true;
+                    page.value = newPage;
+                    setTimeout(() => {
+                      tableRef.value?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }, 0);
+                  }}
                 />
               )}
               {/* Detail Modal */}
