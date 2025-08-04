@@ -79,12 +79,17 @@ export default component$(() => {
     try {
       await kaderService.registerKaderPosyandu(posyanduId);
       alert("Berhasil mendaftar ke posyandu");
-      // Refresh the list
-      await kaderService.getKaderPosyanduList({
+      // Refresh the list and update the state
+      const response = await kaderService.getKaderPosyanduList({
         limit: limit.value,
         page: currentPage.value,
         ...filterOptions.value,
       });
+      posyanduList.value = response.data.map((item: PosyanduItem) => ({
+        ...item,
+        isRegistered: item.is_registered ?? false,
+      }));
+      meta.value = response.meta;
     } catch (err: any) {
       error.value = err.message || "Gagal mendaftar ke posyandu";
     } finally {
