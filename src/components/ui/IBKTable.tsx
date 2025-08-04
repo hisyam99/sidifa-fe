@@ -14,7 +14,13 @@ export const IBKTable = component$((props: IBKTableProps) => {
   const { ibkList, loading, error, onViewDetail$, onEdit$ } = props;
   return (
     <div class="overflow-x-auto card bg-base-100 shadow-xl p-6">
-      <h2 class="card-title text-xl font-bold mb-4">Daftar IBK</h2>
+      <h2
+        id="ibk-table-title"
+        tabIndex={-1}
+        class="card-title text-xl font-bold mb-4"
+      >
+        Daftar IBK
+      </h2>
       {error.value && (
         <div class="alert alert-error mb-4">
           <span>{error.value}</span>

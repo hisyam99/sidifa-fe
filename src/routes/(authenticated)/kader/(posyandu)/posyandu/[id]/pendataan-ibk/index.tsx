@@ -14,7 +14,6 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import {
   FormWizard,
   IBKTable,
-  IBKTableSkeleton,
   LoadingSpinner,
   Alert,
   type WizardStep,
@@ -574,17 +573,14 @@ export default component$(() => {
                   </select>
                 </div>
               </div>
-              {loading.value ? (
-                <IBKTableSkeleton />
-              ) : (
-                <IBKTable
-                  ibkList={filteredIBK}
-                  loading={loading}
-                  error={error}
-                  onViewDetail$={handleViewDetail}
-                  onEdit$={handleEdit}
-                />
-              )}
+              {/* IBK List Table with overlay loading */}
+              <IBKTable
+                ibkList={filteredIBK}
+                loading={loading}
+                error={error}
+                onViewDetail$={handleViewDetail}
+                onEdit$={handleEdit}
+              />
               <div class="mt-auto">
                 {totalPages.value > 1 && (
                   <PaginationControls
@@ -599,10 +595,8 @@ export default component$(() => {
                       hasInteracted.value = true;
                       page.value = newPage;
                       setTimeout(() => {
-                        tableRef.value?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
+                        const el = document.getElementById("ibk-table-title");
+                        if (el) el.focus();
                       }, 0);
                     }}
                   />
