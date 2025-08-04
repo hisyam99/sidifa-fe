@@ -50,10 +50,10 @@ export const PaginationControls = component$(
     };
 
     return (
-      <div class="flex justify-center mt-6">
-        <div class="join">
+      <div class="w-full flex justify-center mt-6">
+        <div class="join overflow-x-auto max-w-full">
           <button
-            class="join-item btn"
+            class="join-item btn btn-xs md:btn-sm"
             disabled={currentPage === 1}
             onClick$={() => onPageChange$(currentPage - 1)}
           >
@@ -63,7 +63,7 @@ export const PaginationControls = component$(
             (page: number | string, index: number) => (
               <button
                 key={index}
-                class={`join-item btn ${page === currentPage ? "btn-active" : ""}`}
+                class={`join-item btn btn-xs md:btn-sm ${page === currentPage ? "btn-active" : ""}`}
                 disabled={typeof page !== "number"}
                 onClick$={$(() => {
                   if (typeof page === "number") {
@@ -76,7 +76,7 @@ export const PaginationControls = component$(
             ),
           )}
           <button
-            class="join-item btn"
+            class="join-item btn btn-xs md:btn-sm"
             disabled={currentPage === totalPages}
             onClick$={() => onPageChange$(currentPage + 1)}
           >
