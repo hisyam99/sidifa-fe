@@ -101,6 +101,7 @@ export default component$(() => {
         page: page.value,
         limit: limit.value,
         orderBy: "created_at",
+        nama: search.value ? search.value : undefined,
       });
       existingIBK.value = (res.data || []).map((item: any) => ({
         personal_data: {
@@ -405,21 +406,12 @@ export default component$(() => {
     }
   });
 
-  // Filtered IBK list (in-memory, for now)
+  // Filtered IBK list (only gender in-memory)
   const filteredIBK = useSignal<IBKRecord[]>([]);
   useTask$(({ track }) => {
     track(() => existingIBK.value);
-    track(() => search.value);
     track(() => genderFilter.value);
     let data = existingIBK.value;
-    if (search.value) {
-      const q = search.value.toLowerCase();
-      data = data.filter(
-        (ibk) =>
-          ibk.personal_data.nama_lengkap.toLowerCase().includes(q) ||
-          ibk.personal_data.nik.includes(q),
-      );
-    }
     if (genderFilter.value) {
       data = data.filter(
         (ibk) => ibk.personal_data.gender === genderFilter.value,

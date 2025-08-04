@@ -438,12 +438,14 @@ export const ibkService = {
     page?: number;
     limit?: number;
     orderBy?: string;
+    nama?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page.toString());
     if (params.limit) queryParams.append("limit", params.limit.toString());
     if (params.orderBy) queryParams.append("orderBy", params.orderBy);
     if (params.posyanduId) queryParams.append("posyanduId", params.posyanduId);
+    if (params.nama) queryParams.append("nama", params.nama);
     const response = await api.get(
       `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`,
     );
