@@ -4,14 +4,14 @@ import { Spinner } from "./Spinner";
 
 interface IBKTableProps {
   ibkList: Signal<IBKRecord[]>;
-  loading: Signal<boolean>;
   error: Signal<string | null>;
+  loading?: Signal<boolean>;
   onViewDetail$?: QRL<(ibk: IBKRecord) => void>;
   onEdit$?: QRL<(ibk: IBKRecord) => void>;
 }
 
 export const IBKTable = component$((props: IBKTableProps) => {
-  const { ibkList, loading, error, onViewDetail$, onEdit$ } = props;
+  const { ibkList, error, onViewDetail$, onEdit$, loading } = props;
   return (
     <div class="overflow-x-auto card bg-base-100 shadow-xl p-6">
       <h2
@@ -21,12 +21,12 @@ export const IBKTable = component$((props: IBKTableProps) => {
       >
         Daftar IBK
       </h2>
+      {loading?.value && <Spinner overlay />}
       {error.value && (
         <div class="alert alert-error mb-4">
           <span>{error.value}</span>
         </div>
       )}
-      {loading.value && <Spinner overlay />}
       <table class="table w-full">
         <thead>
           <tr>
@@ -38,7 +38,7 @@ export const IBKTable = component$((props: IBKTableProps) => {
           </tr>
         </thead>
         <tbody>
-          {ibkList.value.length === 0 && !loading.value && !error.value ? (
+          {ibkList.value.length === 0 && !error.value ? (
             <tr>
               <td colSpan={5} class="text-center text-base-content/60 py-8">
                 Tidak ada data IBK.

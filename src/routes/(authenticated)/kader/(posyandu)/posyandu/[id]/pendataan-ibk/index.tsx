@@ -491,12 +491,7 @@ export default component$(() => {
           </button>
         </div>
 
-        {/* Loading and Error States */}
-        {loading.value && (
-          <div class="flex justify-center items-center py-16">
-            <LoadingSpinner />
-          </div>
-        )}
+        {/* Error States */}
         {error.value && (
           <div class="py-4 flex flex-col items-center gap-2">
             <Alert type="error" message={error.value} />
@@ -510,7 +505,7 @@ export default component$(() => {
         )}
 
         {/* IBK List */}
-        {!loading.value && !error.value && !showAddForm.value && (
+        {!error.value && !showAddForm.value && (
           <>
             <div class="flex flex-col" ref={tableRef}>
               {/* IBKFilterControls */}
