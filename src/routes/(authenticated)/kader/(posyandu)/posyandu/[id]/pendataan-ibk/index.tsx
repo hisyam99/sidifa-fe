@@ -468,7 +468,7 @@ export default component$(() => {
   );
 
   return (
-    <main class="min-h-screen">
+    <main>
       <div class="container mx-auto">
         {/* Page Header (no changes needed here) */}
         <div class="flex items-center justify-between mb-8">
@@ -513,7 +513,7 @@ export default component$(() => {
         {/* IBK List */}
         {!loading.value && !error.value && !showAddForm.value && (
           <>
-            <div class="gap-4" ref={tableRef}>
+            <div class="flex flex-col" ref={tableRef}>
               {/* IBKFilterControls */}
               <div class="flex flex-col md:flex-row gap-4 mb-4 items-end w-full">
                 <div class="w-full md:w-auto flex-1">
@@ -585,27 +585,29 @@ export default component$(() => {
                   onEdit$={handleEdit}
                 />
               )}
-              {totalPages.value > 1 && (
-                <PaginationControls
-                  meta={{
-                    totalData: total.value,
-                    totalPage: totalPages.value,
-                    currentPage: page.value,
-                    limit: limit.value,
-                  }}
-                  currentPage={page.value}
-                  onPageChange$={(newPage) => {
-                    hasInteracted.value = true;
-                    page.value = newPage;
-                    setTimeout(() => {
-                      tableRef.value?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }, 0);
-                  }}
-                />
-              )}
+              <div class="mt-auto">
+                {totalPages.value > 1 && (
+                  <PaginationControls
+                    meta={{
+                      totalData: total.value,
+                      totalPage: totalPages.value,
+                      currentPage: page.value,
+                      limit: limit.value,
+                    }}
+                    currentPage={page.value}
+                    onPageChange$={(newPage) => {
+                      hasInteracted.value = true;
+                      page.value = newPage;
+                      setTimeout(() => {
+                        tableRef.value?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        });
+                      }, 0);
+                    }}
+                  />
+                )}
+              </div>
               {/* Detail Modal */}
               {showDetailModal.value && (
                 <div class="modal modal-open">
