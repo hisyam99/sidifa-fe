@@ -12,6 +12,16 @@ export const AdminPosyanduDetailCard = component$(
   (props: AdminPosyanduDetailCardProps) => {
     const { item, onEdit$, onDelete$ /*onToggleStatus$*/ } = props;
 
+    // Add null check for item
+    if (!item) {
+      return (
+        <div class="card bg-base-100 shadow-md p-6">
+          <h2 class="card-title text-xl font-bold mb-4">Detail Posyandu</h2>
+          <p class="text-gray-500">Data posyandu tidak tersedia.</p>
+        </div>
+      );
+    }
+
     const getStatusBadgeClass = (status: string) => {
       return status === "Aktif" ? "badge-success" : "badge-error";
     };
