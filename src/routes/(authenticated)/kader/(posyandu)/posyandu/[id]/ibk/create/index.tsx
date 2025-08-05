@@ -4,10 +4,11 @@ import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import { object, string, nonEmpty, custom, pipe, InferOutput } from "valibot";
-import { IBKPersonalStep } from "~/components/ibk/IBKPersonalStep";
-import { IBKKunjunganStep } from "~/components/ibk/IBKKunjunganStep";
-import { IBKPsikologiStep } from "~/components/ibk/IBKPsikologiStep";
-import { IBKDisabilitasStep } from "~/components/ibk/IBKDisabilitasStep";
+import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
+import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
+import { IBKSectionAssessment } from "~/components/ibk/IBKPsikologiStep";
+import { IBKSectionHealth } from "~/components/ibk/IBKDisabilitasStep";
+import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
 
 const ibkSchema = object({
   // Step 1: Data Diri
@@ -132,23 +133,26 @@ export default component$(() => {
 
   // Refactor: steps array only static data
   const steps = [
-    { id: "ibk", title: "Data Diri IBK" }, // Section 1
-    { id: "detail", title: "Detail IBK" }, // Section 2
-    { id: "assessment", title: "Assessment" }, // Section 3
-    { id: "kesehatan", title: "Data Kesehatan" }, // Section 4
+    { id: "ibk", title: "Data Diri IBK" },
+    { id: "detail", title: "Detail IBK" },
+    { id: "assessment", title: "Assessment" },
+    { id: "disabilitas", title: "Jenis Disabilitas" }, // dummy
+    { id: "kesehatan", title: "Data Kesehatan" },
   ];
 
   function renderStep(stepIdx: number) {
     const stepId = steps[stepIdx].id;
     switch (stepId) {
       case "ibk":
-        return <IBKPersonalStep form={form} />;
+        return <IBKSectionPersonalData form={form} />;
       case "detail":
-        return <IBKKunjunganStep form={form} />;
+        return <IBKSectionDetail form={form} />;
       case "assessment":
-        return <IBKPsikologiStep form={form} />;
+        return <IBKSectionAssessment form={form} />;
+      case "disabilitas":
+        return <IBKSectionDisability />;
       case "kesehatan":
-        return <IBKDisabilitasStep form={form} />;
+        return <IBKSectionHealth form={form} />;
       default:
         return null;
     }
