@@ -10,9 +10,10 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
             field={field}
             props={props}
             type="number"
-            label="Total IQ"
+            label="Total IQ*"
             min={0}
             max={200}
+            required
           />
         )}
       </Field>
@@ -22,7 +23,8 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
             field={field}
             props={props}
             type="text"
-            label="Kategori IQ"
+            label="Kategori IQ*"
+            required
           />
         )}
       </Field>
@@ -32,7 +34,8 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
             field={field}
             props={props}
             type="text"
-            label="Tipe Kepribadian"
+            label="Tipe Kepribadian*"
+            required
           />
         )}
       </Field>
@@ -42,8 +45,49 @@ export function IBKPsikologiStep({ form }: Readonly<{ form: any }>) {
             field={field}
             props={props}
             type="textarea"
-            label="Deskripsi Kepribadian"
+            label="Deskripsi Kepribadian*"
             rows={3}
+            required
+          />
+        )}
+      </Field>
+      <Field of={form} name="potensi" type="string">
+        {(field: any, props: any) => (
+          <FormFieldModular
+            field={field}
+            props={props}
+            type="text"
+            label="Potensi"
+          />
+        )}
+      </Field>
+      <Field of={form} name="minat" type="string">
+        {(field: any, props: any) => (
+          <FormFieldModular
+            field={field}
+            props={props}
+            type="text"
+            label="Minat"
+          />
+        )}
+      </Field>
+      <Field of={form} name="bakat" type="string">
+        {(field: any, props: any) => (
+          <FormFieldModular
+            field={field}
+            props={props}
+            type="text"
+            label="Bakat"
+          />
+        )}
+      </Field>
+      <Field of={form} name="keterampilan" type="string">
+        {(field: any, props: any) => (
+          <FormFieldModular
+            field={field}
+            props={props}
+            type="text"
+            label="Keterampilan"
           />
         )}
       </Field>

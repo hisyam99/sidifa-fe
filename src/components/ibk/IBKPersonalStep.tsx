@@ -27,11 +27,9 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
               inputMode: "numeric",
               pattern: "\\d*",
               onInput$: $((e: any) => {
-                // Only allow digits and max 16 chars
                 let value = e.target.value.replace(/\D/g, "");
                 if (value.length > 16) value = value.slice(0, 16);
                 e.target.value = value;
-                // If using modular-forms, also update the field value in the form state
                 if (props.onInput$) props.onInput$(e);
               }),
             }}
@@ -48,8 +46,9 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
             field={field}
             props={props}
             type="text"
-            label="Tempat Lahir"
+            label="Tempat Lahir*"
             placeholder="Tempat lahir"
+            required
           />
         )}
       </Field>
@@ -103,7 +102,7 @@ export function IBKPersonalStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="umur" type="number">
+      <Field of={form} name="umur" type="string">
         {(field: any, props: any) => (
           <FormFieldModular
             field={field}

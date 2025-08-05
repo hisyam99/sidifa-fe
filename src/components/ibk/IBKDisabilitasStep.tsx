@@ -48,46 +48,6 @@ export function IBKDisabilitasStep({ form }: Readonly<{ form: any }>) {
           />
         )}
       </Field>
-      <Field of={form} name="potensi" type="string">
-        {(field: any, props: any) => (
-          <FormFieldModular
-            field={field}
-            props={props}
-            type="text"
-            label="Potensi"
-          />
-        )}
-      </Field>
-      <Field of={form} name="minat" type="string">
-        {(field: any, props: any) => (
-          <FormFieldModular
-            field={field}
-            props={props}
-            type="text"
-            label="Minat"
-          />
-        )}
-      </Field>
-      <Field of={form} name="bakat" type="string">
-        {(field: any, props: any) => (
-          <FormFieldModular
-            field={field}
-            props={props}
-            type="text"
-            label="Bakat"
-          />
-        )}
-      </Field>
-      <Field of={form} name="keterampilan" type="string">
-        {(field: any, props: any) => (
-          <FormFieldModular
-            field={field}
-            props={props}
-            type="text"
-            label="Keterampilan"
-          />
-        )}
-      </Field>
     </div>
   );
 }

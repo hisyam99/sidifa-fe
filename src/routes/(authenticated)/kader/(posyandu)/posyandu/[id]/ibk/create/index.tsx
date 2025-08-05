@@ -5,9 +5,9 @@ import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import { object, string, nonEmpty, custom, pipe, InferOutput } from "valibot";
 import { IBKPersonalStep } from "~/components/ibk/IBKPersonalStep";
+import { IBKKunjunganStep } from "~/components/ibk/IBKKunjunganStep";
 import { IBKPsikologiStep } from "~/components/ibk/IBKPsikologiStep";
 import { IBKDisabilitasStep } from "~/components/ibk/IBKDisabilitasStep";
-import { IBKKunjunganStep } from "~/components/ibk/IBKKunjunganStep";
 
 const ibkSchema = object({
   // Step 1: Data Diri
@@ -132,23 +132,23 @@ export default component$(() => {
 
   // Refactor: steps array only static data
   const steps = [
-    { id: "personal", title: "Data Diri IBK" },
-    { id: "psikologi", title: "Asesmen Psikologi" },
-    { id: "disabilitas", title: "Data Disabilitas" },
-    { id: "kunjungan", title: "Kunjungan & Lainnya" },
+    { id: "ibk", title: "Data Diri IBK" }, // Section 1
+    { id: "detail", title: "Detail IBK" }, // Section 2
+    { id: "assessment", title: "Assessment" }, // Section 3
+    { id: "kesehatan", title: "Data Kesehatan" }, // Section 4
   ];
 
   function renderStep(stepIdx: number) {
     const stepId = steps[stepIdx].id;
     switch (stepId) {
-      case "personal":
+      case "ibk":
         return <IBKPersonalStep form={form} />;
-      case "psikologi":
-        return <IBKPsikologiStep form={form} />;
-      case "disabilitas":
-        return <IBKDisabilitasStep form={form} />;
-      case "kunjungan":
+      case "detail":
         return <IBKKunjunganStep form={form} />;
+      case "assessment":
+        return <IBKPsikologiStep form={form} />;
+      case "kesehatan":
+        return <IBKDisabilitasStep form={form} />;
       default:
         return null;
     }
@@ -156,11 +156,13 @@ export default component$(() => {
 
   // Step fields for validation
   const stepFields = [
+    // Section 1: IBK
     [
       "nama",
       "nik",
+      "tempat_lahir",
       "tanggal_lahir",
-      // "file", // file is now optional, so do not block step navigation if not filled
+      "file",
       "jenis_kelamin",
       "agama",
       "umur",
@@ -169,9 +171,29 @@ export default component$(() => {
       "nama_wali",
       "no_telp_wali",
     ],
-    [],
+    // Section 2: Detail IBK
+    [
+      "pekerjaan",
+      "pendidikan",
+      "status_perkawinan",
+      "titik_koordinat",
+      "keterangan_tambahan",
+    ],
+    // Section 3: Assessment
+    [
+      "total_iq",
+      "kategori_iq",
+      "tipe_kepribadian",
+      "deskripsi_kepribadian",
+      "potensi",
+      "minat",
+      "bakat",
+      "keterampilan",
+      "catatan_psikolog",
+      "rekomendasi_intervensi",
+    ],
+    // Section 4: Data Kesehatan
     ["odgj", "hasil_diagnosa", "jenis_bantuan", "riwayat_terapi"],
-    ["pekerjaan", "pendidikan", "status_perkawinan", "titik_koordinat"],
   ];
 
   // Helper to check if current step is valid
@@ -196,11 +218,9 @@ export default component$(() => {
   const handleSubmit = $(async (values: IBKForm) => {
     error.value = null;
     success.value = null;
-
     try {
       const formData = new FormData();
-
-      // Map form fields to API field names
+      // Section 1: IBK
       formData.append("nama", values.nama);
       formData.append("nik", values.nik);
       formData.append("tempat_lahir", values.tempat_lahir);
@@ -216,32 +236,28 @@ export default component$(() => {
       formData.append("nama_wali", values.nama_wali);
       formData.append("no_telp_wali", values.no_telp_wali);
       formData.append("posyanduId", posyanduId);
-
-      // Step 2: Asesmen Psikologi
-      formData.append("total_iq", values.total_iq);
-      formData.append("kategori_iq", values.kategori_iq);
-      formData.append("tipe_kepribadian", values.tipe_kepribadian);
-      formData.append("deskripsi_kepribadian", values.deskripsi_kepribadian);
-      formData.append("catatan_psikolog", values.catatan_psikolog);
-      formData.append("rekomendasi_intervensi", values.rekomendasi_intervensi);
-
-      // Step 3: Disabilitas
-      formData.append("odgj", values.odgj);
-      formData.append("hasil_diagnosa", values.hasil_diagnosa);
-      formData.append("jenis_bantuan", values.jenis_bantuan);
-      formData.append("riwayat_terapi", values.riwayat_terapi);
-      formData.append("potensi", values.potensi);
-      formData.append("minat", values.minat);
-      formData.append("bakat", values.bakat);
-      formData.append("keterampilan", values.keterampilan);
-
-      // Step 4: Kunjungan
+      // Section 2: Detail IBK
       formData.append("pekerjaan", values.pekerjaan);
       formData.append("pendidikan", values.pendidikan);
       formData.append("status_perkawinan", values.status_perkawinan);
       formData.append("titik_koordinat", values.titik_koordinat);
       formData.append("keterangan_tambahan", values.keterangan_tambahan);
-
+      // Section 3: Assessment
+      formData.append("total_iq", values.total_iq);
+      formData.append("kategori_iq", values.kategori_iq);
+      formData.append("tipe_kepribadian", values.tipe_kepribadian);
+      formData.append("deskripsi_kepribadian", values.deskripsi_kepribadian);
+      formData.append("potensi", values.potensi);
+      formData.append("minat", values.minat);
+      formData.append("bakat", values.bakat);
+      formData.append("keterampilan", values.keterampilan);
+      formData.append("catatan_psikolog", values.catatan_psikolog);
+      formData.append("rekomendasi_intervensi", values.rekomendasi_intervensi);
+      // Section 4: Data Kesehatan
+      formData.append("odgj", values.odgj);
+      formData.append("hasil_diagnosa", values.hasil_diagnosa);
+      formData.append("jenis_bantuan", values.jenis_bantuan);
+      formData.append("riwayat_terapi", values.riwayat_terapi);
       await ibkService.createIbk(formData);
       success.value = "Data IBK berhasil disimpan.";
       setTimeout(() => nav(`/kader/posyandu`), 1500);
