@@ -153,7 +153,15 @@ export default component$(() => {
         <PaginationControls
           meta={meta.value}
           currentPage={currentPage.value}
-          onPageChange$={handlePageChange}
+          onPageChange$={$((newPage: number) => {
+            handlePageChange(newPage);
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                const el = document.getElementById("admin-verif-table-title");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              });
+            });
+          })}
         />
       )}
 
