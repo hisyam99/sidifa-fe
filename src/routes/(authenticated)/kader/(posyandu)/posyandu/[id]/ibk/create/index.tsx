@@ -1,9 +1,15 @@
-import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useStore,
+  $,
+  useVisibleTask$,
+} from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
-import { object, string, nonEmpty, custom, pipe, InferOutput } from "valibot";
+import { object, string, nonEmpty, pipe, custom, InferOutput } from "valibot";
 import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
 import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
 import { IBKSectionAssessment } from "~/components/ibk/IBKPsikologiStep";
@@ -15,14 +21,11 @@ const ibkSchema = object({
   nama: pipe(string(), nonEmpty("Nama wajib diisi")),
   nik: pipe(
     string(),
-    custom((val: any) => /^\d{16}$/.test(val), "NIK harus 16 digit angka"),
+    custom((val) => /^\d{16}$/.test(val as string), "NIK harus 16 digit angka"),
   ),
   tempat_lahir: string(),
   tanggal_lahir: pipe(string(), nonEmpty("Tanggal lahir wajib diisi")),
-  file: custom(
-    (val) => val === undefined || val instanceof File,
-    "Foto harus berupa file gambar jika diisi",
-  ),
+  file: pipe(string(), nonEmpty("Foto wajib diisi")),
   jenis_kelamin: pipe(string(), nonEmpty("Jenis kelamin wajib diisi")),
   agama: pipe(string(), nonEmpty("Agama wajib diisi")),
   umur: pipe(string(), nonEmpty("Umur wajib diisi")),
@@ -55,11 +58,46 @@ const ibkSchema = object({
 });
 
 type IBKForm = Omit<InferOutput<typeof ibkSchema>, "file"> & {
-  file: (File & { __no_serialize__: true }) | null | undefined;
+  file: string;
 };
 
 import type { PosyanduDetail } from "~/types";
 import { GenericLoadingSpinner } from "~/components/common/GenericLoadingSpinner";
+
+// Default value IBKForm
+const defaultIBKForm = {
+  nama: "",
+  nik: "",
+  tempat_lahir: "",
+  tanggal_lahir: "",
+  file: "",
+  jenis_kelamin: "",
+  agama: "",
+  umur: "",
+  alamat: "",
+  no_telp: "",
+  nama_wali: "",
+  no_telp_wali: "",
+  total_iq: "",
+  kategori_iq: "",
+  tipe_kepribadian: "",
+  deskripsi_kepribadian: "",
+  catatan_psikolog: "",
+  rekomendasi_intervensi: "",
+  odgj: "",
+  hasil_diagnosa: "",
+  jenis_bantuan: "",
+  riwayat_terapi: "",
+  potensi: "",
+  minat: "",
+  bakat: "",
+  keterampilan: "",
+  pekerjaan: "",
+  pendidikan: "",
+  status_perkawinan: "",
+  titik_koordinat: "",
+  keterangan_tambahan: "",
+};
 
 export default component$(() => {
   const nav = useNavigate();
@@ -68,6 +106,8 @@ export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
   const currentStep = useSignal(0);
+  // State global untuk data IBKForm
+  const formDataStore = useStore<IBKForm>({ ...defaultIBKForm });
 
   // Posyandu detail state
   const loading = useSignal(true);
@@ -90,42 +130,9 @@ export default component$(() => {
     }
   });
 
+  // Satu useForm global untuk seluruh step
   const [form, { Form }] = useForm<IBKForm>({
-    loader: {
-      value: {
-        nama: "",
-        nik: "",
-        tempat_lahir: "",
-        tanggal_lahir: "",
-        file: null as (File & { __no_serialize__: true }) | null,
-        jenis_kelamin: "",
-        agama: "",
-        umur: "",
-        alamat: "",
-        no_telp: "",
-        nama_wali: "",
-        no_telp_wali: "",
-        total_iq: "",
-        kategori_iq: "",
-        tipe_kepribadian: "",
-        deskripsi_kepribadian: "",
-        catatan_psikolog: "",
-        rekomendasi_intervensi: "",
-        odgj: "",
-        hasil_diagnosa: "",
-        jenis_bantuan: "",
-        riwayat_terapi: "",
-        potensi: "",
-        minat: "",
-        bakat: "",
-        keterampilan: "",
-        pekerjaan: "",
-        pendidikan: "",
-        status_perkawinan: "",
-        titik_koordinat: "",
-        keterangan_tambahan: "",
-      },
-    },
+    loader: { value: formDataStore },
     validate: valiForm$(ibkSchema),
     validateOn: "blur",
     revalidateOn: "blur",
@@ -140,128 +147,152 @@ export default component$(() => {
     { id: "kesehatan", title: "Data Kesehatan" },
   ];
 
-  function renderStep(stepIdx: number) {
-    const stepId = steps[stepIdx].id;
-    switch (stepId) {
-      case "ibk":
-        return <IBKSectionPersonalData form={form} />;
-      case "detail":
-        return <IBKSectionDetail form={form} />;
-      case "assessment":
-        return <IBKSectionAssessment form={form} />;
-      case "disabilitas":
-        return <IBKSectionDisability />;
-      case "kesehatan":
-        return <IBKSectionHealth form={form} />;
-      default:
-        return null;
-    }
-  }
-
-  // Step fields for validation
-  const stepFields = [
-    // Section 1: IBK
-    [
-      "nama",
-      "nik",
-      "tempat_lahir",
-      "tanggal_lahir",
-      "file",
-      "jenis_kelamin",
-      "agama",
-      "umur",
-      "alamat",
-      "no_telp",
-      "nama_wali",
-      "no_telp_wali",
-    ],
-    // Section 2: Detail IBK
-    [
-      "pekerjaan",
-      "pendidikan",
-      "status_perkawinan",
-      "titik_koordinat",
-      "keterangan_tambahan",
-    ],
-    // Section 3: Assessment
-    [
-      "total_iq",
-      "kategori_iq",
-      "tipe_kepribadian",
-      "deskripsi_kepribadian",
-      "potensi",
-      "minat",
-      "bakat",
-      "keterampilan",
-      "catatan_psikolog",
-      "rekomendasi_intervensi",
-    ],
-    // Section 4: Data Kesehatan
-    ["odgj", "hasil_diagnosa", "jenis_bantuan", "riwayat_terapi"],
-  ];
-
-  // Helper to check if current step is valid
-  // Helper to check if current step is valid (outside $)
-  function isCurrentStepValid() {
-    const fields = stepFields[currentStep.value];
-    return fields.every(
-      (field) =>
-        !form.internal.fields[field as keyof typeof form.internal.fields]
-          ?.error,
+  // Render semua step, field yang tidak aktif di-hide
+  function renderAllSteps() {
+    return (
+      <>
+        <div style={{ display: currentStep.value === 0 ? undefined : "none" }}>
+          <IBKSectionPersonalData form={form} />
+        </div>
+        <div style={{ display: currentStep.value === 1 ? undefined : "none" }}>
+          <IBKSectionDetail form={form} />
+        </div>
+        <div style={{ display: currentStep.value === 2 ? undefined : "none" }}>
+          <IBKSectionAssessment form={form} />
+        </div>
+        <div style={{ display: currentStep.value === 3 ? undefined : "none" }}>
+          <IBKSectionDisability />
+        </div>
+        <div style={{ display: currentStep.value === 4 ? undefined : "none" }}>
+          <IBKSectionHealth form={form} />
+        </div>
+      </>
     );
   }
-
-  const handleNext = $(() => {
-    currentStep.value++;
-  });
 
   const handlePrevious = $(() => {
     if (currentStep.value > 0) currentStep.value--;
   });
 
+  // Helper validasi hanya field step saat ini
+  const isCurrentStepValid = $(() => {
+    // Step 4 (index 3) = Jenis Disabilitas, selalu true (bisa diskip)
+    if (currentStep.value === 3) return true;
+    const stepFields = [
+      // Step 1
+      [
+        "nama",
+        "nik",
+        "tempat_lahir",
+        "tanggal_lahir",
+        "file",
+        "jenis_kelamin",
+        "agama",
+        "umur",
+        "alamat",
+        "no_telp",
+        "nama_wali",
+        "no_telp_wali",
+      ],
+      // Step 2
+      [
+        "pekerjaan",
+        "pendidikan",
+        "status_perkawinan",
+        "titik_koordinat",
+        "keterangan_tambahan",
+      ],
+      // Step 3
+      [
+        "total_iq",
+        "kategori_iq",
+        "tipe_kepribadian",
+        "deskripsi_kepribadian",
+        "catatan_psikolog",
+        "rekomendasi_intervensi",
+      ],
+      // Step 4
+      [
+        "odgj",
+        "hasil_diagnosa",
+        "jenis_bantuan",
+        "riwayat_terapi",
+        "potensi",
+        "minat",
+        "bakat",
+        "keterampilan",
+      ],
+      // Step 5 (jika ada)
+    ];
+    const fields = stepFields[currentStep.value];
+    return fields.every(
+      (field) =>
+        !form.internal.fields[field as keyof typeof form.internal.fields]
+          ?.error &&
+        form.internal.fields[field as keyof typeof form.internal.fields]
+          ?.value !== "",
+    );
+  });
+
+  // Step terakhir: submit seluruh data gabungan
   const handleSubmit = $(async (values: IBKForm) => {
     error.value = null;
     success.value = null;
+    // Gabungkan data step terakhir ke store
+    Object.assign(formDataStore, values);
     try {
       const formData = new FormData();
-      // Section 1: IBK
-      formData.append("nama", values.nama);
-      formData.append("nik", values.nik);
-      formData.append("tempat_lahir", values.tempat_lahir);
-      formData.append("tanggal_lahir", values.tanggal_lahir);
-      if (values.file instanceof File) {
-        formData.append("file_foto", values.file);
+      // Format tanggal_lahir ke ISO-8601 jika hanya YYYY-MM-DD
+      let tanggalLahirValue = formDataStore.tanggal_lahir;
+      if (/^\d{4}-\d{2}-\d{2}$/.test(tanggalLahirValue)) {
+        tanggalLahirValue = new Date(tanggalLahirValue).toISOString();
       }
-      formData.append("jenis_kelamin", values.jenis_kelamin);
-      formData.append("agama", values.agama);
-      formData.append("umur", values.umur);
-      formData.append("alamat", values.alamat);
-      formData.append("no_telp", values.no_telp);
-      formData.append("nama_wali", values.nama_wali);
-      formData.append("no_telp_wali", values.no_telp_wali);
+      formData.append("tanggal_lahir", tanggalLahirValue);
+      // Pastikan total_iq selalu string
+      const totalIqValue =
+        formDataStore.total_iq !== undefined &&
+        formDataStore.total_iq !== null &&
+        formDataStore.total_iq !== ""
+          ? String(formDataStore.total_iq)
+          : "0";
+      formData.append("total_iq", totalIqValue);
+      // Append semua field lain dari formDataStore
+      formData.append("nama", formDataStore.nama);
+      formData.append("nik", formDataStore.nik);
+      formData.append("tempat_lahir", formDataStore.tempat_lahir);
+      formData.append("file_foto", formDataStore.file ?? "");
+      formData.append("jenis_kelamin", formDataStore.jenis_kelamin);
+      formData.append("agama", formDataStore.agama);
+      formData.append("umur", formDataStore.umur);
+      formData.append("alamat", formDataStore.alamat);
+      formData.append("no_telp", formDataStore.no_telp);
+      formData.append("nama_wali", formDataStore.nama_wali);
+      formData.append("no_telp_wali", formDataStore.no_telp_wali);
       formData.append("posyanduId", posyanduId);
-      // Section 2: Detail IBK
-      formData.append("pekerjaan", values.pekerjaan);
-      formData.append("pendidikan", values.pendidikan);
-      formData.append("status_perkawinan", values.status_perkawinan);
-      formData.append("titik_koordinat", values.titik_koordinat);
-      formData.append("keterangan_tambahan", values.keterangan_tambahan);
-      // Section 3: Assessment
-      formData.append("total_iq", values.total_iq);
-      formData.append("kategori_iq", values.kategori_iq);
-      formData.append("tipe_kepribadian", values.tipe_kepribadian);
-      formData.append("deskripsi_kepribadian", values.deskripsi_kepribadian);
-      formData.append("potensi", values.potensi);
-      formData.append("minat", values.minat);
-      formData.append("bakat", values.bakat);
-      formData.append("keterampilan", values.keterampilan);
-      formData.append("catatan_psikolog", values.catatan_psikolog);
-      formData.append("rekomendasi_intervensi", values.rekomendasi_intervensi);
-      // Section 4: Data Kesehatan
-      formData.append("odgj", values.odgj);
-      formData.append("hasil_diagnosa", values.hasil_diagnosa);
-      formData.append("jenis_bantuan", values.jenis_bantuan);
-      formData.append("riwayat_terapi", values.riwayat_terapi);
+      formData.append("pekerjaan", formDataStore.pekerjaan);
+      formData.append("pendidikan", formDataStore.pendidikan);
+      formData.append("status_perkawinan", formDataStore.status_perkawinan);
+      formData.append("titik_koordinat", formDataStore.titik_koordinat);
+      formData.append("keterangan_tambahan", formDataStore.keterangan_tambahan);
+      formData.append("kategori_iq", formDataStore.kategori_iq);
+      formData.append("tipe_kepribadian", formDataStore.tipe_kepribadian);
+      formData.append(
+        "deskripsi_kepribadian",
+        formDataStore.deskripsi_kepribadian,
+      );
+      formData.append("potensi", formDataStore.potensi);
+      formData.append("minat", formDataStore.minat);
+      formData.append("bakat", formDataStore.bakat);
+      formData.append("keterampilan", formDataStore.keterampilan);
+      formData.append("catatan_psikolog", formDataStore.catatan_psikolog);
+      formData.append(
+        "rekomendasi_intervensi",
+        formDataStore.rekomendasi_intervensi,
+      );
+      formData.append("odgj", formDataStore.odgj);
+      formData.append("hasil_diagnosa", formDataStore.hasil_diagnosa);
+      formData.append("jenis_bantuan", formDataStore.jenis_bantuan);
+      formData.append("riwayat_terapi", formDataStore.riwayat_terapi);
       await ibkService.createIbk(formData);
       success.value = "Data IBK berhasil disimpan.";
       setTimeout(() => nav(`/kader/posyandu`), 1500);
@@ -273,7 +304,6 @@ export default component$(() => {
   return (
     <div class="max-w-3xl mx-auto p-4">
       <h1 class="text-2xl font-bold mb-4">Formulir Pendataan IBK</h1>
-      {/* Posyandu detail loading/error/info */}
       {loading.value && <GenericLoadingSpinner />}
       {posyanduError.value && (
         <div class="alert alert-error mb-2" role="alert">
@@ -301,13 +331,8 @@ export default component$(() => {
       {success.value && (
         <output class="alert alert-success mb-2">{success.value}</output>
       )}
-      {/* Only show form if posyandu loaded */}
       {posyandu.value && (
-        <Form
-          onSubmit$={handleSubmit}
-          class="space-y-6 w-full"
-          encType="multipart/form-data"
-        >
+        <>
           <div class="mb-6">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-semibold text-base-content">
@@ -358,45 +383,68 @@ export default component$(() => {
               ))}
             </div>
           </div>
-          <div class="mb-8">{renderStep(currentStep.value)}</div>
-          <div class="flex items-center justify-between">
-            <button
-              type="button"
-              class="btn btn-ghost gap-2"
-              onClick$={handlePrevious}
-              disabled={currentStep.value === 0}
+          <div class="mb-8">
+            {/* Render Form per step */}
+            <Form
+              onSubmit$={(values) => {
+                Object.assign(formDataStore, values);
+                if (currentStep.value < steps.length - 1) {
+                  currentStep.value++;
+                } else {
+                  handleSubmit(values);
+                }
+              }}
+              class="space-y-6 w-full"
+              encType="multipart/form-data"
             >
-              Sebelumnya
-            </button>
-            {currentStep.value < steps.length - 1 ? (
-              <button
-                type="button"
-                class="btn btn-primary gap-2"
-                onClick$={handleNext}
-                disabled={form.submitting || !isCurrentStepValid()}
-              >
-                Lanjutkan
-              </button>
-            ) : (
-              <button
-                type="submit"
-                class="btn btn-primary gap-2"
-                disabled={form.submitting || form.invalid}
-              >
-                {form.submitting ? (
-                  <>
-                    <div class="skeleton w-4 h-4"></div>
-                    Menyimpan...
-                  </>
+              {renderAllSteps()}
+              <div class="flex items-center justify-between mt-8">
+                <button
+                  type="button"
+                  class="btn btn-ghost gap-2"
+                  onClick$={handlePrevious}
+                  disabled={currentStep.value === 0}
+                >
+                  Sebelumnya
+                </button>
+                {currentStep.value < steps.length - 1 ? (
+                  <button
+                    type="button"
+                    class="btn btn-primary gap-2"
+                    disabled={!(isCurrentStepValid as any)()}
+                    onClick$={$(async () => {
+                      if (await (isCurrentStepValid as any)())
+                        currentStep.value++;
+                    })}
+                  >
+                    Lanjutkan
+                  </button>
                 ) : (
-                  <>Simpan Data IBK</>
+                  <button
+                    type="submit"
+                    class="btn btn-primary gap-2"
+                    disabled={form.submitting || form.invalid}
+                  >
+                    {form.submitting ? (
+                      <>
+                        <div class="skeleton w-4 h-4"></div>
+                        Menyimpan...
+                      </>
+                    ) : (
+                      <>Simpan Data IBK</>
+                    )}
+                  </button>
                 )}
-              </button>
-            )}
+              </div>
+              {form.invalid && (
+                <div class="alert alert-error mt-2">
+                  Ada data yang belum valid/terisi. Silakan cek kembali!
+                </div>
+              )}
+            </Form>
           </div>
-        </Form>
+        </>
       )}
-      {/* If not loading and not found */}
       {!loading.value && !posyandu.value && !posyanduError.value && (
         <div class="alert alert-warning" role="alert">
           Data posyandu tidak ditemukan.

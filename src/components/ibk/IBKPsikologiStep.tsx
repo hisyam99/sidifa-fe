@@ -13,7 +13,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
         </span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field of={form} name="total_iq" type="number">
+        <Field of={form} name="total_iq" type="string">
           {(field: any, props: any) => (
             <FormFieldModular
               field={field}

@@ -1,5 +1,4 @@
 import { Field } from "@modular-forms/qwik";
-import { $ } from "@builder.io/qwik";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 import { LuInfo } from "~/components/icons/lucide-optimized";
 
@@ -30,19 +29,8 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
           {(field: any, props: any) => (
             <FormFieldModular
               field={field}
-              props={{
-                ...props,
-                maxLength: 16,
-                inputMode: "numeric",
-                pattern: "\\d*",
-                onInput$: $((e: any) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (value.length > 16) value = value.slice(0, 16);
-                  e.target.value = value;
-                  if (props.onInput$) props.onInput$(e);
-                }),
-              }}
-              type="text"
+              props={props}
+              type="number"
               label="NIK*"
               placeholder="16 digit NIK"
               required
@@ -72,15 +60,15 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
             />
           )}
         </Field>
-        <Field of={form} name="file" type="File">
+        <Field of={form} name="file" type="string">
           {(field: any, props: any) => (
             <FormFieldModular
               field={field}
               props={props}
-              type="file"
-              label="Foto*"
+              type="text"
+              label="Foto* (URL atau nama file)"
               required
-              helper="File harus dipilih ulang jika Anda kembali ke langkah ini."
+              helper="Masukkan URL foto atau nama file sesuai kebutuhan backend."
             />
           )}
         </Field>
