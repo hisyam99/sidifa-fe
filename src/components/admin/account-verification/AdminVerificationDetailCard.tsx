@@ -11,6 +11,14 @@ export const AdminVerificationDetailCard = component$(
   (props: AdminVerificationDetailCardProps) => {
     const { item, onVerify$, onUnverify$ } = props;
 
+    if (!item) {
+      return (
+        <div class="text-center text-base-content/60 py-8">
+          No account selected.
+        </div>
+      );
+    }
+
     const getStatusBadgeClass = (status: "verified" | "unverified") => {
       return status === "verified" ? "badge-success" : "badge-warning";
     };
