@@ -129,6 +129,11 @@ export const useAuth = () => {
       return;
     }
 
+    // Set auth_status to false if not set (first visit)
+    if (sessionUtils.getAuthStatus() === null) {
+      sessionUtils.setAuthStatus(false);
+    }
+
     // Skip if already initialized
     if (globalAuthState.isInitialized) {
       // Sync dengan global state
