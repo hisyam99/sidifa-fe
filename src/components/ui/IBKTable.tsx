@@ -14,7 +14,7 @@ interface IBKTableProps {
 export const IBKTable = component$((props: IBKTableProps) => {
   const { ibkList, error, onViewDetail$, onEdit$, loading } = props;
   return (
-    <div class="overflow-x-auto bg-base-100 p-2 md:card md:p-6 md:shadow-xl">
+    <div class="overflow-x-auto bg-base-100 p-2 ">
       <h2
         id="ibk-table-title"
         tabIndex={-1}

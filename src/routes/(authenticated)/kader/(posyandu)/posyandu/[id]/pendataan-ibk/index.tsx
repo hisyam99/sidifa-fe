@@ -157,68 +157,6 @@ export default component$(() => {
     }
   });
 
-  // Form validation (no changes needed here)
-  // const validateCurrentStep = $(() => {
-  //   const currentStepData = wizardSteps[currentStep.value];
-
-  //   switch (currentStepData.id) {
-  //     case "personal-data":
-  //       return !!(
-  //         formData.step1.nama_lengkap &&
-  //         formData.step1.nik &&
-  //         formData.step1.tanggal_lahir
-  //       );
-  //     case "psychological-assessment":
-  //       return true; // Optional step
-  //     case "disability-selection":
-  //       return formData.step3.jenis_disabilitas.length > 0;
-  //     case "visit-history":
-  //       return !!(
-  //         formData.step4.tanggal_kunjungan && formData.step4.keluhan_utama
-  //       );
-  //     default:
-  //       return false;
-  //   }
-  // });
-
-  // Update step validation (no changes needed here)
-  // useTask$(async ({ track }) => {
-  //   track(() => currentStep.value);
-  //   track(() => formData.step1.nama_lengkap);
-  //   track(() => formData.step1.nik);
-  //   track(() => formData.step3.jenis_disabilitas);
-  //   track(() => formData.step4.keluhan_utama);
-
-  //   const isValid = await validateCurrentStep();
-  //   wizardSteps[currentStep.value].isValid = isValid;
-  // });
-
-  // Wizard navigation (no changes needed here)
-  // const handleNext = $(() => {
-  //   if (currentStep.value < wizardSteps.length - 1) {
-  //     currentStep.value++;
-  //   }
-  // });
-
-  // const handlePrevious = $(() => {
-  //   if (currentStep.value > 0) {
-  //     currentStep.value--;
-  //   }
-  // });
-
-  // const handleStepChange = $((stepIndex: number) => {
-  //   currentStep.value = stepIndex;
-  // });
-
-  // const handleSubmit = $(async () => {
-  //   console.log("Submitting IBK data:", formData);
-  //   // API call would go here
-  //   alert("Data IBK berhasil disimpan!");
-  //   showAddForm.value = false;
-  //   currentStep.value = 0;
-  //   // Reset form
-  // });
-
   // IBK actions (no changes needed here)
   const handleEdit = $((ibk: IBKRecord) => {
     alert("Edit IBK: " + ibk.personal_data.nama_lengkap);
