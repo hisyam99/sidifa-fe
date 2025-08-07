@@ -56,7 +56,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="max-w-3xl mx-auto px-2 py-6 md:py-10">
+    <div class="mx-auto w-full">
       <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <h1 class="text-3xl font-bold flex items-center gap-2">
           <LuClipboardList class="w-8 h-8 text-primary" /> Jadwal Posyandu

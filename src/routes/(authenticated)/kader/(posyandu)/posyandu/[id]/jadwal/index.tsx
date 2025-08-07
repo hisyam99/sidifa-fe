@@ -70,7 +70,7 @@ export default component$(() => {
   );
 
   return (
-    <div class="max-w-4xl mx-auto p-4">
+    <div class="mx-auto p-4 w-full">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Jadwal Posyandu</h1>
         <button
@@ -110,23 +110,32 @@ export default component$(() => {
       {success.value && (
         <div class="alert alert-success mb-2">{success.value}</div>
       )}
-      <JadwalPosyanduTable
-        items={jadwalList}
-        loading={loading.value}
-        onEdit$={handleEdit}
-        onDetail$={handleDetail}
-        onDelete$={deleteJadwal}
-      />
-      <PaginationControls
-        meta={{
-          totalData: total.value,
-          totalPage: totalPage.value,
-          currentPage: page.value,
-          limit: limit.value,
-        }}
-        currentPage={page.value}
-        onPageChange$={setPage}
-      />
+      <div
+        id="jadwal-table-scroll-anchor"
+        class="overflow-x-auto bg-base-100 p-2"
+      >
+        <JadwalPosyanduTable
+          items={jadwalList}
+          loading={loading.value}
+          onEdit$={handleEdit}
+          onDetail$={handleDetail}
+          onDelete$={deleteJadwal}
+        />
+        <PaginationControls
+          meta={{
+            totalData: total.value,
+            totalPage: totalPage.value,
+            currentPage: page.value,
+            limit: limit.value,
+          }}
+          currentPage={page.value}
+          onPageChange$={$((newPage: number) => {
+            setPage(newPage);
+            const el = document.getElementById("jadwal-table-scroll-anchor");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          })}
+        />
+      </div>
       {showForm.value && (
         <div class="modal modal-open">
           <div class="modal-box max-w-lg">
