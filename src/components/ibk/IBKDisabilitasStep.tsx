@@ -18,9 +18,14 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
             <FormFieldModular
               field={field}
               props={props}
-              type="text"
+              type="select"
               label="ODGJ*"
               required
+              options={[
+                { value: "", label: "Pilih" },
+                { value: "true", label: "Iya" },
+                { value: "false", label: "Tidak" },
+              ]}
             />
           )}
         </Field>

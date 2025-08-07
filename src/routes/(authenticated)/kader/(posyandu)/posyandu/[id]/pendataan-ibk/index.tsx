@@ -159,7 +159,9 @@ export default component$(() => {
 
   // IBK actions (no changes needed here)
   const handleEdit = $((ibk: IBKRecord) => {
-    alert("Edit IBK: " + ibk.personal_data.nama_lengkap);
+    navigate(
+      `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}/edit`,
+    );
   });
 
   // Filtered IBK list (only gender in-memory)

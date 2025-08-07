@@ -433,6 +433,61 @@ export const ibkService = {
     });
     return response.data;
   },
+  async updateIbk(id: string, formData: FormData) {
+    const response = await api.patch(
+      `/kader/pendataan-ibk/update/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  },
+  buildIbkUpdateFormData(payload: Record<string, any>): FormData {
+    const fd = new FormData();
+    for (const [key, value] of Object.entries(payload)) {
+      if (value === undefined || value === null) continue;
+      if (key === "file") {
+        // Backend expects file_foto; accept either File or string
+        if (value instanceof File) {
+          fd.append("file_foto", value);
+        } else if (typeof value === "string") {
+          fd.append("file_foto", value);
+        }
+        continue;
+      }
+      if (key === "tanggal_lahir" && typeof value === "string") {
+        let tgl = value;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(tgl)) {
+          tgl = new Date(`${tgl}T00:00:00`).toISOString();
+        }
+        fd.append("tanggal_lahir", tgl);
+        continue;
+      }
+      if (key === "odgj") {
+        const v = String(value).toLowerCase();
+        const boolStr = ["true", "t", "ya", "iya", "1"].includes(v)
+          ? "true"
+          : "false";
+        fd.append("odgj", boolStr);
+        continue;
+      }
+      if (key === "total_iq") {
+        const n = Math.max(0, Math.min(200, parseInt(String(value), 10) || 0));
+        fd.append("total_iq", String(n));
+        continue;
+      }
+      if (key === "umur") {
+        const n = Math.max(0, Math.min(150, parseInt(String(value), 10) || 0));
+        fd.append("umur", String(n));
+        continue;
+      }
+      fd.append(key, String(value));
+    }
+    return fd;
+  },
   async getIbkListByPosyandu(params: {
     posyanduId: string;
     page?: number;

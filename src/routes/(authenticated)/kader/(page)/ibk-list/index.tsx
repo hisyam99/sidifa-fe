@@ -114,8 +114,7 @@ export default component$(() => {
     showDetailModal.value = true;
   });
   const handleEdit: QRL<(ibk: IBKRecord) => void> = $((ibk) => {
-    // TODO: Implement edit logic/modal
-    alert("Edit IBK: " + ibk.personal_data.nama_lengkap);
+    window.location.href = `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}/edit`;
   });
 
   return (
