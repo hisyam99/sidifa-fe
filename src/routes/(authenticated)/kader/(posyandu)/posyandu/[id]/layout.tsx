@@ -22,6 +22,11 @@ export default component$(() => {
       icon: "LuClipboardList",
     },
     {
+      href: `${base}/jadwal`,
+      label: "Jadwal Posyandu",
+      icon: "LuCalendarClock", // You may need to import or use a suitable icon
+    },
+    {
       href: `${base}/laporan-statistik`,
       label: "Laporan Statistik",
       icon: "LuLineChart",

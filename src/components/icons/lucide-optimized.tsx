@@ -254,3 +254,7 @@ export const LuClock = component$((props: SVGProps<SVGSVGElement>) => (
 export const LuTrash = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuTrash {...props} />
 ));
+
+export const LuCalendarClock = component$((props: SVGProps<SVGSVGElement>) => (
+  <LucideLuCalendarCheck {...props} />
+));
