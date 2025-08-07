@@ -1,6 +1,7 @@
 import { component$, QRL, $ } from "@builder.io/qwik";
 import type { JadwalPosyanduItem } from "~/types";
 import { LuEye, LuPencil, LuTrash } from "~/components/icons/lucide-optimized";
+import { Spinner } from "~/components/ui/Spinner";
 
 interface JadwalPosyanduTableProps {
   items: JadwalPosyanduItem[];
@@ -21,7 +22,8 @@ export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
         >
           Daftar Jadwal Posyandu
         </h2>
-        <div class="overflow-x-auto">
+        <div class="relative overflow-x-auto">
+          {loading && <Spinner overlay />}
           <div class="max-h-[60vh] overflow-y-auto">
             <table class="table table-xs xl:table-md table-pin-cols w-full">
               <thead>
@@ -31,36 +33,47 @@ export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
                   <th class="sticky top-0 z-20 bg-base-100">Lokasi</th>
                   <th class="sticky top-0 z-20 bg-base-100">Tanggal</th>
                   <th class="sticky top-0 z-20 bg-base-100">Waktu</th>
-                  <th class="sticky top-0 z-20 bg-base-100 table-pin-col">Aksi</th>
+                  <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
+                    Aksi
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
+                {items.length === 0 ? (
                   <tr>
-                    <td colSpan={6} class="text-center py-8 text-base-content/50">
-                      Memuat data...
-                    </td>
-                  </tr>
-                ) : items.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} class="text-center text-base-content/60 py-8">
+                    <td
+                      colSpan={6}
+                      class="text-center text-base-content/60 py-8"
+                    >
                       Tidak ada jadwal posyandu.
                     </td>
                   </tr>
                 ) : (
                   items.map((item) => (
                     <tr key={item.id}>
-                      <td class="max-w-[160px] line-clamp-2 break-words whitespace-normal" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title={item.nama_kegiatan}>
+                      <td
+                        class="max-w-[160px] line-clamp-2 break-words whitespace-normal"
+                        style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"
+                        title={item.nama_kegiatan}
+                      >
                         {item.nama_kegiatan}
                       </td>
-                      <td class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap" title={item.jenis_kegiatan}>
+                      <td
+                        class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap"
+                        title={item.jenis_kegiatan}
+                      >
                         {item.jenis_kegiatan}
                       </td>
-                      <td class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap" title={item.lokasi}>
+                      <td
+                        class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap"
+                        title={item.lokasi}
+                      >
                         {item.lokasi}
                       </td>
                       <td>{item.tanggal?.substring(0, 10)}</td>
-                      <td>{item.waktu_mulai} - {item.waktu_selesai}</td>
+                      <td>
+                        {item.waktu_mulai} - {item.waktu_selesai}
+                      </td>
                       <th class="table-pin-col">
                         <div class="flex gap-2">
                           {onDetail$ && (
@@ -89,7 +102,10 @@ export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
                             <button
                               class="btn btn-error btn-xs md:btn-sm"
                               onClick$={$(() => {
-                                if (confirm('Yakin ingin menghapus jadwal ini?')) onDelete$(item.id);
+                                if (
+                                  confirm("Yakin ingin menghapus jadwal ini?")
+                                )
+                                  onDelete$(item.id);
                               })}
                             >
                               <span class="inline xl:hidden">
