@@ -1,7 +1,13 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import {
+  component$,
+  useSignal,
+  useVisibleTask$,
+  $,
+  QRL,
+} from "@builder.io/qwik";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
-import type { JadwalPosyanduItem } from "~/types";
+import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
 import {
   LuCalendar,
   LuMapPin,
@@ -15,6 +21,9 @@ import {
   LuAlertCircle,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
+import { usePresensiIBK } from "~/hooks/usePresensiIBK";
+import { PresensiIBKTable } from "~/components/posyandu/presensi/PresensiIBKTable";
+import { PaginationControls } from "~/components/common/PaginationControls";
 
 function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
   return {
@@ -36,10 +45,30 @@ function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
 
 export default component$(() => {
   const location = useLocation();
+  const nav = useNavigate();
   const jadwalId = location.params.jadwalId as string;
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const jadwal = useSignal<JadwalPosyanduItem | null>(null);
+  const activeTab = useSignal<"monitoring" | "presensi">(
+    location.url.pathname.includes("/presensi") ? "presensi" : "monitoring",
+  );
+
+  // Presensi state (embedded)
+  const {
+    list: presensiList,
+    total: presensiTotal,
+    page: presensiPage,
+    limit: presensiLimit,
+    totalPage: presensiTotalPage,
+    loading: presensiLoading,
+    error: presensiError,
+    success: presensiSuccess,
+    fetchList: fetchPresensi,
+    updateStatus,
+    setPage: setPresensiPage,
+  } = usePresensiIBK({ jadwalId });
+
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     loading.value = true;
@@ -53,6 +82,25 @@ export default component$(() => {
     } finally {
       loading.value = false;
     }
+  });
+
+  // Load presensi when tab opened
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    track(() => activeTab.value);
+    if (activeTab.value === "presensi") {
+      fetchPresensi();
+    }
+  });
+
+  const handlePresensiDetail: QRL<(id: string) => void> = $((id: string) => {
+    nav(
+      `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi/${id}`,
+    );
+  });
+
+  const handleUpdateStatus = $((id: string, status: PresensiStatus) => {
+    return updateStatus(id, status);
   });
 
   return (
@@ -168,33 +216,93 @@ export default component$(() => {
           </div>
         </div>
       )}
-      {/* Section Monitoring */}
+      {/* Tabs Section */}
       <div class="mt-8">
-        <div class="flex items-center gap-2 mb-2">
-          <LuBarChart class="w-5 h-5 text-primary" />
-          <h2 class="text-xl font-semibold">
-            Monitoring{" "}
-            <span class="badge badge-outline badge-sm ml-2">Coming Soon</span>
-          </h2>
-        </div>
-        <div class="p-4 bg-base-200 rounded shadow-sm text-base-content/70">
-          Fitur monitoring akan tersedia di sini.
-        </div>
-      </div>
-      {/* Section Presensi */}
-      <div class="mt-8">
-        <div class="flex items-center gap-2 mb-2">
-          <LuCalendar class="w-5 h-5 text-primary" />
-          <h2 class="text-xl font-semibold">Presensi</h2>
-        </div>
-        <div class="p-4 bg-base-200 rounded shadow-sm text-base-content/70 flex items-center justify-between">
-          <span>Lihat dan kelola presensi IBK untuk jadwal ini.</span>
+        <div role="tablist" class="tabs tabs-lifted">
           <a
-            class="btn btn-primary"
-            href={`/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi`}
+            role="tab"
+            class={`tab ${activeTab.value === "monitoring" ? "tab-active" : ""}`}
+            onClick$={() => {
+              activeTab.value = "monitoring";
+              nav(
+                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}`,
+              );
+            }}
           >
-            Kelola Presensi
+            <span class="flex items-center gap-2">
+              <LuBarChart class="w-4 h-4" /> Monitoring
+            </span>
           </a>
+          <a
+            role="tab"
+            class={`tab ${activeTab.value === "presensi" ? "tab-active" : ""}`}
+            onClick$={() => {
+              activeTab.value = "presensi";
+              nav(
+                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi`,
+              );
+            }}
+          >
+            <span class="flex items-center gap-2">
+              <LuCalendar class="w-4 h-4" /> Presensi
+            </span>
+          </a>
+        </div>
+        <div class="border border-base-300 rounded-b-box bg-base-100 p-4">
+          {activeTab.value === "monitoring" && (
+            <div class="text-base-content/70">
+              Fitur monitoring akan tersedia di sini.
+            </div>
+          )}
+          {activeTab.value === "presensi" && (
+            <div class="flex flex-col gap-4">
+              {presensiError.value && (
+                <div class="alert alert-error">{presensiError.value}</div>
+              )}
+              {presensiSuccess.value && (
+                <div class="alert alert-success">{presensiSuccess.value}</div>
+              )}
+              <div class="flex items-end gap-4 flex-wrap">
+                <div>
+                  <label class="label">
+                    <span class="label-text">Tampilkan per halaman</span>
+                  </label>
+                  <select
+                    class="select select-bordered"
+                    value={presensiLimit.value}
+                    onChange$={(e) => {
+                      presensiLimit.value = Number(
+                        (e.target as HTMLSelectElement).value,
+                      );
+                      fetchPresensi({ page: 1, limit: presensiLimit.value });
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+              </div>
+              <PresensiIBKTable
+                items={presensiList}
+                loading={presensiLoading.value}
+                onDetail$={handlePresensiDetail}
+                onUpdateStatus$={handleUpdateStatus}
+              />
+              <PaginationControls
+                meta={{
+                  totalData: presensiTotal.value,
+                  totalPage: presensiTotalPage.value,
+                  currentPage: presensiPage.value,
+                  limit: presensiLimit.value,
+                }}
+                currentPage={presensiPage.value}
+                onPageChange$={$((newPage: number) => setPresensiPage(newPage))}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
