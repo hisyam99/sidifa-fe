@@ -7,9 +7,10 @@ import type {
   MonitoringIBKItem,
 } from "~/types";
 import FormFieldModular from "~/components/ui/FormFieldModular";
+import { IBKSearchSelect } from "./IBKSearchSelect";
 
 interface MonitoringIBKFormProps {
-  initialData?: Partial<MonitoringIBKItem>;
+  initialData?: Partial<MonitoringIBKItem> & { posyandu_id?: string };
   onSubmit$: QRL<
     (
       data: MonitoringIBKCreateRequest | MonitoringIBKUpdateRequest,
@@ -17,6 +18,7 @@ interface MonitoringIBKFormProps {
   >;
   loading?: boolean;
   submitButtonText?: string;
+  isEditing?: boolean;
 }
 
 const monitoringSchema = object({
@@ -36,7 +38,7 @@ export type MonitoringFormType = MonitoringIBKCreateRequest & {
 };
 
 export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
-  ({ initialData, onSubmit$, loading, submitButtonText }) => {
+  ({ initialData, onSubmit$, loading, submitButtonText, isEditing }) => {
     const [form, { Form, Field }] = useForm<MonitoringFormType>({
       loader: {
         value: {
@@ -65,30 +67,61 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
           await onSubmit$(values);
         }}
       >
-        <Field name="ibk_id" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="text"
-              label="IBK ID"
-              placeholder="Pilih/isi IBK ID"
-              required
-            />
-          )}
-        </Field>
-        <Field name="jadwal_posyandu_id" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="text"
-              label="Jadwal Posyandu ID"
-              placeholder="ID Jadwal"
-              required
-            />
-          )}
-        </Field>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="label">
+              <span class="label-text font-medium">Pilih IBK</span>
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                class="input input-bordered w-full"
+                value={form.internal.fields?.ibk_id?.value as string}
+                readOnly
+                disabled
+              />
+            ) : (
+              <IBKSearchSelect
+                posyanduId={initialData?.posyandu_id || ""}
+                targetInputId="monitoring-ibk-id"
+                placeholder="Cari nama IBK..."
+              />
+            )}
+            {/* Hidden field to satisfy form state */}
+            <Field name="ibk_id" type="string">
+              {(field, props) => (
+                <input
+                  id="monitoring-ibk-id"
+                  type="hidden"
+                  {...props}
+                  value={field.value || ""}
+                />
+              )}
+            </Field>
+          </div>
+          <Field name="jadwal_posyandu_id" type="string">
+            {(field, props) => (
+              <div class="form-control w-full">
+                <label class="label">
+                  <span class="label-text font-medium">Jadwal Posyandu ID</span>
+                </label>
+                <input
+                  {...props}
+                  type="text"
+                  value={field.value || ""}
+                  class="input input-bordered w-full focus-ring"
+                  readOnly
+                  disabled
+                />
+                <label class="label">
+                  <span class="label-text-alt text-base-content/60">
+                    Otomatis dari jadwal terpilih
+                  </span>
+                </label>
+              </div>
+            )}
+          </Field>
+        </div>
         <Field name="tanggal_kunjungan" type="string">
           {(field, props) => (
             <FormFieldModular

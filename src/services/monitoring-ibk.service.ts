@@ -18,11 +18,29 @@ export class MonitoringIBKService {
   }
 
   async create(payload: MonitoringIBKCreateRequest): Promise<void> {
-    await api.post(`/kader/monitoring-ibk`, payload);
+    const body: any = { ...payload };
+    if (
+      body.tanggal_kunjungan &&
+      /^\d{4}-\d{2}-\d{2}$/.test(body.tanggal_kunjungan)
+    ) {
+      body.tanggal_kunjungan = new Date(
+        `${body.tanggal_kunjungan}T00:00:00`,
+      ).toISOString();
+    }
+    await api.post(`/kader/monitoring-ibk`, body);
   }
 
   async update(id: string, payload: MonitoringIBKUpdateRequest): Promise<void> {
-    await api.patch(`/kader/monitoring-ibk/update/${id}`, payload);
+    const body: any = { ...payload };
+    if (
+      body.tanggal_kunjungan &&
+      /^\d{4}-\d{2}-\d{2}$/.test(body.tanggal_kunjungan)
+    ) {
+      body.tanggal_kunjungan = new Date(
+        `${body.tanggal_kunjungan}T00:00:00`,
+      ).toISOString();
+    }
+    await api.patch(`/kader/monitoring-ibk/update/${id}`, body);
   }
 
   async listByJadwal(

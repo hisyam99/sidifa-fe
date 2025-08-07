@@ -385,8 +385,15 @@ export default component$(() => {
                     <MonitoringIBKForm
                       initialData={
                         monitoringEditId.value
-                          ? monitoringSelected.value || undefined
-                          : { jadwal_posyandu_id: jadwalId }
+                          ? {
+                              ...(monitoringSelected.value || {}),
+                              jadwal_posyandu_id: jadwalId,
+                              posyandu_id: location.params.id as string,
+                            }
+                          : {
+                              jadwal_posyandu_id: jadwalId,
+                              posyandu_id: location.params.id as string,
+                            }
                       }
                       onSubmit$={
                         monitoringEditId.value
@@ -399,6 +406,7 @@ export default component$(() => {
                           ? "Update Monitoring"
                           : "Simpan Monitoring"
                       }
+                      isEditing={!!monitoringEditId.value}
                     />
                   </div>
                 </div>
