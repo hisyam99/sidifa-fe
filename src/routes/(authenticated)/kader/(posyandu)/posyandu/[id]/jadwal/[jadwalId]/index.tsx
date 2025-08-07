@@ -217,7 +217,7 @@ export default component$(() => {
         </div>
       )}
       {/* Tabs Section */}
-      <div class="mt-8">
+      <div id="jadwal-tabs" class="mt-8">
         <div role="tablist" class="tabs tabs-lifted">
           <a
             role="tab"
@@ -225,7 +225,7 @@ export default component$(() => {
             onClick$={() => {
               activeTab.value = "monitoring";
               nav(
-                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}`,
+                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}#jadwal-tabs`,
               );
             }}
           >
@@ -239,7 +239,7 @@ export default component$(() => {
             onClick$={() => {
               activeTab.value = "presensi";
               nav(
-                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi`,
+                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi#jadwal-tabs`,
               );
             }}
           >

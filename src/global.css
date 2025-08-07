@@ -4,6 +4,11 @@
   themes: sidifa;
 }
 
+/* Smooth scrolling for anchor navigations */
+html:where(:not(.no-smooth-scroll)) {
+  scroll-behavior: smooth;
+}
+
 @plugin "daisyui/theme" {
   name: "sidifa";
   default: true;
