@@ -1,4 +1,4 @@
-import { useSignal, useStore, $ } from "@builder.io/qwik";
+import { useSignal, useStore, $, useComputed$ } from "@builder.io/qwik";
 import type {
   JadwalPosyanduItem,
   JadwalPosyanduCreateRequest,
@@ -22,6 +22,9 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
   const page = useSignal(initialPage);
   const limit = useSignal(initialLimit);
   const selectedJadwal = useSignal<JadwalPosyanduItem | null>(null);
+  const totalPage = useComputed$(
+    () => Math.ceil(total.value / limit.value) || 1,
+  );
 
   const fetchList = $(async (params?: { page?: number; limit?: number }) => {
     loading.value = true;
@@ -31,10 +34,22 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
         page: params?.page ?? page.value,
         limit: params?.limit ?? limit.value,
       });
-      jadwalList.splice(0, jadwalList.length, ...res.data);
-      total.value = res.total;
-      page.value = res.page;
-      limit.value = res.limit;
+      jadwalList.splice(0, jadwalList.length, ...(res.data || []));
+      total.value = res.meta?.totalData ?? 0;
+      page.value = res.meta?.currentPage ?? 1;
+      limit.value = res.meta?.limit ?? 10;
+      // Debug logs
+      console.log("[JadwalPosyandu] API response:", res);
+      console.log(
+        "[JadwalPosyandu] total:",
+        total.value,
+        "limit:",
+        limit.value,
+        "page:",
+        page.value,
+      );
+      // If you use useComputed$ for totalPage, log it here too
+      // (If not available here, log in the component after import)
     } catch (err: any) {
       error.value = err.message || "Gagal memuat jadwal posyandu.";
     } finally {
@@ -129,6 +144,7 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     total,
     page,
     limit,
+    totalPage,
     loading,
     error,
     success,

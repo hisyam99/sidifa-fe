@@ -24,6 +24,7 @@ export default component$(() => {
     total,
     page,
     limit,
+    totalPage,
     loading,
     error,
     success,
@@ -96,9 +97,12 @@ export default component$(() => {
             }}
           >
             <option value={5}>5</option>
-            <option value={10}>10</option>
+            <option selected value={10}>
+              10
+            </option>
             <option value={20}>20</option>
             <option value={50}>50</option>
+            <option value={100}>100</option>
           </select>
         </div>
       </div>
@@ -113,18 +117,16 @@ export default component$(() => {
         onDetail$={handleDetail}
         onDelete$={deleteJadwal}
       />
-      {Math.ceil(total.value / limit.value) > 1 && (
-        <PaginationControls
-          meta={{
-            totalData: total.value,
-            totalPage: Math.ceil(total.value / limit.value),
-            currentPage: page.value,
-            limit: limit.value,
-          }}
-          currentPage={page.value}
-          onPageChange$={setPage}
-        />
-      )}
+      <PaginationControls
+        meta={{
+          totalData: total.value,
+          totalPage: totalPage.value,
+          currentPage: page.value,
+          limit: limit.value,
+        }}
+        currentPage={page.value}
+        onPageChange$={setPage}
+      />
       {showForm.value && (
         <div class="modal modal-open">
           <div class="modal-box max-w-lg">

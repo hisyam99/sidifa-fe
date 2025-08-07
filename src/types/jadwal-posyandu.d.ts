@@ -35,9 +35,17 @@ export interface JadwalPosyanduItem extends JadwalPosyanduBase {
 
 export interface JadwalPosyanduListResponse {
   data: JadwalPosyanduItem[];
-  total: number;
-  page: number;
-  limit: number;
+  // Old fields for backward compatibility (optional)
+  total?: number;
+  page?: number;
+  limit?: number;
+  // Add meta for new API structure
+  meta?: {
+    currentPage: number;
+    limit: number;
+    totalData: number;
+    totalPage: number;
+  };
 }
 
 export interface JadwalPosyanduDetailResponse {
