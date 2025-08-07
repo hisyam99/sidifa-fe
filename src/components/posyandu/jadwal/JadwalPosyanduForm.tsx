@@ -62,7 +62,7 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
           waktu_mulai: initialData?.waktu_mulai || "",
           waktu_selesai: initialData?.waktu_selesai || "",
           posyandu_id: initialData?.posyandu_id || "",
-          file_name: initialData?.file_url || "",
+          file_name: initialData?.file_name || "",
         },
       },
       validate: valiForm$(jadwalSchema),
@@ -220,19 +220,20 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
           </Field>
         </div>
         {/* File lama (jika ada) */}
-        {typeof initialData?.file_url === "string" && initialData.file_url && (
-          <div class="alert alert-info p-2 text-xs">
-            File lama:{" "}
-            <a
-              href={initialData.file_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link link-primary underline break-all"
-            >
-              {initialData.file_url}
-            </a>
-          </div>
-        )}
+        {typeof initialData?.file_name === "string" &&
+          initialData.file_name && (
+            <div class="alert alert-info p-2 text-xs">
+              File lama:{" "}
+              <a
+                href={initialData.file_name}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link link-primary underline break-all"
+              >
+                {initialData.file_name}
+              </a>
+            </div>
+          )}
         <div class="space-y-2">
           <label class="block text-sm font-medium">
             Upload File (Opsional)

@@ -22,9 +22,15 @@ export interface JadwalPosyanduUpdateRequest
 
 export interface JadwalPosyanduItem extends JadwalPosyanduBase {
   id: string;
-  file_url?: string;
+  file_name?: string;
+  file_url?: string; // generated in FE for convenience
   created_at: string;
   updated_at: string;
+  posyandu?: {
+    id: string;
+    nama_posyandu: string;
+    alamat: string;
+  };
 }
 
 export interface JadwalPosyanduListResponse {
