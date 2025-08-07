@@ -27,6 +27,7 @@ import { PaginationControls } from "~/components/common/PaginationControls";
 import { useMonitoringIBK } from "~/hooks/useMonitoringIBK";
 import { MonitoringIBKTable } from "~/components/posyandu/monitoring/MonitoringIBKTable";
 import { MonitoringIBKForm } from "~/components/posyandu/monitoring/MonitoringIBKForm";
+import { IBKSearchSelect } from "~/components/posyandu/monitoring/IBKSearchSelect";
 
 function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
   return {
@@ -72,7 +73,10 @@ export default component$(() => {
     fetchList: fetchPresensi,
     updateStatus,
     setPage: setPresensiPage,
+    addToPresensi,
   } = usePresensiIBK({ jadwalId });
+
+  const presensiAddOpen = useSignal(false);
 
   const {
     list: monitoringList,
@@ -372,7 +376,7 @@ export default component$(() => {
 
               {monitoringShowForm.value && (
                 <div class="modal modal-open">
-                  <div class="modal-box max-w-2xl">
+                  <div class="modal-box max-w-2xl overflow-visible">
                     <button
                       class="btn btn-sm btn-circle absolute right-2 top-2"
                       onClick$={() => {
@@ -443,6 +447,14 @@ export default component$(() => {
                     <option value={100}>100</option>
                   </select>
                 </div>
+                <button
+                  class="btn btn-primary"
+                  onClick$={() => {
+                    presensiAddOpen.value = true;
+                  }}
+                >
+                  Tambah IBK ke Presensi
+                </button>
               </div>
               <PresensiIBKTable
                 items={presensiList}
@@ -460,6 +472,50 @@ export default component$(() => {
                 currentPage={presensiPage.value}
                 onPageChange$={$((newPage: number) => setPresensiPage(newPage))}
               />
+
+              {presensiAddOpen.value && (
+                <div class="modal modal-open">
+                  <div class="modal-box max-w-lg overflow-visible">
+                    <button
+                      class="btn btn-sm btn-circle absolute right-2 top-2"
+                      onClick$={() => {
+                        presensiAddOpen.value = false;
+                      }}
+                    >
+                      ✕
+                    </button>
+                    <h3 class="font-bold text-lg mb-2">
+                      Tambah IBK ke Presensi
+                    </h3>
+                    <div class="space-y-3">
+                      <label class="label">
+                        <span class="label-text">Pilih IBK</span>
+                      </label>
+                      <IBKSearchSelect
+                        posyanduId={location.params.id as string}
+                        targetInputId="presensi-ibk-id"
+                        placeholder="Cari nama IBK..."
+                      />
+                      <input id="presensi-ibk-id" type="hidden" />
+                      <button
+                        class="btn btn-primary w-full"
+                        onClick$={$(() => {
+                          const el = document.getElementById(
+                            "presensi-ibk-id",
+                          ) as HTMLInputElement | null;
+                          const idVal = el?.value?.trim();
+                          if (idVal) {
+                            addToPresensi({ user_ibk_id: idVal });
+                            presensiAddOpen.value = false;
+                          }
+                        })}
+                      >
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

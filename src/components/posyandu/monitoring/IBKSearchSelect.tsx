@@ -4,7 +4,7 @@ import { ibkService } from "~/services/api";
 interface IBKSearchSelectProps {
   posyanduId: string;
   onSelect$?: QRL<(payload: { id: string; label: string }) => void>;
-  targetInputId?: string; // optional hidden input id to write selected id
+  targetInputId?: string;
   placeholder?: string;
 }
 
@@ -39,17 +39,21 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
     useTask$(({ track, cleanup }) => {
       track(() => query.value);
       const handle = setTimeout(() => {
-        fetchList();
-        open.value = true;
-      }, 250);
+        if (open.value) fetchList();
+      }, 200);
       cleanup(() => clearTimeout(handle));
     });
 
-    const handleFocus = $(() => {
-      if (!open.value && items.value.length === 0) {
-        fetchList();
+    const openDropdown = $(() => {
+      if (!open.value) {
+        open.value = true;
+        if (items.value.length === 0) fetchList();
       }
-      open.value = true;
+    });
+
+    const closeDropdown = $(() => {
+      // Delay agar click item tetap diproses sebelum tertutup
+      setTimeout(() => (open.value = false), 120);
     });
 
     const applySelection = $((payload: { id: string; label: string }) => {
@@ -69,22 +73,24 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
     });
 
     return (
-      <div class="dropdown w-full">
-        <div class="flex gap-2">
-          <input
-            type="text"
-            class="input input-bordered w-full"
-            placeholder={placeholder || "Cari nama IBK..."}
-            value={selectedLabel.value || query.value}
-            onInput$={(e) => {
-              selectedLabel.value = ""; // reset when user types
-              query.value = (e.target as HTMLInputElement).value;
-            }}
-            onFocus$={handleFocus}
-          />
-        </div>
+      <div class="relative w-full" onClick$={openDropdown}>
+        <input
+          type="text"
+          class="input input-bordered w-full"
+          placeholder={placeholder || "Cari nama IBK..."}
+          value={selectedLabel.value || query.value}
+          onInput$={(e) => {
+            selectedLabel.value = ""; // reset saat user mengetik
+            query.value = (e.target as HTMLInputElement).value;
+          }}
+          onFocus$={openDropdown}
+          onBlur$={closeDropdown}
+          autoComplete="off"
+          autoCapitalize="off"
+          spellcheck={false}
+        />
         {open.value && (
-          <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-full mt-2 max-h-60 overflow-auto">
+          <ul class="absolute left-0 right-0 mt-2 z-[9999] menu menu-sm p-2 shadow bg-base-100 rounded-box max-h-60 overflow-auto">
             {loading.value && <li class="px-2 py-1 text-sm">Memuat...</li>}
             {!loading.value && items.value.length === 0 && (
               <li class="px-2 py-1 text-sm text-base-content/60">
@@ -92,28 +98,25 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
               </li>
             )}
             {!loading.value &&
-              items.value.map((row: any) => (
-                <li key={row.id}>
-                  <button
-                    type="button"
-                    onClick$={$(() => {
-                      const label =
-                        row?.nama ||
-                        row?.personal_data?.nama_lengkap ||
-                        row?.ibk?.nama ||
-                        row?.nama_lengkap ||
-                        "(Tanpa Nama)";
-                      applySelection({ id: row.id, label });
-                    })}
-                  >
-                    {row?.nama ||
-                      row?.personal_data?.nama_lengkap ||
-                      row?.ibk?.nama ||
-                      row?.nama_lengkap ||
-                      "(Tanpa Nama)"}
-                  </button>
-                </li>
-              ))}
+              items.value.map((row: any) => {
+                const label =
+                  row?.nama ||
+                  row?.personal_data?.nama_lengkap ||
+                  row?.ibk?.nama ||
+                  row?.nama_lengkap ||
+                  "(Tanpa Nama)";
+                return (
+                  <li key={row.id}>
+                    <button
+                      type="button"
+                      class="justify-start"
+                      onClick$={$(() => applySelection({ id: row.id, label }))}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                );
+              })}
           </ul>
         )}
       </div>

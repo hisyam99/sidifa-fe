@@ -9,6 +9,11 @@ html:where(:not(.no-smooth-scroll)) {
   scroll-behavior: smooth;
 }
 
+/* Allow modal content to overflow (for absolute dropdowns) */
+.modal-box {
+  overflow: visible;
+}
+
 @plugin "daisyui/theme" {
   name: "sidifa";
   default: true;
