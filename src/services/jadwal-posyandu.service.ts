@@ -51,6 +51,13 @@ export class JadwalPosyanduService {
       if (value !== undefined && value !== null) {
         if (key === "file_name" && value instanceof File) {
           formData.append(key, value);
+        } else if (key === "tanggal") {
+          // Pastikan tanggal dalam format ISO-8601
+          let tgl = value as string;
+          if (/^\d{4}-\d{2}-\d{2}$/.test(tgl)) {
+            tgl = new Date(tgl).toISOString();
+          }
+          formData.append(key, tgl);
         } else {
           formData.append(key, value as string);
         }

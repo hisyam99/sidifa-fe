@@ -47,7 +47,24 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     error.value = null;
     try {
       const res = await jadwalPosyanduService.getJadwalDetail(id);
-      selectedJadwal.value = res.data;
+      console.log("DEBUG raw API response", res);
+      const data = res.data || res || {};
+      selectedJadwal.value = {
+        ...data,
+        tanggal: data?.tanggal ? data.tanggal.substring(0, 10) : "",
+        file_name: data?.file_name || "",
+        waktu_mulai: data?.waktu_mulai || "",
+        waktu_selesai: data?.waktu_selesai || "",
+        nama_kegiatan: data?.nama_kegiatan || "",
+        jenis_kegiatan: data?.jenis_kegiatan || "",
+        deskripsi: data?.deskripsi || "",
+        lokasi: data?.lokasi || "",
+        posyandu_id: data?.posyandu_id || "",
+      };
+      console.log(
+        "DEBUG selectedJadwal.value in fetchDetail",
+        selectedJadwal.value,
+      );
     } catch (err: any) {
       error.value = err.message || "Gagal memuat detail jadwal.";
     } finally {

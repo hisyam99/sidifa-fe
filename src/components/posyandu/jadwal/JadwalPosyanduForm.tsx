@@ -1,5 +1,5 @@
-import { component$, QRL, noSerialize } from "@builder.io/qwik";
-import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { component$, QRL, noSerialize, useTask$ } from "@builder.io/qwik";
+import { useForm, valiForm$, setValues } from "@modular-forms/qwik";
 import { object, string, nonEmpty, minLength, pipe, optional } from "valibot";
 import type {
   JadwalPosyanduCreateRequest,
@@ -70,17 +70,36 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
       revalidateOn: "blur",
     });
 
+    // Reset form values when initialData changes (for edit mode)
+    useTask$(({ track }) => {
+      track(() => initialData);
+      if (initialData) {
+        setValues(form, {
+          nama_kegiatan: initialData.nama_kegiatan || "",
+          jenis_kegiatan: initialData.jenis_kegiatan || "",
+          deskripsi: initialData.deskripsi || "",
+          lokasi: initialData.lokasi || "",
+          tanggal: initialData.tanggal
+            ? initialData.tanggal.substring(0, 10)
+            : "",
+          waktu_mulai: initialData.waktu_mulai || "",
+          waktu_selesai: initialData.waktu_selesai || "",
+          posyandu_id: initialData.posyandu_id || "",
+          file_name: initialData.file_name || "",
+        });
+      }
+    });
+
     return (
       <Form
         class="space-y-4"
         onSubmit$={async (values, event) => {
-          console.log("DEBUG SUBMIT FORM VALUES", values, event);
           // Ambil file dari input file manual
           const fileInput = (
             event?.target as HTMLFormElement
           )?.elements.namedItem("file_name") as HTMLInputElement;
           let file: File | string | undefined = undefined;
-          if (fileInput && fileInput.files && fileInput.files.length > 0) {
+          if (fileInput?.files?.length && fileInput.files?.[0]) {
             file = noSerialize(fileInput.files[0]);
           } else if (values.file_name && typeof values.file_name === "string") {
             file = values.file_name;
@@ -221,29 +240,29 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
         </div>
         {/* File lama (jika ada) */}
         {typeof initialData?.file_name === "string" &&
-          initialData.file_name && (
+          initialData?.file_name && (
             <div class="alert alert-info p-2 text-xs">
               File lama:{" "}
               <a
-                href={initialData.file_name}
+                href={initialData?.file_name}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link link-primary underline break-all"
               >
-                {initialData.file_name}
+                {initialData?.file_name}
               </a>
             </div>
           )}
         <div class="space-y-2">
-          <label class="block text-sm font-medium">
-            Upload File (Opsional)
+          <label class="flex flex-col gap-1 text-sm font-medium">
+            <span>Upload File (Opsional)</span>
+            <input
+              name="file_name"
+              type="file"
+              class="input input-bordered w-full focus-ring"
+              accept="*"
+            />
           </label>
-          <input
-            name="file_name"
-            type="file"
-            class="input input-bordered w-full focus-ring"
-            accept="*"
-          />
           <div class="text-xs text-gray-500">
             Bisa dikosongkan jika tidak ingin mengisi file.
           </div>

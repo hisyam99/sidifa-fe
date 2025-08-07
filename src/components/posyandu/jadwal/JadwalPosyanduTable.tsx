@@ -10,6 +10,52 @@ interface JadwalPosyanduTableProps {
 
 export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
   ({ items, loading, onEdit$, onDetail$ }) => {
+    function renderTableBody() {
+      if (loading) {
+        return (
+          <tr>
+            <td colSpan={6} class="text-center py-8 text-base-content/50">
+              Memuat data...
+            </td>
+          </tr>
+        );
+      }
+      if (items.length === 0) {
+        return (
+          <tr>
+            <td colSpan={6} class="text-center py-8 text-base-content/50">
+              Tidak ada jadwal posyandu.
+            </td>
+          </tr>
+        );
+      }
+      return items.map((item) => (
+        <tr key={item.id}>
+          <td>{item.nama_kegiatan}</td>
+          <td>{item.jenis_kegiatan}</td>
+          <td>{item.lokasi}</td>
+          <td>{item.tanggal?.substring(0, 10)}</td>
+          <td>
+            {item.waktu_mulai} - {item.waktu_selesai}
+          </td>
+          <td>
+            <button
+              class="btn btn-xs btn-info mr-2"
+              onClick$={onDetail$ ? $(() => onDetail$(item.id)) : undefined}
+            >
+              Detail
+            </button>
+            <button
+              class="btn btn-xs btn-warning"
+              onClick$={onEdit$ ? $(() => onEdit$(item.id)) : undefined}
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
+      ));
+    }
+
     return (
       <div class="overflow-x-auto">
         <table class="table w-full">
@@ -23,49 +69,7 @@ export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
               <th>Aksi</th>
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={6} class="text-center py-8 text-base-content/50">
-                  Memuat data...
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td colSpan={6} class="text-center py-8 text-base-content/50">
-                  Tidak ada jadwal posyandu.
-                </td>
-              </tr>
-            ) : (
-              items.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.nama_kegiatan}</td>
-                  <td>{item.jenis_kegiatan}</td>
-                  <td>{item.lokasi}</td>
-                  <td>{item.tanggal?.substring(0, 10)}</td>
-                  <td>
-                    {item.waktu_mulai} - {item.waktu_selesai}
-                  </td>
-                  <td>
-                    <button
-                      class="btn btn-xs btn-info mr-2"
-                      onClick$={
-                        onDetail$ ? $(() => onDetail$(item.id)) : undefined
-                      }
-                    >
-                      Detail
-                    </button>
-                    <button
-                      class="btn btn-xs btn-warning"
-                      onClick$={onEdit$ ? $(() => onEdit$(item.id)) : undefined}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
+          <tbody>{renderTableBody()}</tbody>
         </table>
       </div>
     );

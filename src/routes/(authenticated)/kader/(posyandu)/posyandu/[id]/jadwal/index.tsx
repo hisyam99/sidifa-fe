@@ -44,6 +44,7 @@ export default component$(() => {
   const handleEdit: QRL<(id: string) => void> = $(async (id: string) => {
     editId.value = id;
     await fetchDetail(id);
+    console.log("DEBUG selectedJadwal after fetch", selectedJadwal.value);
     showForm.value = true;
   });
 
@@ -97,16 +98,29 @@ export default component$(() => {
             >
               ✕
             </button>
-            <JadwalPosyanduForm
-              initialData={
-                editId.value ? selectedJadwal.value || undefined : undefined
-              }
-              onSubmit$={editId.value ? handleUpdate : handleCreate}
-              loading={loading.value}
-              submitButtonText={
-                editId.value ? "Update Jadwal" : "Simpan Jadwal"
-              }
-            />
+            {editId.value && !selectedJadwal.value ? (
+              <div class="flex justify-center items-center h-32">
+                Loading...
+              </div>
+            ) : (
+              <>
+                {console.log(
+                  "DEBUG initialData",
+                  editId.value ? selectedJadwal.value || undefined : undefined,
+                )}
+                <JadwalPosyanduForm
+                  key={editId.value || "create"}
+                  initialData={
+                    editId.value ? selectedJadwal.value || undefined : undefined
+                  }
+                  onSubmit$={editId.value ? handleUpdate : handleCreate}
+                  loading={loading.value}
+                  submitButtonText={
+                    editId.value ? "Update Jadwal" : "Simpan Jadwal"
+                  }
+                />
+              </>
+            )}
           </div>
         </div>
       )}
