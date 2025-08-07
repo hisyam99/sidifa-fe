@@ -5,6 +5,7 @@ export * from "./ibk";
 export * from "./content";
 export * from "./jadwal-posyandu";
 export * from "./presensi-ibk";
+export * from "./monitoring-ibk";
 
 // Additional utility types that might be useful across the app
 export interface APIResponse<T = any> {

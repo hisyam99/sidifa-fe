@@ -24,6 +24,9 @@ import {
 import { usePresensiIBK } from "~/hooks/usePresensiIBK";
 import { PresensiIBKTable } from "~/components/posyandu/presensi/PresensiIBKTable";
 import { PaginationControls } from "~/components/common/PaginationControls";
+import { useMonitoringIBK } from "~/hooks/useMonitoringIBK";
+import { MonitoringIBKTable } from "~/components/posyandu/monitoring/MonitoringIBKTable";
+import { MonitoringIBKForm } from "~/components/posyandu/monitoring/MonitoringIBKForm";
 
 function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
   return {
@@ -53,6 +56,8 @@ export default component$(() => {
   const activeTab = useSignal<"monitoring" | "presensi">(
     location.url.pathname.includes("/presensi") ? "presensi" : "monitoring",
   );
+  const monitoringShowForm = useSignal(false);
+  const monitoringEditId = useSignal<string | null>(null);
 
   // Presensi state (embedded)
   const {
@@ -69,6 +74,23 @@ export default component$(() => {
     setPage: setPresensiPage,
   } = usePresensiIBK({ jadwalId });
 
+  const {
+    list: monitoringList,
+    total: monitoringTotal,
+    page: monitoringPage,
+    limit: monitoringLimit,
+    totalPage: monitoringTotalPage,
+    loading: monitoringLoading,
+    error: monitoringError,
+    success: monitoringSuccess,
+    selected: monitoringSelected,
+    fetchList: fetchMonitoring,
+    fetchDetail: fetchMonitoringDetail,
+    createItem: createMonitoring,
+    updateItem: updateMonitoring,
+    setPage: setMonitoringPage,
+  } = useMonitoringIBK({ jadwalId });
+
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     loading.value = true;
@@ -84,6 +106,40 @@ export default component$(() => {
     }
   });
 
+  const handlePresensiDetail: QRL<(id: string) => void> = $((id: string) => {
+    nav(
+      `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi/${id}`,
+    );
+  });
+
+  const handleUpdateStatus = $((id: string, status: PresensiStatus) => {
+    return updateStatus(id, status);
+  });
+
+  const handleMonitoringCreate = $(async (data: any) => {
+    await createMonitoring({ ...data, jadwal_posyandu_id: jadwalId });
+    monitoringShowForm.value = false;
+  });
+
+  const handleMonitoringEdit: QRL<(id: string) => void> = $(
+    async (id: string) => {
+      monitoringEditId.value = id;
+      await fetchMonitoringDetail(id);
+      monitoringShowForm.value = true;
+    },
+  );
+
+  const handleMonitoringUpdate = $(async (data: any) => {
+    if (monitoringEditId.value) {
+      await updateMonitoring(monitoringEditId.value, {
+        ...data,
+        jadwal_posyandu_id: jadwalId,
+      });
+      monitoringEditId.value = null;
+      monitoringShowForm.value = false;
+    }
+  });
+
   // Load presensi when tab opened
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
@@ -93,14 +149,13 @@ export default component$(() => {
     }
   });
 
-  const handlePresensiDetail: QRL<(id: string) => void> = $((id: string) => {
-    nav(
-      `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi/${id}`,
-    );
-  });
-
-  const handleUpdateStatus = $((id: string, status: PresensiStatus) => {
-    return updateStatus(id, status);
+  // Load monitoring when tab opened
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    track(() => activeTab.value);
+    if (activeTab.value === "monitoring") {
+      fetchMonitoring();
+    }
   });
 
   return (
@@ -250,8 +305,104 @@ export default component$(() => {
         </div>
         <div class="border border-base-300 rounded-b-box bg-base-100 p-4">
           {activeTab.value === "monitoring" && (
-            <div class="text-base-content/70">
-              Fitur monitoring akan tersedia di sini.
+            <div class="flex flex-col gap-4">
+              {monitoringError.value && (
+                <div class="alert alert-error">{monitoringError.value}</div>
+              )}
+              {monitoringSuccess.value && (
+                <div class="alert alert-success">{monitoringSuccess.value}</div>
+              )}
+              <div class="flex items-end gap-4 flex-wrap">
+                <div>
+                  <label class="label">
+                    <span class="label-text">Tampilkan per halaman</span>
+                  </label>
+                  <select
+                    class="select select-bordered"
+                    value={monitoringLimit.value}
+                    onChange$={(e) => {
+                      monitoringLimit.value = Number(
+                        (e.target as HTMLSelectElement).value,
+                      );
+                      fetchMonitoring({
+                        page: 1,
+                        limit: monitoringLimit.value,
+                      });
+                    }}
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                </div>
+                <button
+                  class="btn btn-primary"
+                  onClick$={() => {
+                    monitoringShowForm.value = true;
+                    monitoringEditId.value = null;
+                  }}
+                >
+                  Tambah Monitoring
+                </button>
+              </div>
+              <MonitoringIBKTable
+                items={monitoringList}
+                loading={monitoringLoading.value}
+                onDetail$={$((id: string) =>
+                  nav(
+                    `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/monitoring/${id}`,
+                  ),
+                )}
+                onEdit$={handleMonitoringEdit}
+              />
+              <PaginationControls
+                meta={{
+                  totalData: monitoringTotal.value,
+                  totalPage: monitoringTotalPage.value,
+                  currentPage: monitoringPage.value,
+                  limit: monitoringLimit.value,
+                }}
+                currentPage={monitoringPage.value}
+                onPageChange$={$((newPage: number) =>
+                  setMonitoringPage(newPage),
+                )}
+              />
+
+              {monitoringShowForm.value && (
+                <div class="modal modal-open">
+                  <div class="modal-box max-w-2xl">
+                    <button
+                      class="btn btn-sm btn-circle absolute right-2 top-2"
+                      onClick$={() => {
+                        monitoringShowForm.value = false;
+                        monitoringEditId.value = null;
+                      }}
+                    >
+                      ✕
+                    </button>
+                    <MonitoringIBKForm
+                      initialData={
+                        monitoringEditId.value
+                          ? monitoringSelected.value || undefined
+                          : { jadwal_posyandu_id: jadwalId }
+                      }
+                      onSubmit$={
+                        monitoringEditId.value
+                          ? handleMonitoringUpdate
+                          : handleMonitoringCreate
+                      }
+                      loading={monitoringLoading.value}
+                      submitButtonText={
+                        monitoringEditId.value
+                          ? "Update Monitoring"
+                          : "Simpan Monitoring"
+                      }
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
           {activeTab.value === "presensi" && (
