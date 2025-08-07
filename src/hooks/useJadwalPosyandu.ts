@@ -104,6 +104,26 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     },
   );
 
+  const deleteJadwal = $(async (id: string) => {
+    loading.value = true;
+    error.value = null;
+    success.value = null;
+    try {
+      await jadwalPosyanduService.deleteJadwal(id);
+      success.value = "Jadwal berhasil dihapus.";
+      await fetchList();
+    } catch (err: any) {
+      error.value = err.message || "Gagal menghapus jadwal.";
+    } finally {
+      loading.value = false;
+    }
+  });
+
+  const setPage = $(async (newPage: number) => {
+    page.value = newPage;
+    await fetchList({ page: newPage, limit: limit.value });
+  });
+
   return {
     jadwalList,
     total,
@@ -117,5 +137,7 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     fetchDetail,
     createJadwal,
     updateJadwal,
+    deleteJadwal,
+    setPage,
   };
 }

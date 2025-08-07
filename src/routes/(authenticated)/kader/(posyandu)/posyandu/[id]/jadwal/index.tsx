@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { useJadwalPosyandu } from "~/hooks/useJadwalPosyandu";
 import { JadwalPosyanduTable } from "~/components/posyandu/jadwal/JadwalPosyanduTable";
 import { JadwalPosyanduForm } from "~/components/posyandu/jadwal/JadwalPosyanduForm";
+import { PaginationControls } from "~/components/common/PaginationControls";
 
 export default component$(() => {
   const location = useLocation();
@@ -20,14 +21,19 @@ export default component$(() => {
 
   const {
     jadwalList,
+    total,
+    page,
+    limit,
     loading,
     error,
     success,
+    selectedJadwal,
     fetchList,
+    fetchDetail,
     createJadwal,
     updateJadwal,
-    selectedJadwal,
-    fetchDetail,
+    deleteJadwal,
+    setPage,
   } = useJadwalPosyandu({ posyanduId });
 
   // eslint-disable-next-line qwik/no-use-visible-task
@@ -76,6 +82,26 @@ export default component$(() => {
           Tambah Jadwal
         </button>
       </div>
+      <div class="flex flex-col md:flex-row gap-4 mb-4 items-end">
+        <div>
+          <label class="label">
+            <span class="label-text">Tampilkan per halaman</span>
+          </label>
+          <select
+            class="select select-bordered"
+            value={limit.value}
+            onChange$={(e) => {
+              limit.value = Number((e.target as HTMLSelectElement).value);
+              fetchList({ page: 1, limit: limit.value });
+            }}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+      </div>
       {error.value && <div class="alert alert-error mb-2">{error.value}</div>}
       {success.value && (
         <div class="alert alert-success mb-2">{success.value}</div>
@@ -85,7 +111,20 @@ export default component$(() => {
         loading={loading.value}
         onEdit$={handleEdit}
         onDetail$={handleDetail}
+        onDelete$={deleteJadwal}
       />
+      {Math.ceil(total.value / limit.value) > 1 && (
+        <PaginationControls
+          meta={{
+            totalData: total.value,
+            totalPage: Math.ceil(total.value / limit.value),
+            currentPage: page.value,
+            limit: limit.value,
+          }}
+          currentPage={page.value}
+          onPageChange$={setPage}
+        />
+      )}
       {showForm.value && (
         <div class="modal modal-open">
           <div class="modal-box max-w-lg">

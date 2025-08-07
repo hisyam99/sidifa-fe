@@ -87,6 +87,10 @@ export class JadwalPosyanduService {
     const response = await api.get(`/kader/jadwal-posyandu/detail/${id}`);
     return response.data;
   }
+
+  async deleteJadwal(id: string): Promise<void> {
+    await api.delete(`/kader/jadwal-posyandu/delete/${id}`);
+  }
 }
 
 export const jadwalPosyanduService = JadwalPosyanduService.getInstance();
