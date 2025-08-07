@@ -185,13 +185,16 @@ export default component$(() => {
       <div class="mt-8">
         <div class="flex items-center gap-2 mb-2">
           <LuCalendar class="w-5 h-5 text-primary" />
-          <h2 class="text-xl font-semibold">
-            Presensi{" "}
-            <span class="badge badge-outline badge-sm ml-2">Coming Soon</span>
-          </h2>
+          <h2 class="text-xl font-semibold">Presensi</h2>
         </div>
-        <div class="p-4 bg-base-200 rounded shadow-sm text-base-content/70">
-          Fitur presensi akan tersedia di sini.
+        <div class="p-4 bg-base-200 rounded shadow-sm text-base-content/70 flex items-center justify-between">
+          <span>Lihat dan kelola presensi IBK untuk jadwal ini.</span>
+          <a
+            class="btn btn-primary"
+            href={`/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi`}
+          >
+            Kelola Presensi
+          </a>
         </div>
       </div>
     </div>
