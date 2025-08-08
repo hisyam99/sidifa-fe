@@ -63,7 +63,9 @@ export default component$(() => {
           onDelete$={handleDeleteClick}
         />
       ) : (
-        <div class="text-center py-8 text-base-content/70">Data tidak ditemukan</div>
+        <div class="text-center py-8 text-base-content/70">
+          Data tidak ditemukan
+        </div>
       )}
 
       <ConfirmationModal
@@ -75,4 +77,4 @@ export default component$(() => {
       />
     </div>
   );
-}); 
+});

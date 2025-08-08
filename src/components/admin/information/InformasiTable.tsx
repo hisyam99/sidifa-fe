@@ -17,7 +17,9 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
       {loading && <Spinner overlay />}
       <div class="flex justify-between items-center mb-4">
         <h2 class="card-title text-xl font-bold">Daftar Informasi & Edukasi</h2>
-        <div class="text-sm text-base-content/70">Total: {items.length} data</div>
+        <div class="text-sm text-base-content/70">
+          Total: {items.length} data
+        </div>
       </div>
       <table class="table table-zebra w-full">
         <thead>
@@ -35,11 +37,24 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
             <tr>
               <td colSpan={6} class="text-center text-base-content/60 py-8">
                 <div class="flex flex-col items-center gap-2">
-                  <svg class="w-12 h-12 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg
+                    class="w-12 h-12 text-base-content/30"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </svg>
                   <span>Tidak ada data informasi dan edukasi</span>
-                  <span class="text-xs">Tambahkan data pertama dengan menekan tombol "Tambah Informasi Baru"</span>
+                  <span class="text-xs">
+                    Tambahkan data pertama dengan menekan tombol "Tambah
+                    Informasi Baru"
+                  </span>
                 </div>
               </td>
             </tr>
@@ -57,18 +72,37 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                 </td>
                 <td>
                   <div class="max-w-xs">
-                    <div class="truncate" title={item.deskripsi}>{item.deskripsi}</div>
+                    <div class="truncate" title={item.deskripsi}>
+                      {item.deskripsi}
+                    </div>
                   </div>
                 </td>
                 <td>
                   {item.file_url ? (
-                    <a href={item.file_url} target="_blank" class="btn btn-ghost btn-xs link link-primary" title="Lihat File">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    <a
+                      href={item.file_url}
+                      target="_blank"
+                      class="btn btn-ghost btn-xs link link-primary"
+                      title="Lihat File"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                        />
                       </svg>
                     </a>
                   ) : item.file_name ? (
-                    <span class="text-sm" title={item.file_name}>{item.file_name}</span>
+                    <span class="text-sm" title={item.file_name}>
+                      {item.file_name}
+                    </span>
                   ) : (
                     <span class="text-base-content/40">-</span>
                   )}

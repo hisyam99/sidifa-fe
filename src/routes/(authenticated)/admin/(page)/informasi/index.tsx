@@ -69,21 +69,43 @@ export default component$(() => {
     if (!isLoggedIn.value) return;
 
     try {
-      const base = await informasiEdukasiAdminService.list({ page: 1, limit: 1 });
-      const totalAll = (base?.meta?.totalData ?? base?.meta?.total ?? 0) as number;
+      const base = await informasiEdukasiAdminService.list({
+        page: 1,
+        limit: 1,
+      });
+      const totalAll = (base?.meta?.totalData ??
+        base?.meta?.total ??
+        0) as number;
       totalInformasi.value = totalAll;
 
       const [artikel, panduan] = await Promise.all([
-        informasiEdukasiAdminService.list({ page: 1, limit: 1, tipe: "artikel" }),
-        informasiEdukasiAdminService.list({ page: 1, limit: 1, tipe: "panduan" }),
+        informasiEdukasiAdminService.list({
+          page: 1,
+          limit: 1,
+          tipe: "artikel",
+        }),
+        informasiEdukasiAdminService.list({
+          page: 1,
+          limit: 1,
+          tipe: "panduan",
+        }),
       ]);
-      totalArtikel.value = (artikel?.meta?.totalData ?? artikel?.meta?.total ?? 0) as number;
-      totalPanduan.value = (panduan?.meta?.totalData ?? panduan?.meta?.total ?? 0) as number;
+      totalArtikel.value = (artikel?.meta?.totalData ??
+        artikel?.meta?.total ??
+        0) as number;
+      totalPanduan.value = (panduan?.meta?.totalData ??
+        panduan?.meta?.total ??
+        0) as number;
 
       if (totalAll > 0) {
-        const all = await informasiEdukasiAdminService.list({ page: 1, limit: totalAll });
+        const all = await informasiEdukasiAdminService.list({
+          page: 1,
+          limit: totalAll,
+        });
         const rows: InformasiItem[] = (all?.data || []) as InformasiItem[];
-        totalDenganFile.value = rows.filter((r: any) => !!(r.file_name || r.file_url)).length;
+        totalDenganFile.value = rows.filter(
+          (r: any) => !!(r.file_name || r.file_url),
+        ).length;
       } else {
         totalDenganFile.value = 0;
       }
@@ -258,8 +280,12 @@ export default component$(() => {
         limit={currentLimit.value}
         loading={loading.value}
       >
-        {items.value.map((item: InformasiItem) => ([
-          <div q:slot={`edit-${item.id}`} key={`edit-${item.id}`} class="flex gap-1">
+        {items.value.map((item: InformasiItem) => [
+          <div
+            q:slot={`edit-${item.id}`}
+            key={`edit-${item.id}`}
+            class="flex gap-1"
+          >
             <div class="tooltip" data-tip="Lihat Detail">
               <button
                 class="btn btn-ghost btn-xs btn-square text-info"
@@ -307,7 +333,12 @@ export default component$(() => {
               </button>
             </div>
           </div>,
-          <div q:slot={`delete-${item.id}`} key={`delete-${item.id}`} class="tooltip" data-tip="Hapus">
+          <div
+            q:slot={`delete-${item.id}`}
+            key={`delete-${item.id}`}
+            class="tooltip"
+            data-tip="Hapus"
+          >
             <button
               class="btn btn-ghost btn-xs btn-square text-error"
               onClick$={() => handleDeleteClick(item.id)}
@@ -326,8 +357,8 @@ export default component$(() => {
                 />
               </svg>
             </button>
-          </div>
-        ]))}
+          </div>,
+        ])}
       </InformasiTable>
 
       {meta.value && meta.value.totalPage > 1 && (

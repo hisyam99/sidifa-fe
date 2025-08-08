@@ -363,9 +363,10 @@ export const informasiEdukasiAdminService = {
       return null;
     }
     // Guard non-UUID id (e.g., "create")
-    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-      id,
-    );
+    const isUuid =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        id,
+      );
     if (!isUuid) return null;
 
     const response = await api.get(`/admin/informasi-edukasi/detail/${id}`);

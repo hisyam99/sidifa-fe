@@ -7,4 +7,4 @@ export const useRedirect = routeLoader$(({ params, redirect }) => {
 
 export default component$(() => {
   return null;
-}); 
+});

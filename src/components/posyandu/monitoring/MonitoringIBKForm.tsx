@@ -219,4 +219,3 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
     );
   },
 );
- 

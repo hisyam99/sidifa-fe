@@ -35,8 +35,12 @@ export const useInformasiEdukasiAdmin = () => {
         });
         items.value = (data?.data || []) as InformasiItem[];
         const meta = data?.meta || {};
-        const resolvedTotal = (meta.totalData ?? meta.total ?? items.value.length) as number;
-        const resolvedPage = (meta.currentPage ?? meta.page ?? page.value) as number;
+        const resolvedTotal = (meta.totalData ??
+          meta.total ??
+          items.value.length) as number;
+        const resolvedPage = (meta.currentPage ??
+          meta.page ??
+          page.value) as number;
         const resolvedLimit = (meta.limit ?? limit.value) as number;
         total.value = resolvedTotal || 0;
         page.value = resolvedPage || 1;
@@ -58,9 +62,10 @@ export const useInformasiEdukasiAdmin = () => {
     error.value = null;
     try {
       // Guard invalid id (avoid calling detail with non-UUID like "create")
-      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-        id,
-      );
+      const isUuid =
+        /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+          id,
+        );
       if (!isUuid) return null;
       return (await informasiEdukasiAdminService.detail(id)) as InformasiItem; // Cast to InformasiItem
     } catch (err: any) {
