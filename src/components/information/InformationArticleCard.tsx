@@ -22,15 +22,13 @@ export const InformationArticleCard = component$(
             class="transition-transform duration-300 group-hover:scale-105"
           />
         </figure>
-        <div class="card-body bg-black bg-opacity-60 text-white rounded-xl">
+        <div class="card-body bg-opacity-60">
           <h2 class="card-title text-xl font-bold group-hover:underline">
             {title}
           </h2>
           <p class="text-sm mb-2">{excerpt}</p>
           <div class="card-actions justify-end">
-            <div class="badge badge-outline text-white border-white">
-              {category}
-            </div>
+            <div class="badge badge-outline">{category}</div>
             {href && (
               <button class="btn btn-primary btn-sm">Baca Selengkapnya</button>
             )}

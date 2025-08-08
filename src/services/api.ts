@@ -107,14 +107,21 @@ api.interceptors.response.use(
       } catch (refreshError) {
         console.error("Gagal refresh token:", refreshError);
         sessionUtils.clearAllAuthData();
-        return Promise.reject(
-          new Error("Sesi telah berakhir, silakan login kembali."),
-        );
+        return Promise.reject(new Error(error.response?.data.message));
       }
     }
 
-    // Untuk semua error lain, teruskan saja error aslinya.
-    return Promise.reject(error);
+    // Untuk semua error lain, bungkus ke Error bila perlu, lalu teruskan.
+    const ensureError = (err: unknown): Error => {
+      if (err instanceof Error) return err;
+      try {
+        const msg = (err as any)?.message ?? JSON.stringify(err);
+        return new Error(String(msg));
+      } catch {
+        return new Error("Unknown error");
+      }
+    };
+    return Promise.reject(ensureError(error));
   },
 );
 
@@ -430,6 +437,56 @@ export const informasiEdukasiAdminService = {
   },
 };
 
+// ADD START: Kader Informasi & Edukasi service
+export const informasiEdukasiKaderService = {
+  async list(params: {
+    limit?: number;
+    page?: number;
+    deskripsi?: string;
+    judul?: string;
+  }) {
+    if (typeof window === "undefined") {
+      return {
+        data: [],
+        meta: {
+          totalData: 0,
+          totalPage: 1,
+          currentPage: 1,
+          limit: params.limit ?? 10,
+        },
+      };
+    }
+    const queryParams = new URLSearchParams();
+    if (params.limit) queryParams.append("limit", params.limit.toString());
+    if (params.page) queryParams.append("page", params.page.toString());
+    if (params.deskripsi) queryParams.append("deskripsi", params.deskripsi);
+    if (params.judul) queryParams.append("judul", params.judul);
+
+    const response = await api.get(
+      `/kader/informasi-edukasi-kader?${queryParams.toString()}`,
+    );
+    return response.data;
+  },
+  async detail(id: string) {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    const isUuid =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        id,
+      );
+    if (!isUuid) return null;
+
+    // Direct GET without forcing CSRF for read-only endpoint
+    const response = await api.get(
+      `/kader/informasi-edukasi-kader/detail/${id}`,
+    );
+    const body = response.data;
+    return body?.data ?? body;
+  },
+};
+// ADD END: Kader Informasi & Edukasi service
+
 export const ibkService = {
   async createIbk(formData: FormData) {
     const response = await api.post("/kader/pendataan-ibk", formData, {
@@ -453,45 +510,55 @@ export const ibkService = {
   },
   buildIbkUpdateFormData(payload: Record<string, any>): FormData {
     const fd = new FormData();
+
+    // Helpers to normalize values
+    const clampNumber = (value: unknown, min: number, max: number): number => {
+      const n = parseInt(String(value), 10);
+      if (Number.isNaN(n)) return min;
+      return Math.max(min, Math.min(max, n));
+    };
+    const normalizeBooleanString = (value: unknown): string => {
+      const v = String(value).toLowerCase();
+      return ["true", "t", "ya", "iya", "1"].includes(v) ? "true" : "false";
+    };
+    const normalizeDateISOString = (value: unknown): string => {
+      let t = String(value);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+        t = new Date(`${t}T00:00:00`).toISOString();
+      }
+      return t;
+    };
+
+    // Handlers map to reduce branching complexity
+    const handlers: Record<string, (value: unknown) => void> = {
+      file: (value: unknown) => {
+        // Accept File (Blob) or string path uniformly
+        fd.append("file_foto", value as File);
+      },
+      tanggal_lahir: (value: unknown) => {
+        fd.append("tanggal_lahir", normalizeDateISOString(value));
+      },
+      odgj: (value: unknown) => {
+        fd.append("odgj", normalizeBooleanString(value));
+      },
+      total_iq: (value: unknown) => {
+        fd.append("total_iq", String(clampNumber(value, 0, 200)));
+      },
+      umur: (value: unknown) => {
+        fd.append("umur", String(clampNumber(value, 0, 150)));
+      },
+    };
+
     for (const [key, value] of Object.entries(payload)) {
       if (value === undefined || value === null) continue;
-      if (key === "file") {
-        // Backend expects file_foto; accept either File or string
-        if (value instanceof File) {
-          fd.append("file_foto", value);
-        } else if (typeof value === "string") {
-          fd.append("file_foto", value);
-        }
-        continue;
-      }
-      if (key === "tanggal_lahir" && typeof value === "string") {
-        let tgl = value;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(tgl)) {
-          tgl = new Date(`${tgl}T00:00:00`).toISOString();
-        }
-        fd.append("tanggal_lahir", tgl);
-        continue;
-      }
-      if (key === "odgj") {
-        const v = String(value).toLowerCase();
-        const boolStr = ["true", "t", "ya", "iya", "1"].includes(v)
-          ? "true"
-          : "false";
-        fd.append("odgj", boolStr);
-        continue;
-      }
-      if (key === "total_iq") {
-        const n = Math.max(0, Math.min(200, parseInt(String(value), 10) || 0));
-        fd.append("total_iq", String(n));
-        continue;
-      }
-      if (key === "umur") {
-        const n = Math.max(0, Math.min(150, parseInt(String(value), 10) || 0));
-        fd.append("umur", String(n));
+      const handler = handlers[key];
+      if (handler) {
+        handler(value);
         continue;
       }
       fd.append(key, String(value));
     }
+
     return fd;
   },
   async getIbkListByPosyandu(params: {

@@ -64,6 +64,7 @@ export default component$(() => {
   });
 
   // Fetch summary counters lazily on client so table loads first
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
     track(isLoggedIn);
     if (!isLoggedIn.value) return;
