@@ -437,6 +437,143 @@ export const informasiEdukasiAdminService = {
   },
 };
 
+// ADD START: Admin Lowongan service
+export const adminLowonganService = {
+  async list(params: {
+    limit?: number;
+    page?: number;
+    nama_lowongan?: string;
+    nama_perusahaan?: string;
+    jenis_pekerjaan?: string;
+    lokasi?: string;
+    jenis_difasilitas?: string;
+    status?: string;
+  }) {
+    if (typeof window === "undefined") {
+      return {
+        data: [],
+        meta: {
+          totalData: 0,
+          totalPage: 1,
+          currentPage: 1,
+          limit: params.limit ?? 10,
+        },
+      };
+    }
+    const query = new URLSearchParams();
+    if (params.limit) query.append("limit", String(params.limit));
+    if (params.page) query.append("page", String(params.page));
+    if (params.nama_lowongan)
+      query.append("nama_lowongan", params.nama_lowongan);
+    if (params.nama_perusahaan)
+      query.append("nama_perusahaan", params.nama_perusahaan);
+    if (params.jenis_pekerjaan)
+      query.append("jenis_pekerjaan", params.jenis_pekerjaan);
+    if (params.lokasi) query.append("lokasi", params.lokasi);
+    if (params.jenis_difasilitas)
+      query.append("jenis_difasilitas", params.jenis_difasilitas);
+    if (params.status) query.append("status", params.status);
+
+    const response = await api.get(`/admin/lowongan?${query.toString()}`);
+    return response.data;
+  },
+  async detail(id: string) {
+    if (typeof window === "undefined") return null;
+    const response = await api.get(`/admin/lowongan/detail/${id}`);
+    const body = response.data;
+    return body?.data ?? body;
+  },
+  async create(data: {
+    nama_lowongan: string;
+    nama_perusahaan: string;
+    jenis_pekerjaan: string;
+    lokasi: string;
+    jenis_difasilitas: string;
+    deskripsi: string;
+    status: string;
+    tanggal_mulai?: string;
+    tanggal_selesai?: string;
+    file?: File;
+  }) {
+    if (typeof window === "undefined") return null;
+    const fd = new FormData();
+    const appendDate = (key: string, value?: string) => {
+      if (!value) return;
+      let t = String(value);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+        t = new Date(`${t}T00:00:00`).toISOString();
+      }
+      fd.append(key, t);
+    };
+    fd.append("nama_lowongan", data.nama_lowongan);
+    fd.append("nama_perusahaan", data.nama_perusahaan);
+    fd.append("jenis_pekerjaan", data.jenis_pekerjaan);
+    fd.append("lokasi", data.lokasi);
+    fd.append("jenis_difasilitas", data.jenis_difasilitas);
+    fd.append("deskripsi", data.deskripsi);
+    fd.append("status", data.status);
+    appendDate("tanggal_mulai", data.tanggal_mulai);
+    appendDate("tanggal_selesai", data.tanggal_selesai);
+    if (data.file) fd.append("file", data.file);
+
+    const response = await api.post(`/admin/lowongan`, fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+  async update(
+    id: string,
+    data: {
+      nama_lowongan?: string;
+      nama_perusahaan?: string;
+      jenis_pekerjaan?: string;
+      lokasi?: string;
+      jenis_difasilitas?: string;
+      deskripsi?: string;
+      status?: string;
+      tanggal_mulai?: string;
+      tanggal_selesai?: string;
+      file?: File;
+    },
+  ) {
+    if (typeof window === "undefined") return null;
+    const fd = new FormData();
+    const appendIf = (k: string, v?: string) => {
+      if (v !== undefined && v !== null) fd.append(k, v);
+    };
+    const appendDate = (key: string, value?: string) => {
+      if (value === undefined || value === null) return;
+      let t = String(value);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+        t = new Date(`${t}T00:00:00`).toISOString();
+      }
+      fd.append(key, t);
+    };
+    fd.append("id", id);
+    appendIf("nama_lowongan", data.nama_lowongan);
+    appendIf("nama_perusahaan", data.nama_perusahaan);
+    appendIf("jenis_pekerjaan", data.jenis_pekerjaan);
+    appendIf("lokasi", data.lokasi);
+    appendIf("jenis_difasilitas", data.jenis_difasilitas);
+    appendIf("deskripsi", data.deskripsi);
+    appendIf("status", data.status);
+    appendDate("tanggal_mulai", data.tanggal_mulai);
+    appendDate("tanggal_selesai", data.tanggal_selesai);
+    if (data.file) fd.append("file", data.file);
+
+    const response = await api.patch(`/admin/lowongan`, fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+  async delete(id: string) {
+    if (typeof window === "undefined") return null;
+    const response = await api.delete(`/admin/lowongan`, { data: { id } });
+    return response.data;
+  },
+};
+// ADD END: Admin Lowongan service
+
 // ADD START: Kader Informasi & Edukasi service
 export const informasiEdukasiKaderService = {
   async list(params: {
