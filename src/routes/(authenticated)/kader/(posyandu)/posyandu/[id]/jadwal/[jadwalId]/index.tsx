@@ -94,6 +94,7 @@ export default component$(() => {
     fetchDetail: fetchMonitoringDetail,
     createItem: createMonitoring,
     updateItem: updateMonitoring,
+    deleteItem: deleteMonitoring,
     setPage: setMonitoringPage,
   } = useMonitoringIBK({ jadwalId });
 
@@ -145,6 +146,16 @@ export default component$(() => {
       });
       monitoringEditId.value = null;
       monitoringShowForm.value = false;
+    }
+  });
+
+  const handleMonitoringDelete = $(async (id: string) => {
+    if (
+      confirm(
+        "Yakin ingin menghapus monitoring ini? Tindakan ini tidak dapat dibatalkan.",
+      )
+    ) {
+      await deleteMonitoring(id);
     }
   });
 
@@ -377,6 +388,7 @@ export default component$(() => {
                   ),
                 )}
                 onEdit$={handleMonitoringEdit}
+                onDelete$={handleMonitoringDelete}
               />
               <PaginationControls
                 meta={{

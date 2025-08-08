@@ -82,6 +82,11 @@ export class MonitoringIBKService {
     const res = await api.get(`/kader/monitoring-ibk/detail/${id}`);
     return res.data;
   }
+
+  // New: delete monitoring
+  async delete(id: string): Promise<void> {
+    await api.delete(`/kader/monitoring-ibk/delete/${id}`);
+  }
 }
 
 export const monitoringIBKService = MonitoringIBKService.getInstance();

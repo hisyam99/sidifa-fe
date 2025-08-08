@@ -1,17 +1,18 @@
 import { component$, QRL, $ } from "@builder.io/qwik";
 import type { MonitoringIBKItem } from "~/types";
 import { Spinner } from "~/components/ui/Spinner";
-import { LuEye, LuPencil } from "~/components/icons/lucide-optimized";
+import { LuEye, LuPencil, LuTrash } from "~/components/icons/lucide-optimized";
 
 interface MonitoringIBKTableProps {
   items: MonitoringIBKItem[];
   loading?: boolean;
   onEdit$?: QRL<(id: string) => void>;
   onDetail$?: QRL<(id: string) => void>;
+  onDelete$?: QRL<(id: string) => void>;
 }
 
 export const MonitoringIBKTable = component$<MonitoringIBKTableProps>(
-  ({ items, loading, onEdit$, onDetail$ }) => {
+  ({ items, loading, onEdit$, onDetail$, onDelete$ }) => {
     return (
       <div class="overflow-x-auto bg-base-100 p-2">
         <h2 class="text-lg font-bold mb-2 md:card-title md:text-xl md:mb-4">
@@ -64,6 +65,7 @@ export const MonitoringIBKTable = component$<MonitoringIBKTableProps>(
                             <button
                               class="btn btn-ghost btn-xs md:btn-sm"
                               onClick$={$(() => onDetail$(row.id))}
+                              title="Detail"
                             >
                               <LuEye class="w-4 h-4" />
                               <span class="hidden xl:inline ml-1">Detail</span>
@@ -73,9 +75,20 @@ export const MonitoringIBKTable = component$<MonitoringIBKTableProps>(
                             <button
                               class="btn btn-primary btn-xs md:btn-sm"
                               onClick$={$(() => onEdit$(row.id))}
+                              title="Edit"
                             >
                               <LuPencil class="w-4 h-4" />
                               <span class="hidden xl:inline ml-1">Edit</span>
+                            </button>
+                          )}
+                          {onDelete$ && (
+                            <button
+                              class="btn btn-error btn-xs md:btn-sm"
+                              onClick$={$(() => onDelete$(row.id))}
+                              title="Hapus"
+                            >
+                              <LuTrash class="w-4 h-4" />
+                              <span class="hidden xl:inline ml-1">Hapus</span>
                             </button>
                           )}
                         </div>

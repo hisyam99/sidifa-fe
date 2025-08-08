@@ -94,6 +94,21 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
     },
   );
 
+  const deleteItem = $(async (id: string) => {
+    loading.value = true;
+    error.value = null;
+    success.value = null;
+    try {
+      await monitoringIBKService.delete(id);
+      success.value = "Monitoring berhasil dihapus.";
+      await fetchList();
+    } catch (err: any) {
+      error.value = extractErrorMessage(err);
+    } finally {
+      loading.value = false;
+    }
+  });
+
   const setPage = $(async (newPage: number) => {
     page.value = newPage;
     await fetchList({ page: newPage, limit: limit.value });
@@ -113,6 +128,7 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
     fetchDetail,
     createItem,
     updateItem,
+    deleteItem,
     setPage,
   };
 }
