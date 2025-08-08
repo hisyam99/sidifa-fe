@@ -493,6 +493,7 @@ export default component$(() => {
                       </label>
                       <IBKSearchSelect
                         posyanduId={location.params.id as string}
+                        jadwalId={location.params.jadwalId as string}
                         targetInputId="presensi-ibk-id"
                         placeholder="Cari nama IBK..."
                       />

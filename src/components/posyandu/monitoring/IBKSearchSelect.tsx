@@ -1,15 +1,16 @@
 import { component$, useSignal, $, useTask$, QRL } from "@builder.io/qwik";
-import { ibkService } from "~/services/api";
+import { presensiIBKService } from "~/services/presensi-ibk.service";
 
 interface IBKSearchSelectProps {
   posyanduId: string;
+  jadwalId?: string; // optional; when provided, use ibk-not-registered endpoint
   onSelect$?: QRL<(payload: { id: string; label: string }) => void>;
   targetInputId?: string;
   placeholder?: string;
 }
 
 export const IBKSearchSelect = component$<IBKSearchSelectProps>(
-  ({ posyanduId, onSelect$, targetInputId, placeholder }) => {
+  ({ posyanduId, jadwalId, onSelect$, targetInputId, placeholder }) => {
     const query = useSignal("");
     const open = useSignal(false);
     const loading = useSignal(false);
@@ -20,17 +21,20 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
       if (!posyanduId) return;
       loading.value = true;
       try {
-        const res: any = await ibkService.getIbkListByPosyandu({
-          posyanduId,
-          page: 1,
-          limit: 10,
-          nama: query.value || undefined,
-        });
-        items.value = Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res)
-            ? res
-            : [];
+        if (jadwalId) {
+          // Use new endpoint for IBK not registered in this jadwal
+          const res = await presensiIBKService.listIbkNotRegistered(
+            jadwalId,
+            posyanduId,
+          );
+          const q = (query.value || "").toLowerCase();
+          items.value = res.filter((r) =>
+            (r.nama || "").toLowerCase().includes(q),
+          );
+        } else {
+          // Fallback: no jadwalId provided; return empty
+          items.value = [];
+        }
       } finally {
         loading.value = false;
       }
@@ -52,7 +56,6 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
     });
 
     const closeDropdown = $(() => {
-      // Delay agar click item tetap diproses sebelum tertutup
       setTimeout(() => (open.value = false), 120);
     });
 
@@ -80,7 +83,7 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
           placeholder={placeholder || "Cari nama IBK..."}
           value={selectedLabel.value || query.value}
           onInput$={(e) => {
-            selectedLabel.value = ""; // reset saat user mengetik
+            selectedLabel.value = "";
             query.value = (e.target as HTMLInputElement).value;
           }}
           onFocus$={openDropdown}
@@ -99,12 +102,7 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
             )}
             {!loading.value &&
               items.value.map((row: any) => {
-                const label =
-                  row?.nama ||
-                  row?.personal_data?.nama_lengkap ||
-                  row?.ibk?.nama ||
-                  row?.nama_lengkap ||
-                  "(Tanpa Nama)";
+                const label = row?.nama || "(Tanpa Nama)";
                 return (
                   <li key={row.id}>
                     <button

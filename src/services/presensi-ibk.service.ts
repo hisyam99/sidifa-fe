@@ -50,6 +50,27 @@ export class PresensiIBKService {
     });
     return res.data;
   }
+
+  // New: list IBK not yet registered in the jadwal for a given posyandu
+  async listIbkNotRegistered(
+    jadwalId: string,
+    posyanduId: string,
+  ): Promise<Array<{ id: string; nama: string }>> {
+    const res = await api.get(
+      `/kader/presensi-ibk/ibk-not-registered/${jadwalId}/posyandu/${posyanduId}`,
+    );
+    // The backend returns an array; normalize to id and nama keys commonly used in UI
+    const data = Array.isArray(res.data?.data) ? res.data.data : res.data;
+    return (Array.isArray(data) ? data : []).map((row: any) => ({
+      id: row.id ?? row.ibk_id ?? row.user_ibk_id ?? row.user_id ?? "",
+      nama:
+        row.nama ||
+        row.nama_lengkap ||
+        row.personal_data?.nama_lengkap ||
+        row.ibk?.nama ||
+        "(Tanpa Nama)",
+    }));
+  }
 }
 
 export const presensiIBKService = PresensiIBKService.getInstance();

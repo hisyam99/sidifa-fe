@@ -83,6 +83,7 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
             ) : (
               <IBKSearchSelect
                 posyanduId={initialData?.posyandu_id || ""}
+                jadwalId={initialData?.jadwal_posyandu_id || ""}
                 targetInputId="monitoring-ibk-id"
                 placeholder="Cari nama IBK..."
               />
