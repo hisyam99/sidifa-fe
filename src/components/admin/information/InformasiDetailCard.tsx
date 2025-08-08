@@ -28,7 +28,11 @@ export const InformasiDetailCard = component$(
           <div>
             <b>File:</b>{" "}
             {item.file_url || item.file_name ? (
-              <a href={buildUploadUrl(item.file_url || item.file_name)} target="_blank" class="link link-primary">
+              <a
+                href={buildUploadUrl(item.file_url || item.file_name)}
+                target="_blank"
+                class="link link-primary"
+              >
                 Lihat File
               </a>
             ) : (

@@ -56,6 +56,28 @@ export class MonitoringIBKService {
     return res.data;
   }
 
+  // New: fetch IBK hadir list (presensi-specific) for a jadwal
+  async listHadirByJadwal(
+    jadwalId: string,
+    params: { limit?: number; page?: number } = {},
+  ): Promise<{
+    data: any[];
+    meta?: {
+      currentPage: number;
+      totalPage: number;
+      limit: number;
+      totalData: number;
+    };
+  }> {
+    const query = new URLSearchParams();
+    if (params.limit) query.append("limit", params.limit.toString());
+    if (params.page) query.append("page", params.page.toString());
+    const res = await api.get(
+      `/kader/monitoring-ibk/list-hadir/${jadwalId}?${query.toString()}`,
+    );
+    return res.data;
+  }
+
   async detail(id: string): Promise<MonitoringIBKDetailResponse> {
     const res = await api.get(`/kader/monitoring-ibk/detail/${id}`);
     return res.data;
