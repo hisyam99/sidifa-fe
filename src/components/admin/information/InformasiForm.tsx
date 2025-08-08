@@ -1,11 +1,11 @@
-import { component$, $, QRL, useSignal } from "@builder.io/qwik";
+import { component$, $, QRL, useSignal, noSerialize, type NoSerialize } from "@builder.io/qwik";
 import { GenericLoadingSpinner } from "~/components/common";
 
 export interface InformasiFormData {
   judul: string;
   tipe: string;
   deskripsi: string;
-  file?: File;
+  file?: NoSerialize<File>;
   file_url?: string; // For displaying existing file URL
 }
 
@@ -17,12 +17,7 @@ interface InformasiFormProps {
 }
 
 export const InformasiForm = component$((props: InformasiFormProps) => {
-  const {
-    initialData,
-    onSubmit$,
-    loading,
-    submitButtonText = "Simpan",
-  } = props;
+  const { initialData, onSubmit$, loading, submitButtonText = "Simpan" } = props;
 
   const formState = useSignal<InformasiFormData>(
     initialData || {
@@ -33,21 +28,21 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
     },
   );
 
-  const selectedFile = useSignal<File | null>(null);
+  const selectedFile = useSignal<NoSerialize<File> | null>(null);
 
   const handleSubmit = $(async (event: Event) => {
     event.preventDefault();
-    const submitData = {
+    const submitData: InformasiFormData = {
       ...formState.value,
-      file: selectedFile.value || undefined,
+      file: selectedFile.value ?? undefined,
     };
     await onSubmit$(submitData);
   });
 
   const handleFileChange = $((event: Event) => {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    selectedFile.value = file || null;
+    const file = input.files?.[0] || null;
+    selectedFile.value = file ? noSerialize(file) : null;
   });
 
   return (
@@ -59,9 +54,7 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         <input
           class="input input-bordered w-full"
           value={formState.value.judul}
-          onInput$={(e) =>
-            (formState.value.judul = (e.target as HTMLInputElement).value)
-          }
+          onInput$={(e) => (formState.value.judul = (e.target as HTMLInputElement).value)}
           required
         />
       </div>
@@ -72,9 +65,7 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         <select
           class="select select-bordered w-full"
           value={formState.value.tipe}
-          onChange$={(e) =>
-            (formState.value.tipe = (e.target as HTMLSelectElement).value)
-          }
+          onChange$={(e) => (formState.value.tipe = (e.target as HTMLSelectElement).value)}
           required
         >
           <option value="">Pilih Tipe</option>
@@ -91,11 +82,7 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         <textarea
           class="textarea textarea-bordered w-full"
           value={formState.value.deskripsi}
-          onInput$={(e) =>
-            (formState.value.deskripsi = (
-              e.target as HTMLTextAreaElement
-            ).value)
-          }
+          onInput$={(e) => (formState.value.deskripsi = (e.target as HTMLTextAreaElement).value)}
           required
         />
       </div>
@@ -111,27 +98,19 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         />
         {selectedFile.value && (
           <div class="mt-2 text-sm text-base-content/70">
-            File terpilih: {selectedFile.value.name}
+            File terpilih: {(selectedFile.value as unknown as File).name}
           </div>
         )}
         {formState.value.file_url && !selectedFile.value && (
           <div class="mt-2">
-            <a
-              href={formState.value.file_url}
-              target="_blank"
-              class="link link-primary text-sm"
-            >
+            <a href={formState.value.file_url} target="_blank" class="link link-primary text-sm">
               File saat ini: Lihat File
             </a>
           </div>
         )}
       </div>
       <button class="btn btn-primary w-full" type="submit" disabled={loading}>
-        {loading ? (
-          <GenericLoadingSpinner size="w-5 h-5" color="text-white" />
-        ) : (
-          submitButtonText
-        )}
+        {loading ? <GenericLoadingSpinner size="w-5 h-5" color="text-white" /> : submitButtonText}
       </button>
     </form>
   );

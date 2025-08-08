@@ -33,13 +33,17 @@ export const useInformasiEdukasiAdmin = () => {
           judul: params.judul,
           tipe: params.tipe,
         });
-        items.value = data.data as InformasiItem[]; // Cast to InformasiItem[]
-        total.value = data.meta?.total || 0;
-        page.value = data.meta?.currentPage || 1;
-        limit.value = data.meta?.limit || 10;
+        items.value = (data?.data || []) as InformasiItem[];
+        const meta = data?.meta || {};
+        const resolvedTotal = (meta.totalData ?? meta.total ?? items.value.length) as number;
+        const resolvedPage = (meta.currentPage ?? meta.page ?? page.value) as number;
+        const resolvedLimit = (meta.limit ?? limit.value) as number;
+        total.value = resolvedTotal || 0;
+        page.value = resolvedPage || 1;
+        limit.value = resolvedLimit || 10;
         totalPage.value =
-          data.meta?.totalPage ||
-          Math.ceil((data.meta?.total || 0) / (data.meta?.limit || 10)) ||
+          (meta.totalPage as number) ||
+          Math.ceil((total.value || 0) / (limit.value || 10)) ||
           1;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data";
@@ -53,6 +57,11 @@ export const useInformasiEdukasiAdmin = () => {
     loading.value = true;
     error.value = null;
     try {
+      // Guard invalid id (avoid calling detail with non-UUID like "create")
+      const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+        id,
+      );
+      if (!isUuid) return null;
       return (await informasiEdukasiAdminService.detail(id)) as InformasiItem; // Cast to InformasiItem
     } catch (err: any) {
       error.value = err.message || "Gagal memuat detail";
@@ -72,7 +81,7 @@ export const useInformasiEdukasiAdmin = () => {
         judul: data.judul,
         tipe: data.tipe,
         deskripsi: data.deskripsi,
-        file: data.file,
+        file: (data.file as unknown as File) || undefined,
       });
       success.value = "Berhasil memperbarui informasi edukasi";
     } catch (err: any) {
@@ -107,7 +116,7 @@ export const useInformasiEdukasiAdmin = () => {
         judul: data.judul,
         tipe: data.tipe,
         deskripsi: data.deskripsi,
-        file: data.file,
+        file: (data.file as unknown as File) || undefined,
       });
       success.value = "Berhasil menambah informasi edukasi";
     } catch (err: any) {

@@ -7,8 +7,7 @@ interface InformasiDetailCardProps {
   onDelete$: QRL<(id: string) => void>;
 }
 
-export const InformasiDetailCard = component$(
-  (props: InformasiDetailCardProps) => {
+export const InformasiDetailCard = component$((props: InformasiDetailCardProps) => {
     const { item, onEdit$, onDelete$ } = props;
 
     return (
@@ -30,6 +29,8 @@ export const InformasiDetailCard = component$(
               <a href={item.file_url} target="_blank" class="link link-primary">
                 Lihat File
               </a>
+          ) : item.file_name ? (
+            <span>{item.file_name}</span>
             ) : (
               "-"
             )}
@@ -45,5 +46,4 @@ export const InformasiDetailCard = component$(
         </div>
       </div>
     );
-  },
-);
+});

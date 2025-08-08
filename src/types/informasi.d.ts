@@ -4,7 +4,8 @@ export interface InformasiItem {
   tipe: string;
   deskripsi: string;
   file_url?: string;
-  // Add any other relevant fields from your API
+  file_name?: string;
+  // created_at, updated_at, etc. can be added if needed
 }
 
 export interface InformasiFilterOptions {

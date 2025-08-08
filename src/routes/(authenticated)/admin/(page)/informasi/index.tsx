@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
+import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
@@ -11,6 +11,7 @@ import {
 } from "~/components/admin/information";
 import { PaginationControls, ConfirmationModal } from "~/components/common";
 import type { InformasiItem, InformasiFilterOptions } from "~/types/informasi";
+import { informasiEdukasiAdminService } from "~/services/api";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -35,7 +36,12 @@ export default component$(() => {
 
   const nav = useNavigate();
 
-  // Use the reusable pagination hook
+  // Summary counters (global)
+  const totalInformasi = useSignal<number>(0);
+  const totalArtikel = useSignal<number>(0);
+  const totalPanduan = useSignal<number>(0);
+  const totalDenganFile = useSignal<number>(0);
+
   const {
     currentPage,
     currentLimit,
@@ -55,6 +61,35 @@ export default component$(() => {
     totalPage,
     filters: filterOptions,
     dependencies: [isLoggedIn],
+  });
+
+  // Fetch summary counters lazily on client so table loads first
+  useVisibleTask$(async ({ track }) => {
+    track(isLoggedIn);
+    if (!isLoggedIn.value) return;
+
+    try {
+      const base = await informasiEdukasiAdminService.list({ page: 1, limit: 1 });
+      const totalAll = (base?.meta?.totalData ?? base?.meta?.total ?? 0) as number;
+      totalInformasi.value = totalAll;
+
+      const [artikel, panduan] = await Promise.all([
+        informasiEdukasiAdminService.list({ page: 1, limit: 1, tipe: "artikel" }),
+        informasiEdukasiAdminService.list({ page: 1, limit: 1, tipe: "panduan" }),
+      ]);
+      totalArtikel.value = (artikel?.meta?.totalData ?? artikel?.meta?.total ?? 0) as number;
+      totalPanduan.value = (panduan?.meta?.totalData ?? panduan?.meta?.total ?? 0) as number;
+
+      if (totalAll > 0) {
+        const all = await informasiEdukasiAdminService.list({ page: 1, limit: totalAll });
+        const rows: InformasiItem[] = (all?.data || []) as InformasiItem[];
+        totalDenganFile.value = rows.filter((r: any) => !!(r.file_name || r.file_url)).length;
+      } else {
+        totalDenganFile.value = 0;
+      }
+    } catch {
+      // ignore summary errors; don't block table
+    }
   });
 
   // Filter change handler resets page and triggers fetch
@@ -142,7 +177,7 @@ export default component$(() => {
             </svg>
           </div>
           <div class="stat-title">Total Informasi</div>
-          <div class="stat-value text-primary">{meta.value.totalData}</div>
+          <div class="stat-value text-primary">{totalInformasi.value}</div>
           <div class="stat-desc">Semua jenis konten</div>
         </div>
 
@@ -163,9 +198,7 @@ export default component$(() => {
             </svg>
           </div>
           <div class="stat-title">Artikel</div>
-          <div class="stat-value text-success">
-            {items.value.filter((item) => item.tipe === "artikel").length}
-          </div>
+          <div class="stat-value text-success">{totalArtikel.value}</div>
         </div>
 
         <div class="stat bg-base-100 rounded-lg shadow">
@@ -185,9 +218,7 @@ export default component$(() => {
             </svg>
           </div>
           <div class="stat-title">Panduan</div>
-          <div class="stat-value text-info">
-            {items.value.filter((item) => item.tipe === "panduan").length}
-          </div>
+          <div class="stat-value text-info">{totalPanduan.value}</div>
         </div>
 
         <div class="stat bg-base-100 rounded-lg shadow">
@@ -207,9 +238,7 @@ export default component$(() => {
             </svg>
           </div>
           <div class="stat-title">Dengan File</div>
-          <div class="stat-value text-warning">
-            {items.value.filter((item) => item.file_url).length}
-          </div>
+          <div class="stat-value text-warning">{totalDenganFile.value}</div>
         </div>
       </div>
 
@@ -229,60 +258,12 @@ export default component$(() => {
         limit={currentLimit.value}
         loading={loading.value}
       >
-        {items.value.map((item: InformasiItem) => (
-          <>
-            <div q:slot={`edit-${item.id}`} class="flex gap-1">
-              <div class="tooltip" data-tip="Lihat Detail">
-                <button
-                  class="btn btn-ghost btn-xs btn-square text-info"
-                  onClick$={() => nav(`/admin/informasi/${item.id}`)}
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div class="tooltip" data-tip="Edit">
-                <button
-                  class="btn btn-ghost btn-xs btn-square text-primary"
-                  onClick$={() => nav(`/admin/informasi/${item.id}/edit`)}
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div q:slot={`delete-${item.id}`} class="tooltip" data-tip="Hapus">
+        {items.value.map((item: InformasiItem) => ([
+          <div q:slot={`edit-${item.id}`} key={`edit-${item.id}`} class="flex gap-1">
+            <div class="tooltip" data-tip="Lihat Detail">
               <button
-                class="btn btn-ghost btn-xs btn-square text-error"
-                onClick$={() => handleDeleteClick(item.id)}
+                class="btn btn-ghost btn-xs btn-square text-info"
+                onClick$={() => nav(`/admin/informasi/detail/${item.id}`)}
               >
                 <svg
                   class="w-4 h-4"
@@ -294,13 +275,59 @@ export default component$(() => {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                   />
                 </svg>
               </button>
             </div>
-          </>
-        ))}
+            <div class="tooltip" data-tip="Edit">
+              <button
+                class="btn btn-ghost btn-xs btn-square text-primary"
+                onClick$={() => nav(`/admin/informasi/detail/${item.id}/edit`)}
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>,
+          <div q:slot={`delete-${item.id}`} key={`delete-${item.id}`} class="tooltip" data-tip="Hapus">
+            <button
+              class="btn btn-ghost btn-xs btn-square text-error"
+              onClick$={() => handleDeleteClick(item.id)}
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
+        ]))}
       </InformasiTable>
 
       {meta.value && meta.value.totalPage > 1 && (

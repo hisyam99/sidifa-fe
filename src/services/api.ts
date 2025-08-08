@@ -351,6 +351,7 @@ export const informasiEdukasiAdminService = {
     if (params.deskripsi) queryParams.append("deskripsi", params.deskripsi);
     if (params.judul) queryParams.append("judul", params.judul);
     if (params.tipe) queryParams.append("tipe", params.tipe);
+
     const response = await api.get(
       `/admin/informasi-edukasi?${queryParams.toString()}`,
     );
@@ -361,8 +362,15 @@ export const informasiEdukasiAdminService = {
     if (typeof window === "undefined") {
       return null;
     }
+    // Guard non-UUID id (e.g., "create")
+    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+      id,
+    );
+    if (!isUuid) return null;
+
     const response = await api.get(`/admin/informasi-edukasi/detail/${id}`);
-    return response.data;
+    const body = response.data;
+    return body?.data ?? body;
   },
   async update(data: {
     id: string;
@@ -383,9 +391,7 @@ export const informasiEdukasiAdminService = {
     if (data.file) formData.append("file", data.file);
 
     const response = await api.patch(`/admin/informasi-edukasi`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      params: { role: "admin", name: "Nam" },
     });
     return response.data;
   },
@@ -395,6 +401,7 @@ export const informasiEdukasiAdminService = {
       return null;
     }
     const response = await api.delete(`/admin/informasi-edukasi`, {
+      params: { role: "admin", name: "Nam" },
       data: { id },
     });
     return response.data;
@@ -416,9 +423,7 @@ export const informasiEdukasiAdminService = {
     if (data.file) formData.append("file", data.file);
 
     const response = await api.post(`/admin/informasi-edukasi`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      params: { role: "admin", name: "Nam" },
     });
     return response.data;
   },

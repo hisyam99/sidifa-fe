@@ -48,7 +48,7 @@ export default component$(() => {
         file: data.file,
       });
       if (!error.value) {
-        nav(`/admin/informasi/${id}`);
+        nav(`/admin/informasi/detail/${id}`);
       }
     } catch {
       // Error is already handled in updateItem function

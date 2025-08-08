@@ -514,10 +514,10 @@ export default component$(() => {
                         Simpan
                       </button>
                     </div>
-                  </div>
-                </div>
+        </div>
+      </div>
               )}
-            </div>
+        </div>
           )}
         </div>
       </div>
