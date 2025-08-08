@@ -51,6 +51,14 @@ export class PresensiIBKService {
     return res.data;
   }
 
+  // New: Bulk update status for multiple IBK in a jadwal
+  async bulkUpdate(
+    jadwalId: string,
+    updates: Array<{ user_ibk_id: string; status_presensi: PresensiStatus }>,
+  ): Promise<void> {
+    await api.patch(`/kader/presensi-ibk/bulk-update/${jadwalId}`, updates, {});
+  }
+
   // New: list IBK not yet registered in the jadwal for a given posyandu
   async listIbkNotRegistered(
     jadwalId: string,

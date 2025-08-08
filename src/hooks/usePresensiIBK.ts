@@ -88,6 +88,25 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
     }
   });
 
+  const bulkUpdateStatus = $(
+    async (
+      updates: Array<{ user_ibk_id: string; status_presensi: PresensiStatus }>,
+    ) => {
+      loading.value = true;
+      error.value = null;
+      success.value = null;
+      try {
+        await presensiIBKService.bulkUpdate(jadwalId, updates);
+        success.value = "Status presensi berhasil diperbarui (bulk).";
+        await fetchList();
+      } catch (err: any) {
+        error.value = extractErrorMessage(err);
+      } finally {
+        loading.value = false;
+      }
+    },
+  );
+
   const setPage = $(async (newPage: number) => {
     page.value = newPage;
     await fetchList({ page: newPage, limit: limit.value });
@@ -107,6 +126,7 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
     fetchDetail,
     addToPresensi,
     updateStatus,
+    bulkUpdateStatus,
     setPage,
   };
 }

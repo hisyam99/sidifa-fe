@@ -73,6 +73,7 @@ export default component$(() => {
     success: presensiSuccess,
     fetchList: fetchPresensi,
     updateStatus,
+    bulkUpdateStatus,
     setPage: setPresensiPage,
     addToPresensi,
   } = usePresensiIBK({ jadwalId });
@@ -97,18 +98,20 @@ export default component$(() => {
   } = useMonitoringIBK({ jadwalId });
 
   // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const apiData = await jadwalPosyanduService.getJadwalDetail(jadwalId);
-      const data = apiData.data || apiData;
-      jadwal.value = mapApiToJadwalItem(data);
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail jadwal posyandu.";
-    } finally {
-      loading.value = false;
-    }
+  useVisibleTask$(() => {
+    (async () => {
+      loading.value = true;
+      error.value = null;
+      try {
+        const apiData = await jadwalPosyanduService.getJadwalDetail(jadwalId);
+        const data = apiData.data || apiData;
+        jadwal.value = mapApiToJadwalItem(data);
+      } catch (err: any) {
+        error.value = err.message || "Gagal memuat detail jadwal posyandu.";
+      } finally {
+        loading.value = false;
+      }
+    })();
   });
 
   const handlePresensiDetail: QRL<(id: string) => void> = $((id: string) => {
@@ -164,33 +167,37 @@ export default component$(() => {
   });
 
   return (
-    <div class="mx-auto w-full">
-      <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 class="text-3xl font-bold flex items-center gap-2">
-          <LuClipboardList class="w-8 h-8 text-primary" /> Jadwal Posyandu
-          Detail
-        </h1>
-        {jadwal.value && (
-          <span class="badge badge-lg badge-primary text-base-100 font-semibold px-4 py-2 shadow">
-            {jadwal.value.nama_kegiatan}
-          </span>
-        )}
+    <div class="mx-auto w-full max-w-[1200px] px-3 md:px-4">
+      <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center gap-2">
+          <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-2">
+            <LuClipboardList class="w-7 h-7 md:w-8 md:h-8 text-primary" />
+            Detail Jadwal Posyandu
+          </h1>
+          {jadwal.value && (
+            <span class="badge badge-primary text-base-100 font-semibold px-3 py-2">
+              {jadwal.value.nama_kegiatan}
+            </span>
+          )}
+        </div>
       </div>
+
       {loading.value && (
         <div class="flex justify-center items-center h-40">
           <span class="loading loading-spinner loading-lg text-primary"></span>
         </div>
       )}
       {error.value && (
-        <div class="alert alert-error flex items-center gap-2">
+        <div class="alert alert-error flex items-center gap-2 mb-4">
           <LuAlertCircle class="w-6 h-6" /> {error.value}
         </div>
       )}
+
       {jadwal.value && (
-        <div class="card bg-base-100 shadow-xl p-0 overflow-hidden">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-0">
-            {/* Info utama */}
-            <div class="p-6 flex flex-col gap-4 border-b md:border-b-0 md:border-r border-base-200">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Info utama */}
+          <div class="card bg-base-100 shadow-xl p-5">
+            <div class="flex flex-col gap-4">
               <div class="flex items-center gap-3">
                 <LuUser class="w-6 h-6 text-primary" />
                 <span class="font-semibold">Jenis Kegiatan:</span>
@@ -215,7 +222,9 @@ export default component$(() => {
               <div class="flex items-center gap-3">
                 <LuMapPin class="w-6 h-6 text-primary" />
                 <span class="font-semibold">Lokasi:</span>
-                <span class="ml-2">{jadwal.value.lokasi}</span>
+                <span class="ml-2 break-words whitespace-normal">
+                  {jadwal.value.lokasi}
+                </span>
               </div>
               {jadwal.value.file_url && (
                 <div class="flex items-center gap-3">
@@ -241,43 +250,47 @@ export default component$(() => {
                 <span class="ml-2">{jadwal.value.updated_at || "-"}</span>
               </div>
             </div>
-            {/* Deskripsi & Posyandu */}
-            <div class="p-6 flex flex-col gap-6">
-              <div>
+          </div>
+
+          {/* Deskripsi & Posyandu */}
+          <div class="grid grid-cols-1 gap-4">
+            <div class="card bg-base-100 shadow-xl p-5">
+              <div class="flex items-center gap-2 mb-2">
+                <LuClipboardList class="w-5 h-5 text-primary" />
+                <span class="font-semibold">Deskripsi Kegiatan</span>
+              </div>
+              <div class="bg-base-200 rounded p-3 text-base-content/80 break-words whitespace-normal">
+                {jadwal.value.deskripsi}
+              </div>
+            </div>
+            {jadwal.value.posyandu && (
+              <div class="card bg-base-100 shadow-xl p-5">
                 <div class="flex items-center gap-2 mb-2">
-                  <LuClipboardList class="w-5 h-5 text-primary" />
-                  <span class="font-semibold">Deskripsi Kegiatan</span>
+                  <LuBuilding class="w-5 h-5 text-primary" />
+                  <span class="font-semibold">Info Posyandu</span>
                 </div>
-                <div class="bg-base-200 rounded p-3 text-base-content/80">
-                  {jadwal.value.deskripsi}
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center gap-2">
+                    <LuUsers class="w-4 h-4 text-info" />
+                    <span class="font-medium">
+                      {jadwal.value.posyandu.nama_posyandu}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <LuMapPin class="w-4 h-4 text-info" />
+                    <span class="break-words whitespace-normal">
+                      {jadwal.value.posyandu.alamat}
+                    </span>
+                  </div>
                 </div>
               </div>
-              {jadwal.value.posyandu && (
-                <div>
-                  <div class="flex items-center gap-2 mb-2">
-                    <LuBuilding class="w-5 h-5 text-primary" />
-                    <span class="font-semibold">Info Posyandu</span>
-                  </div>
-                  <div class="bg-base-200 rounded p-3 flex flex-col gap-1">
-                    <div class="flex items-center gap-2">
-                      <LuUsers class="w-4 h-4 text-info" />
-                      <span class="font-medium">
-                        {jadwal.value.posyandu.nama_posyandu}
-                      </span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <LuMapPin class="w-4 h-4 text-info" />
-                      <span>{jadwal.value.posyandu.alamat}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       )}
+
       {/* Tabs Section */}
-      <div id="jadwal-tabs" class="mt-8">
+      <div id="jadwal-tabs" class="mt-6">
         <div role="tablist" class="tabs tabs-lifted">
           <a
             role="tab"
@@ -288,6 +301,7 @@ export default component$(() => {
                 `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}#jadwal-tabs`,
               );
             }}
+            title="Monitoring"
           >
             <span class="flex items-center gap-2">
               <LuBarChart class="w-4 h-4" /> Monitoring
@@ -302,6 +316,7 @@ export default component$(() => {
                 `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi#jadwal-tabs`,
               );
             }}
+            title="Presensi"
           >
             <span class="flex items-center gap-2">
               <LuCalendar class="w-4 h-4" /> Presensi
@@ -334,6 +349,7 @@ export default component$(() => {
                         limit: monitoringLimit.value,
                       });
                     }}
+                    title="Limit per halaman"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -418,6 +434,7 @@ export default component$(() => {
               )}
             </div>
           )}
+
           {activeTab.value === "presensi" && (
             <div class="flex flex-col gap-4">
               {presensiError.value && (
@@ -440,6 +457,7 @@ export default component$(() => {
                       );
                       fetchPresensi({ page: 1, limit: presensiLimit.value });
                     }}
+                    title="Limit per halaman"
                   >
                     <option value={5}>5</option>
                     <option value={10}>10</option>
@@ -462,6 +480,7 @@ export default component$(() => {
                 loading={presensiLoading.value}
                 onDetail$={handlePresensiDetail}
                 onUpdateStatus$={handleUpdateStatus}
+                onBulkUpdate$={bulkUpdateStatus}
               />
               <PaginationControls
                 meta={{
