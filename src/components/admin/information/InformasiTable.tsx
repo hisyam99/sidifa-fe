@@ -1,6 +1,7 @@
 import { component$, Slot } from "@builder.io/qwik";
 import type { InformasiItem } from "~/types/informasi";
 import { Spinner } from "~/components/ui/Spinner";
+import { buildUploadUrl } from "~/utils/url";
 
 interface InformasiTableProps {
   items: InformasiItem[];
@@ -78,9 +79,9 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                   </div>
                 </td>
                 <td>
-                  {item.file_url ? (
+                  {item.file_url || item.file_name ? (
                     <a
-                      href={item.file_url}
+                      href={buildUploadUrl(item.file_url || item.file_name)}
                       target="_blank"
                       class="btn btn-ghost btn-xs link link-primary"
                       title="Lihat File"
@@ -99,10 +100,6 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                         />
                       </svg>
                     </a>
-                  ) : item.file_name ? (
-                    <span class="text-sm" title={item.file_name}>
-                      {item.file_name}
-                    </span>
                   ) : (
                     <span class="text-base-content/40">-</span>
                   )}

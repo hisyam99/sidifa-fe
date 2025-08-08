@@ -10,6 +10,7 @@ import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
 import { usePagination } from "~/hooks/usePagination";
 import { useDebouncer } from "~/utils/debouncer";
 import { useAuth } from "~/hooks";
+import { buildUploadUrl } from "~/utils/url";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -88,7 +89,7 @@ export default component$(() => {
                 title={item.judul}
                 category={item.tipe || "Informasi"}
                 image={
-                  item.file_url ||
+                  buildUploadUrl(item.file_url) ||
                   "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
                 }
                 excerpt={item.deskripsi}

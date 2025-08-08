@@ -4,6 +4,7 @@ import { useLocation } from "@builder.io/qwik-city";
 import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
 import { useAuth } from "~/hooks";
 import { GenericLoadingSpinner } from "~/components/common";
+import { buildUploadUrl } from "~/utils/url";
 
 export default component$(() => {
   const loc = useLocation();
@@ -34,7 +35,7 @@ export default component$(() => {
             <p class="mt-4">
               <a
                 class="link link-primary"
-                href={item.value.file_url}
+                href={buildUploadUrl(item.value.file_url)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

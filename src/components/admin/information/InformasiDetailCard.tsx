@@ -1,5 +1,6 @@
 import { component$, QRL } from "@builder.io/qwik";
 import type { InformasiItem } from "~/types/informasi";
+import { buildUploadUrl } from "~/utils/url";
 
 interface InformasiDetailCardProps {
   item: InformasiItem;
@@ -26,12 +27,10 @@ export const InformasiDetailCard = component$(
           </div>
           <div>
             <b>File:</b>{" "}
-            {item.file_url ? (
-              <a href={item.file_url} target="_blank" class="link link-primary">
+            {item.file_url || item.file_name ? (
+              <a href={buildUploadUrl(item.file_url || item.file_name)} target="_blank" class="link link-primary">
                 Lihat File
               </a>
-            ) : item.file_name ? (
-              <span>{item.file_name}</span>
             ) : (
               "-"
             )}

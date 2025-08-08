@@ -7,6 +7,7 @@ import {
   type NoSerialize,
 } from "@builder.io/qwik";
 import { GenericLoadingSpinner } from "~/components/common";
+import { buildUploadUrl } from "~/utils/url";
 
 export interface InformasiFormData {
   judul: string;
@@ -124,7 +125,7 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         {formState.value.file_url && !selectedFile.value && (
           <div class="mt-2">
             <a
-              href={formState.value.file_url}
+              href={buildUploadUrl(formState.value.file_url)}
               target="_blank"
               class="link link-primary text-sm"
             >
