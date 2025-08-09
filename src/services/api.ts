@@ -574,6 +574,55 @@ export const adminLowonganService = {
 };
 // ADD END: Admin Lowongan service
 
+// ADD START: Kader Lowongan service
+export const kaderLowonganService = {
+  async list(params: {
+    limit?: number;
+    page?: number;
+    nama_lowongan?: string;
+    nama_perusahaan?: string;
+    jenis_pekerjaan?: string;
+    lokasi?: string;
+    jenis_difasilitas?: string;
+    status?: string;
+  }) {
+    if (typeof window === "undefined") {
+      return {
+        data: [],
+        meta: {
+          totalData: 0,
+          totalPage: 1,
+          currentPage: 1,
+          limit: params.limit ?? 10,
+        },
+      };
+    }
+    const query = new URLSearchParams();
+    if (params.limit) query.append("limit", String(params.limit));
+    if (params.page) query.append("page", String(params.page));
+    if (params.nama_lowongan)
+      query.append("nama_lowongan", params.nama_lowongan);
+    if (params.nama_perusahaan)
+      query.append("nama_perusahaan", params.nama_perusahaan);
+    if (params.jenis_pekerjaan)
+      query.append("jenis_pekerjaan", params.jenis_pekerjaan);
+    if (params.lokasi) query.append("lokasi", params.lokasi);
+    if (params.jenis_difasilitas)
+      query.append("jenis_difasilitas", params.jenis_difasilitas);
+    if (params.status) query.append("status", params.status);
+
+    const response = await api.get(`/kader/lowongan?${query.toString()}`);
+    return response.data;
+  },
+  async detail(id: string) {
+    if (typeof window === "undefined") return null;
+    const response = await api.get(`/kader/lowongan/detail/${id}`);
+    const body = response.data;
+    return body?.data ?? body;
+  },
+};
+// ADD END: Kader Lowongan service
+
 // ADD START: Kader Informasi & Edukasi service
 export const informasiEdukasiKaderService = {
   async list(params: {
