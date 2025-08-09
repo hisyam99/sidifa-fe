@@ -17,26 +17,26 @@ export interface SidebarProps {
 
 export const Sidebar = component$<SidebarProps>((props) => {
   return (
-    <aside class={`drawer-side z-40 ${props.class ?? "pt-16"}`}>
+    <aside class={`drawer-side h-screen pt-16 lg:pt-0 ${props.class ?? ""}`}>
       <label
         for={props.drawerId}
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
-      <ul
-        class={`bg-base-100 lg:bg-transparent menu p-4 w-80 min-h-full text-base-content`}
-      >
-        <li class="text-xl font-bold p-4 hidden lg:block">{props.title}</li>
-        {props.menuItems.map((item) => (
-          <SidebarMenuItem
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-          />
-        ))}
-        <Slot />
-      </ul>
+      <div class="h-full bg-base-100/95 lg:bg-transparent backdrop-blur supports-[backdrop-filter]:bg-base-100/70 lg:mx-4 lg:rounded-2xl lg:shadow-lg">
+        {/* Header dihapus total sesuai permintaan */}
+        <ul class="menu px-2 py-3 gap-1">
+          {props.menuItems.map((item) => (
+            <SidebarMenuItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+            />
+          ))}
+          <Slot />
+        </ul>
+      </div>
     </aside>
   );
 });

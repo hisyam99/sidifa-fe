@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 
@@ -7,22 +7,33 @@ const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;
 interface SidebarMenuItemProps {
   href: string;
   label: string;
-  icon: string; // Sekarang string, bukan any
-  onClick$?: QRL<() => void>;
+  icon?: any; // accept component reference or string key
 }
 
 export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
-  const { href, label, icon, onClick$ } = props;
+  const { href, label, icon } = props;
   const location = useLocation();
 
-  const isActive = location.url.pathname === href;
-  const Icon = icon ? ICON_LOOKUP_MAP[icon] : null;
+  const current = location.url.pathname;
+  const isActive = current === href || current.startsWith(href + "/");
+  const IconComp = typeof icon === "string" ? ICON_LOOKUP_MAP[icon] : icon;
 
   return (
-    <li class={isActive ? "bordered" : ""}>
-      <a href={href} onClick$={onClick$}>
-        {Icon && <Icon class="w-5 h-5" />}
-        {label}
+    <li>
+      <a
+        href={href}
+        class={`flex items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-primary/10 hover:text-primary ${
+          isActive ? "bg-primary/10 text-primary font-semibold" : ""
+        }`}
+      >
+        {IconComp && (
+          <span
+            class={`inline-flex items-center justify-center w-8 h-8 rounded-lg ${isActive ? "bg-primary/15" : "bg-base-200"}`}
+          >
+            <IconComp class="w-4 h-4" />
+          </span>
+        )}
+        <span class="truncate">{label}</span>
       </a>
     </li>
   );

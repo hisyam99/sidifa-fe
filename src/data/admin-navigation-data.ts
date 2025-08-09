@@ -4,11 +4,9 @@ import {
   LuUsers,
   LuBuilding,
   LuKey,
-  LuSettings,
-  LuClipboardList,
   LuBookOpen,
-  LuBrain,
-} from "~/components/icons/lucide-optimized"; // Changed import source
+  LuBriefcase,
+} from "~/components/icons/lucide-optimized";
 
 interface AdminMenuItem {
   href: string;
@@ -38,23 +36,13 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     icon: LuUsers,
   },
   {
-    href: "/admin/manajemen-psikolog",
-    label: "Manajemen Psikolog",
-    icon: LuBrain,
-  },
-  {
     href: "/admin/informasi",
     label: "Informasi dan Edukasi",
     icon: LuBookOpen,
   },
   {
-    href: "/admin/laporan-sistem",
-    label: "Laporan Sistem",
-    icon: LuClipboardList,
-  },
-  {
-    href: "/dashboard/settings",
-    label: "Pengaturan",
-    icon: LuSettings,
+    href: "/admin/lowongan",
+    label: "Lowongan",
+    icon: LuBriefcase,
   },
 ];
