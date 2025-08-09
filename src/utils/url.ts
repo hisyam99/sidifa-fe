@@ -15,3 +15,32 @@ export function buildUploadUrl(nameOrPath?: string): string | undefined {
   cleaned = cleaned.replace(/^\//, "");
   return `${publicUploadsUrl}/${cleaned}`;
 }
+
+// Tambahan helper khusus subfolder
+function buildTypedUploadUrl(
+  nameOrPath: string | undefined,
+  subfolder: string,
+): string | undefined {
+  if (!nameOrPath) return undefined;
+  const raw = String(nameOrPath).trim();
+  if (isAbsoluteUrl(raw)) return raw;
+  let cleaned = raw.replace(/^https?:\/\/[^/]+/i, "");
+  cleaned = cleaned.replace(/^\/?uploads\/?/i, "");
+  cleaned = cleaned.replace(/^\//, "");
+  if (cleaned.toLowerCase().startsWith(`${subfolder.toLowerCase()}/`)) {
+    return `${publicUploadsUrl}/${cleaned}`;
+  }
+  return `${publicUploadsUrl}/${subfolder}/${cleaned}`;
+}
+
+export function buildJadwalPosyanduUrl(
+  nameOrPath?: string,
+): string | undefined {
+  return buildTypedUploadUrl(nameOrPath, "jadwal-posyandu");
+}
+
+export function buildLowonganUploadUrl(
+  nameOrPath?: string,
+): string | undefined {
+  return buildTypedUploadUrl(nameOrPath, "lowongan");
+}

@@ -28,7 +28,7 @@ import { useMonitoringIBK } from "~/hooks/useMonitoringIBK";
 import { MonitoringIBKTable } from "~/components/posyandu/monitoring/MonitoringIBKTable";
 import { MonitoringIBKForm } from "~/components/posyandu/monitoring/MonitoringIBKForm";
 import { IBKSearchSelect } from "~/components/posyandu/monitoring/IBKSearchSelect";
-import { buildUploadUrl } from "~/utils/url";
+import { buildJadwalPosyanduUrl } from "~/utils/url";
 
 function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
   return {
@@ -41,7 +41,7 @@ function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
     tanggal: apiData.tanggal,
     waktu_mulai: apiData.waktu_mulai,
     waktu_selesai: apiData.waktu_selesai,
-    file_url: buildUploadUrl(apiData.file_name || apiData.file_url),
+    file_url: buildJadwalPosyanduUrl(apiData.file_name || apiData.file_url),
     created_at: apiData.created_at,
     updated_at: apiData.updated_at,
     posyandu: apiData.posyandu || undefined,
@@ -242,7 +242,7 @@ export default component$(() => {
                   <LuFileText class="w-6 h-6 text-primary" />
                   <span class="font-semibold">File:</span>
                   <a
-                    href={buildUploadUrl(jadwal.value.file_url)}
+                    href={buildJadwalPosyanduUrl(jadwal.value.file_url)}
                     target="_blank"
                     class="link link-primary underline ml-2"
                   >

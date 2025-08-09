@@ -3,7 +3,7 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import { GenericLoadingSpinner } from "~/components/common";
-import { buildUploadUrl } from "~/utils/url";
+import { buildLowonganUploadUrl } from "~/utils/url";
 
 export default component$(() => {
   const loc = useLocation();
@@ -41,7 +41,7 @@ export default component$(() => {
             <p class="mt-4">
               <a
                 class="link link-primary"
-                href={buildUploadUrl(item.value.file_url)}
+                href={buildLowonganUploadUrl(item.value.file_url)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -3,7 +3,7 @@ import type { LowonganCreateRequest, LowonganItem } from "~/types/lowongan";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { object, string, nonEmpty, pipe, optional } from "valibot";
 import FormFieldModular from "~/components/ui/FormFieldModular";
-import { buildUploadUrl } from "~/utils/url";
+import { buildLowonganUploadUrl } from "~/utils/url";
 
 export type LowonganFormData = Omit<LowonganCreateRequest, "file"> & {
   file?: File | string;
@@ -273,7 +273,7 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
         <div class="alert alert-info p-2 text-xs">
           File lama:{" "}
           <a
-            href={buildUploadUrl(init.file_name)}
+            href={buildLowonganUploadUrl(init.file_name)}
             target="_blank"
             rel="noopener noreferrer"
             class="link link-primary underline break-all"

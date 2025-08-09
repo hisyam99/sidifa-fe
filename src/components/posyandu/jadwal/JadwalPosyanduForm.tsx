@@ -7,7 +7,7 @@ import type {
   JadwalPosyanduItem,
 } from "~/types";
 import FormFieldModular from "~/components/ui/FormFieldModular";
-import { buildUploadUrl } from "~/utils/url";
+import { buildJadwalPosyanduUrl } from "~/utils/url";
 
 interface JadwalPosyanduFormProps {
   initialData?: Partial<JadwalPosyanduItem>;
@@ -245,7 +245,7 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
             <div class="alert alert-info p-2 text-xs">
               File lama:{" "}
               <a
-                href={buildUploadUrl(initialData?.file_name)}
+                href={buildJadwalPosyanduUrl(initialData?.file_name)}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link link-primary underline break-all"
