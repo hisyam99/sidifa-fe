@@ -49,8 +49,16 @@ export default component$(() => {
   // Lazy effects if needed in future (summary counts)
   useVisibleTask$(() => {});
 
-  const handleFilterChange = $(() => {
-    resetPage();
+  const handleFilterChange = $(async () => {
+    await resetPage();
+    // Trigger fetch immediately with page=1 so user sees results without paging
+    if (isLoggedIn.value) {
+      await fetchList({
+        limit: currentLimit.value,
+        page: 1,
+        ...filterOptions.value,
+      });
+    }
   });
 
   const handleDeleteClick = $((id: string) => {

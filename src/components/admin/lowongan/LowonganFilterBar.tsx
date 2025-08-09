@@ -1,5 +1,6 @@
-import { component$, PropFunction, Signal } from "@builder.io/qwik";
+import { component$, PropFunction, Signal, $ } from "@builder.io/qwik";
 import type { LowonganFilterOptions } from "~/types/lowongan";
+import { useDebouncer } from "~/utils/debouncer";
 
 interface LowonganFilterBarProps {
   filterOptions: Signal<LowonganFilterOptions>;
@@ -10,6 +11,13 @@ interface LowonganFilterBarProps {
 
 export const LowonganFilterBar = component$<LowonganFilterBarProps>(
   ({ filterOptions, onFilterChange$, limit, onLimitChange$ }) => {
+    const applyChange = $(async () => onFilterChange$());
+    const debouncedApply = useDebouncer(applyChange, 400);
+
+    const setFilter = $((key: keyof LowonganFilterOptions, value: string) => {
+      filterOptions.value = { ...filterOptions.value, [key]: value };
+    });
+
     return (
       <div class="grid grid-cols-1 md:grid-cols-6 gap-3 bg-base-100 p-4 rounded-lg shadow">
         <input
@@ -17,11 +25,8 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
           placeholder="Nama lowongan"
           value={filterOptions.value.nama_lowongan || ""}
           onInput$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              nama_lowongan: (e.target as HTMLInputElement).value,
-            };
-            onFilterChange$();
+            setFilter("nama_lowongan", (e.target as HTMLInputElement).value);
+            debouncedApply();
           }}
         />
         <input
@@ -29,11 +34,8 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
           placeholder="Perusahaan"
           value={filterOptions.value.nama_perusahaan || ""}
           onInput$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              nama_perusahaan: (e.target as HTMLInputElement).value,
-            };
-            onFilterChange$();
+            setFilter("nama_perusahaan", (e.target as HTMLInputElement).value);
+            debouncedApply();
           }}
         />
         <input
@@ -41,11 +43,8 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
           placeholder="Jenis pekerjaan"
           value={filterOptions.value.jenis_pekerjaan || ""}
           onInput$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              jenis_pekerjaan: (e.target as HTMLInputElement).value,
-            };
-            onFilterChange$();
+            setFilter("jenis_pekerjaan", (e.target as HTMLInputElement).value);
+            debouncedApply();
           }}
         />
         <input
@@ -53,11 +52,8 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
           placeholder="Lokasi"
           value={filterOptions.value.lokasi || ""}
           onInput$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              lokasi: (e.target as HTMLInputElement).value,
-            };
-            onFilterChange$();
+            setFilter("lokasi", (e.target as HTMLInputElement).value);
+            debouncedApply();
           }}
         />
         <input
@@ -65,22 +61,19 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
           placeholder="Jenis difasilitas"
           value={filterOptions.value.jenis_difasilitas || ""}
           onInput$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              jenis_difasilitas: (e.target as HTMLInputElement).value,
-            };
-            onFilterChange$();
+            setFilter(
+              "jenis_difasilitas",
+              (e.target as HTMLInputElement).value,
+            );
+            debouncedApply();
           }}
         />
         <select
           class="select select-bordered w-full"
           value={filterOptions.value.status || ""}
           onChange$={(e) => {
-            filterOptions.value = {
-              ...filterOptions.value,
-              status: (e.target as HTMLSelectElement).value,
-            };
-            onFilterChange$();
+            setFilter("status", (e.target as HTMLSelectElement).value);
+            debouncedApply();
           }}
         >
           <option value="">Semua Status</option>
