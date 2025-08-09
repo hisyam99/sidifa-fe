@@ -611,12 +611,12 @@ export const kaderLowonganService = {
       query.append("jenis_difasilitas", params.jenis_difasilitas);
     if (params.status) query.append("status", params.status);
 
-    const response = await api.get(`/kader/lowongan?${query.toString()}`);
+    const response = await api.get(`/kader/lowongan-kader?${query.toString()}`);
     return response.data;
   },
   async detail(id: string) {
     if (typeof window === "undefined") return null;
-    const response = await api.get(`/kader/lowongan/detail/${id}`);
+    const response = await api.get(`/kader/lowongan-kader/detail/${id}`);
     const body = response.data;
     return body?.data ?? body;
   },

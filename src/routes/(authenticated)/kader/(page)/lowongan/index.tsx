@@ -7,6 +7,7 @@ import { PaginationControls } from "~/components/common/PaginationControls";
 import { usePagination } from "~/hooks/usePagination";
 import type { LowonganFilterOptions } from "~/types/lowongan";
 import { useLowonganKader } from "~/hooks/useLowonganKader";
+import { GenericLoadingSpinner } from "~/components/common";
 
 export default component$(() => {
   const nav = useNavigate();
@@ -39,7 +40,14 @@ export default component$(() => {
     });
   });
 
-  useVisibleTask$(() => {});
+  // Ensure initial client-side fetch occurs
+  useVisibleTask$(async () => {
+    await fetchList({
+      limit: currentLimit.value,
+      page: currentPage.value,
+      ...filterOptions.value,
+    });
+  });
 
   return (
     <div>
@@ -59,7 +67,7 @@ export default component$(() => {
         />
       </div>
 
-      {loading.value && <div class="loading loading-spinner loading-lg" />}
+      {loading.value && <GenericLoadingSpinner />}
       {error.value && <div class="alert alert-error mb-4">{error.value}</div>}
 
       <div class="space-y-6">
