@@ -328,7 +328,9 @@ export default component$(() => {
               activeTab.value = "monitoring";
               // Update hash without route reload
               window.history.replaceState(null, "", "#tab=monitoring");
-              document.getElementById("jadwal-tabs")?.scrollIntoView({ behavior: "smooth" });
+              document
+                .getElementById("jadwal-tabs")
+                ?.scrollIntoView({ behavior: "smooth" });
             })}
             title="Monitoring"
           >
@@ -344,7 +346,9 @@ export default component$(() => {
               activeTab.value = "presensi";
               // Update hash without route reload
               window.history.replaceState(null, "", "#tab=presensi");
-              document.getElementById("jadwal-tabs")?.scrollIntoView({ behavior: "smooth" });
+              document
+                .getElementById("jadwal-tabs")
+                ?.scrollIntoView({ behavior: "smooth" });
             })}
             title="Presensi"
           >

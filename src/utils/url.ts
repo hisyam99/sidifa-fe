@@ -44,3 +44,9 @@ export function buildLowonganUploadUrl(
 ): string | undefined {
   return buildTypedUploadUrl(nameOrPath, "lowongan");
 }
+
+export function buildInformasiEdukasiUrl(
+  nameOrPath?: string,
+): string | undefined {
+  return buildTypedUploadUrl(nameOrPath, "informasi-edukasi");
+}
