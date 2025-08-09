@@ -1,8 +1,38 @@
-import { component$, PropFunction } from "@builder.io/qwik";
+import { component$, PropFunction, useSignal } from "@builder.io/qwik";
 import type { LowonganCreateRequest, LowonganItem } from "~/types/lowongan";
+import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { object, string, nonEmpty, pipe, optional } from "valibot";
+import FormFieldModular from "~/components/ui/FormFieldModular";
+import { buildUploadUrl } from "~/utils/url";
 
 export type LowonganFormData = Omit<LowonganCreateRequest, "file"> & {
   file?: File | string;
+};
+
+const lowonganSchema = object({
+  nama_lowongan: pipe(string(), nonEmpty("Nama lowongan wajib diisi")),
+  nama_perusahaan: pipe(string(), nonEmpty("Nama perusahaan wajib diisi")),
+  jenis_pekerjaan: pipe(string(), nonEmpty("Jenis pekerjaan wajib diisi")),
+  lokasi: pipe(string(), nonEmpty("Lokasi wajib diisi")),
+  jenis_difasilitas: pipe(string(), nonEmpty("Jenis difasilitas wajib diisi")),
+  deskripsi: pipe(string(), nonEmpty("Deskripsi wajib diisi")),
+  status: pipe(string(), nonEmpty("Status wajib dipilih")),
+  tanggal_mulai: string(),
+  tanggal_selesai: string(),
+  file: optional(string()),
+});
+
+type LowonganFormValues = {
+  nama_lowongan: string;
+  nama_perusahaan: string;
+  jenis_pekerjaan: string;
+  lokasi: string;
+  jenis_difasilitas: string;
+  deskripsi: string;
+  status: string;
+  tanggal_mulai?: string;
+  tanggal_selesai?: string;
+  file?: string;
 };
 
 interface LowonganFormProps {
@@ -14,156 +44,274 @@ interface LowonganFormProps {
 
 export const LowonganForm = component$<LowonganFormProps>((props) => {
   const init = props.initialData || {};
+  const isEdit = Boolean((init as any).id || init.file_name);
+  const fileError = useSignal<string | null>(null);
+
+  const [form, { Form, Field }] = useForm<LowonganFormValues>({
+    loader: {
+      value: {
+        nama_lowongan: init.nama_lowongan || "",
+        nama_perusahaan: init.nama_perusahaan || "",
+        jenis_pekerjaan: init.jenis_pekerjaan || "",
+        lokasi: init.lokasi || "",
+        jenis_difasilitas: init.jenis_difasilitas || "",
+        deskripsi: init.deskripsi || "",
+        status: init.status || "aktif",
+        tanggal_mulai: (init.tanggal_mulai || "").substring(0, 10),
+        tanggal_selesai: (init.tanggal_selesai || "").substring(0, 10),
+        file: "",
+      },
+    },
+    validate: valiForm$(lowonganSchema),
+    validateOn: "blur",
+    revalidateOn: "blur",
+  });
 
   return (
-    <form
+    <Form
       class="space-y-4"
-      onSubmit$={(e) => {
-        e.preventDefault();
-        const form = e.target as HTMLFormElement;
-        const fd = new FormData(form);
+      onSubmit$={async (values, ev) => {
+        const formEl = ev.target as HTMLFormElement;
+        const fileInput = formEl.querySelector(
+          'input[name="file"]',
+        ) as HTMLInputElement | null;
+        const fileObj = fileInput?.files?.[0];
+
+        // Require file on create
+        if (!isEdit && !fileObj) {
+          fileError.value = "File wajib diunggah saat membuat lowongan baru.";
+          return;
+        }
+        fileError.value = null;
+
         const payload: LowonganFormData = {
-          nama_lowongan: String(fd.get("nama_lowongan") || ""),
-          nama_perusahaan: String(fd.get("nama_perusahaan") || ""),
-          jenis_pekerjaan: String(fd.get("jenis_pekerjaan") || ""),
-          lokasi: String(fd.get("lokasi") || ""),
-          jenis_difasilitas: String(fd.get("jenis_difasilitas") || ""),
-          deskripsi: String(fd.get("deskripsi") || ""),
-          status: String(fd.get("status") || "aktif"),
-          tanggal_mulai: String(fd.get("tanggal_mulai") || ""),
-          tanggal_selesai: String(fd.get("tanggal_selesai") || ""),
-          file: (fd.get("file") as File) || undefined,
+          nama_lowongan: values.nama_lowongan,
+          nama_perusahaan: values.nama_perusahaan,
+          jenis_pekerjaan: values.jenis_pekerjaan,
+          lokasi: values.lokasi,
+          jenis_difasilitas: values.jenis_difasilitas,
+          deskripsi: values.deskripsi,
+          status: values.status || "aktif",
+          tanggal_mulai: values.tanggal_mulai,
+          tanggal_selesai: values.tanggal_selesai,
+          file: fileObj || undefined,
         };
-        props.onSubmit$(payload);
+        await props.onSubmit$(payload);
       }}
+      encType="multipart/form-data"
     >
+      {form.invalid && (
+        <div class="alert alert-error">
+          Ada data yang belum valid/terisi. Silakan cek kembali field yang
+          bertanda merah di bawah ini!
+        </div>
+      )}
+
+      <Field name="nama_lowongan" type="string">
+        {(field, fieldProps) => (
+          <>
+            <FormFieldModular
+              field={field}
+              props={fieldProps}
+              type="text"
+              label="Nama Lowongan"
+              placeholder="Nama lowongan"
+              required
+            />
+            {field.error && (
+              <div class="text-error text-xs mt-1">{field.error}</div>
+            )}
+          </>
+        )}
+      </Field>
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="label">
-            <span class="label-text">Nama Lowongan</span>
-          </label>
-          <input
-            name="nama_lowongan"
-            required
-            class="input input-bordered w-full"
-            defaultValue={init.nama_lowongan || ""}
-          />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Nama Perusahaan</span>
-          </label>
-          <input
-            name="nama_perusahaan"
-            required
-            class="input input-bordered w-full"
-            defaultValue={init.nama_perusahaan || ""}
-          />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Jenis Pekerjaan</span>
-          </label>
-          <input
-            name="jenis_pekerjaan"
-            required
-            class="input input-bordered w-full"
-            defaultValue={init.jenis_pekerjaan || ""}
-          />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Lokasi</span>
-          </label>
-          <input
-            name="lokasi"
-            required
-            class="input input-bordered w-full"
-            defaultValue={init.lokasi || ""}
-          />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Jenis Difasilitas</span>
-          </label>
-          <input
-            name="jenis_difasilitas"
-            required
-            class="input input-bordered w-full"
-            defaultValue={init.jenis_difasilitas || ""}
-          />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Status</span>
-          </label>
-          <select
-            name="status"
-            class="select select-bordered w-full"
-            value={init.status || "aktif"}
+        <Field name="nama_perusahaan" type="string">
+          {(field, fieldProps) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={fieldProps}
+                type="text"
+                label="Nama Perusahaan"
+                placeholder="Nama perusahaan"
+                required
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+        <Field name="jenis_pekerjaan" type="string">
+          {(field, fieldProps) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={fieldProps}
+                type="text"
+                label="Jenis Pekerjaan"
+                placeholder="Contoh: Full-time"
+                required
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+        <Field name="lokasi" type="string">
+          {(field, fieldProps) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={fieldProps}
+                type="text"
+                label="Lokasi"
+                placeholder="Contoh: Jakarta"
+                required
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+        <Field name="jenis_difasilitas" type="string">
+          {(field, fieldProps) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={fieldProps}
+                type="text"
+                label="Jenis Difasilitas"
+                placeholder="Contoh: Tuna Daksa"
+                required
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+      </div>
+
+      <Field name="deskripsi" type="string">
+        {(field, fieldProps) => (
+          <>
+            <FormFieldModular
+              field={field}
+              props={fieldProps}
+              type="textarea"
+              label="Deskripsi"
+              placeholder="Deskripsi pekerjaan"
+              required
+            />
+            {field.error && (
+              <div class="text-error text-xs mt-1">{field.error}</div>
+            )}
+          </>
+        )}
+      </Field>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Field name="status" type="string">
+          {(field) => (
+            <div>
+              <label class="label">
+                <span class="label-text">Status</span>
+              </label>
+              <select
+                class="select select-bordered w-full"
+                value={field.value || "aktif"}
+                onInput$={(e) =>
+                  (field.value = (e.target as HTMLSelectElement).value)
+                }
+              >
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+              </select>
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </div>
+          )}
+        </Field>
+        <Field name="tanggal_mulai" type="string">
+          {(field, propsField) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={propsField}
+                type="date"
+                label="Tanggal Mulai"
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+        <Field name="tanggal_selesai" type="string">
+          {(field, propsField) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={propsField}
+                type="date"
+                label="Tanggal Selesai"
+              />
+              {field.error && (
+                <div class="text-error text-xs mt-1">{field.error}</div>
+              )}
+            </>
+          )}
+        </Field>
+      </div>
+
+      {typeof init.file_name === "string" && init.file_name && (
+        <div class="alert alert-info p-2 text-xs">
+          File lama:{" "}
+          <a
+            href={buildUploadUrl(init.file_name)}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link link-primary underline break-all"
           >
-            <option value="aktif">Aktif</option>
-            <option value="nonaktif">Nonaktif</option>
-          </select>
+            {init.file_name}
+          </a>
         </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Tanggal Mulai</span>
-          </label>
+      )}
+
+      <div class="space-y-2">
+        <label class="flex flex-col gap-1 text-sm font-medium">
+          <span>Upload File {isEdit ? "(Opsional)" : "(Wajib)"}</span>
           <input
-            type="date"
-            name="tanggal_mulai"
-            class="input input-bordered w-full"
-            defaultValue={(init.tanggal_mulai || "").substring(0, 10)}
+            name="file"
+            type="file"
+            class="input input-bordered w-full focus-ring"
+            accept="*"
           />
-        </div>
-        <div>
-          <label class="label">
-            <span class="label-text">Tanggal Selesai</span>
-          </label>
-          <input
-            type="date"
-            name="tanggal_selesai"
-            class="input input-bordered w-full"
-            defaultValue={(init.tanggal_selesai || "").substring(0, 10)}
-          />
+        </label>
+        {fileError.value && (
+          <div class="text-error text-xs mt-1">{fileError.value}</div>
+        )}
+        <div class="text-xs text-gray-500">
+          {isEdit
+            ? "Bisa dikosongkan jika tidak ingin mengganti file."
+            : "Wajib unggah file untuk lowongan baru."}
         </div>
       </div>
-      <div>
-        <label class="label">
-          <span class="label-text">Deskripsi</span>
-        </label>
-        <textarea
-          name="deskripsi"
-          required
-          class="textarea textarea-bordered w-full"
-          rows={5}
-          defaultValue={init.deskripsi || ""}
-        />
-      </div>
-      <div>
-        <label class="label">
-          <span class="label-text">Lampiran (opsional)</span>
-        </label>
-        <input
-          type="file"
-          name="file"
-          class="file-input file-input-bordered w-full"
-        />
-        {init.file_name || init.file_url ? (
-          <p class="text-sm mt-1">
-            File saat ini: {init.file_name || init.file_url}
-          </p>
-        ) : null}
-      </div>
-      <div class="flex justify-end gap-2">
-        <button
-          type="submit"
-          class={`btn btn-primary ${props.loading ? "btn-disabled" : ""}`}
-        >
-          {props.submitButtonText || "Simpan"}
-        </button>
-      </div>
-    </form>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-full"
+        disabled={form.submitting || props.loading}
+      >
+        {form.submitting || props.loading
+          ? "Menyimpan..."
+          : props.submitButtonText || "Simpan Lowongan"}
+      </button>
+    </Form>
   );
 });
