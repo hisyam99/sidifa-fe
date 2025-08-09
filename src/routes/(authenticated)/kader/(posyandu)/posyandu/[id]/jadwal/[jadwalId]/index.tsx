@@ -56,7 +56,12 @@ export default component$(() => {
   const error = useSignal<string | null>(null);
   const jadwal = useSignal<JadwalPosyanduItem | null>(null);
   const activeTab = useSignal<"monitoring" | "presensi">(
-    location.url.pathname.includes("/presensi") ? "presensi" : "monitoring",
+    // Prefer hash (#tab=presensi) to avoid full route nav; fallback to path
+    (location.url.hash || "").includes("tab=presensi")
+      ? "presensi"
+      : location.url.pathname.includes("/presensi")
+        ? "presensi"
+        : "monitoring",
   );
   const monitoringShowForm = useSignal(false);
   const monitoringEditId = useSignal<string | null>(null);
@@ -175,6 +180,18 @@ export default component$(() => {
     if (activeTab.value === "monitoring") {
       fetchMonitoring();
     }
+  });
+
+  // Sync tab with hash changes (back/forward)
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const handler = () => {
+      activeTab.value = (location.url.hash || "").includes("tab=presensi")
+        ? "presensi"
+        : "monitoring";
+    };
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
   });
 
   return (
@@ -306,12 +323,13 @@ export default component$(() => {
           <a
             role="tab"
             class={`tab ${activeTab.value === "monitoring" ? "tab-active" : ""}`}
-            onClick$={() => {
+            href="#tab=monitoring"
+            onClick$={$(() => {
               activeTab.value = "monitoring";
-              nav(
-                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}#jadwal-tabs`,
-              );
-            }}
+              // Update hash without route reload
+              window.history.replaceState(null, "", "#tab=monitoring");
+              document.getElementById("jadwal-tabs")?.scrollIntoView({ behavior: "smooth" });
+            })}
             title="Monitoring"
           >
             <span class="flex items-center gap-2">
@@ -321,12 +339,13 @@ export default component$(() => {
           <a
             role="tab"
             class={`tab ${activeTab.value === "presensi" ? "tab-active" : ""}`}
-            onClick$={() => {
+            href="#tab=presensi"
+            onClick$={$(() => {
               activeTab.value = "presensi";
-              nav(
-                `/kader/posyandu/${location.params.id}/jadwal/${location.params.jadwalId}/presensi#jadwal-tabs`,
-              );
-            }}
+              // Update hash without route reload
+              window.history.replaceState(null, "", "#tab=presensi");
+              document.getElementById("jadwal-tabs")?.scrollIntoView({ behavior: "smooth" });
+            })}
             title="Presensi"
           >
             <span class="flex items-center gap-2">
