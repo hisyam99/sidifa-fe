@@ -15,10 +15,9 @@ export const InformasiFilterBar = component$(
 
     const typeOptions = [
       { label: "Semua Tipe", value: "" },
-      { label: "Artikel", value: "artikel" },
-      { label: "Panduan", value: "panduan" },
-      { label: "Video", value: "video" },
-      { label: "Infografis", value: "infografis" },
+      { label: "Artikel", value: "ARTIKEL" },
+      { label: "Panduan", value: "PANDUAN" },
+      { label: "Regulasi", value: "REGULASI" },
     ];
 
     return (

@@ -70,41 +70,12 @@ export default component$(() => {
     if (!isLoggedIn.value) return;
 
     try {
-      const base = await informasiEdukasiAdminService.list({
-        page: 1,
-        limit: 1,
-      });
-      const totalAll = (base?.meta?.totalData ??
-        base?.meta?.total ??
-        0) as number;
-      totalInformasi.value = totalAll;
-
-      const [artikel, panduan, regulasi] = await Promise.all([
-        informasiEdukasiAdminService.list({
-          page: 1,
-          limit: 1,
-          tipe: "artikel",
-        }),
-        informasiEdukasiAdminService.list({
-          page: 1,
-          limit: 1,
-          tipe: "panduan",
-        }),
-        informasiEdukasiAdminService.list({
-          page: 1,
-          limit: 1,
-          tipe: "regulasi",
-        }),
-      ]);
-      totalArtikel.value = (artikel?.meta?.totalData ??
-        artikel?.meta?.total ??
-        0) as number;
-      totalPanduan.value = (panduan?.meta?.totalData ??
-        panduan?.meta?.total ??
-        0) as number;
-      totalRegulasi.value = (regulasi?.meta?.totalData ??
-        regulasi?.meta?.total ??
-        0) as number;
+      const stats = await informasiEdukasiAdminService.statistik();
+      const count = (stats as any)?.count ?? (stats as any) ?? {};
+      totalInformasi.value = Number(count.total ?? 0);
+      totalArtikel.value = Number(count.artikel ?? 0);
+      totalPanduan.value = Number(count.panduan ?? 0);
+      totalRegulasi.value = Number(count.regulasi ?? 0);
     } catch {
       // ignore summary errors; don't block table
     }

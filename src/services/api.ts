@@ -364,6 +364,14 @@ export const informasiEdukasiAdminService = {
     );
     return response.data;
   },
+  // NEW: Statistik endpoint for counts summary
+  async statistik() {
+    if (typeof window === "undefined") {
+      return { count: { total: 0, panduan: 0, artikel: 0, regulasi: 0 } };
+    }
+    const response = await api.get(`/admin/informasi-edukasi/statistik`);
+    return response.data;
+  },
   async detail(id: string) {
     // Prevent API calls during SSG/server
     if (typeof window === "undefined") {

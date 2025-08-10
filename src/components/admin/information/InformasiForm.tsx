@@ -86,9 +86,9 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
           required
         >
           <option value="">Pilih Tipe</option>
-          <option value="artikel">Artikel</option>
-          <option value="panduan">Panduan</option>
-          <option value="regulasi">Regulasi</option>
+          <option value="ARTIKEL">Artikel</option>
+          <option value="PANDUAN">Panduan</option>
+          <option value="REGULASI">Regulasi</option>
         </select>
       </div>
       <div>
