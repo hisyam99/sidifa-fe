@@ -18,6 +18,7 @@ import {
 } from "~/utils/dashboard-utils";
 import { getRoleBenefitsData } from "~/data/profile-data";
 import { ProfileInfoItem, ProfileBenefitList, ProfileSection } from "./";
+import { Avatar } from "~/components/ui";
 
 export default component$(() => {
   const { user, loading, error, refreshUserData, logout } = useAuth();
@@ -125,18 +126,8 @@ export default component$(() => {
         <aside class="lg:col-span-1">
           <div class="card bg-base-100 shadow-lg">
             <div class="card-body items-center p-6">
-              <div class={`avatar placeholder mx-auto mb-4`}>
-                <div
-                  class={`w-24 rounded-full ${roleColorClass} text-primary-content`}
-                >
-                  <span class="text-3xl font-bold ">
-                    {user.value.email ? (
-                      user.value.email.charAt(0).toUpperCase()
-                    ) : (
-                      <div class="skeleton w-full h-full rounded-full"></div>
-                    )}
-                  </span>
-                </div>
+              <div class="mx-auto mb-4">
+                <Avatar email={user.value.email} size="w-24 h-24" />
               </div>
               <h2 class="font-bold text-lg text-center mb-1 truncate w-full">
                 {user.value.email}

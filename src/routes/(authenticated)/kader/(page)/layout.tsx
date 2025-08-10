@@ -22,14 +22,29 @@ export default component$(() => {
             <div class="sticky top-20">
               <div class="card bg-base-100 shadow-lg">
                 <div class="card-body items-center p-6">
-                  <div class={`avatar placeholder mx-auto mb-4`}>
-                    <div
-                      class={`w-24 rounded-full ${roleColorClass} text-primary-content`}
+                  <div class="mx-auto mb-4">
+                    <img
+                      src=""
+                      alt=""
+                      width={0}
+                      height={0}
+                      style={{ display: "none" }}
+                    />
+                    <span
+                      class={`inline-block p-1 rounded-full ${roleColorClass}`}
                     >
-                      <span class="text-3xl font-bold ">
-                        {user.value?.email?.charAt(0).toUpperCase() || "U"}
+                      <span class="bg-base-100 rounded-full block">
+                        <span class="inline-block">
+                          {/* Shared Avatar for initials fallback */}
+                          <span class="rounded-full inline-flex items-center justify-center w-24 h-24 bg-gradient-primary">
+                            <span class="text-3xl font-bold">
+                              {user.value?.email?.charAt(0).toUpperCase() ||
+                                "U"}
+                            </span>
+                          </span>
+                        </span>
                       </span>
-                    </div>
+                    </span>
                   </div>
                   <h2 class="font-bold text-lg text-center mb-1 truncate w-full">
                     {user.value?.email}
