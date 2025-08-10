@@ -59,7 +59,12 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
   });
 
   return (
-    <form class="space-y-4" onSubmit$={handleSubmit}>
+    <form
+      class="space-y-4"
+      preventdefault:submit
+      onSubmit$={handleSubmit}
+      enctype="multipart/form-data"
+    >
       <div>
         <label class="label">
           <span class="label-text">Judul</span>
@@ -112,8 +117,11 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         </label>
         <input
           type="file"
+          id="informasi-file-input"
+          name="file"
           class="file-input file-input-bordered w-full"
           accept="image/*,.pdf,.doc,.docx"
+          required
           onChange$={handleFileChange}
         />
         {selectedFile.value && (

@@ -408,6 +408,7 @@ export const informasiEdukasiAdminService = {
 
     const response = await api.patch(`/admin/informasi-edukasi`, formData, {
       params: { role: "admin", name: "Nam" },
+      headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
@@ -440,6 +441,7 @@ export const informasiEdukasiAdminService = {
 
     const response = await api.post(`/admin/informasi-edukasi`, formData, {
       params: { role: "admin", name: "Nam" },
+      headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
