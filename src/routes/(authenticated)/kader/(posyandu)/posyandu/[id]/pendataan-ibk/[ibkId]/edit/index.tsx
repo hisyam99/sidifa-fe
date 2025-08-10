@@ -197,7 +197,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="mx-auto p-4 w-full">
+    <div class="mx-auto w-full">
       <h1 class="text-2xl font-bold mb-4">Edit Data IBK</h1>
       {loading.value && <div class="loading loading-spinner loading-lg" />}
       {error.value && <div class="alert alert-error mb-3">{error.value}</div>}

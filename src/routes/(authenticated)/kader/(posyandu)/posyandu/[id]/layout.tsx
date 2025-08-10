@@ -41,7 +41,7 @@ export default component$(() => {
           type="checkbox"
           class="drawer-toggle"
         />
-        <div class="drawer-content flex flex-col p-4 md:p-8">
+        <div class="drawer-content flex flex-col p-2 md:p-4">
           <label
             for="drawer-posyandu-detail"
             class="btn btn-primary drawer-button lg:hidden mb-4 self-start"

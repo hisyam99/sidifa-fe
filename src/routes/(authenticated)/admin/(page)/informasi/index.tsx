@@ -40,7 +40,7 @@ export default component$(() => {
   const totalInformasi = useSignal<number>(0);
   const totalArtikel = useSignal<number>(0);
   const totalPanduan = useSignal<number>(0);
-  const totalDenganFile = useSignal<number>(0);
+  const totalRegulasi = useSignal<number>(0);
 
   const {
     currentPage,
@@ -79,7 +79,7 @@ export default component$(() => {
         0) as number;
       totalInformasi.value = totalAll;
 
-      const [artikel, panduan] = await Promise.all([
+      const [artikel, panduan, regulasi] = await Promise.all([
         informasiEdukasiAdminService.list({
           page: 1,
           limit: 1,
@@ -90,6 +90,11 @@ export default component$(() => {
           limit: 1,
           tipe: "panduan",
         }),
+        informasiEdukasiAdminService.list({
+          page: 1,
+          limit: 1,
+          tipe: "regulasi",
+        }),
       ]);
       totalArtikel.value = (artikel?.meta?.totalData ??
         artikel?.meta?.total ??
@@ -97,19 +102,9 @@ export default component$(() => {
       totalPanduan.value = (panduan?.meta?.totalData ??
         panduan?.meta?.total ??
         0) as number;
-
-      if (totalAll > 0) {
-        const all = await informasiEdukasiAdminService.list({
-          page: 1,
-          limit: totalAll,
-        });
-        const rows: InformasiItem[] = (all?.data || []) as InformasiItem[];
-        totalDenganFile.value = rows.filter(
-          (r: any) => !!(r.file_name || r.file_url),
-        ).length;
-      } else {
-        totalDenganFile.value = 0;
-      }
+      totalRegulasi.value = (regulasi?.meta?.totalData ??
+        regulasi?.meta?.total ??
+        0) as number;
     } catch {
       // ignore summary errors; don't block table
     }
@@ -260,8 +255,8 @@ export default component$(() => {
               />
             </svg>
           </div>
-          <div class="stat-title">Dengan File</div>
-          <div class="stat-value text-warning">{totalDenganFile.value}</div>
+          <div class="stat-title">Regulasi</div>
+          <div class="stat-value text-warning">{totalRegulasi.value}</div>
         </div>
       </div>
 

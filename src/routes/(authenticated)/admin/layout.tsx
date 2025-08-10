@@ -31,7 +31,7 @@ export default component$(() => {
   return (
     <div class="min-h-screen bg-base-200/60">
       <NavigationAdmin />
-      <div class="drawer lg:drawer-open">
+      <div class="container mx-auto drawer lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:p-8 relative">
           {/* Global loading overlay */}

@@ -35,7 +35,7 @@ export const AdminPosyanduTable = component$(
 
           {/* Loading Overlay */}
           {loading && (
-            <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center z-10">
+            <div class="absolute inset-0 bg-base-100/70 rounded-3xl flex justify-center items-center">
               <LuLoader2
                 class="animate-spin text-primary"
                 style={{ width: "32px", height: "32px" }}

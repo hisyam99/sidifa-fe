@@ -42,7 +42,7 @@ export default component$(() => {
   ];
 
   return (
-    <div class="container mx-auto py-8">
+    <div class="container mx-auto">
       <RoleDashboardHeader
         title="Dashboard Kader"
         welcomeMessage="Selamat datang,"

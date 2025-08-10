@@ -70,7 +70,7 @@ export default component$(() => {
   );
 
   return (
-    <div class="mx-auto p-4 w-full">
+    <div class="mx-auto w-full">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Jadwal Posyandu</h1>
         <button
