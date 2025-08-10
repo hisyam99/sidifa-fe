@@ -69,7 +69,7 @@ export const NavigationGuest = component$(() => {
 
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
-      <div class="container mx-auto px-4 flex items-center min-w-0">
+      <div class="container mx-auto flex items-center min-w-0">
         {/* Logo kiri dengan teks kecil di mobile */}
         <BrandLogo variant="nav" size="sm" />
 

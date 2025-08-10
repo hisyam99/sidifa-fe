@@ -45,14 +45,14 @@ export const SidifaFooter = component$(() => {
             title="Layanan"
             gradientClass="text-gradient-secondary"
           >
-            <ul class="space-y-2" role="list">
+            <ul class="space-y-2">
               <FooterLink href="/" label="Beranda" />
               <FooterLink href="/auth/login" label="Masuk" />
               <FooterLink href="/auth/signup/kader" label="Daftar Posyandu" />
-              <FooterLink
+              {/* <FooterLink
                 href="/auth/signup/psikolog"
                 label="Daftar Psikolog"
-              />
+              /> */}
             </ul>
           </FooterSection>
 

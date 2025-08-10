@@ -53,14 +53,17 @@ export default component$(() => {
           </div>
 
           {/* Search Box */}
-          <SearchBox
-            placeholder="Cari pertanyaan yang ingin dijawab..."
-            value={searchTerm.value}
-            onInput$={$(
-              (e) => (searchTerm.value = (e.target as HTMLInputElement).value),
-            )}
-            onEnter$={$(() => {})}
-          />
+          <div class="max-w-2xl mx-auto mb-10">
+            <SearchBox
+              placeholder="Cari pertanyaan yang ingin dijawab..."
+              value={searchTerm.value}
+              onInput$={$(
+                (e: Event) =>
+                  (searchTerm.value = (e.target as HTMLInputElement).value),
+              )}
+              onEnter$={$(() => {})}
+            />
+          </div>
 
           {/* FAQ Categories */}
           <div class="max-w-5xl mx-auto space-y-8">
@@ -70,7 +73,7 @@ export default component$(() => {
                 categoryIndex: number, // Call as function and explicitly type parameters
               ) => (
                 <FAQCategory
-                  key={categoryIndex}
+                  key={category.judul}
                   category={category}
                   categoryIndex={categoryIndex}
                 />

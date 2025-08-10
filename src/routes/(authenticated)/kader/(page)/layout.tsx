@@ -2,16 +2,12 @@ import { component$, Slot } from "@builder.io/qwik";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 import { useAuth } from "~/hooks";
 import { LuUser } from "~/components/icons/lucide-optimized";
-import {
-  getRoleDisplayName,
-  getRoleIcon,
-  getRoleColor,
-} from "~/utils/dashboard-utils";
+import { getRoleDisplayName, getRoleIcon } from "~/utils/dashboard-utils";
+import { Avatar } from "~/components/ui";
 
 export default component$(() => {
   const { user } = useAuth();
   const RoleIcon = getRoleIcon(user.value?.role);
-  const roleColorClass = getRoleColor(user.value?.role) || "bg-primary";
 
   return (
     <div class="min-h-screen bg-base-200/60">
@@ -23,28 +19,7 @@ export default component$(() => {
               <div class="card bg-base-100 shadow-lg">
                 <div class="card-body items-center p-6">
                   <div class="mx-auto mb-4">
-                    <img
-                      src=""
-                      alt=""
-                      width={0}
-                      height={0}
-                      style={{ display: "none" }}
-                    />
-                    <span
-                      class={`inline-block p-1 rounded-full ${roleColorClass}`}
-                    >
-                      <span class="bg-base-100 rounded-full block">
-                        <span class="inline-block">
-                          {/* Shared Avatar for initials fallback */}
-                          <span class="rounded-full inline-flex items-center justify-center w-24 h-24 bg-gradient-primary">
-                            <span class="text-3xl font-bold">
-                              {user.value?.email?.charAt(0).toUpperCase() ||
-                                "U"}
-                            </span>
-                          </span>
-                        </span>
-                      </span>
-                    </span>
+                    <Avatar email={user.value?.email} size="w-24 h-24" />
                   </div>
                   <h2 class="font-bold text-lg text-center mb-1 truncate w-full">
                     {user.value?.email}

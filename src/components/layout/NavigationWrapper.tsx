@@ -15,7 +15,7 @@ export const NavigationWrapper = component$(() => {
   if (loading.value) {
     return (
       <nav class="navbar bg-base-100/80 border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
-        <div class="container mx-auto px-4 flex items-center justify-between">
+        <div class="container mx-auto flex items-center justify-between">
           <div class="navbar-start">
             <button
               class="btn btn-ghost btn-circle lg:hidden focus-ring"

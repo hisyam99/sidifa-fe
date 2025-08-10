@@ -154,7 +154,7 @@ export const faqCategories: FAQCategory[] = [
       {
         pertanyaan: "Apakah SIDIFA tersedia secara gratis?",
         jawaban:
-          "SIDIFA menawarkan berbagai paket layanan, termasuk opsi gratis untuk fitur dasar dan paket premium dengan fitur yang lebih lengkap untuk kebutuhan profesional.",
+          "Ya. SIDIFA sepenuhnya gratis untuk digunakan. Tidak ada paket berbayar atau biaya langganan.",
       },
     ],
   },
@@ -187,7 +187,7 @@ export const faqCategories: FAQCategory[] = [
       {
         pertanyaan: "Apakah SIDIFA tersedia secara gratis?",
         jawaban:
-          "SIDIFA menawarkan berbagai paket layanan, termasuk opsi gratis untuk fitur dasar dan paket premium dengan fitur yang lebih lengkap untuk kebutuhan profesional.",
+          "Ya. SIDIFA sepenuhnya gratis untuk digunakan. Tidak ada paket berbayar atau biaya langganan.",
       },
     ],
   },
