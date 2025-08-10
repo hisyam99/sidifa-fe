@@ -30,7 +30,7 @@ export const CTASection = component$(() => {
               </div>
             </div>
             <div class="relative">
-              <CtaImg />
+              <CtaImg alt="Ilustrasi ajakan untuk mulai menggunakan SI-DIFA" />
             </div>
           </div>
         </div>

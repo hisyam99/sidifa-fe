@@ -28,7 +28,7 @@ export const Audience = component$(() => {
       desc: "Dasar kebijakan melalui statistik.",
       img: CardImgInstansi,
     },
-  ];
+  ] as const;
   return (
     <section id="untuk-siapa" class="py-14 lg:py-20" data-animate="section">
       <div class="container mx-auto px-4">
@@ -45,7 +45,7 @@ export const Audience = component$(() => {
               class="card bg-base-100 shadow-md hover:shadow-xl transition"
             >
               <figure class="h-40 overflow-hidden">
-                <Img />
+                <Img alt={`Ilustrasi untuk ${title}`} />
               </figure>
               <div class="card-body">
                 <div class="flex items-center gap-2">

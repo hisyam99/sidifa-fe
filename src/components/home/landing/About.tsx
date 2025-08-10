@@ -78,7 +78,7 @@ export const About = component$(() => {
           </div>
           <div>
             <div class="rounded-2xl overflow-hidden shadow-lg border bg-base-100">
-              <AboutImg />
+              <AboutImg alt="Ilustrasi fitur inti SI-DIFA untuk kader dan instansi" />
             </div>
           </div>
         </div>

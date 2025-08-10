@@ -72,7 +72,7 @@ export const Hero = component$(() => {
           <div class="relative">
             <div class="mockup-window border bg-base-200 shadow-xl">
               <div class="px-4 py-6 bg-base-100">
-                <ImageHero />
+                <ImageHero alt="Cuplikan antarmuka SI-DIFA pada perangkat" />
               </div>
             </div>
             <div class="absolute -bottom-6 -left-6 hidden lg:block">
@@ -81,7 +81,7 @@ export const Hero = component$(() => {
                   <div class="flex items-center gap-3">
                     <div class="avatar">
                       <div class="w-10 rounded-full overflow-hidden">
-                        <AvatarImg />
+                        <AvatarImg alt="Logo Lingkar Sosial Indonesia (LINKSOS)" />
                       </div>
                     </div>
                     <div>
