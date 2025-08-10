@@ -25,7 +25,7 @@ const ibkSchema = object({
   ),
   tempat_lahir: string(),
   tanggal_lahir: pipe(string(), nonEmpty("Tanggal lahir wajib diisi")),
-  file: pipe(string(), nonEmpty("Foto wajib diisi")),
+  file: string(),
   jenis_kelamin: pipe(string(), nonEmpty("Jenis kelamin wajib diisi")),
   agama: pipe(string(), nonEmpty("Agama wajib diisi")),
   umur: pipe(string(), nonEmpty("Umur wajib diisi")),
@@ -33,27 +33,27 @@ const ibkSchema = object({
   no_telp: pipe(string(), nonEmpty("No. Telp wajib diisi")),
   nama_wali: pipe(string(), nonEmpty("Nama wali wajib diisi")),
   no_telp_wali: pipe(string(), nonEmpty("No. Telp wali wajib diisi")),
-  // Step 2: Asesmen Psikologi
+  // Step 2: Asesmen Psikologi (semua opsional)
   total_iq: string(),
   kategori_iq: string(),
   tipe_kepribadian: string(),
   deskripsi_kepribadian: string(),
   catatan_psikolog: string(),
   rekomendasi_intervensi: string(),
-  // Step 3: Disabilitas
+  // Step 3: Kesehatan (hanya odgj wajib)
   odgj: pipe(string(), nonEmpty("ODGJ wajib diisi")),
-  hasil_diagnosa: pipe(string(), nonEmpty("Hasil diagnosa wajib diisi")),
-  jenis_bantuan: pipe(string(), nonEmpty("Jenis bantuan wajib diisi")),
-  riwayat_terapi: pipe(string(), nonEmpty("Riwayat terapi wajib diisi")),
+  hasil_diagnosa: string(),
+  jenis_bantuan: string(),
+  riwayat_terapi: string(),
   potensi: string(),
   minat: string(),
   bakat: string(),
   keterampilan: string(),
-  // Step 4: Kunjungan
-  pekerjaan: pipe(string(), nonEmpty("Pekerjaan wajib diisi")),
-  pendidikan: pipe(string(), nonEmpty("Pendidikan wajib diisi")),
-  status_perkawinan: pipe(string(), nonEmpty("Status perkawinan wajib diisi")),
-  titik_koordinat: pipe(string(), nonEmpty("Titik koordinat wajib diisi")),
+  // Step 4: Detail IBK (semua opsional)
+  pekerjaan: string(),
+  pendidikan: string(),
+  status_perkawinan: string(),
+  titik_koordinat: string(),
   keterangan_tambahan: string(),
 });
 
@@ -178,54 +178,35 @@ export default component$(() => {
   const isCurrentStepValid = $(() => {
     // Step 4 (index 3) = Jenis Disabilitas, selalu true (bisa diskip)
     if (currentStep.value === 3) return true;
-    const stepFields = [
-      // Step 1
-      [
-        "nama",
-        "nik",
-        "tempat_lahir",
-        "tanggal_lahir",
-        "file",
-        "jenis_kelamin",
-        "agama",
-        "umur",
-        "alamat",
-        "no_telp",
-        "nama_wali",
-        "no_telp_wali",
-      ],
-      // Step 2
-      [
-        "pekerjaan",
-        "pendidikan",
-        "status_perkawinan",
-        "titik_koordinat",
-        "keterangan_tambahan",
-      ],
-      // Step 3
-      [
-        "total_iq",
-        "kategori_iq",
-        "tipe_kepribadian",
-        "deskripsi_kepribadian",
-        "catatan_psikolog",
-        "rekomendasi_intervensi",
-      ],
-      // Step 4
-      [
-        "odgj",
-        "hasil_diagnosa",
-        "jenis_bantuan",
-        "riwayat_terapi",
-        "potensi",
-        "minat",
-        "bakat",
-        "keterampilan",
-      ],
-      // Step 5 (jika ada)
+
+    // Step 2 (index 1) Detail IBK tidak wajib, selalu true
+    if (currentStep.value === 1) return true;
+
+    // Step 3 (index 2) Assessment tidak wajib, selalu true
+    if (currentStep.value === 2) return true;
+
+    // Step 5 (index 4) Kesehatan: hanya odgj yang wajib
+    if (currentStep.value === 4) {
+      const fld =
+        form.internal.fields["odgj" as keyof typeof form.internal.fields];
+      return !fld?.error && fld?.value !== "";
+    }
+
+    // Default: Step 1 (Data Diri) wajib kecuali foto
+    const requiredStep1 = [
+      "nama",
+      "nik",
+      "tempat_lahir",
+      "tanggal_lahir",
+      "jenis_kelamin",
+      "agama",
+      "umur",
+      "alamat",
+      "no_telp",
+      "nama_wali",
+      "no_telp_wali",
     ];
-    const fields = stepFields[currentStep.value];
-    return fields.every(
+    return requiredStep1.every(
       (field) =>
         !form.internal.fields[field as keyof typeof form.internal.fields]
           ?.error &&

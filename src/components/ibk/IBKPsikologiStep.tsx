@@ -19,10 +19,9 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="number"
-              label="Total IQ*"
+              label="Total IQ"
               min={0}
               max={200}
-              required
             />
           )}
         </Field>
@@ -32,8 +31,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Kategori IQ*"
-              required
+              label="Kategori IQ"
             />
           )}
         </Field>
@@ -43,8 +41,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Tipe Kepribadian*"
-              required
+              label="Tipe Kepribadian"
             />
           )}
         </Field>
@@ -54,9 +51,8 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="textarea"
-              label="Deskripsi Kepribadian*"
+              label="Deskripsi Kepribadian"
               rows={3}
-              required
             />
           )}
         </Field>

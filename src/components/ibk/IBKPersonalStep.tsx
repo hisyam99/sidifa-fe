@@ -19,7 +19,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Nama*"
+              label="Nama"
               placeholder="Nama lengkap"
               required
             />
@@ -31,7 +31,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="number"
-              label="NIK*"
+              label="NIK"
               placeholder="16 digit NIK"
               required
             />
@@ -43,7 +43,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Tempat Lahir*"
+              label="Tempat Lahir"
               placeholder="Tempat lahir"
               required
             />
@@ -55,7 +55,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="date"
-              label="Tanggal Lahir*"
+              label="Tanggal Lahir"
               required
             />
           )}
@@ -66,8 +66,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Foto* (URL atau nama file)"
-              required
+              label="Foto (URL atau nama file)"
               helper="Masukkan URL foto atau nama file sesuai kebutuhan backend."
             />
           )}
@@ -78,7 +77,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="select"
-              label="Jenis Kelamin*"
+              label="Jenis Kelamin"
               required
               options={[
                 { value: "", label: "Pilih" },
@@ -94,7 +93,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Agama*"
+              label="Agama"
               required
             />
           )}
@@ -105,7 +104,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="number"
-              label="Umur*"
+              label="Umur"
               required
               min={0}
               max={120}
@@ -118,7 +117,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Alamat*"
+              label="Alamat"
               required
             />
           )}
@@ -129,7 +128,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="tel"
-              label="No. Telp*"
+              label="No. Telp"
               required
             />
           )}
@@ -140,7 +139,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Nama Wali*"
+              label="Nama Wali"
               required
             />
           )}
@@ -151,7 +150,7 @@ export function IBKSectionPersonalData({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="tel"
-              label="No. Telp Wali*"
+              label="No. Telp Wali"
               required
             />
           )}

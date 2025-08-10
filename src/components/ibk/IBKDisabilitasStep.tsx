@@ -19,7 +19,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="select"
-              label="ODGJ*"
+              label="ODGJ"
               required
               options={[
                 { value: "", label: "Pilih" },
@@ -35,8 +35,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Hasil Diagnosa*"
-              required
+              label="Hasil Diagnosa"
             />
           )}
         </Field>
@@ -46,8 +45,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Jenis Bantuan*"
-              required
+              label="Jenis Bantuan"
             />
           )}
         </Field>
@@ -57,8 +55,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Riwayat Terapi*"
-              required
+              label="Riwayat Terapi"
             />
           )}
         </Field>

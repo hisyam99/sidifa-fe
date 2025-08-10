@@ -19,8 +19,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Pekerjaan*"
-              required
+              label="Pekerjaan"
             />
           )}
         </Field>
@@ -30,8 +29,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Pendidikan*"
-              required
+              label="Pendidikan"
             />
           )}
         </Field>
@@ -41,8 +39,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="select"
-              label="Status Perkawinan*"
-              required
+              label="Status Perkawinan"
               options={[
                 { value: "", label: "Pilih" },
                 { value: "Belum menikah", label: "Belum menikah" },
@@ -59,8 +56,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
               field={field}
               props={props}
               type="text"
-              label="Titik Koordinat*"
-              required
+              label="Titik Koordinat"
               placeholder="Contoh: -7.123456, 112.123456"
             />
           )}
