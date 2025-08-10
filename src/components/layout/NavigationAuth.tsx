@@ -7,11 +7,10 @@ import {
   LuSettings,
   LuHelpCircle,
   LuBarChart,
-  LuHeart,
-  LuBrain,
 } from "~/components/icons/lucide-optimized";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { AvatarMenu } from "../ui";
+import { BrandLogo } from "~/components/common";
 
 export const NavigationAuth = component$(() => {
   const { user, logout } = useAuth();
@@ -33,10 +32,10 @@ export const NavigationAuth = component$(() => {
       ? [{ href: "/admin", label: "Dashboard Admin", icon: LuBarChart }]
       : []),
     ...(user.value?.role === "kader"
-      ? [{ href: "/kader", label: "Dashboard Kader", icon: LuHeart }]
+      ? [{ href: "/kader", label: "Dashboard Kader", icon: LuBarChart }]
       : []),
     ...(user.value?.role === "psikolog"
-      ? [{ href: "/psikolog", label: "Dashboard Psikolog", icon: LuBrain }]
+      ? [{ href: "/psikolog", label: "Dashboard Psikolog", icon: LuBarChart }]
       : []),
     { href: "/dashboard/settings", label: "Pengaturan", icon: LuSettings },
   ];
@@ -45,20 +44,7 @@ export const NavigationAuth = component$(() => {
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto px-4 flex items-center min-w-0">
         {/* Logo di kiri */}
-        <a
-          href="/"
-          class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300 flex-shrink-0"
-        >
-          <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
-            <LuHeart class="w-6 h-6" />
-          </div>
-          <div class="flex flex-col items-start">
-            <span class="font-bold text-gradient-primary">SIDIFA</span>
-            <span class="text-xs text-base-content/60 font-medium">
-              Sistem Informasi Difabel
-            </span>
-          </div>
-        </a>
+        <BrandLogo variant="nav" size="sm" href="/" />
         {/* Kanan: menuItems desktop, avatar, hamburger mobile */}
         <div class="ml-auto flex items-center gap-2">
           {/* MenuItems utama desktop */}

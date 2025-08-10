@@ -6,10 +6,10 @@ import {
   LuFileText,
   LuSettings,
   LuUser,
-  LuBarChart,
   LuMenu,
 } from "~/components/icons/lucide-optimized";
 import { AvatarMenu } from "../ui";
+import { BrandLogo } from "~/components/common";
 
 export const NavigationPsikolog = component$(() => {
   const { user, logout } = useAuth();
@@ -34,22 +34,7 @@ export const NavigationPsikolog = component$(() => {
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto px-4 flex items-center min-w-0">
         {/* Logo dan menu biasa di kiri */}
-        <a
-          href="/psikolog/"
-          class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300 flex-shrink-0"
-        >
-          <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
-            <LuBarChart class="w-6 h-6" />
-          </div>
-          <div class="flex flex-col items-start">
-            <span class="font-bold text-gradient-primary">
-              Si-DIFA Psikolog
-            </span>
-            <span class="text-xs text-base-content/60 font-medium">
-              Sistem Informasi Difabel
-            </span>
-          </div>
-        </a>
+        <BrandLogo variant="nav" size="sm" href="/psikolog/" />
         {/* Tombol menuItems dan avatar/login di kanan */}
         <div class="ml-auto flex items-center gap-2">
           {/* MenuItems utama desktop */}

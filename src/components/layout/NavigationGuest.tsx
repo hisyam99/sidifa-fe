@@ -9,9 +9,9 @@ import {
   // LuBrain,
   LuHelpCircle,
   LuBarChart,
-  LuHeart,
 } from "~/components/icons/lucide-optimized";
 import { useLocation } from "@builder.io/qwik-city";
+import { BrandLogo } from "~/components/common";
 
 export const NavigationGuest = component$(() => {
   const { isLoggedIn, user } = useAuth();
@@ -70,23 +70,11 @@ export const NavigationGuest = component$(() => {
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto px-4 flex items-center min-w-0">
-        {/* Logo di kiri */}
-        <a
-          href="/"
-          class="btn btn-ghost text-xl hover:bg-primary/10 transition-all duration-300 flex-shrink-0"
-        >
-          <div class="bg-gradient-primary rounded-full w-12 h-12 mr-3 flex items-center justify-center shadow-lg">
-            <LuHeart class="w-6 h-6" />
-          </div>
-          <div class="flex flex-col items-start">
-            <span class="font-bold text-gradient-primary">SIDIFA</span>
-            <span class="text-xs text-base-content/60 font-medium">
-              Sistem Informasi Difabel
-            </span>
-          </div>
-        </a>
+        {/* Logo kiri dengan teks kecil di mobile */}
+        <BrandLogo variant="nav" size="sm" />
+
         {/* MenuItems dan tombol login/dashboard di kanan */}
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ml-auto flex items-center gap-1 sm:gap-2 shrink-0">
           {/* MenuItems utama desktop */}
           <div class="hidden lg:flex items-center gap-2">
             {menuItems.map((item) => (
@@ -108,18 +96,18 @@ export const NavigationGuest = component$(() => {
           {!isAuthenticated.value ? (
             <a
               href="/auth/login"
-              class="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
+              class="btn btn-primary btn-sm gap-2 whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
             >
               <LuLogIn class="w-4 h-4" />
-              Masuk
+              <span class="max-[360px]:hidden">Masuk</span>
             </a>
           ) : (
             <a
               href={dashboardPath.value}
-              class="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
+              class="btn btn-primary btn-sm gap-2 whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
             >
               <LuBarChart class="w-4 h-4" />
-              Dashboard
+              <span class="max-[360px]:hidden">Dashboard</span>
             </a>
           )}
           {/* Hamburger mobile menu */}

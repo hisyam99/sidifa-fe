@@ -41,12 +41,18 @@ export const SidifaFooter = component$(() => {
           </div>
 
           {/* Quick Links */}
-          <FooterSection title="Layanan" gradientClass="text-gradient-secondary">
+          <FooterSection
+            title="Layanan"
+            gradientClass="text-gradient-secondary"
+          >
             <ul class="space-y-2" role="list">
               <FooterLink href="/" label="Beranda" />
               <FooterLink href="/auth/login" label="Masuk" />
               <FooterLink href="/auth/signup/kader" label="Daftar Posyandu" />
-              <FooterLink href="/auth/signup/psikolog" label="Daftar Psikolog" />
+              <FooterLink
+                href="/auth/signup/psikolog"
+                label="Daftar Psikolog"
+              />
             </ul>
           </FooterSection>
 
@@ -60,7 +66,10 @@ export const SidifaFooter = component$(() => {
           </FooterSection>
 
           {/* Social Media */}
-          <FooterSection title="Ikuti Kami" gradientClass="text-gradient-secondary">
+          <FooterSection
+            title="Ikuti Kami"
+            gradientClass="text-gradient-secondary"
+          >
             <div class="flex justify-start gap-3">
               <SocialButton icon={LuFacebook} ariaLabel="Facebook" />
               <SocialButton icon={LuInstagram} ariaLabel="Instagram" />
@@ -79,7 +88,10 @@ export const SidifaFooter = component$(() => {
               © 2025 SIDIFA — All rights reserved
             </p>
           </aside>
-          <nav class="flex flex-wrap justify-start md:justify-end gap-x-6 gap-y-2" aria-label="Footer links">
+          <nav
+            class="flex flex-wrap justify-start md:justify-end gap-x-6 gap-y-2"
+            aria-label="Footer links"
+          >
             <FooterLink isButton={true} label="Kebijakan Privasi" />
             <FooterLink isButton={true} label="Syarat & Ketentuan" />
             <FooterLink isButton={true} label="Bantuan" />
