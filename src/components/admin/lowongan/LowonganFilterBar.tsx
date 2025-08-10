@@ -58,7 +58,7 @@ export const LowonganFilterBar = component$<LowonganFilterBarProps>(
         />
         <input
           class="input input-bordered w-full"
-          placeholder="Jenis difasilitas"
+          placeholder="Jenis disabilitas"
           value={filterOptions.value.jenis_difasilitas || ""}
           onInput$={(e) => {
             setFilter(

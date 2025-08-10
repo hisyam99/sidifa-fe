@@ -184,7 +184,7 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 field={field}
                 props={fieldProps}
                 type="text"
-                label="Jenis Difasilitas"
+                label="Jenis Disabilitas"
                 placeholder="Contoh: Tuna Daksa"
                 required
               />

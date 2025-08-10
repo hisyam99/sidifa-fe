@@ -1,7 +1,7 @@
 import { Component, SVGProps } from "@builder.io/qwik";
 import {
   LuHome,
-  LuUsers,
+  // LuUsers,
   LuBuilding,
   LuKey,
   LuBookOpen,
@@ -30,11 +30,11 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     label: "Manajemen Posyandu",
     icon: LuBuilding,
   },
-  {
+  /*   {
     href: "/admin/manajemen-kader",
     label: "Manajemen Kader",
     icon: LuUsers,
-  },
+  }, */
   {
     href: "/admin/informasi",
     label: "Informasi dan Edukasi",

@@ -6,7 +6,7 @@ import {
   LuHome,
   LuLogIn,
   LuStethoscope,
-  LuBrain,
+  // LuBrain,
   LuHelpCircle,
   LuBarChart,
   LuHeart,
@@ -58,11 +58,11 @@ export const NavigationGuest = component$(() => {
             label: "Daftar Kader",
             icon: LuStethoscope,
           },
-          {
+          /* {
             href: "/auth/signup/psikolog",
             label: "Daftar Psikolog",
             icon: LuBrain,
-          },
+          }, */
         ]
       : []),
   ];
