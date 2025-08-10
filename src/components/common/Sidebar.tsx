@@ -5,6 +5,7 @@ export interface SidebarMenuItemType {
   href: string;
   label: string;
   icon?: any; // Accepts a Qwik/React component, not QRL
+  exact?: boolean; // when true, only highlight on exact path
 }
 
 export interface SidebarProps {
@@ -32,6 +33,7 @@ export const Sidebar = component$<SidebarProps>((props) => {
               href={item.href}
               label={item.label}
               icon={item.icon}
+              exact={item.exact}
             />
           ))}
           <Slot />

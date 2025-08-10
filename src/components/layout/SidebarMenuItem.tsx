@@ -8,14 +8,18 @@ interface SidebarMenuItemProps {
   href: string;
   label: string;
   icon?: any; // accept component reference or string key
+  exact?: boolean; // when true, only highlight on exact path match (ignoring trailing slash)
 }
 
 export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
-  const { href, label, icon } = props;
+  const { href, label, icon, exact } = props;
   const location = useLocation();
 
   const current = location.url.pathname;
-  const isActive = current === href || current.startsWith(href + "/");
+  const normalize = (p: string) => (p !== "/" ? p.replace(/\/+$/, "") : "/");
+  const isActive = exact
+    ? normalize(current) === normalize(href)
+    : current === href || current.startsWith(href + "/");
   const IconComp = typeof icon === "string" ? ICON_LOOKUP_MAP[icon] : icon;
 
   return (

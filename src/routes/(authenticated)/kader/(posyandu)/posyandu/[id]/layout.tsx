@@ -15,7 +15,7 @@ export default component$(() => {
   const base = `/kader/posyandu/${posyanduId}`;
 
   const menuItems = [
-    { href: base, label: "Dashboard", icon: "LuBarChart" },
+    { href: base, label: "Dashboard", icon: "LuBarChart", exact: true },
     {
       href: `${base}/pendataan-ibk`,
       label: "Pendataan IBK",
