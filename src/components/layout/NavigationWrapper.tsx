@@ -23,7 +23,7 @@ export const NavigationWrapper = component$(() => {
             >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
-            <BrandLogo />
+            <BrandLogo variant="nav" />
           </div>
         </div>
       </nav>

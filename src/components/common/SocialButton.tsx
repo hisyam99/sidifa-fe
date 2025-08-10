@@ -13,8 +13,9 @@ export const SocialButton = component$((props: SocialButtonProps) => {
       class="btn btn-circle btn-sm btn-ghost hover:bg-primary/10 transition-all duration-300"
       aria-label={ariaLabel}
       onClick$={onClick$}
+      type="button"
     >
-      <Icon class="w-5 h-5 text-primary" />
+      <Icon class="w-5 h-5 text-primary" aria-hidden="true" />
     </button>
   );
 });

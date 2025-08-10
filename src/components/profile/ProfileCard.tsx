@@ -12,7 +12,6 @@ import {
 } from "@qwikest/icons/lucide";
 import {
   getRoleIcon,
-  getRoleColor,
   getRoleDisplayName,
   getActivityTypeClass,
 } from "~/utils/dashboard-utils";
@@ -94,7 +93,6 @@ export default component$(() => {
   }
 
   const RoleIcon = getRoleIcon(user.value.role);
-  const roleColorClass = getRoleColor(user.value.role);
   const roleBenefits = getRoleBenefitsData(user.value.role);
 
   // Sample recent activities (replace with actual data fetching)
@@ -218,7 +216,9 @@ export default component$(() => {
                     class="flex items-start gap-4 p-4 rounded-lg shadow-sm border border-base-200/50 hover:shadow-md transition-shadow duration-200"
                   >
                     <div
-                      class={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getActivityTypeClass(activity.type)}`}
+                      class={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getActivityTypeClass(
+                        activity.type,
+                      )}`}
                     >
                       <LuClock class="w-5 h-5" />
                     </div>

@@ -13,25 +13,25 @@ import {
   FooterLink,
   FooterSection,
   SocialButton,
+  BrandLogo,
 } from "~/components/common";
 
 export const SidifaFooter = component$(() => {
   return (
-    <footer class="footer footer-center p-10 bg-gradient-to-br from-base-200 to-base-300 text-base-content border-t border-base-200/50">
-      <div class="container mx-auto px-4">
+    <footer
+      class="bg-base-200/80 border-t border-base-300/60 backdrop-blur supports-[backdrop-filter]:bg-base-200/70"
+      role="contentinfo"
+    >
+      {/* Decorative wave */}
+      <div class="w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
+
+      <div class="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-10">
           {/* Brand Section */}
           <div class="text-left">
-            <div class="flex items-center justify-center lg:justify-start mb-4">
-              <div class="flex flex-col items-start">
-                <span class="font-bold text-xl text-gradient-primary">
-                  SIDIFA
-                </span>
-                <span class="text-sm text-base-content/60 font-medium">
-                  Sistem Informasi Difabel
-                </span>
-              </div>
+            <div class="flex items-center justify-start mb-4">
+              <BrandLogo hideTextOnMobile={false} size="sm" />
             </div>
             <p class="text-base-content/70 text-sm leading-relaxed">
               Platform terpadu untuk mengelola data kesehatan masyarakat dan
@@ -41,28 +41,17 @@ export const SidifaFooter = component$(() => {
           </div>
 
           {/* Quick Links */}
-          <FooterSection
-            title="Layanan"
-            gradientClass="text-gradient-secondary"
-            textAlign="center"
-          >
-            <ul class="space-y-2">
+          <FooterSection title="Layanan" gradientClass="text-gradient-secondary">
+            <ul class="space-y-2" role="list">
               <FooterLink href="/" label="Beranda" />
               <FooterLink href="/auth/login" label="Masuk" />
               <FooterLink href="/auth/signup/kader" label="Daftar Posyandu" />
-              <FooterLink
-                href="/auth/signup/psikolog"
-                label="Daftar Psikolog"
-              />
+              <FooterLink href="/auth/signup/psikolog" label="Daftar Psikolog" />
             </ul>
           </FooterSection>
 
           {/* Contact Info */}
-          <FooterSection
-            title="Kontak"
-            gradientClass="text-gradient-secondary"
-            textAlign="center"
-          >
+          <FooterSection title="Kontak" gradientClass="text-gradient-secondary">
             <div class="space-y-3">
               <ContactItem icon={LuMapPin} text="Malang, Jawa Timur" />
               <ContactItem icon={LuPhone} text="+62 341 123456" />
@@ -71,12 +60,8 @@ export const SidifaFooter = component$(() => {
           </FooterSection>
 
           {/* Social Media */}
-          <FooterSection
-            title="Ikuti Kami"
-            gradientClass="text-gradient-secondary"
-            textAlign="center"
-          >
-            <div class="flex justify-center lg:justify-start gap-3">
+          <FooterSection title="Ikuti Kami" gradientClass="text-gradient-secondary">
+            <div class="flex justify-start gap-3">
               <SocialButton icon={LuFacebook} ariaLabel="Facebook" />
               <SocialButton icon={LuInstagram} ariaLabel="Instagram" />
               <SocialButton icon={LuTwitter} ariaLabel="Twitter" />
@@ -85,14 +70,16 @@ export const SidifaFooter = component$(() => {
           </FooterSection>
         </div>
 
+        <div class="divider my-0" />
+
         {/* Bottom Section */}
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-          <aside class="text-center md:text-left">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-6">
+          <aside class="text-left">
             <p class="text-sm text-base-content/60">
-              Copyright © 2025 SIDIFA - All rights reserved
+              © 2025 SIDIFA — All rights reserved
             </p>
           </aside>
-          <nav class="flex gap-4">
+          <nav class="flex flex-wrap justify-start md:justify-end gap-x-6 gap-y-2" aria-label="Footer links">
             <FooterLink isButton={true} label="Kebijakan Privasi" />
             <FooterLink isButton={true} label="Syarat & Ketentuan" />
             <FooterLink isButton={true} label="Bantuan" />

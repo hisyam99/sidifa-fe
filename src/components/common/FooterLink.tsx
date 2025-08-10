@@ -10,12 +10,12 @@ interface FooterLinkProps {
 export const FooterLink = component$((props: FooterLinkProps) => {
   const { href, onClick$, label, isButton = false } = props;
 
+  const baseClass =
+    "link link-hover text-sm text-base-content/70 hover:text-primary transition-colors duration-300";
+
   if (isButton) {
     return (
-      <button
-        onClick$={onClick$}
-        class="link link-hover text-sm text-base-content/60 hover:text-primary transition-colors duration-300"
-      >
+      <button onClick$={onClick$} class={baseClass} aria-label={label}>
         {label}
       </button>
     );
@@ -23,10 +23,7 @@ export const FooterLink = component$((props: FooterLinkProps) => {
 
   return (
     <li>
-      <a
-        href={href}
-        class="link link-hover text-sm hover:text-primary transition-colors duration-300"
-      >
+      <a href={href} class={baseClass} aria-label={label}>
         {label}
       </a>
     </li>

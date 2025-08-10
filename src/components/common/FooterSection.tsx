@@ -8,10 +8,11 @@ interface FooterSectionProps {
 
 export const FooterSection = component$((props: FooterSectionProps) => {
   const { title, gradientClass, textAlign = "left" } = props;
+  const alignClass = textAlign === "center" ? "text-center" : "text-left";
 
   return (
-    <div class={`text-${textAlign} lg:text-left`}>
-      <h3 class={`font-bold text-lg mb-4 ${gradientClass}`}>{title}</h3>
+    <div class={`${alignClass} lg:text-left`}>
+      <h6 class={`footer-title mb-4 ${gradientClass}`}>{title}</h6>
       <Slot />
     </div>
   );
