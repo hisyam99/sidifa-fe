@@ -648,7 +648,7 @@ export const informasiEdukasiKaderService = {
           totalData: 0,
           totalPage: 1,
           currentPage: 1,
-          limit: params.limit ?? 10,
+          limit: params.limit ?? 9,
         },
       };
     }

@@ -3,7 +3,7 @@ import { component$ } from "@builder.io/qwik";
 interface InformationArticleCardProps {
   title: string;
   category: string;
-  image: string;
+  image?: string;
   excerpt: string;
   href?: string; // Optional link to the full article
 }
@@ -12,16 +12,18 @@ export const InformationArticleCard = component$(
   (props: InformationArticleCardProps) => {
     const { title, category, image, excerpt, href } = props;
     return (
-      <a href={href} class="card bg-base-100 shadow-xl image-full group">
-        <figure>
-          <img
-            src={image}
-            alt={title}
-            width="400"
-            height="250"
-            class="transition-transform duration-300 group-hover:scale-105"
-          />
-        </figure>
+      <a href={href} class="card bg-base-100 shadow-xl group">
+        {image && (
+          <figure class="image-full">
+            <img
+              src={image}
+              alt={title}
+              width="400"
+              height="250"
+              class="transition-transform duration-300 group-hover:scale-105"
+            />
+          </figure>
+        )}
         <div class="card-body bg-opacity-60">
           <h2 class="card-title text-xl font-bold group-hover:underline">
             {title}

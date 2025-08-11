@@ -31,7 +31,7 @@ export default component$(() => {
     handleLimitChange,
   } = usePagination<{ judul?: string; deskripsi?: string }>({
     initialPage: 1,
-    initialLimit: 10,
+    initialLimit: 9,
     fetchList: $((params) => {
       if (isLoggedIn.value) {
         fetchList(params);
@@ -50,7 +50,7 @@ export default component$(() => {
 
   return (
     <div>
-      <h1 class="text-3xl font-bold mb-2">Informasi & Edukasi</h1>
+      <h1 class="text-3xl font-bold mb-2">Informasi</h1>
       <p class="mb-6">
         Kumpulan artikel, panduan, dan materi edukasi untuk Anda.
       </p>
@@ -71,9 +71,10 @@ export default component$(() => {
             handleLimitChange(parseInt((e.target as HTMLSelectElement).value)),
           )}
         >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
+          <option value="9">9</option>
+          <option value="18">18</option>
+          <option value="27">27</option>
+          <option value="36">36</option>
         </select>
       </div>
 
@@ -88,10 +89,7 @@ export default component$(() => {
                 key={item.id}
                 title={item.judul}
                 category={item.tipe || "Informasi"}
-                image={
-                  buildInformasiEdukasiUrl(item.file_url) ||
-                  "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                }
+                image={buildInformasiEdukasiUrl(item.file_url)}
                 excerpt={item.deskripsi}
                 href={`/kader/informasi/${item.id}`}
               />
@@ -116,11 +114,6 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Informasi & Edukasi - Si-DIFA",
-  meta: [
-    {
-      name: "description",
-      content: "Informasi dan Edukasi untuk Kader Posyandu Si-DIFA",
-    },
-  ],
+  title: "Informasi & Edukasi",
+  meta: [{ name: "description", content: "Informasi dan edukasi untuk kader" }],
 };

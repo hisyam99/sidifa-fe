@@ -9,7 +9,7 @@ export const useInformasiEdukasiKader = () => {
   const total = useSignal<number>(0);
   const totalPage = useSignal<number>(1);
   const page = useSignal<number>(1);
-  const limit = useSignal<number>(10);
+  const limit = useSignal<number>(9);
 
   const fetchList = $(
     async (
@@ -40,10 +40,10 @@ export const useInformasiEdukasiKader = () => {
         const resolvedLimit = (meta.limit ?? limit.value) as number;
         total.value = resolvedTotal || 0;
         page.value = resolvedPage || 1;
-        limit.value = resolvedLimit || 10;
+        limit.value = resolvedLimit || 9;
         totalPage.value =
           (meta.totalPage as number) ||
-          Math.ceil((total.value || 0) / (limit.value || 10)) ||
+          Math.ceil((total.value || 0) / (limit.value || 9)) ||
           1;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data";
