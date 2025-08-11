@@ -78,8 +78,7 @@ export default component$(() => {
     error.value = null;
     try {
       await kaderService.registerKaderPosyandu(posyanduId);
-      alert("Berhasil mendaftar ke posyandu");
-      // Refresh the list and update the state
+      // Refresh the list and update the state without window alert
       const response = await kaderService.getKaderPosyanduList({
         limit: limit.value,
         page: currentPage.value,

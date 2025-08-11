@@ -59,9 +59,10 @@ export const PosyanduTable = component$((props: PosyanduTableProps) => {
                         {posyandu.isRegistered ? (
                           <button
                             class="btn btn-info btn-sm w-24"
-                            onClick$={() =>
-                              nav(`/kader/posyandu/${posyandu.id}`)
-                            }
+                            onClick$={() => {
+                              loading.value = true;
+                              nav(`/kader/posyandu/${posyandu.id}`);
+                            }}
                           >
                             View
                           </button>
