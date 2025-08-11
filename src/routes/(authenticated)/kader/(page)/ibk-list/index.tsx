@@ -18,10 +18,6 @@ export default component$(() => {
   const search = useSignal("");
   const genderFilter = useSignal("");
 
-  // Modal state
-  const showDetailModal = useSignal(false);
-  const selectedIBK = useSignal<IBKRecord | null>(null);
-
   // TODO: Replace with dynamic posyanduId selection or filter
   const posyanduId = "356682f4-6cfd-4148-84bd-4fc631db753a";
 
@@ -110,8 +106,7 @@ export default component$(() => {
 
   // Modal handlers
   const handleViewDetail: QRL<(ibk: IBKRecord) => void> = $((ibk) => {
-    selectedIBK.value = ibk;
-    showDetailModal.value = true;
+    window.location.href = `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}`;
   });
   const handleEdit: QRL<(ibk: IBKRecord) => void> = $((ibk) => {
     window.location.href = `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}/edit`;
@@ -169,44 +164,6 @@ export default component$(() => {
           currentPage={page.value}
           onPageChange$={(newPage) => (page.value = newPage)}
         />
-      )}
-      {/* Detail Modal */}
-      {showDetailModal.value && selectedIBK.value && (
-        <div class="modal modal-open">
-          <div class="modal-box max-w-lg">
-            <h3 class="font-bold text-lg mb-4">Detail Data IBK</h3>
-            <div class="space-y-2">
-              <div>
-                <b>NIK:</b> {selectedIBK.value.personal_data.nik}
-              </div>
-              <div>
-                <b>Nama:</b> {selectedIBK.value.personal_data.nama_lengkap}
-              </div>
-              <div>
-                <b>Jenis Kelamin:</b>{" "}
-                {selectedIBK.value.personal_data.gender === "laki-laki"
-                  ? "Laki-laki"
-                  : "Perempuan"}
-              </div>
-              <div>
-                <b>Alamat:</b> {selectedIBK.value.personal_data.alamat_lengkap}
-              </div>
-              {/* Add more fields as needed */}
-            </div>
-            <div class="modal-action">
-              <button
-                class="btn btn-ghost"
-                onClick$={() => (showDetailModal.value = false)}
-              >
-                Tutup
-              </button>
-            </div>
-          </div>
-          <div
-            class="modal-backdrop"
-            onClick$={() => (showDetailModal.value = false)}
-          ></div>
-        </div>
       )}
     </div>
   );

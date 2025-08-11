@@ -3,7 +3,7 @@
 import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { IBKTable, LoadingSpinner, Alert } from "~/components/ui";
+import { IBKTable, Alert } from "~/components/ui";
 import { PaginationControls } from "~/components/common";
 import type { IBKRecord } from "~/types";
 import {
@@ -28,9 +28,6 @@ export default component$(() => {
 
   // Search/filter state
   const genderFilter = useSignal("");
-  // Modal state
-  const showDetailModal = useSignal(false);
-  const ibkDetail = useSignal<any>(null);
 
   const limitOptions = ["5", "10", "20", "50", "100"];
 
@@ -177,18 +174,11 @@ export default component$(() => {
     }
     filteredIBK.value = data;
   });
-  // Modal handlers
-  const handleViewDetail = $(async (ibk: IBKRecord) => {
-    showDetailModal.value = true;
-    ibkDetail.value = null;
-    try {
-      const res = await ibkService.getIbkDetail(ibk.personal_data.id!);
-      ibkDetail.value = res;
-    } catch {
-      // error handling already handled above
-    } finally {
-      // detailLoading.value = false; // This was part of the modal, now removed
-    }
+  // View Detail: navigate to dedicated page
+  const handleViewDetail = $((ibk: IBKRecord) => {
+    navigate(
+      `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}`,
+    );
   });
 
   const debouncedFetch = useDebouncer(
@@ -334,195 +324,6 @@ export default component$(() => {
                   />
                 )}
               </div>
-              {/* Detail Modal */}
-              {showDetailModal.value && (
-                <div class="modal modal-open">
-                  <div class="modal-box max-w-2xl">
-                    <h3 class="font-bold text-lg mb-4">Detail Data IBK</h3>
-                    {loading.value ? ( // Changed from detailLoading.value
-                      <div class="flex justify-center items-center py-8">
-                        <LoadingSpinner />
-                      </div>
-                    ) : error.value ? ( // Changed from detailError.value
-                      <div class="alert alert-error my-4">{error.value}</div>
-                    ) : ibkDetail.value ? (
-                      <div class="space-y-4">
-                        {/* Data Diri */}
-                        <div class="border-b pb-2 mb-2">
-                          <h4 class="font-semibold text-base mb-2">
-                            Data Diri
-                          </h4>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                            <div>
-                              <b>NIK:</b> {ibkDetail.value.nik}
-                            </div>
-                            <div>
-                              <b>Nama:</b> {ibkDetail.value.nama}
-                            </div>
-                            <div>
-                              <b>Tempat Lahir:</b>{" "}
-                              {ibkDetail.value.tempat_lahir}
-                            </div>
-                            <div>
-                              <b>Tanggal Lahir:</b>{" "}
-                              {ibkDetail.value.tanggal_lahir}
-                            </div>
-                            <div>
-                              <b>Jenis Kelamin:</b>{" "}
-                              {ibkDetail.value.jenis_kelamin}
-                            </div>
-                            <div>
-                              <b>Agama:</b> {ibkDetail.value.agama}
-                            </div>
-                            <div>
-                              <b>Umur:</b> {ibkDetail.value.umur}
-                            </div>
-                            <div>
-                              <b>Alamat:</b> {ibkDetail.value.alamat}
-                            </div>
-                            <div>
-                              <b>No. Telp:</b> {ibkDetail.value.no_telp}
-                            </div>
-                            <div>
-                              <b>Nama Wali:</b> {ibkDetail.value.nama_wali}
-                            </div>
-                            <div>
-                              <b>No. Telp Wali:</b>{" "}
-                              {ibkDetail.value.no_telp_wali}
-                            </div>
-                          </div>
-                        </div>
-                        {/* Kesehatan IBK */}
-                        {ibkDetail.value.kesehatan_ibk && (
-                          <div class="border-b pb-2 mb-2">
-                            <h4 class="font-semibold text-base mb-2">
-                              Kesehatan IBK
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                              <div>
-                                <b>Hasil Diagnosa:</b>{" "}
-                                {ibkDetail.value.kesehatan_ibk.hasil_diagnosa}
-                              </div>
-                              <div>
-                                <b>ODGJ:</b>{" "}
-                                {ibkDetail.value.kesehatan_ibk.odgj
-                                  ? "Ya"
-                                  : "Tidak"}
-                              </div>
-                              <div>
-                                <b>Jenis Bantuan:</b>{" "}
-                                {ibkDetail.value.kesehatan_ibk.jenis_bantuan}
-                              </div>
-                              <div>
-                                <b>Riwayat Terapi:</b>{" "}
-                                {ibkDetail.value.kesehatan_ibk.riwayat_terapi}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {/* Detail IBK */}
-                        {ibkDetail.value.detail_ibk && (
-                          <div class="border-b pb-2 mb-2">
-                            <h4 class="font-semibold text-base mb-2">
-                              Detail Sosial & Pendidikan
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                              <div>
-                                <b>Pekerjaan:</b>{" "}
-                                {ibkDetail.value.detail_ibk.pekerjaan}
-                              </div>
-                              <div>
-                                <b>Pendidikan:</b>{" "}
-                                {ibkDetail.value.detail_ibk.pendidikan}
-                              </div>
-                              <div>
-                                <b>Status Perkawinan:</b>{" "}
-                                {ibkDetail.value.detail_ibk.status_perkawinan}
-                              </div>
-                              <div>
-                                <b>Titik Koordinat:</b>{" "}
-                                {ibkDetail.value.detail_ibk.titik_koordinat}
-                              </div>
-                              <div>
-                                <b>Keterangan Tambahan:</b>{" "}
-                                {ibkDetail.value.detail_ibk.keterangan_tambahan}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        {/* Assesmen IBK */}
-                        {ibkDetail.value.assesmen_ibk && (
-                          <div>
-                            <h4 class="font-semibold text-base mb-2">
-                              Asesmen Psikologi
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1 text-sm">
-                              <div>
-                                <b>Total IQ:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.total_iq}
-                              </div>
-                              <div>
-                                <b>Kategori IQ:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.kategori_iq}
-                              </div>
-                              <div>
-                                <b>Tipe Kepribadian:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.tipe_kepribadian}
-                              </div>
-                              <div>
-                                <b>Deskripsi Kepribadian:</b>{" "}
-                                {
-                                  ibkDetail.value.assesmen_ibk
-                                    .deskripsi_kepribadian
-                                }
-                              </div>
-                              <div>
-                                <b>Potensi:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.potensi}
-                              </div>
-                              <div>
-                                <b>Minat:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.minat}
-                              </div>
-                              <div>
-                                <b>Bakat:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.bakat}
-                              </div>
-                              <div>
-                                <b>Keterampilan:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.keterampilan}
-                              </div>
-                              <div>
-                                <b>Catatan Psikolog:</b>{" "}
-                                {ibkDetail.value.assesmen_ibk.catatan_psikolog}
-                              </div>
-                              <div>
-                                <b>Rekomendasi Intervensi:</b>{" "}
-                                {
-                                  ibkDetail.value.assesmen_ibk
-                                    .rekomendasi_intervensi
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : null}
-                    <div class="modal-action">
-                      <button
-                        class="btn btn-ghost"
-                        onClick$={() => (showDetailModal.value = false)}
-                      >
-                        Tutup
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    class="modal-backdrop"
-                    onClick$={() => (showDetailModal.value = false)}
-                  ></div>
-                </div>
-              )}
             </div>
 
             {existingIBK.value.length === 0 && (

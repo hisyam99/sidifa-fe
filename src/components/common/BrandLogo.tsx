@@ -31,7 +31,10 @@ const sizeToSub: Record<NonNullable<BrandLogoProps["size"]>, string> = {
   lg: "text-sm",
 };
 
-const sizeToPx: Record<NonNullable<BrandLogoProps["size"]>, { width: number; height: number }> = {
+const sizeToPx: Record<
+  NonNullable<BrandLogoProps["size"]>,
+  { width: number; height: number }
+> = {
   sm: { width: 32, height: 32 },
   md: { width: 40, height: 40 },
   lg: { width: 48, height: 48 },

@@ -63,6 +63,7 @@ jobs:
             ORIGIN="${{ secrets.ORIGIN }}"
             PUBLIC_BASE_URL="${{ secrets.PUBLIC_BASE_URL }}"
             PUBLIC_API_URL="${{ secrets.PUBLIC_API_URL }}"
+            PUBLIC_UPLOADS_URL="${{ secrets.PUBLIC_UPLOADS_URL }}"
             DOCKER_IMAGE_REGISTRY="${{ secrets.DOCKER_IMAGE_REGISTRY }}"
             DOCKER_IMAGE_REPO="${{ secrets.DOCKER_IMAGE_REPO }}"
             DOCKER_IMAGE_TAG="${{ secrets.DOCKER_IMAGE_TAG }}"
