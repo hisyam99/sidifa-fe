@@ -106,6 +106,15 @@ export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
   const currentStep = useSignal(0);
+  const createdIbkId = useSignal<string | null>(null);
+  const selectedDisabilities = useSignal<
+    Array<{
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>
+  >([]);
   // State global untuk data IBKForm
   const formDataStore = useStore<IBKForm>({ ...defaultIBKForm });
 
@@ -143,8 +152,8 @@ export default component$(() => {
     { id: "ibk", title: "Data Diri IBK" },
     { id: "detail", title: "Detail IBK" },
     { id: "assessment", title: "Assessment" },
-    { id: "disabilitas", title: "Jenis Disabilitas" }, // dummy
     { id: "kesehatan", title: "Data Kesehatan" },
+    { id: "disabilitas", title: "Jenis Disabilitas" },
   ];
 
   // Render semua step, field yang tidak aktif di-hide
@@ -161,10 +170,23 @@ export default component$(() => {
           <IBKSectionAssessment form={form} />
         </div>
         <div style={{ display: currentStep.value === 3 ? undefined : "none" }}>
-          <IBKSectionDisability />
+          <IBKSectionHealth form={form} />
         </div>
         <div style={{ display: currentStep.value === 4 ? undefined : "none" }}>
-          <IBKSectionHealth form={form} />
+          <IBKSectionDisability
+            onChangeSelections={$(
+              (
+                items: Array<{
+                  jenis_difabilitas_id: string;
+                  tingkat_keparahan: string;
+                  sejak_kapan?: string;
+                  keterangan?: string;
+                }>,
+              ) => {
+                selectedDisabilities.value = items;
+              },
+            )}
+          />
         </div>
       </>
     );
@@ -176,17 +198,17 @@ export default component$(() => {
 
   // Helper validasi hanya field step saat ini
   const isCurrentStepValid = $(() => {
-    // Step 4 (index 3) = Jenis Disabilitas, selalu true (bisa diskip)
-    if (currentStep.value === 3) return true;
+    // Step Disabilitas (terakhir) selalu true
+    if (currentStep.value === 4) return true;
 
-    // Step 2 (index 1) Detail IBK tidak wajib, selalu true
+    // Step Detail IBK tidak wajib, selalu true
     if (currentStep.value === 1) return true;
 
-    // Step 3 (index 2) Assessment tidak wajib, selalu true
+    // Step Assessment tidak wajib, selalu true
     if (currentStep.value === 2) return true;
 
-    // Step 5 (index 4) Kesehatan: hanya odgj yang wajib
-    if (currentStep.value === 4) {
+    // Step Kesehatan: hanya odgj yang wajib
+    if (currentStep.value === 3) {
       const fld =
         form.internal.fields["odgj" as keyof typeof form.internal.fields];
       return !fld?.error && fld?.value !== "";
@@ -215,21 +237,18 @@ export default component$(() => {
     );
   });
 
-  // Step terakhir: submit seluruh data gabungan
-  const handleSubmit = $(async (values: IBKForm) => {
+  // Step submit data IBK (sebelum disabilitas)
+  const handleSubmitIbk = $(async (values: IBKForm) => {
     error.value = null;
     success.value = null;
-    // Gabungkan data step terakhir ke store
     Object.assign(formDataStore, values);
     try {
       const formData = new FormData();
-      // Format tanggal_lahir ke ISO-8601 jika hanya YYYY-MM-DD
       let tanggalLahirValue = formDataStore.tanggal_lahir;
       if (/^\d{4}-\d{2}-\d{2}$/.test(tanggalLahirValue)) {
         tanggalLahirValue = new Date(tanggalLahirValue).toISOString();
       }
       formData.append("tanggal_lahir", tanggalLahirValue);
-      // Pastikan total_iq selalu string
       const totalIqValue =
         formDataStore.total_iq !== undefined &&
         formDataStore.total_iq !== null &&
@@ -237,7 +256,6 @@ export default component$(() => {
           ? String(formDataStore.total_iq)
           : "0";
       formData.append("total_iq", totalIqValue);
-      // Append semua field lain dari formDataStore
       formData.append("nama", formDataStore.nama);
       formData.append("nik", formDataStore.nik);
       formData.append("tempat_lahir", formDataStore.tempat_lahir);
@@ -274,9 +292,59 @@ export default component$(() => {
       formData.append("hasil_diagnosa", formDataStore.hasil_diagnosa);
       formData.append("jenis_bantuan", formDataStore.jenis_bantuan);
       formData.append("riwayat_terapi", formDataStore.riwayat_terapi);
-      await ibkService.createIbk(formData);
-      success.value = "Data IBK berhasil disimpan.";
-      setTimeout(() => nav(`/kader/posyandu`), 1500);
+      const res = await ibkService.createIbk(formData);
+      // Ambil ibk_id dari response jika tersedia, jika tidak, coba dari res.data
+      const returnedId = (res?.data?.id ||
+        res?.id ||
+        res?.data?.ibk_id ||
+        res?.ibk_id) as string | undefined;
+      if (returnedId) {
+        createdIbkId.value = returnedId;
+      }
+      currentStep.value = 4; // lanjut ke step disabilitas
+      success.value =
+        "Data IBK berhasil disimpan. Silakan lengkapi data disabilitas.";
+    } catch (err: any) {
+      error.value = extractErrorMessage(err);
+    }
+  });
+
+  // Step terakhir: submit disabilitas berdasarkan selections
+  const handleSubmitDisability = $(async () => {
+    error.value = null;
+    success.value = null;
+    try {
+      if (!createdIbkId.value) {
+        throw new Error("IBK belum berhasil dibuat.");
+      }
+      const toIsoOrUndefined = (input?: string) => {
+        if (!input) return undefined;
+        const v = String(input).trim();
+        try {
+          // If value like YYYY-MM-DDTHH:mm, let Date parse and convert to ISO
+          if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v)) {
+            return new Date(v).toISOString();
+          }
+          // If value like YYYY-MM-DD, set start of day
+          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+            return new Date(`${v}T00:00:00`).toISOString();
+          }
+          // If already has seconds/offset, attempt direct parse
+          return new Date(v).toISOString();
+        } catch {
+          return undefined;
+        }
+      };
+      const payloads = selectedDisabilities.value.map((d) => ({
+        ibk_id: createdIbkId.value as string,
+        jenis_difabilitas_id: d.jenis_difabilitas_id,
+        tingkat_keparahan: d.tingkat_keparahan,
+        sejak_kapan: toIsoOrUndefined(d.sejak_kapan),
+        keterangan: d.keterangan,
+      }));
+      await ibkService.createIbkDisabilities(payloads);
+      success.value = "Jenis disabilitas berhasil disimpan.";
+      setTimeout(() => nav(`/kader/posyandu`), 1200);
     } catch (err: any) {
       error.value = extractErrorMessage(err);
     }
@@ -314,6 +382,7 @@ export default component$(() => {
       )}
       {posyandu.value && (
         <>
+          {/* Progress & Stepper tetap */}
           <div class="mb-6">
             <div class="flex items-center justify-between mb-4">
               <h2 class="text-lg font-semibold text-base-content">
@@ -364,15 +433,20 @@ export default component$(() => {
               ))}
             </div>
           </div>
+
           <div class="mb-8">
-            {/* Render Form per step */}
             <Form
               onSubmit$={(values) => {
                 Object.assign(formDataStore, values);
-                if (currentStep.value < steps.length - 1) {
+                if (currentStep.value < steps.length - 2) {
+                  // Masih di step IBK sebelum kesehatan
                   currentStep.value++;
+                } else if (currentStep.value === steps.length - 2) {
+                  // Step terakhir untuk data IBK (kesehatan) => submit IBK dan lanjut ke disabilitas
+                  handleSubmitIbk(values);
                 } else {
-                  handleSubmit(values);
+                  // Step disabilitas => submit disabilitas
+                  handleSubmitDisability();
                 }
               }}
               class="space-y-6 w-full"
@@ -383,41 +457,54 @@ export default component$(() => {
                 <button
                   type="button"
                   class="btn btn-ghost gap-2"
-                  onClick$={handlePrevious}
+                  onClick$={$(() => {
+                    if (currentStep.value === 4 && createdIbkId.value) {
+                      nav(
+                        `/kader/posyandu/${posyanduId}/pendataan-ibk/${createdIbkId.value}/edit`,
+                      );
+                    } else {
+                      handlePrevious();
+                    }
+                  })}
                   disabled={currentStep.value === 0}
                 >
-                  Sebelumnya
+                  {currentStep.value === 4
+                    ? "Kembali ke Edit IBK"
+                    : "Sebelumnya"}
                 </button>
                 {currentStep.value < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    class="btn btn-primary gap-2"
-                    disabled={!(isCurrentStepValid as any)()}
-                    onClick$={$(async () => {
-                      if (await (isCurrentStepValid as any)())
-                        currentStep.value++;
-                    })}
-                  >
-                    Lanjutkan
-                  </button>
+                  currentStep.value === steps.length - 2 ? (
+                    <button
+                      type="submit"
+                      class="btn btn-primary gap-2"
+                      disabled={!(isCurrentStepValid as any)()}
+                    >
+                      Lanjutkan
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      class="btn btn-primary gap-2"
+                      disabled={!(isCurrentStepValid as any)()}
+                      onClick$={$(async () => {
+                        if (await (isCurrentStepValid as any)())
+                          currentStep.value++;
+                      })}
+                    >
+                      Lanjutkan
+                    </button>
+                  )
                 ) : (
                   <button
                     type="submit"
                     class="btn btn-primary gap-2"
-                    disabled={form.submitting || form.invalid}
+                    disabled={form.submitting}
                   >
-                    {form.submitting ? (
-                      <>
-                        <div class="skeleton w-4 h-4"></div>
-                        Menyimpan...
-                      </>
-                    ) : (
-                      <>Simpan Data IBK</>
-                    )}
+                    Simpan Disabilitas
                   </button>
                 )}
               </div>
-              {form.invalid && (
+              {currentStep.value !== 4 && form.invalid && (
                 <div class="alert alert-error mt-2">
                   Ada data yang belum valid/terisi. Silakan cek kembali!
                 </div>

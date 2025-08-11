@@ -757,6 +757,34 @@ export const ibkService = {
 
     return fd;
   },
+  // --- NEW: IBK Disability endpoints ---
+  async createIbkDisability(payload: {
+    ibk_id: string;
+    jenis_difabilitas_id: string;
+    tingkat_keparahan: string;
+    sejak_kapan?: string;
+    keterangan?: string;
+  }): Promise<void> {
+    await api.post(`/kader/pendataan-ibk/disabilitas-ibk`, payload);
+  },
+  async createIbkDisabilities(
+    payloads: Array<{
+      ibk_id: string;
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>,
+  ): Promise<void> {
+    if (!payloads || payloads.length === 0) return;
+    if (payloads.length === 1) {
+      await ibkService.createIbkDisability(payloads[0]);
+      return;
+    }
+    // Fallback: send multiple single requests until bulk endpoint is available
+    await Promise.all(payloads.map((p) => ibkService.createIbkDisability(p)));
+  },
+  // --- END NEW ---
   async getIbkListByPosyandu(params: {
     posyanduId: string;
     page?: number;
