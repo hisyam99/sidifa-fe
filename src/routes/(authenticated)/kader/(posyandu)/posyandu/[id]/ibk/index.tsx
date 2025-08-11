@@ -1,5 +1,3 @@
-// File: /sidifa-fev2/src/routes/posyandu/pendataan-ibk/index.tsx
-
 import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks"; // Add this import
 import type { DocumentHead } from "@builder.io/qwik-city";
@@ -137,7 +135,7 @@ export default component$(() => {
 
   // Remove showAddForm, currentStep, formData, wizardSteps, and all form logic
 
-  // Initial data loading or side effects for pendataan-ibk
+  // Initial data loading or side effects for ibk
   useTask$(({ track }) => {
     track(isLoggedIn); // Re-run when isLoggedIn changes
 
@@ -156,9 +154,7 @@ export default component$(() => {
 
   // IBK actions (no changes needed here)
   const handleEdit = $((ibk: IBKRecord) => {
-    navigate(
-      `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}/edit`,
-    );
+    navigate(`/kader/posyandu/${posyanduId}/ibk/${ibk.personal_data.id}/edit`);
   });
 
   // Filtered IBK list (only gender in-memory)
@@ -176,9 +172,7 @@ export default component$(() => {
   });
   // View Detail: navigate to dedicated page
   const handleViewDetail = $((ibk: IBKRecord) => {
-    navigate(
-      `/kader/posyandu/${posyanduId}/pendataan-ibk/${ibk.personal_data.id}`,
-    );
+    navigate(`/kader/posyandu/${posyanduId}/ibk/${ibk.personal_data.id}`);
   });
 
   const debouncedFetch = useDebouncer(

@@ -58,7 +58,7 @@ export default component$(() => {
       icon: LuLineChart,
     },
     {
-      href: `${base}/pendataan-ibk`,
+      href: `${base}/ibk`,
       label: "Pendataan IBK",
       icon: LuClipboardList,
     },

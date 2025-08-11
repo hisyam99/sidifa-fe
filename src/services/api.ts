@@ -685,7 +685,7 @@ export const informasiEdukasiKaderService = {
 
 export const ibkService = {
   async createIbk(formData: FormData) {
-    const response = await api.post("/kader/pendataan-ibk", formData, {
+    const response = await api.post("/kader/ibk", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -693,15 +693,11 @@ export const ibkService = {
     return response.data;
   },
   async updateIbk(id: string, formData: FormData) {
-    const response = await api.patch(
-      `/kader/pendataan-ibk/update/${id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    const response = await api.patch(`/kader/ibk/update/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
     return response.data;
   },
   buildIbkUpdateFormData(payload: Record<string, any>): FormData {
@@ -765,7 +761,7 @@ export const ibkService = {
     sejak_kapan?: string;
     keterangan?: string;
   }): Promise<void> {
-    await api.post(`/kader/pendataan-ibk/disabilitas-ibk`, payload);
+    await api.post(`/kader/ibk/disabilitas-ibk`, payload);
   },
   async createIbkDisabilities(
     payloads: Array<{
@@ -799,12 +795,12 @@ export const ibkService = {
     if (params.posyanduId) queryParams.append("posyanduId", params.posyanduId);
     if (params.nama) queryParams.append("nama", params.nama);
     const response = await api.get(
-      `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`,
+      `/kader/ibk/${params.posyanduId}?${queryParams.toString()}`,
     );
     return response.data;
   },
   async getIbkDetail(id: string) {
-    const response = await api.get(`/kader/pendataan-ibk/detail/${id}`);
+    const response = await api.get(`/kader/ibk/detail/${id}`);
     return response.data;
   },
 };

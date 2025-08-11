@@ -14,7 +14,7 @@ export const getPrettyBreadcrumbName = (segment: string): string => {
       return "Detail";
     case "laporan-statistik":
       return "Laporan Statistik";
-    case "pendataan-ibk":
+    case "ibk":
       return "Pendataan IBK";
     case "lowongan":
       return "Lowongan";

@@ -225,7 +225,7 @@ export default component$(() => {
           // Kirim semua field; backend menerima file_foto sebagai string sementara
           await updateIbk({ id: ibkId, ...values, posyanduId });
           if (!saveErr.value) {
-            nav(`/kader/posyandu/${posyanduId}/pendataan-ibk`);
+            nav(`/kader/posyandu/${posyanduId}/ibk`);
           }
         }}
       >

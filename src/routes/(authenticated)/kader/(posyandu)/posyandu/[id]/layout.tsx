@@ -17,7 +17,7 @@ export default component$(() => {
   const menuItems = [
     { href: base, label: "Dashboard", icon: "LuBarChart", exact: true },
     {
-      href: `${base}/pendataan-ibk`,
+      href: `${base}/ibk`,
       label: "Pendataan IBK",
       icon: "LuClipboardList",
     },

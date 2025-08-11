@@ -204,7 +204,7 @@ export default component$(() => {
             </p>
             <div class="card-actions justify-end">
               <a
-                href={`/admin/posyandu/${posyanduId}/pendataan-ibk`}
+                href={`/admin/posyandu/${posyanduId}/ibk`}
                 class="btn btn-secondary btn-sm"
               >
                 Lihat Data

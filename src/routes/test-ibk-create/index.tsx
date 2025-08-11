@@ -60,7 +60,7 @@ export default component$(() => {
       );
 
       const res = await fetch(
-        "https://apisd.krisnabmntr.my.id/api/v1/kader/pendataan-ibk",
+        "https://apisd.krisnabmntr.my.id/api/v1/kader/ibk",
         {
           method: "POST",
           body: formData,

@@ -37,10 +37,10 @@ export default component$(() => {
   });
 
   const handleBack: QRL<() => void> = $(() =>
-    nav(`/kader/posyandu/${posyanduId}/pendataan-ibk`),
+    nav(`/kader/posyandu/${posyanduId}/ibk`),
   );
   const handleEdit: QRL<() => void> = $(() =>
-    nav(`/kader/posyandu/${posyanduId}/pendataan-ibk/${ibkId}/edit`),
+    nav(`/kader/posyandu/${posyanduId}/ibk/${ibkId}/edit`),
   );
 
   return (
