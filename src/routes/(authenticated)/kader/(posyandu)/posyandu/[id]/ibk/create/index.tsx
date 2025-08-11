@@ -331,7 +331,7 @@ export default component$(() => {
         await ibkService.createIbkDisabilities(payloads);
       }
       success.value = "Data IBK dan disabilitas berhasil disimpan.";
-      setTimeout(() => nav(`/kader/posyandu`), 1200);
+      nav(`/kader/posyandu/${posyanduId}/ibk`);
     } catch (err: any) {
       error.value = extractErrorMessage(err);
     }
