@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import ImgSidifa from "~/media/logo/sidifa.svg?jsx";
+import sidifaLogoUrl from "~/media/logo/sidifa.svg?url";
 
 interface BrandLogoProps {
   hideTextOnMobile?: boolean;
@@ -31,6 +31,12 @@ const sizeToSub: Record<NonNullable<BrandLogoProps["size"]>, string> = {
   lg: "text-sm",
 };
 
+const sizeToPx: Record<NonNullable<BrandLogoProps["size"]>, { width: number; height: number }> = {
+  sm: { width: 32, height: 32 },
+  md: { width: 40, height: 40 },
+  lg: { width: 48, height: 48 },
+};
+
 export const BrandLogo = component$((props: BrandLogoProps) => {
   const {
     hideTextOnMobile = false,
@@ -43,11 +49,22 @@ export const BrandLogo = component$((props: BrandLogoProps) => {
   const logoSize = sizeToLogo[size];
   const brandNameSize = sizeToName[size];
   const subTextSize = sizeToSub[size];
+  const intrinsic = sizeToPx[size];
+  const isNav = variant === "nav";
 
   const content = (
     <>
       <span class={`inline-flex ${logoSize}`} aria-hidden="true">
-        <ImgSidifa class="w-full h-full object-contain select-none" />
+        <img
+          src={sidifaLogoUrl}
+          width={intrinsic.width}
+          height={intrinsic.height}
+          alt=""
+          decoding="async"
+          loading={isNav ? "eager" : "lazy"}
+          fetchPriority={isNav ? "high" : "auto"}
+          class="w-full h-full object-contain select-none"
+        />
       </span>
       <span
         class={`flex flex-col items-start ${hideTextOnMobile ? "hidden sm:flex" : ""}`}
