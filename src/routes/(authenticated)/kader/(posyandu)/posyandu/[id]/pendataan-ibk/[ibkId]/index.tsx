@@ -44,7 +44,7 @@ export default component$(() => {
   );
 
   return (
-    <main class="container mx-auto p-4 sm:p-6">
+    <main>
       <div class="mb-6">
         <h1 class="text-2xl sm:text-3xl font-bold">Detail Data IBK</h1>
         <p class="text-base-content/70">
