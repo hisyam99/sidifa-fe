@@ -152,8 +152,8 @@ export default component$(() => {
     { id: "ibk", title: "Data Diri IBK" },
     { id: "detail", title: "Detail IBK" },
     { id: "assessment", title: "Assessment" },
-    { id: "kesehatan", title: "Data Kesehatan" },
     { id: "disabilitas", title: "Jenis Disabilitas" },
+    { id: "kesehatan", title: "Data Kesehatan" },
   ];
 
   // Render semua step, field yang tidak aktif di-hide
@@ -170,9 +170,6 @@ export default component$(() => {
           <IBKSectionAssessment form={form} />
         </div>
         <div style={{ display: currentStep.value === 3 ? undefined : "none" }}>
-          <IBKSectionHealth form={form} />
-        </div>
-        <div style={{ display: currentStep.value === 4 ? undefined : "none" }}>
           <IBKSectionDisability
             onChangeSelections={$(
               (
@@ -188,6 +185,9 @@ export default component$(() => {
             )}
           />
         </div>
+        <div style={{ display: currentStep.value === 4 ? undefined : "none" }}>
+          <IBKSectionHealth form={form} />
+        </div>
       </>
     );
   }
@@ -198,17 +198,14 @@ export default component$(() => {
 
   // Helper validasi hanya field step saat ini
   const isCurrentStepValid = $(() => {
-    // Step Disabilitas (terakhir) selalu true
-    if (currentStep.value === 4) return true;
-
     // Step Detail IBK tidak wajib, selalu true
     if (currentStep.value === 1) return true;
 
     // Step Assessment tidak wajib, selalu true
     if (currentStep.value === 2) return true;
 
-    // Step Kesehatan: hanya odgj yang wajib
-    if (currentStep.value === 3) {
+    // Step Kesehatan: hanya odgj yang wajib (sekarang step terakhir index 4)
+    if (currentStep.value === 4) {
       const fld =
         form.internal.fields["odgj" as keyof typeof form.internal.fields];
       return !fld?.error && fld?.value !== "";
@@ -237,8 +234,8 @@ export default component$(() => {
     );
   });
 
-  // Step submit data IBK (sebelum disabilitas)
-  const handleSubmitIbk = $(async (values: IBKForm) => {
+  // Final submit: create IBK dulu, lalu disabilitas
+  const handleSubmitAll = $(async (values: IBKForm) => {
     error.value = null;
     success.value = null;
     Object.assign(formDataStore, values);
@@ -292,31 +289,18 @@ export default component$(() => {
       formData.append("hasil_diagnosa", formDataStore.hasil_diagnosa);
       formData.append("jenis_bantuan", formDataStore.jenis_bantuan);
       formData.append("riwayat_terapi", formDataStore.riwayat_terapi);
+
       const res = await ibkService.createIbk(formData);
-      // Ambil ibk_id dari response jika tersedia, jika tidak, coba dari res.data
       const returnedId = (res?.data?.id ||
         res?.id ||
         res?.data?.ibk_id ||
         res?.ibk_id) as string | undefined;
-      if (returnedId) {
-        createdIbkId.value = returnedId;
+      const ibkId = returnedId;
+      if (!ibkId) {
+        throw new Error("ID IBK tidak tersedia dari respons.");
       }
-      currentStep.value = 4; // lanjut ke step disabilitas
-      success.value =
-        "Data IBK berhasil disimpan. Silakan lengkapi data disabilitas.";
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
-    }
-  });
+      createdIbkId.value = ibkId;
 
-  // Step terakhir: submit disabilitas berdasarkan selections
-  const handleSubmitDisability = $(async () => {
-    error.value = null;
-    success.value = null;
-    try {
-      if (!createdIbkId.value) {
-        throw new Error("IBK belum berhasil dibuat.");
-      }
       const toIsoOrUndefined = (input?: string) => {
         if (!input) return undefined;
         const v = String(input).trim();
@@ -335,15 +319,18 @@ export default component$(() => {
           return undefined;
         }
       };
+
       const payloads = selectedDisabilities.value.map((d) => ({
-        ibk_id: createdIbkId.value as string,
+        ibk_id: ibkId,
         jenis_difabilitas_id: d.jenis_difabilitas_id,
         tingkat_keparahan: d.tingkat_keparahan,
         sejak_kapan: toIsoOrUndefined(d.sejak_kapan),
         keterangan: d.keterangan,
       }));
-      await ibkService.createIbkDisabilities(payloads);
-      success.value = "Jenis disabilitas berhasil disimpan.";
+      if (payloads.length > 0) {
+        await ibkService.createIbkDisabilities(payloads);
+      }
+      success.value = "Data IBK dan disabilitas berhasil disimpan.";
       setTimeout(() => nav(`/kader/posyandu`), 1200);
     } catch (err: any) {
       error.value = extractErrorMessage(err);
@@ -438,15 +425,10 @@ export default component$(() => {
             <Form
               onSubmit$={(values) => {
                 Object.assign(formDataStore, values);
-                if (currentStep.value < steps.length - 2) {
-                  // Masih di step IBK sebelum kesehatan
+                if (currentStep.value < steps.length - 1) {
                   currentStep.value++;
-                } else if (currentStep.value === steps.length - 2) {
-                  // Step terakhir untuk data IBK (kesehatan) => submit IBK dan lanjut ke disabilitas
-                  handleSubmitIbk(values);
                 } else {
-                  // Step disabilitas => submit disabilitas
-                  handleSubmitDisability();
+                  handleSubmitAll(values);
                 }
               }}
               class="space-y-6 w-full"
@@ -458,49 +440,31 @@ export default component$(() => {
                   type="button"
                   class="btn btn-ghost gap-2"
                   onClick$={$(() => {
-                    if (currentStep.value === 4 && createdIbkId.value) {
-                      nav(
-                        `/kader/posyandu/${posyanduId}/pendataan-ibk/${createdIbkId.value}/edit`,
-                      );
-                    } else {
-                      handlePrevious();
-                    }
+                    handlePrevious();
                   })}
                   disabled={currentStep.value === 0}
                 >
-                  {currentStep.value === 4
-                    ? "Kembali ke Edit IBK"
-                    : "Sebelumnya"}
+                  Sebelumnya
                 </button>
                 {currentStep.value < steps.length - 1 ? (
-                  currentStep.value === steps.length - 2 ? (
-                    <button
-                      type="submit"
-                      class="btn btn-primary gap-2"
-                      disabled={!(isCurrentStepValid as any)()}
-                    >
-                      Lanjutkan
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      class="btn btn-primary gap-2"
-                      disabled={!(isCurrentStepValid as any)()}
-                      onClick$={$(async () => {
-                        if (await (isCurrentStepValid as any)())
-                          currentStep.value++;
-                      })}
-                    >
-                      Lanjutkan
-                    </button>
-                  )
+                  <button
+                    type="button"
+                    class="btn btn-primary gap-2"
+                    disabled={!(isCurrentStepValid as any)()}
+                    onClick$={$(async () => {
+                      if (await (isCurrentStepValid as any)())
+                        currentStep.value++;
+                    })}
+                  >
+                    Lanjutkan
+                  </button>
                 ) : (
                   <button
                     type="submit"
                     class="btn btn-primary gap-2"
                     disabled={form.submitting}
                   >
-                    Simpan Disabilitas
+                    Simpan
                   </button>
                 )}
               </div>
