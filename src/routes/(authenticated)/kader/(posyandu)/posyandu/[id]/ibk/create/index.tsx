@@ -171,7 +171,7 @@ export default component$(() => {
         </div>
         <div style={{ display: currentStep.value === 3 ? undefined : "none" }}>
           <IBKSectionDisability
-            onChangeSelections={$(
+            onChangeSelections$={$(
               (
                 items: Array<{
                   jenis_difabilitas_id: string;

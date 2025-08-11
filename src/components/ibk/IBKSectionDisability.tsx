@@ -1,11 +1,4 @@
-import {
-  component$,
-  useSignal,
-  useStore,
-  $,
-  noSerialize,
-  type NoSerialize,
-} from "@builder.io/qwik";
+import { component$, useSignal, useStore, $, QRL } from "@builder.io/qwik";
 import {
   LuInfo,
   LuActivity,
@@ -24,14 +17,16 @@ const DISABILITY_ICON_MAP = {
 
 export const IBKSectionDisability = component$(
   (props: {
-    onChangeSelections?: (
-      items: Array<{
-        jenis_difabilitas_id: string;
-        tingkat_keparahan: string;
-        sejak_kapan?: string;
-        keterangan?: string;
-      }>,
-    ) => void;
+    onChangeSelections$?: QRL<
+      (
+        items: Array<{
+          jenis_difabilitas_id: string;
+          tingkat_keparahan: string;
+          sejak_kapan?: string;
+          keterangan?: string;
+        }>,
+      ) => void
+    >;
   }) => {
     // State untuk multi-select dan detail
     const selected = useSignal<string[]>([]);
@@ -45,24 +40,6 @@ export const IBKSectionDisability = component$(
         }
       >
     >({});
-
-    // Simpan callback non-serializable di signal dengan noSerialize agar tidak ditangkap di dalam $ closures
-    type OnChangeCb = (
-      items: Array<{
-        jenis_difabilitas_id: string;
-        tingkat_keparahan: string;
-        sejak_kapan?: string;
-        keterangan?: string;
-      }>,
-    ) => void;
-    const onChangeSelectionsSig = useSignal<
-      NoSerialize<OnChangeCb> | undefined
-    >(undefined);
-    if (props.onChangeSelections) {
-      onChangeSelectionsSig.value = noSerialize(
-        props.onChangeSelections as OnChangeCb,
-      );
-    }
 
     const TYPE_TO_ID: Record<string, string> = {
       fisik: "b8afb93f-0232-45b7-9c9f-c2063215a8f2",
@@ -116,10 +93,7 @@ export const IBKSectionDisability = component$(
     ];
 
     const emitChange = $(() => {
-      const cb = onChangeSelectionsSig.value as unknown as
-        | OnChangeCb
-        | undefined;
-      if (!cb) return;
+      if (!props.onChangeSelections$) return;
       const items = selected.value.map((type) => {
         const id = TYPE_TO_ID[type];
         const d = details[type] || {
@@ -134,7 +108,7 @@ export const IBKSectionDisability = component$(
           keterangan: d.deskripsi_kondisi || undefined,
         };
       });
-      cb(items);
+      props.onChangeSelections$(items);
     });
 
     const toggleDisability = $((type: string) => {
