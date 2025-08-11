@@ -6,7 +6,6 @@ import { useLocation } from "@builder.io/qwik-city";
 import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
 import { extractErrorMessage } from "~/utils/error";
-import { Spinner } from "~/components/ui/Spinner";
 import StatisticsCard from "~/components/ui/StatisticsCard";
 import {
   LuUser,
@@ -41,11 +40,6 @@ export default component$(() => {
       } finally {
         loading.value = false;
       }
-    } else if (!isLoggedIn.value) {
-      data.value = null;
-      error.value =
-        "Anda tidak memiliki akses untuk melihat data ini. Silakan login.";
-      loading.value = false;
     }
   });
 
@@ -128,6 +122,8 @@ export default component$(() => {
     </div>
   );
 
+  // Inline skeletons only where values are dynamic
+
   return (
     <div class="">
       <div class="container mx-auto">
@@ -155,65 +151,97 @@ export default component$(() => {
         </div>
         {/* Tombol Tambah IBK */}
         <div class="flex justify-end mb-4">
-          <a
-            href={`/kader/posyandu/${data.value?.id}/ibk/create`}
-            class="btn btn-primary gap-2"
-          >
-            Tambah IBK
-          </a>
+          {loading.value ? (
+            <div class="skeleton h-10 w-36"></div>
+          ) : (
+            <a
+              href={`/kader/posyandu/${data.value?.id}/ibk/create`}
+              class="btn btn-primary gap-2"
+            >
+              Tambah IBK
+            </a>
+          )}
         </div>
         <div class="card bg-base-100 shadow-xl border border-base-200/50 relative">
           {/* Hamburger menu in top right */}
           <div class="absolute top-4 right-4 z-10">{actionMenu}</div>
           <div class="card-body p-6 lg:p-8">
-            {loading.value && (
-              <div class="flex justify-center items-center min-h-[200px]">
-                <Spinner size="w-10 h-10" />
-              </div>
-            )}
             {error.value && (
               <div class="alert alert-error mb-4" role="alert">
                 {error.value}
               </div>
             )}
-            {data.value && !loading.value && !error.value && (
+            {(loading.value || (data.value && !error.value)) && (
               <>
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                   <div>
                     <div class="flex items-center gap-3 mb-2">
                       <span class="avatar placeholder">
-                        <div class="bg-gradient-primary rounded-full w-14 h-14 text-white flex items-center justify-center">
-                          <LuUser class="w-8 h-8" />
-                        </div>
+                        {loading.value ? (
+                          <div class="skeleton rounded-full w-14 h-14"></div>
+                        ) : (
+                          <div class="bg-gradient-primary rounded-full w-14 h-14 text-white flex items-center justify-center">
+                            <LuUser class="w-8 h-8" />
+                          </div>
+                        )}
                       </span>
                       <div>
-                        <h2 class="card-title text-2xl font-bold text-base-content mb-1">
-                          {data.value.nama_posyandu}
-                        </h2>
-                        {statusBadge}
+                        {loading.value ? (
+                          <>
+                            <div class="skeleton h-6 w-48 mb-2"></div>
+                            <div class="skeleton h-5 w-24"></div>
+                          </>
+                        ) : (
+                          <>
+                            <h2 class="card-title text-2xl font-bold text-base-content mb-1">
+                              {data.value!.nama_posyandu}
+                            </h2>
+                            {statusBadge}
+                          </>
+                        )}
                       </div>
                     </div>
-                    {userInfo(data.value.users_id)}
+                    {loading.value ? (
+                      <div class="skeleton h-4 w-40 mt-2"></div>
+                    ) : (
+                      userInfo(data.value!.users_id)
+                    )}
                   </div>
                   <div class="flex flex-col gap-2 text-sm text-base-content/70">
                     <div class="flex items-center gap-2">
                       <LuMapPin class="w-5 h-5 text-primary" />
-                      <span>{data.value.alamat}</span>
+                      {loading.value ? (
+                        <div class="skeleton h-4 w-64"></div>
+                      ) : (
+                        <span>{data.value!.alamat}</span>
+                      )}
                     </div>
                     <div class="flex items-center gap-2">
                       <LuPhone class="w-5 h-5 text-primary" />
-                      <span>{data.value.no_telp}</span>
+                      {loading.value ? (
+                        <div class="skeleton h-4 w-40"></div>
+                      ) : (
+                        <span>{data.value!.no_telp}</span>
+                      )}
                     </div>
                     <div class="flex items-center gap-2">
                       <LuCalendar class="w-5 h-5 text-primary" />
-                      <span>
-                        Dibuat:{" "}
-                        {new Date(data.value.created_at).toLocaleString()}
-                      </span>
+                      {loading.value ? (
+                        <div class="skeleton h-4 w-56"></div>
+                      ) : (
+                        <span>
+                          Dibuat:{" "}
+                          {new Date(data.value!.created_at).toLocaleString()}
+                        </span>
+                      )}
                     </div>
                     <div class="flex items-center gap-2">
                       <LuArrowRight class="w-5 h-5 text-primary" />
-                      <span>ID: {data.value.id}</span>
+                      {loading.value ? (
+                        <div class="skeleton h-4 w-44"></div>
+                      ) : (
+                        <span>ID: {data.value!.id}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -234,7 +262,7 @@ export default component$(() => {
                 </div>
               </>
             )}
-            {!data.value && !loading.value && !error.value && (
+            {!data.value && !error.value && !loading.value && (
               <div class="alert alert-warning" role="alert">
                 Data tidak ditemukan atau tidak tersedia.
               </div>
