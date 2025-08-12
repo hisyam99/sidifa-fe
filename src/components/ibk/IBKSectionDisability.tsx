@@ -188,7 +188,6 @@ export const IBKSectionDisability = component$(
       didPrefill.value = true;
       // Emit once after prefill so parent gets edited and new states
       // Note: emitChange is a $ QRL, safe to call here
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       emitChange();
     }
 

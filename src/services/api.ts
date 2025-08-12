@@ -1,5 +1,5 @@
-import axios from "axios";
-import { sessionUtils } from "~/utils/auth"; // Impor sessionUtils
+import axios from "xior";
+import { sessionUtils } from "~/utils/auth";
 
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "__PUBLIC_API_URL__",
@@ -7,9 +7,8 @@ const api = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true,
-  xsrfCookieName: "_csrf",
-  xsrfHeaderName: "X-CSRF-TOKEN",
+  // xior (fetch) uses credentials instead of withCredentials
+  credentials: "include",
 });
 
 // CSRF Token fetcher
@@ -43,7 +42,13 @@ api.interceptors.request.use(async (config) => {
       config.method?.toLowerCase() || "",
     )
   ) {
-    config.headers["X-CSRF-TOKEN"] = csrfTokenValue;
+    // Support both plain object and Headers instance in xior
+    const h: any = config.headers as any;
+    if (typeof Headers !== "undefined" && h instanceof Headers) {
+      h.set("X-CSRF-TOKEN", csrfTokenValue);
+    } else {
+      config.headers["X-CSRF-TOKEN"] = csrfTokenValue;
+    }
   }
   return config;
 });
@@ -68,7 +73,11 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
-    const originalRequest = error.config;
+    type RetriableConfig = {
+      _retry?: boolean;
+      url?: string;
+    };
+    const originalRequest = (error?.config ?? {}) as RetriableConfig;
 
     console.log("❌ ERROR:", {
       status: error.response?.status,
@@ -103,7 +112,8 @@ api.interceptors.response.use(
         console.log("🔄 Mencoba refresh token...");
         await authService.refresh();
         console.log("✅ Token berhasil di-refresh. Mengulang request asli...");
-        return api(originalRequest);
+        // In xior, use instance.request() rather than calling the instance as a function
+        return api.request(originalRequest as any);
       } catch (refreshError) {
         console.error("Gagal refresh token:", refreshError);
         sessionUtils.clearAllAuthData();
@@ -317,7 +327,7 @@ export const kaderService = {
   },
 
   async getPosyanduDetail(params: { id: string }) {
-    const response = await api.get(`/kader/posyandu/detail`, { data: params });
+    const response = await api.get(`/kader/posyandu/detail`, { params });
     return response.data;
   },
 

@@ -1,5 +1,5 @@
 // Test script untuk endpoint reset password
-import axios from "axios";
+import xior from "xior";
 
 const API_URL = "https://sidifa-api.bits.my.id/api/v1";
 const TEST_TOKEN =
@@ -18,7 +18,7 @@ async function testResetPassword() {
   console.log("🌐 URL:", `${API_URL}/auth/reset-password`);
 
   try {
-    const response = await axios.post(
+    const response = await xior.post(
       `${API_URL}/auth/reset-password`,
       testData,
       {
@@ -38,7 +38,17 @@ async function testResetPassword() {
     if (error.response) {
       console.log("Status:", error.response.status);
       console.log("Data:", error.response.data);
-      console.log("Headers:", error.response.headers);
+      if (
+        typeof Headers !== "undefined" &&
+        error.response.headers instanceof Headers
+      ) {
+        console.log(
+          "Headers:",
+          Object.fromEntries(error.response.headers.entries()),
+        );
+      } else {
+        console.log("Headers:", error.response.headers);
+      }
     } else if (error.request) {
       console.log("No response received:", error.request);
     } else {

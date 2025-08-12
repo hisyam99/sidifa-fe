@@ -51,12 +51,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
-    "axios": "^1.11.0",
     "daisyui": "^5.0.50",
     "dotenv": "^17.2.1",
     "install": "^0.13.0",
     "motion": "^12.23.12",
     "tailwindcss": "^4.1.11",
-    "valibot": "^1.1.0"
+    "valibot": "^1.1.0",
+    "xior": "^0.7.8"
   }
 }

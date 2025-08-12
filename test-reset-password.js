@@ -1,7 +1,7 @@
 // Script untuk test reset password
 // Jalankan dengan: node test-reset-password.js
 
-import axios from "axios";
+import xior from "xior";
 
 // Konfigurasi
 const API_URL = "https://apisd.krisnabmntr.my.id/api/v1";
@@ -23,7 +23,7 @@ async function testResetPassword() {
 
     console.log("\n📤 Request Data:", JSON.stringify(requestData, null, 2));
 
-    const response = await axios.post(
+    const response = await xior.post(
       `${API_URL}/auth/reset-password`,
       requestData,
       {
@@ -45,7 +45,15 @@ async function testResetPassword() {
     console.log("Message:", error.message);
 
     if (error.response?.headers) {
-      console.log("Headers:", error.response.headers);
+      if (
+        typeof Headers !== "undefined" &&
+        error.response.headers instanceof Headers
+      ) {
+        const headerObj = Object.fromEntries(error.response.headers.entries());
+        console.log("Headers:", headerObj);
+      } else {
+        console.log("Headers:", error.response.headers);
+      }
     }
   }
 }
@@ -55,7 +63,7 @@ async function testCORS() {
   try {
     console.log("\n🌐 Testing CORS...");
 
-    const response = await axios.options(`${API_URL}/auth/reset-password`, {
+    const response = await xior.options(`${API_URL}/auth/reset-password`, {
       headers: {
         Origin: "https://your-frontend-domain.com",
         "Access-Control-Request-Method": "POST",
@@ -63,7 +71,14 @@ async function testCORS() {
       },
     });
 
-    console.log("CORS Headers:", response.headers);
+    if (typeof Headers !== "undefined" && response.headers instanceof Headers) {
+      console.log(
+        "CORS Headers:",
+        Object.fromEntries(response.headers.entries()),
+      );
+    } else {
+      console.log("CORS Headers:", response.headers);
+    }
   } catch (error) {
     console.log("CORS Error:", error.message);
   }
