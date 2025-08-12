@@ -46,28 +46,26 @@ const ignores = [
   "eslint.config.js",
 ];
 
-export default tseslint.config(
-  globalIgnores(ignores),
-  js.configs.recommended,
-  tseslint.configs.recommended,
-  qwikEslint9Plugin.configs.recommended,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        ...globals.es2021,
-        ...globals.serviceworker,
-      },
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
+export default tseslint.config({
+  extends: [
+    globalIgnores(ignores),
+    js.configs.recommended,
+    ...tseslint.configs.recommended,
+    qwikEslint9Plugin.configs.recommended,
+  ],
+  languageOptions: {
+    globals: {
+      ...globals.browser,
+      ...globals.node,
+      ...globals.es2021,
+      ...globals.serviceworker,
+    },
+    parserOptions: {
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
     },
   },
-  {
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-    },
+  rules: {
+    "@typescript-eslint/no-explicit-any": "off",
   },
-);
+});
