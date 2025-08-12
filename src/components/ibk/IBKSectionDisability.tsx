@@ -27,6 +27,25 @@ export const IBKSectionDisability = component$(
         }>,
       ) => void
     >;
+    // For edit mode: existing disabilities from backend
+    initialItems?: Array<{
+      id: string; // disabilitas record id (needed for update)
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>;
+    onEditChanges$?: QRL<
+      (
+        items: Array<{
+          id: string;
+          jenis_difabilitas_id: string;
+          tingkat_keparahan: string;
+          sejak_kapan?: string;
+          keterangan?: string;
+        }>,
+      ) => void
+    >;
   }) => {
     // State untuk multi-select dan detail
     const selected = useSignal<string[]>([]);
@@ -40,6 +59,16 @@ export const IBKSectionDisability = component$(
         }
       >
     >({});
+    const didPrefill = useSignal(false);
+
+    // Map jenis_difabilitas_id -> type key for prefill
+    const ID_TO_TYPE: Record<string, string> = {
+      "b8afb93f-0232-45b7-9c9f-c2063215a8f2": "fisik",
+      "889c26c0-1624-4280-aa05-f28ae71816db": "intelektual",
+      "6f469ea4-974a-4240-b062-693acbd47d17": "mental",
+      "9e8c9f6d-3e05-4b62-a9df-768effa0316d": "sensorik_penglihatan",
+      "712e4398-c116-4040-a762-bd3bc44ab835": "sensorik_rungu",
+    };
 
     const TYPE_TO_ID: Record<string, string> = {
       fisik: "b8afb93f-0232-45b7-9c9f-c2063215a8f2",
@@ -93,7 +122,6 @@ export const IBKSectionDisability = component$(
     ];
 
     const emitChange = $(() => {
-      if (!props.onChangeSelections$) return;
       const items = selected.value.map((type) => {
         const id = TYPE_TO_ID[type];
         const d = details[type] || {
@@ -108,8 +136,61 @@ export const IBKSectionDisability = component$(
           keterangan: d.deskripsi_kondisi || undefined,
         };
       });
-      props.onChangeSelections$(items);
+      if (props.onChangeSelections$) props.onChangeSelections$(items);
+
+      // If we have initial items, also emit edit changes for those currently visible
+      if (
+        props.onEditChanges$ &&
+        props.initialItems &&
+        props.initialItems.length
+      ) {
+        const edited: Array<{
+          id: string;
+          jenis_difabilitas_id: string;
+          tingkat_keparahan: string;
+          sejak_kapan?: string;
+          keterangan?: string;
+        }> = [];
+        for (const it of props.initialItems) {
+          const type = ID_TO_TYPE[it.jenis_difabilitas_id];
+          if (!type) continue;
+          // If the card is rendered (either selected or initial), read details from state; otherwise use original
+          const d = details[type] || {
+            tingkat_keparahan: it.tingkat_keparahan,
+            sejak_kapan: it.sejak_kapan || "",
+            deskripsi_kondisi: it.keterangan || "",
+          };
+          edited.push({
+            id: it.id,
+            jenis_difabilitas_id: it.jenis_difabilitas_id,
+            tingkat_keparahan: d.tingkat_keparahan,
+            sejak_kapan: d.sejak_kapan || undefined,
+            keterangan: d.deskripsi_kondisi || undefined,
+          });
+        }
+        props.onEditChanges$(edited);
+      }
     });
+
+    // Prefill from initialItems (once) and notify parent
+    if (!didPrefill.value && props.initialItems && props.initialItems.length) {
+      for (const it of props.initialItems) {
+        const type = ID_TO_TYPE[it.jenis_difabilitas_id];
+        if (!type) continue;
+        if (!selected.value.includes(type))
+          selected.value = [...selected.value, type];
+        details[type] = {
+          tingkat_keparahan: it.tingkat_keparahan || "ringan",
+          sejak_kapan: it.sejak_kapan || "",
+          deskripsi_kondisi: it.keterangan || "",
+        };
+      }
+      didPrefill.value = true;
+      // Emit once after prefill so parent gets edited and new states
+      // Note: emitChange is a $ QRL, safe to call here
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      emitChange();
+    }
 
     const toggleDisability = $((type: string) => {
       if (selected.value.includes(type)) {

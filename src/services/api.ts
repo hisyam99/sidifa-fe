@@ -783,6 +783,20 @@ export const ibkService = {
     }
     await api.post(`/kader/pendataan-ibk/disabilitas-ibk/bulk`, payloads);
   },
+  async updateIbkDisability(
+    id: string,
+    payload: {
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    },
+  ): Promise<void> {
+    await api.patch(
+      `/kader/pendataan-ibk/disabilitas-ibk/update/${id}`,
+      payload,
+    );
+  },
   // --- END NEW ---
   async getIbkListByPosyandu(params: {
     posyanduId: string;

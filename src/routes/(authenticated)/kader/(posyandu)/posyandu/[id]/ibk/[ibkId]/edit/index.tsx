@@ -116,6 +116,34 @@ export default component$(() => {
     { id: "disabilitas", title: "Jenis Disabilitas" }, // placeholder jika dibutuhkan
   ];
 
+  // Track edit and new disability states (declare before tasks)
+  const existingDisabilities = useSignal<
+    Array<{
+      id: string;
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>
+  >([]);
+  const editedDisabilities = useSignal<
+    Array<{
+      id: string;
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>
+  >([]);
+  const newDisabilities = useSignal<
+    Array<{
+      jenis_difabilitas_id: string;
+      tingkat_keparahan: string;
+      sejak_kapan?: string;
+      keterangan?: string;
+    }>
+  >([]);
+
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     loading.value = true;
@@ -162,6 +190,16 @@ export default component$(() => {
       };
 
       setValues(form, mapVal);
+
+      // Prefill disabilitas existing items
+      const disabilitasIbk = (d?.disabilitasIbk || []).map((x: any) => ({
+        id: x.id,
+        jenis_difabilitas_id: x.jenis_difasilitas_id || x.jenis_difabilitas_id,
+        tingkat_keparahan: x.tingkat_keparahan,
+        sejak_kapan: x.sejak_kapan,
+        keterangan: x.keterangan,
+      }));
+      existingDisabilities.value = disabilitasIbk;
     } catch (err: any) {
       error.value = extractErrorMessage(err);
     } finally {
@@ -184,7 +222,51 @@ export default component$(() => {
         <IBKSectionDetail form={form} />
       </div>
       <div style={{ display: currentStep.value === 4 ? undefined : "none" }}>
-        <IBKSectionDisability />
+        <IBKSectionDisability
+          initialItems={
+            existingDisabilities.value.length
+              ? existingDisabilities.value
+              : undefined
+          }
+          onEditChanges$={
+            existingDisabilities.value.length
+              ? $(
+                  (
+                    items: Array<{
+                      id: string;
+                      jenis_difabilitas_id: string;
+                      tingkat_keparahan: string;
+                      sejak_kapan?: string;
+                      keterangan?: string;
+                    }>,
+                  ) => {
+                    editedDisabilities.value = items;
+                  },
+                )
+              : undefined
+          }
+          onChangeSelections$={$(
+            (
+              items: Array<{
+                jenis_difabilitas_id: string;
+                tingkat_keparahan: string;
+                sejak_kapan?: string;
+                keterangan?: string;
+              }>,
+            ) => {
+              // Items here are all currently visible, but we only want NEW creations.
+              // Filter out ones that match existing initial items' IDs (by jenis id)
+              const existingJenisIds = new Set(
+                (existingDisabilities.value || []).map(
+                  (x) => x.jenis_difabilitas_id,
+                ),
+              );
+              newDisabilities.value = items.filter(
+                (it) => !existingJenisIds.has(it.jenis_difabilitas_id),
+              );
+            },
+          )}
+        />
       </div>
     </>
   );
@@ -221,13 +303,60 @@ export default component$(() => {
 
       <Form
         class="space-y-6"
-        onSubmit$={async (values) => {
+        onSubmit$={$(async (values: IBKForm) => {
+          const toIsoOrUndefined = (input?: string): string | undefined => {
+            if (!input) return undefined;
+            try {
+              const d = new Date(input);
+              if (isNaN(d.getTime())) return undefined;
+              return d.toISOString();
+            } catch {
+              return undefined;
+            }
+          };
           // Kirim semua field; backend menerima file_foto sebagai string sementara
           await updateIbk({ id: ibkId, ...values, posyanduId });
-          if (!saveErr.value) {
-            nav(`/kader/posyandu/${posyanduId}/ibk`);
+          if (saveErr.value) return;
+
+          // 1) Update existing disabilities (PATCH one by one)
+          const edits =
+            editedDisabilities.value && editedDisabilities.value.length
+              ? editedDisabilities.value
+              : (existingDisabilities.value || []).map((it) => ({
+                  id: it.id,
+                  jenis_difabilitas_id: it.jenis_difabilitas_id,
+                  tingkat_keparahan: it.tingkat_keparahan,
+                  sejak_kapan: it.sejak_kapan,
+                  keterangan: it.keterangan,
+                }));
+          for (const ed of edits) {
+            try {
+              await ibkService.updateIbkDisability(ed.id, {
+                jenis_difabilitas_id: ed.jenis_difabilitas_id,
+                tingkat_keparahan: ed.tingkat_keparahan,
+                sejak_kapan: toIsoOrUndefined(ed.sejak_kapan),
+                keterangan: ed.keterangan,
+              });
+            } catch (e) {
+              // continue updating others; surface error below
+              console.error("Failed to update disability", e);
+            }
           }
-        }}
+
+          // 2) Create new disabilities (single or bulk)
+          const createPayloads = (newDisabilities.value || []).map((it) => ({
+            ibk_id: ibkId,
+            jenis_difabilitas_id: it.jenis_difabilitas_id,
+            tingkat_keparahan: it.tingkat_keparahan,
+            sejak_kapan: toIsoOrUndefined(it.sejak_kapan),
+            keterangan: it.keterangan,
+          }));
+          if (createPayloads.length > 0) {
+            await ibkService.createIbkDisabilities(createPayloads);
+          }
+
+          nav(`/kader/posyandu/${posyanduId}/ibk`);
+        })}
       >
         {renderSteps()}
 
