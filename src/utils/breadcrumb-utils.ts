@@ -20,6 +20,8 @@ export const getPrettyBreadcrumbName = (segment: string): string => {
       return "Lowongan";
     case "informasi":
       return "Informasi";
+    case "settings":
+      return "Pengaturan";
     default:
       return (
         segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ")
