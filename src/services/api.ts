@@ -11,6 +11,21 @@ const api = axios.create({
   credentials: "include",
 });
 
+// Ensure FormData requests don't have explicit Content-Type so boundary is set automatically
+api.interceptors.request.use((config) => {
+  const isFormData =
+    typeof FormData !== "undefined" && config.data instanceof FormData;
+  if (isFormData) {
+    const h: any = config.headers as any;
+    if (typeof Headers !== "undefined" && h instanceof Headers) {
+      h.delete("Content-Type");
+    } else if (config.headers && (config.headers as any)["Content-Type"]) {
+      delete (config.headers as any)["Content-Type"];
+    }
+  }
+  return config;
+});
+
 // CSRF Token fetcher
 export async function fetchCsrfToken() {
   const response = await api.get("/csrf/token");
@@ -418,7 +433,6 @@ export const informasiEdukasiAdminService = {
 
     const response = await api.patch(`/admin/informasi-edukasi`, formData, {
       params: { role: "admin", name: "admin" },
-      headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
@@ -451,7 +465,6 @@ export const informasiEdukasiAdminService = {
 
     const response = await api.post(`/admin/informasi-edukasi`, formData, {
       params: { role: "admin", name: "admin" },
-      headers: { "Content-Type": "multipart/form-data" },
     });
     return response.data;
   },
@@ -536,9 +549,7 @@ export const adminLowonganService = {
     appendDate("tanggal_selesai", data.tanggal_selesai);
     if (data.file) fd.append("file", data.file);
 
-    const response = await api.post(`/admin/lowongan`, fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await api.post(`/admin/lowongan`, fd);
     return response.data;
   },
   async update(
@@ -581,9 +592,7 @@ export const adminLowonganService = {
     appendDate("tanggal_selesai", data.tanggal_selesai);
     if (data.file) fd.append("file", data.file);
 
-    const response = await api.patch(`/admin/lowongan`, fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await api.patch(`/admin/lowongan`, fd);
     return response.data;
   },
   async delete(id: string) {
@@ -695,22 +704,13 @@ export const informasiEdukasiKaderService = {
 
 export const ibkService = {
   async createIbk(formData: FormData) {
-    const response = await api.post("/kader/pendataan-ibk", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await api.post("/kader/pendataan-ibk", formData);
     return response.data;
   },
   async updateIbk(id: string, formData: FormData) {
     const response = await api.patch(
       `/kader/pendataan-ibk/update/${id}`,
       formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      },
     );
     return response.data;
   },

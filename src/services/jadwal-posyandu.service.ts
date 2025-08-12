@@ -35,11 +35,7 @@ export class JadwalPosyanduService {
         }
       }
     });
-    await api.post("/kader/jadwal-posyandu", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await api.post("/kader/jadwal-posyandu", formData);
   }
 
   async updateJadwal(
@@ -63,11 +59,7 @@ export class JadwalPosyanduService {
         }
       }
     });
-    await api.patch(`/kader/jadwal-posyandu/update/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await api.patch(`/kader/jadwal-posyandu/update/${id}`, formData);
   }
 
   async getJadwalList(
