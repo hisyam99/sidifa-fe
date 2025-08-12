@@ -127,16 +127,18 @@ export const IBKDetailView = component$<IBKDetailViewProps>(
       <div class="min-h-screen">
         <div class="container mx-auto">
           {/* Header with Back Button */}
-          <div class="mb-4 sm:mb-8">
-            <button
-              class="btn btn-ghost btn-sm gap-2 hover:bg-base-200 transition-all duration-200"
-              onClick$={onBack$}
-              aria-label="Kembali"
-            >
-              <LuArrowLeft class="w-4 h-4" />
-              <span class="text-sm">Kembali</span>
-            </button>
-          </div>
+          {onBack$ && (
+            <div class="mb-4 sm:mb-8">
+              <button
+                class="btn btn-ghost btn-sm gap-2 hover:bg-base-200 transition-all duration-200"
+                onClick$={onBack$}
+                aria-label="Kembali"
+              >
+                <LuArrowLeft class="w-4 h-4" />
+                <span class="text-sm">Kembali</span>
+              </button>
+            </div>
+          )}
 
           {/* Main Content */}
           <div class="space-y-4 sm:space-y-6">
@@ -148,22 +150,20 @@ export const IBKDetailView = component$<IBKDetailViewProps>(
                   <div class="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 items-center">
                     {/* Avatar */}
                     <div class="mx-auto lg:mx-0">
-                      <div class="avatar">
-                        <div class="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full ring-2 sm:ring-4 ring-primary/20 ring-offset-2 sm:ring-offset-4 ring-offset-base-100 shadow-lg">
-                          {foto ? (
-                            <img
-                              src={foto}
-                              alt={nama}
-                              width={128}
-                              height={128}
-                              class="w-full h-full object-cover rounded-full"
-                            />
-                          ) : (
-                            <div class="w-full h-full grid place-items-center bg-gradient-to-br from-base-300 to-base-200">
-                              <LuUser class="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-base-content/40" />
-                            </div>
-                          )}
-                        </div>
+                      <div class="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full ring-2 sm:ring-4 ring-primary/20 ring-offset-2 sm:ring-offset-4 ring-offset-base-100 shadow-lg overflow-hidden">
+                        {foto ? (
+                          <img
+                            src={foto}
+                            alt={nama}
+                            width={128}
+                            height={128}
+                            class="w-full h-full object-cover rounded-full"
+                          />
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-base-300 to-base-200">
+                            <LuUser class="w-8 h-8 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-base-content/40" />
+                          </div>
+                        )}
                       </div>
                     </div>
 

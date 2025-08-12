@@ -13,13 +13,15 @@ import {
   LuMapPin,
   LuClock,
   LuFileText,
-  LuUser,
   LuBuilding,
   LuClipboardList,
   LuTrendingUp,
   LuUsers,
   LuAlertCircle,
   LuBarChart,
+  LuCheckCircle,
+  LuDownload,
+  LuUser,
 } from "~/components/icons/lucide-optimized";
 import { usePresensiIBK } from "~/hooks/usePresensiIBK";
 import { PresensiIBKTable } from "~/components/posyandu/presensi/PresensiIBKTable";
@@ -194,20 +196,37 @@ export default component$(() => {
     return () => window.removeEventListener("hashchange", handler);
   });
 
+  // Ensure when opening /presensi path, the Presensi tab is active and focused
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const isPresensiPath = location.url.pathname.includes("/presensi");
+    const isPresensiHash = (location.url.hash || "").includes("tab=presensi");
+    if (isPresensiPath || isPresensiHash) {
+      activeTab.value = "presensi";
+      if (!isPresensiHash) {
+        // Update hash without reloading
+        window.history.replaceState(null, "", "#tab=presensi");
+      }
+      // Focus and scroll to tabs container
+      setTimeout(() => {
+        document.getElementById("tab-presensi")?.focus();
+        document
+          .getElementById("jadwal-tabs")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    }
+  });
+
   return (
-    <div class="mx-auto w-full max-w-[1200px] px-3 md:px-4">
-      <div class="mb-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div class="flex items-center gap-2">
-          <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            <LuClipboardList class="w-7 h-7 md:w-8 md:h-8 text-primary" />
-            Detail Jadwal Posyandu
-          </h1>
-          {jadwal.value && (
-            <span class="badge badge-primary text-base-100 font-semibold px-3 py-2">
-              {jadwal.value.nama_kegiatan}
-            </span>
-          )}
-        </div>
+    <div class="w-full max-w-[1200px]">
+      {/* Back button to Jadwal List */}
+      <div class="mb-4">
+        <a
+          href={`/kader/posyandu/${location.params.id}/jadwal`}
+          class="btn btn-ghost btn-sm gap-2 hover:btn-primary transition-all duration-300"
+        >
+          ← Kembali ke Jadwal
+        </a>
       </div>
 
       {loading.value && (
@@ -216,112 +235,189 @@ export default component$(() => {
         </div>
       )}
       {error.value && (
-        <div class="alert alert-error flex items-center gap-2 mb-4">
+        <div class="alert alert-error flex items-center gap-2 mb-3">
           <LuAlertCircle class="w-6 h-6" /> {error.value}
         </div>
       )}
 
       {jadwal.value && (
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Info utama */}
-          <div class="card bg-base-100 shadow-xl p-5">
-            <div class="flex flex-col gap-4">
-              <div class="flex items-center gap-3">
-                <LuUser class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Jenis Kegiatan:</span>
-                <span class="badge badge-outline badge-info text-info-content ml-2">
-                  {jadwal.value.jenis_kegiatan}
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <LuCalendar class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Tanggal:</span>
-                <span class="ml-2">
-                  {jadwal.value.tanggal?.substring(0, 10)}
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <LuClock class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Waktu:</span>
-                <span class="ml-2">
-                  {jadwal.value.waktu_mulai} - {jadwal.value.waktu_selesai}
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <LuMapPin class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Lokasi:</span>
-                <span class="ml-2 break-words whitespace-normal">
-                  {jadwal.value.lokasi}
-                </span>
-              </div>
-              {jadwal.value.file_url && (
-                <div class="flex items-center gap-3">
-                  <LuFileText class="w-6 h-6 text-primary" />
-                  <span class="font-semibold">File:</span>
-                  <a
-                    href={buildJadwalPosyanduUrl(jadwal.value.file_url)}
-                    target="_blank"
-                    class="link link-primary underline ml-2"
-                  >
-                    Lihat File
-                  </a>
-                </div>
-              )}
-              <div class="flex items-center gap-3">
-                <LuTrendingUp class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Dibuat:</span>
-                <span class="ml-2">{jadwal.value.created_at}</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <LuTrendingUp class="w-6 h-6 text-primary" />
-                <span class="font-semibold">Diupdate:</span>
-                <span class="ml-2">{jadwal.value.updated_at || "-"}</span>
-              </div>
-            </div>
-          </div>
+        <>
+          {/* Enhanced Jadwal Card */}
+          <div class="card bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 overflow-hidden mb-4">
+            {/* Card Header with Event Info */}
+            <div class="card-body p-0">
+              <div class="bg-base-100/50 backdrop-blur-sm p-3 border-b border-base-200">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-2">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-focus text-primary-content flex items-center justify-center">
+                      <LuCalendar class="w-6 h-6" />
+                    </div>
+                    <div class="text-center lg:text-left">
+                      <h2 class="text-xl font-bold text-base-content">
+                        {jadwal.value.nama_kegiatan}
+                      </h2>
+                      <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
+                        <div class="badge badge-primary badge-sm font-semibold">
+                          {jadwal.value.jenis_kegiatan}
+                        </div>
+                        <div class="badge badge-outline badge-sm">
+                          {jadwal.value.tanggal?.substring(0, 10)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-          {/* Deskripsi & Posyandu */}
-          <div class="grid grid-cols-1 gap-4">
-            <div class="card bg-base-100 shadow-xl p-5">
-              <div class="flex items-center gap-2 mb-2">
-                <LuClipboardList class="w-5 h-5 text-primary" />
-                <span class="font-semibold">Deskripsi Kegiatan</span>
+                  {/* Status Badge */}
+                  <div class="flex items-center gap-2">
+                    <LuCheckCircle class="w-5 h-5 text-success" />
+                    <div class="badge badge-success font-semibold">
+                      Terjadwal
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="bg-base-200 rounded p-3 text-base-content/80 break-words whitespace-normal">
-                {jadwal.value.deskripsi}
+
+              {/* Event Stats */}
+              <div class="p-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                  {/* Tanggal & Waktu */}
+                  <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                    <div class="text-primary">
+                      <LuClock class="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div class="text-xs text-base-content/60">Waktu</div>
+                      <div class="text-sm font-bold text-base-content">
+                        {jadwal.value.waktu_mulai} -{" "}
+                        {jadwal.value.waktu_selesai}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Lokasi */}
+                  <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                    <div class="text-accent">
+                      <LuMapPin class="w-4 h-4" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs text-base-content/60">Lokasi</div>
+                      <div class="text-sm font-bold text-base-content truncate">
+                        {jadwal.value.lokasi}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* File Attachment */}
+                  <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                    <div class="text-secondary">
+                      <LuFileText class="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div class="text-xs text-base-content/60">Dokumen</div>
+                      {jadwal.value.file_url ? (
+                        <a
+                          href={buildJadwalPosyanduUrl(jadwal.value.file_url)}
+                          target="_blank"
+                          class="btn btn-xs btn-primary gap-1"
+                        >
+                          <LuDownload class="w-3 h-3" />
+                          File
+                        </a>
+                      ) : (
+                        <span class="text-xs text-base-content/50">
+                          Tidak ada
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Deskripsi Kegiatan */}
+                <div class="mb-3">
+                  <h4 class="text-sm font-semibold mb-1 flex items-center gap-2 text-base-content/80">
+                    <LuClipboardList class="w-4 h-4 text-primary" />
+                    Deskripsi Kegiatan
+                  </h4>
+                  <div class="bg-primary/5 border border-primary/20 rounded-lg p-2">
+                    <p class="text-sm text-base-content leading-relaxed break-words">
+                      {jadwal.value.deskripsi}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Info Posyandu */}
+                {jadwal.value.posyandu && (
+                  <div class="mb-3">
+                    <h4 class="text-sm font-semibold mb-1 flex items-center gap-2 text-base-content/80">
+                      <LuBuilding class="w-4 h-4 text-info" />
+                      Informasi Posyandu
+                    </h4>
+                    <div class="bg-info/5 border border-info/20 rounded-lg p-2">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div class="flex items-center gap-2">
+                          <LuUsers class="w-4 h-4 text-info" />
+                          <div>
+                            <div class="text-xs text-base-content/60">
+                              Nama Posyandu
+                            </div>
+                            <div class="text-sm font-semibold text-base-content">
+                              {jadwal.value.posyandu.nama_posyandu}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <LuMapPin class="w-4 h-4 text-info" />
+                          <div>
+                            <div class="text-xs text-base-content/60">
+                              Alamat
+                            </div>
+                            <div class="text-sm font-semibold text-base-content break-words">
+                              {jadwal.value.posyandu.alamat}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Timeline Info */}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div class="flex items-center gap-2 p-2 bg-base-200/30 rounded-lg">
+                    <LuTrendingUp class="w-4 h-4 text-success" />
+                    <div>
+                      <div class="text-xs text-base-content/60">Dibuat</div>
+                      <div class="text-sm font-medium text-base-content">
+                        {jadwal.value.created_at}
+                      </div>
+                    </div>
+                  </div>
+                  {jadwal.value.updated_at && (
+                    <div class="flex items-center gap-2 p-2 bg-base-200/30 rounded-lg">
+                      <LuTrendingUp class="w-4 h-4 text-warning" />
+                      <div>
+                        <div class="text-xs text-base-content/60">
+                          Terakhir Diupdate
+                        </div>
+                        <div class="text-sm font-medium text-base-content">
+                          {jadwal.value.updated_at}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            {jadwal.value.posyandu && (
-              <div class="card bg-base-100 shadow-xl p-5">
-                <div class="flex items-center gap-2 mb-2">
-                  <LuBuilding class="w-5 h-5 text-primary" />
-                  <span class="font-semibold">Info Posyandu</span>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <div class="flex items-center gap-2">
-                    <LuUsers class="w-4 h-4 text-info" />
-                    <span class="font-medium">
-                      {jadwal.value.posyandu.nama_posyandu}
-                    </span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <LuMapPin class="w-4 h-4 text-info" />
-                    <span class="break-words whitespace-normal">
-                      {jadwal.value.posyandu.alamat}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-        </div>
+        </>
       )}
 
       {/* Tabs Section */}
-      <div id="jadwal-tabs" class="mt-6">
+      <div id="jadwal-tabs" class="mt-4">
         <div role="tablist" class="tabs tabs-lifted">
           <a
             role="tab"
+            id="tab-monitoring"
             class={`tab ${activeTab.value === "monitoring" ? "tab-active" : ""}`}
             href="#tab=monitoring"
             onClick$={$(() => {
@@ -340,6 +436,7 @@ export default component$(() => {
           </a>
           <a
             role="tab"
+            id="tab-presensi"
             class={`tab ${activeTab.value === "presensi" ? "tab-active" : ""}`}
             href="#tab=presensi"
             onClick$={$(() => {
@@ -359,49 +456,57 @@ export default component$(() => {
         </div>
         <div class="border border-base-300 rounded-b-box bg-base-100 p-4">
           {activeTab.value === "monitoring" && (
-            <div class="flex flex-col gap-4">
+            <div class="space-y-3">
               {monitoringError.value && (
-                <div class="alert alert-error">{monitoringError.value}</div>
+                <div class="alert alert-error text-sm py-2">
+                  {monitoringError.value}
+                </div>
               )}
               {monitoringSuccess.value && (
-                <div class="alert alert-success">{monitoringSuccess.value}</div>
-              )}
-              <div class="flex items-end gap-4 flex-wrap">
-                <div>
-                  <label class="label">
-                    <span class="label-text">Tampilkan per halaman</span>
-                  </label>
-                  <select
-                    class="select select-bordered"
-                    value={monitoringLimit.value}
-                    onChange$={(e) => {
-                      monitoringLimit.value = Number(
-                        (e.target as HTMLSelectElement).value,
-                      );
-                      fetchMonitoring({
-                        page: 1,
-                        limit: monitoringLimit.value,
-                      });
-                    }}
-                    title="Limit per halaman"
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
+                <div class="alert alert-success text-sm py-2">
+                  {monitoringSuccess.value}
                 </div>
-                <button
-                  class="btn btn-primary"
-                  onClick$={() => {
-                    monitoringShowForm.value = true;
-                    monitoringEditId.value = null;
-                  }}
-                >
-                  Tambah Monitoring
-                </button>
+              )}
+
+              {/* Compact Controls */}
+              <div class="bg-base-100 border border-base-300 rounded-lg p-3">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-base-content/70">
+                      Show:
+                    </span>
+                    <select
+                      class="select select-bordered select-sm w-20"
+                      value={monitoringLimit.value}
+                      onChange$={(e) => {
+                        monitoringLimit.value = Number(
+                          (e.target as HTMLSelectElement).value,
+                        );
+                        fetchMonitoring({
+                          page: 1,
+                          limit: monitoringLimit.value,
+                        });
+                      }}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+                  <button
+                    class="btn btn-primary btn-sm gap-2"
+                    onClick$={() => {
+                      monitoringShowForm.value = true;
+                      monitoringEditId.value = null;
+                    }}
+                  >
+                    <LuBarChart class="w-4 h-4" />
+                    Tambah Monitoring
+                  </button>
+                </div>
               </div>
+
               <MonitoringIBKTable
                 items={monitoringList}
                 loading={monitoringLoading.value}
@@ -413,6 +518,7 @@ export default component$(() => {
                 onEdit$={handleMonitoringEdit}
                 onDelete$={handleMonitoringDelete}
               />
+
               <PaginationControls
                 meta={{
                   totalData: monitoringTotal.value,
@@ -428,7 +534,7 @@ export default component$(() => {
 
               {monitoringShowForm.value && (
                 <div class="modal modal-open">
-                  <div class="modal-box max-w-2xl overflow-visible">
+                  <div class="modal-box max-w-xl overflow-visible">
                     <button
                       class="btn btn-sm btn-circle absolute right-2 top-2"
                       onClick$={() => {
@@ -471,45 +577,53 @@ export default component$(() => {
           )}
 
           {activeTab.value === "presensi" && (
-            <div class="flex flex-col gap-4">
+            <div class="space-y-3">
               {presensiError.value && (
-                <div class="alert alert-error">{presensiError.value}</div>
+                <div class="alert alert-error text-sm py-2">
+                  {presensiError.value}
+                </div>
               )}
               {presensiSuccess.value && (
-                <div class="alert alert-success">{presensiSuccess.value}</div>
-              )}
-              <div class="flex items-end gap-4 flex-wrap">
-                <div>
-                  <label class="label">
-                    <span class="label-text">Tampilkan per halaman</span>
-                  </label>
-                  <select
-                    class="select select-bordered"
-                    value={presensiLimit.value}
-                    onChange$={(e) => {
-                      presensiLimit.value = Number(
-                        (e.target as HTMLSelectElement).value,
-                      );
-                      fetchPresensi({ page: 1, limit: presensiLimit.value });
-                    }}
-                    title="Limit per halaman"
-                  >
-                    <option value={5}>5</option>
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
+                <div class="alert alert-success text-sm py-2">
+                  {presensiSuccess.value}
                 </div>
-                <button
-                  class="btn btn-primary"
-                  onClick$={() => {
-                    presensiAddOpen.value = true;
-                  }}
-                >
-                  Tambah IBK ke Presensi
-                </button>
+              )}
+
+              {/* Compact Controls */}
+              <div class="bg-base-100 border border-base-300 rounded-lg p-3">
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-base-content/70">
+                      Show:
+                    </span>
+                    <select
+                      class="select select-bordered select-sm w-20"
+                      value={presensiLimit.value}
+                      onChange$={(e) => {
+                        presensiLimit.value = Number(
+                          (e.target as HTMLSelectElement).value,
+                        );
+                        fetchPresensi({ page: 1, limit: presensiLimit.value });
+                      }}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
+                  <button
+                    class="btn btn-primary btn-sm gap-2"
+                    onClick$={() => {
+                      presensiAddOpen.value = true;
+                    }}
+                  >
+                    <LuUser class="w-4 h-4" />
+                    Tambah IBK
+                  </button>
+                </div>
               </div>
+
               <PresensiIBKTable
                 items={presensiList}
                 loading={presensiLoading.value}
@@ -517,6 +631,7 @@ export default component$(() => {
                 onUpdateStatus$={handleUpdateStatus}
                 onBulkUpdate$={bulkUpdateStatus}
               />
+
               <PaginationControls
                 meta={{
                   totalData: presensiTotal.value,
@@ -530,7 +645,7 @@ export default component$(() => {
 
               {presensiAddOpen.value && (
                 <div class="modal modal-open">
-                  <div class="modal-box max-w-lg overflow-visible">
+                  <div class="modal-box max-w-md overflow-visible">
                     <button
                       class="btn btn-sm btn-circle absolute right-2 top-2"
                       onClick$={() => {
@@ -539,13 +654,15 @@ export default component$(() => {
                     >
                       ✕
                     </button>
-                    <h3 class="font-bold text-lg mb-2">
+                    <h3 class="font-bold text-lg mb-3">
                       Tambah IBK ke Presensi
                     </h3>
-                    <div class="space-y-3">
-                      <label class="label">
-                        <span class="label-text">Pilih IBK</span>
-                      </label>
+                    <div class="space-y-4">
+                      <div>
+                        <label class="label label-text font-medium mb-1">
+                          Pilih IBK
+                        </label>
+                      </div>
                       <IBKSearchSelect
                         posyanduId={location.params.id as string}
                         jadwalId={location.params.jadwalId as string}
@@ -554,7 +671,7 @@ export default component$(() => {
                       />
                       <input id="presensi-ibk-id" type="hidden" />
                       <button
-                        class="btn btn-primary w-full"
+                        class="btn btn-primary btn-sm w-full gap-2"
                         onClick$={$(() => {
                           const el = document.getElementById(
                             "presensi-ibk-id",
@@ -566,6 +683,7 @@ export default component$(() => {
                           }
                         })}
                       >
+                        <LuUser class="w-4 h-4" />
                         Simpan
                       </button>
                     </div>

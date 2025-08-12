@@ -80,9 +80,9 @@ export const PresensiIBKTable = component$<PresensiIBKTableProps>(
     });
 
     return (
-      <div class="card bg-base-100 shadow-xl p-4">
+      <div class="bg-base-100 border border-base-300 rounded-lg p-4">
         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 class="card-title text-xl font-bold">Presensi IBK</h2>
+          <h2 class="text-xl font-bold">Presensi IBK</h2>
           <div class="flex items-center gap-2 flex-wrap">
             <select
               class="select select-bordered select-sm w-full sm:w-auto"
