@@ -30,8 +30,14 @@ export const ConfirmationModal = component$((props: ConfirmationModalProps) => {
   }
 
   return (
-    <div class="modal modal-open modal-bottom sm:modal-middle">
-      <div class="modal-box max-w-2xl">
+    <dialog
+      open
+      class="modal modal-bottom sm:modal-middle"
+      onClose$={() => {
+        isOpen.value = false;
+      }}
+    >
+      <div class="modal-box max-w-2xl max-h-[calc(100dvh-4rem)] overflow-y-auto">
         <h3 class="font-bold text-lg mb-2">{title}</h3>
         {message && <p class="py-4 text-base-content/70">{message}</p>}
 
@@ -51,6 +57,9 @@ export const ConfirmationModal = component$((props: ConfirmationModalProps) => {
           )}
         </div>
       </div>
-    </div>
+      <form method="dialog" class="modal-backdrop">
+        <button onClick$={onCancel$}>close</button>
+      </form>
+    </dialog>
   );
 });

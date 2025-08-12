@@ -137,8 +137,15 @@ export default component$(() => {
         />
       </div>
       {showForm.value && (
-        <div class="modal modal-open">
-          <div class="modal-box max-w-lg">
+        <dialog
+          open
+          class="modal modal-bottom sm:modal-middle"
+          onClose$={() => {
+            showForm.value = false;
+            editId.value = null;
+          }}
+        >
+          <div class="modal-box max-w-lg max-h-[calc(100dvh-4rem)] overflow-y-auto">
             <button
               class="btn btn-sm btn-circle absolute right-2 top-2"
               onClick$={() => {
@@ -172,7 +179,17 @@ export default component$(() => {
               </>
             )}
           </div>
-        </div>
+          <form method="dialog" class="modal-backdrop">
+            <button
+              onClick$={() => {
+                showForm.value = false;
+                editId.value = null;
+              }}
+            >
+              close
+            </button>
+          </form>
+        </dialog>
       )}
     </div>
   );

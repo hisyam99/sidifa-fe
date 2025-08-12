@@ -6,12 +6,10 @@ import {
   LuAlertCircle,
   LuCalendar,
   LuMapPin,
-  LuUser,
   LuClipboardList,
   LuActivity,
   LuTrendingUp,
   LuCheckCircle,
-  LuEye,
   LuInfo,
 } from "~/components/icons/lucide-optimized";
 import { ibkService } from "~/services/api";

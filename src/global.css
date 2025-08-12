@@ -9,8 +9,11 @@ html:where(:not(.no-smooth-scroll)) {
   scroll-behavior: smooth;
 }
 
-/* Allow modal content to overflow (for absolute dropdowns) */
+/* Modal content: scroll by default; use .modal-box-overflow-visible to override */
 .modal-box {
+  overflow: auto;
+}
+.modal-box.modal-box-overflow-visible {
   overflow: visible;
 }
 

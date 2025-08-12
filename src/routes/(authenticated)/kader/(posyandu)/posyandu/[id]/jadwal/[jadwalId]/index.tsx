@@ -533,8 +533,15 @@ export default component$(() => {
               />
 
               {monitoringShowForm.value && (
-                <div class="modal modal-open">
-                  <div class="modal-box max-w-xl overflow-visible">
+                <dialog
+                  open
+                  class="modal modal-bottom sm:modal-middle"
+                  onClose$={() => {
+                    monitoringShowForm.value = false;
+                    monitoringEditId.value = null;
+                  }}
+                >
+                  <div class="modal-box modal-box-overflow-visible max-w-xl">
                     <button
                       class="btn btn-sm btn-circle absolute right-2 top-2"
                       onClick$={() => {
@@ -544,34 +551,46 @@ export default component$(() => {
                     >
                       ✕
                     </button>
-                    <MonitoringIBKForm
-                      initialData={
-                        monitoringEditId.value
-                          ? {
-                              ...(monitoringSelected.value || {}),
-                              jadwal_posyandu_id: jadwalId,
-                              posyandu_id: location.params.id as string,
-                            }
-                          : {
-                              jadwal_posyandu_id: jadwalId,
-                              posyandu_id: location.params.id as string,
-                            }
-                      }
-                      onSubmit$={
-                        monitoringEditId.value
-                          ? handleMonitoringUpdate
-                          : handleMonitoringCreate
-                      }
-                      loading={monitoringLoading.value}
-                      submitButtonText={
-                        monitoringEditId.value
-                          ? "Update Monitoring"
-                          : "Simpan Monitoring"
-                      }
-                      isEditing={!!monitoringEditId.value}
-                    />
+                    <div class="max-h-[calc(100dvh-4rem)] overflow-y-auto">
+                      <MonitoringIBKForm
+                        initialData={
+                          monitoringEditId.value
+                            ? {
+                                ...(monitoringSelected.value || {}),
+                                jadwal_posyandu_id: jadwalId,
+                                posyandu_id: location.params.id as string,
+                              }
+                            : {
+                                jadwal_posyandu_id: jadwalId,
+                                posyandu_id: location.params.id as string,
+                              }
+                        }
+                        onSubmit$={
+                          monitoringEditId.value
+                            ? handleMonitoringUpdate
+                            : handleMonitoringCreate
+                        }
+                        loading={monitoringLoading.value}
+                        submitButtonText={
+                          monitoringEditId.value
+                            ? "Update Monitoring"
+                            : "Simpan Monitoring"
+                        }
+                        isEditing={!!monitoringEditId.value}
+                      />
+                    </div>
                   </div>
-                </div>
+                  <form method="dialog" class="modal-backdrop">
+                    <button
+                      onClick$={() => {
+                        monitoringShowForm.value = false;
+                        monitoringEditId.value = null;
+                      }}
+                    >
+                      close
+                    </button>
+                  </form>
+                </dialog>
               )}
             </div>
           )}
@@ -644,8 +663,14 @@ export default component$(() => {
               />
 
               {presensiAddOpen.value && (
-                <div class="modal modal-open">
-                  <div class="modal-box max-w-md overflow-visible">
+                <dialog
+                  open
+                  class="modal modal-bottom sm:modal-middle"
+                  onClose$={() => {
+                    presensiAddOpen.value = false;
+                  }}
+                >
+                  <div class="modal-box modal-box-overflow-visible max-w-md">
                     <button
                       class="btn btn-sm btn-circle absolute right-2 top-2"
                       onClick$={() => {
@@ -654,41 +679,52 @@ export default component$(() => {
                     >
                       ✕
                     </button>
-                    <h3 class="font-bold text-lg mb-3">
-                      Tambah IBK ke Presensi
-                    </h3>
-                    <div class="space-y-4">
-                      <div>
-                        <label class="label label-text font-medium mb-1">
-                          Pilih IBK
-                        </label>
+                    <div class="max-h-[calc(100dvh-4rem)] overflow-y-auto">
+                      <h3 class="font-bold text-lg mb-3">
+                        Tambah IBK ke Presensi
+                      </h3>
+                      <div class="space-y-4">
+                        <div>
+                          <label class="label label-text font-medium mb-1">
+                            Pilih IBK
+                          </label>
+                        </div>
+                        <IBKSearchSelect
+                          posyanduId={location.params.id as string}
+                          jadwalId={location.params.jadwalId as string}
+                          targetInputId="presensi-ibk-id"
+                          placeholder="Cari nama IBK..."
+                        />
+                        <input id="presensi-ibk-id" type="hidden" />
+                        <button
+                          class="btn btn-primary btn-sm w-full gap-2"
+                          onClick$={$(() => {
+                            const el = document.getElementById(
+                              "presensi-ibk-id",
+                            ) as HTMLInputElement | null;
+                            const idVal = el?.value?.trim();
+                            if (idVal) {
+                              addToPresensi({ user_ibk_id: idVal });
+                              presensiAddOpen.value = false;
+                            }
+                          })}
+                        >
+                          <LuUser class="w-4 h-4" />
+                          Simpan
+                        </button>
                       </div>
-                      <IBKSearchSelect
-                        posyanduId={location.params.id as string}
-                        jadwalId={location.params.jadwalId as string}
-                        targetInputId="presensi-ibk-id"
-                        placeholder="Cari nama IBK..."
-                      />
-                      <input id="presensi-ibk-id" type="hidden" />
-                      <button
-                        class="btn btn-primary btn-sm w-full gap-2"
-                        onClick$={$(() => {
-                          const el = document.getElementById(
-                            "presensi-ibk-id",
-                          ) as HTMLInputElement | null;
-                          const idVal = el?.value?.trim();
-                          if (idVal) {
-                            addToPresensi({ user_ibk_id: idVal });
-                            presensiAddOpen.value = false;
-                          }
-                        })}
-                      >
-                        <LuUser class="w-4 h-4" />
-                        Simpan
-                      </button>
                     </div>
                   </div>
-                </div>
+                  <form method="dialog" class="modal-backdrop">
+                    <button
+                      onClick$={() => {
+                        presensiAddOpen.value = false;
+                      }}
+                    >
+                      close
+                    </button>
+                  </form>
+                </dialog>
               )}
             </div>
           )}
