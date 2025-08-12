@@ -14,11 +14,18 @@
     "skipLibCheck": true,
     "incremental": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "outDir": "tmp",
     "noEmit": true,
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "./*.d.ts", "./*.config.ts"]
+  "include": [
+    "src",
+    "./*.d.ts",
+    "./*.config.ts",
+    "./*.config.mts",
+    "adapters/**/*.config.mts"
+  ]
 }
