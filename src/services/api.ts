@@ -781,8 +781,7 @@ export const ibkService = {
       await ibkService.createIbkDisability(payloads[0]);
       return;
     }
-    // Fallback: send multiple single requests until bulk endpoint is available
-    await Promise.all(payloads.map((p) => ibkService.createIbkDisability(p)));
+    await api.post(`/kader/pendataan-ibk/disabilitas-ibk/bulk`, payloads);
   },
   // --- END NEW ---
   async getIbkListByPosyandu(params: {
