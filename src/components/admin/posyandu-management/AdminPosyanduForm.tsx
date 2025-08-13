@@ -57,8 +57,7 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
   return (
     <Form
       class="space-y-4"
-      preventdefault:submit
-      onSubmit$={$(async (values) => {
+      onSubmit$={$(async (values: PosyanduFormValues) => {
         const payload: AdminPosyanduFormData = {
           nama_posyandu: values.nama_posyandu,
           alamat: values.alamat,
