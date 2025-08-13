@@ -89,7 +89,7 @@ export default component$(() => {
                 key={item.id}
                 title={item.judul}
                 category={item.tipe || "Informasi"}
-                image={buildInformasiEdukasiUrl(item.file_url)}
+                image={buildInformasiEdukasiUrl(item.file_name)}
                 excerpt={item.deskripsi}
                 href={`/kader/informasi/${item.id}`}
               />

@@ -41,10 +41,10 @@ export default component$(() => {
                   </span>
                 </div>
               </div>
-              {item.value.file_url && (
+              {item.value.file_name && (
                 <a
                   class="btn btn-outline btn-primary"
-                  href={buildLowonganUploadUrl(item.value.file_url)}
+                  href={buildLowonganUploadUrl(item.value.file_name)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

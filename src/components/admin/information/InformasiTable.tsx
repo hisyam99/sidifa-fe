@@ -79,9 +79,9 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                   </div>
                 </td>
                 <td>
-                  {item.file_url ? (
+                  {item.file_name ? (
                     <a
-                      href={buildInformasiEdukasiUrl(item.file_url)}
+                      href={buildInformasiEdukasiUrl(item.file_name)}
                       target="_blank"
                       class="btn btn-ghost btn-xs link link-primary"
                       title="Lihat File"

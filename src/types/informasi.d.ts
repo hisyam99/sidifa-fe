@@ -3,7 +3,7 @@ export interface InformasiItem {
   judul: string;
   tipe: string;
   deskripsi: string;
-  file_url?: string;
+  file_name?: string;
   created_at?: string;
   updated_at?: string | null;
 }

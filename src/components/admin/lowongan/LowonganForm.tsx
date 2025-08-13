@@ -118,9 +118,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
               placeholder="Nama lowongan"
               required
             />
-            {field.error && (
-              <div class="text-error text-xs mt-1">{field.error}</div>
-            )}
           </>
         )}
       </Field>
@@ -137,9 +134,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 placeholder="Nama perusahaan"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -154,9 +148,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 placeholder="Contoh: Full-time"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -171,9 +162,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 placeholder="Contoh: Jakarta"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -188,9 +176,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 placeholder="Contoh: Tuna Daksa"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -207,9 +192,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
               placeholder="Deskripsi pekerjaan"
               required
             />
-            {field.error && (
-              <div class="text-error text-xs mt-1">{field.error}</div>
-            )}
           </>
         )}
       </Field>
@@ -231,9 +213,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 <option value="aktif">Aktif</option>
                 <option value="nonaktif">Nonaktif</option>
               </select>
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </div>
           )}
         </Field>
@@ -246,9 +225,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 type="date"
                 label="Tanggal Mulai"
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -261,9 +237,6 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
                 type="date"
                 label="Tanggal Selesai"
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>

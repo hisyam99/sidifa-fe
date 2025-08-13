@@ -43,7 +43,7 @@ function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
     tanggal: apiData.tanggal,
     waktu_mulai: apiData.waktu_mulai,
     waktu_selesai: apiData.waktu_selesai,
-    file_url: buildJadwalPosyanduUrl(apiData.file_name || apiData.file_url),
+    file_name: buildJadwalPosyanduUrl(apiData.file_name || apiData.file_name),
     created_at: apiData.created_at,
     updated_at: apiData.updated_at,
     posyandu: apiData.posyandu || undefined,
@@ -314,9 +314,9 @@ export default component$(() => {
                     </div>
                     <div>
                       <div class="text-xs text-base-content/60">Dokumen</div>
-                      {jadwal.value.file_url ? (
+                      {jadwal.value.file_name ? (
                         <a
-                          href={buildJadwalPosyanduUrl(jadwal.value.file_url)}
+                          href={buildJadwalPosyanduUrl(jadwal.value.file_name)}
                           target="_blank"
                           class="btn btn-xs btn-primary gap-1"
                         >

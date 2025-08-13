@@ -37,11 +37,11 @@ export default component$(() => {
             <b>Jenis Difasilitas:</b> {item.value.jenis_difasilitas}
           </p>
           <p class="mt-2">{item.value.deskripsi}</p>
-          {item.value.file_url && (
+          {item.value.file_name && (
             <p class="mt-4">
               <a
                 class="link link-primary"
-                href={buildLowonganUploadUrl(item.value.file_url)}
+                href={buildLowonganUploadUrl(item.value.file_name)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

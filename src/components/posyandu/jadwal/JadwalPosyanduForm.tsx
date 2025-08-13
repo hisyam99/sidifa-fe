@@ -127,9 +127,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                 placeholder="Nama kegiatan"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -144,9 +141,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                 placeholder="Jenis kegiatan"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -161,9 +155,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                 placeholder="Deskripsi kegiatan"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -178,9 +169,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                 placeholder="Lokasi kegiatan"
                 required
               />
-              {field.error && (
-                <div class="text-error text-xs mt-1">{field.error}</div>
-              )}
             </>
           )}
         </Field>
@@ -200,9 +188,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                   label="Tanggal"
                   required
                 />
-                {field.error && (
-                  <div class="text-error text-xs mt-1">{field.error}</div>
-                )}
               </>
             )}
           </Field>
@@ -216,9 +201,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                   label="Waktu Mulai"
                   required
                 />
-                {field.error && (
-                  <div class="text-error text-xs mt-1">{field.error}</div>
-                )}
               </>
             )}
           </Field>
@@ -232,9 +214,6 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
                   label="Waktu Selesai"
                   required
                 />
-                {field.error && (
-                  <div class="text-error text-xs mt-1">{field.error}</div>
-                )}
               </>
             )}
           </Field>

@@ -14,7 +14,7 @@ export interface InformasiFormData {
   tipe: string;
   deskripsi: string;
   file?: NoSerialize<File>;
-  file_url?: string; // For displaying existing file URL
+  file_name?: string; // For displaying existing file URL
 }
 
 interface InformasiFormProps {
@@ -37,7 +37,7 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
       judul: "",
       tipe: "",
       deskripsi: "",
-      file_url: "",
+      file_name: "",
     },
   );
 
@@ -129,10 +129,10 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
             File terpilih: {(selectedFile.value as unknown as File).name}
           </div>
         )}
-        {formState.value.file_url && !selectedFile.value && (
+        {formState.value.file_name && !selectedFile.value && (
           <div class="mt-2">
             <a
-              href={buildInformasiEdukasiUrl(formState.value.file_url)}
+              href={buildInformasiEdukasiUrl(formState.value.file_name)}
               target="_blank"
               class="link link-primary text-sm"
             >

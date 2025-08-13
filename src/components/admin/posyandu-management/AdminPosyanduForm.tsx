@@ -1,4 +1,7 @@
-import { component$, $, QRL, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, $, type QRL } from "@builder.io/qwik";
+import { useForm, valiForm$ } from "@modular-forms/qwik";
+import { object, string, nonEmpty, pipe } from "valibot";
+import FormFieldModular from "~/components/ui/FormFieldModular";
 import { GenericLoadingSpinner } from "~/components/common";
 
 export interface AdminPosyanduFormData {
@@ -15,6 +18,20 @@ interface AdminPosyanduFormProps {
   submitButtonText?: string;
 }
 
+const posyanduSchema = object({
+  nama_posyandu: pipe(string(), nonEmpty("Nama posyandu wajib diisi")),
+  alamat: pipe(string(), nonEmpty("Alamat wajib diisi")),
+  no_telp: pipe(string(), nonEmpty("No. telepon wajib diisi")),
+  status: string(),
+});
+
+type PosyanduFormValues = {
+  nama_posyandu: string;
+  alamat: string;
+  no_telp: string;
+  status: string;
+};
+
 export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
   const {
     initialData,
@@ -23,117 +40,112 @@ export const AdminPosyanduForm = component$((props: AdminPosyanduFormProps) => {
     submitButtonText = "Simpan",
   } = props;
 
-  const formState = useSignal<AdminPosyanduFormData>({
-    nama_posyandu: "",
-    alamat: "",
-    no_telp: "",
-    status: "Aktif",
-  });
-
-  // Update formState when initialData changes
-  useTask$(({ track }) => {
-    track(() => initialData);
-    if (initialData) {
-      formState.value = {
-        nama_posyandu: initialData.nama_posyandu || "",
-        alamat: initialData.alamat || "",
-        no_telp: initialData.no_telp || "",
-        status: initialData.status || "Aktif",
-      };
-    } else {
-      // Reset form for create mode
-      formState.value = {
-        nama_posyandu: "",
-        alamat: "",
-        no_telp: "",
-        status: "Aktif",
-      };
-    }
-  });
-
-  const handleSubmit = $(async (event: Event) => {
-    event.preventDefault();
-    await onSubmit$(formState.value);
-  });
-
-  const updateField = $((field: keyof AdminPosyanduFormData, value: string) => {
-    formState.value = {
-      ...formState.value,
-      [field]: value,
-    };
+  const [form, { Form, Field }] = useForm<PosyanduFormValues>({
+    loader: {
+      value: {
+        nama_posyandu: initialData?.nama_posyandu ?? "",
+        alamat: initialData?.alamat ?? "",
+        no_telp: initialData?.no_telp ?? "",
+        status: initialData?.status ?? "Aktif",
+      },
+    },
+    validate: valiForm$(posyanduSchema),
+    validateOn: "blur",
+    revalidateOn: "blur",
   });
 
   return (
-    <form
-      class="space-y-4 p-6 bg-base-100 rounded-lg shadow-md"
-      onSubmit$={handleSubmit}
+    <Form
+      class="space-y-4"
+      preventdefault:submit
+      onSubmit$={$(async (values) => {
+        const payload: AdminPosyanduFormData = {
+          nama_posyandu: values.nama_posyandu,
+          alamat: values.alamat,
+          no_telp: values.no_telp,
+          status: (values.status as "Aktif" | "Tidak Aktif") ?? "Aktif",
+        };
+        await onSubmit$(payload);
+      })}
     >
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">Nama Posyandu</span>
-        </label>
-        <input
-          type="text"
-          class="input input-bordered w-full"
-          value={formState.value.nama_posyandu}
-          onInput$={(e) =>
-            updateField("nama_posyandu", (e.target as HTMLInputElement).value)
-          }
-          required
-        />
-      </div>
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">Alamat</span>
-        </label>
-        <textarea
-          class="textarea textarea-bordered w-full"
-          value={formState.value.alamat}
-          onInput$={(e) =>
-            updateField("alamat", (e.target as HTMLTextAreaElement).value)
-          }
-          required
-        />
-      </div>
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">No. Telepon</span>
-        </label>
-        <input
-          type="tel"
-          class="input input-bordered w-full"
-          value={formState.value.no_telp}
-          onInput$={(e) =>
-            updateField("no_telp", (e.target as HTMLInputElement).value)
-          }
-          required
-        />
-      </div>
-      <div class="form-control">
-        <label class="label">
-          <span class="label-text">Status</span>
-        </label>
-        <select
-          class="select select-bordered w-full"
-          value={formState.value.status}
-          onChange$={(e) =>
-            updateField("status", (e.target as HTMLSelectElement).value)
-          }
-          required
+      {form.invalid && (
+        <div class="alert alert-error">
+          Ada data yang belum valid. Silakan periksa field bertanda merah.
+        </div>
+      )}
+
+      <Field name="nama_posyandu" type="string">
+        {(field, fieldProps) => (
+          <FormFieldModular
+            field={field}
+            props={fieldProps}
+            type="text"
+            label="Nama Posyandu"
+            placeholder="Masukkan nama posyandu"
+            required
+          />
+        )}
+      </Field>
+
+      <Field name="alamat" type="string">
+        {(field, fieldProps) => (
+          <FormFieldModular
+            field={field}
+            props={fieldProps}
+            type="textarea"
+            label="Alamat"
+            placeholder="Masukkan alamat lengkap"
+            required
+          />
+        )}
+      </Field>
+
+      <Field name="no_telp" type="string">
+        {(field, fieldProps) => (
+          <FormFieldModular
+            field={field}
+            props={fieldProps}
+            type="text"
+            label="No. Telepon"
+            placeholder="Contoh: 0812xxxxxxx"
+            required
+          />
+        )}
+      </Field>
+
+      <Field name="status" type="string">
+        {(field) => (
+          <div>
+            <label class="label">
+              <span class="label-text">Status</span>
+            </label>
+            <select
+              class="select select-bordered w-full"
+              value={field.value || "Aktif"}
+              onInput$={(e) =>
+                (field.value = (e.target as HTMLSelectElement).value)
+              }
+            >
+              <option value="Aktif">Aktif</option>
+              <option value="Tidak Aktif">Tidak Aktif</option>
+            </select>
+          </div>
+        )}
+      </Field>
+
+      <div class="flex justify-end pt-2">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          disabled={form.submitting || loading}
         >
-          <option value="Aktif">Aktif</option>
-          <option value="Tidak Aktif">Tidak Aktif</option>
-        </select>
-      </div>
-      <div class="flex justify-end pt-4">
-        <button type="submit" class="btn btn-primary" disabled={loading}>
-          {loading ? (
+          {form.submitting || loading ? (
             <GenericLoadingSpinner size="w-5 h-5" color="text-white" />
           ) : (
             submitButtonText
           )}
         </button>
       </div>
-    </form>
+    </Form>
   );
 });

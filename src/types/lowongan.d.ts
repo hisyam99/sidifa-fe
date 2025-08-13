@@ -7,7 +7,6 @@ export interface LowonganItem {
   jenis_difasilitas: string;
   deskripsi: string;
   status: "aktif" | "nonaktif" | string;
-  file_url?: string;
   file_name?: string;
   tanggal_mulai?: string; // ISO-8601
   tanggal_selesai?: string; // ISO-8601

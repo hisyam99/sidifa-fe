@@ -20,6 +20,7 @@ export const useAdminAccountVerification = () => {
         name?: string;
         role?: "admin" | "posyandu" | "psikolog" | "";
         verification?: "verified" | "unverified" | "declined" | "";
+        status?: "verified" | "unverified" | "declined" | "";
         orderBy?: "asc" | "desc" | "";
       } = {},
     ) => {
@@ -31,17 +32,28 @@ export const useAdminAccountVerification = () => {
           page: params.page ?? page.value,
           name: params.name,
           role: params.role,
-          verification: params.verification,
-          orderBy: params.orderBy,
+          verification: params.status ?? params.verification ?? "",
         });
 
-        items.value = response.data as AdminVerificationItem[];
+        const rows = Array.isArray(response.data) ? response.data : [];
+        items.value = rows.map((row: any) => ({
+          id: row.id,
+          name: row.name,
+          email: row.email,
+          role: row.role,
+          status:
+            (row.verification as "verified" | "unverified" | "declined") ??
+            "unverified",
+          requested_at: row.requested_at ?? "",
+          verified_at: row.verified_at ?? null,
+        }));
         totalData.value = response.meta?.totalData || 0;
         totalPages.value = response.meta?.totalPage || 1;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
       } catch (err: any) {
         error.value = err.message || "Gagal memuat data verifikasi akun";
+        items.value = [];
       } finally {
         loading.value = false;
       }

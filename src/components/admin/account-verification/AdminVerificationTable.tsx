@@ -56,11 +56,19 @@ export const AdminVerificationTable = component$(
             <table class="table table-sm xl:table-md w-full">
               <thead>
                 <tr class="bg-base-200/60">
-                  <th class="sticky top-0 z-20 bg-base-200/60">Nama</th>
-                  <th class="sticky top-0 z-20 bg-base-200/60">Email</th>
-                  <th class="sticky top-0 z-20 bg-base-200/60">Peran</th>
-                  <th class="sticky top-0 z-20 bg-base-200/60">Status</th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 table-pin-col">
+                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
+                    Nama
+                  </th>
+                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
+                    Email
+                  </th>
+                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
+                    Peran
+                  </th>
+                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
+                    Status
+                  </th>
+                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur table-pin-col">
                     Aksi
                   </th>
                 </tr>

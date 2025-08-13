@@ -30,7 +30,7 @@ export default component$(() => {
           judul: data.judul || "",
           tipe: data.tipe || "",
           deskripsi: data.deskripsi || "",
-          file_url: data.file_url || "", // Changed from file_name to file_url
+          file_name: data.file_name || "", // Changed from file_name to file_name
         };
       }
     }

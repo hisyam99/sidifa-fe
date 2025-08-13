@@ -20,7 +20,7 @@ export interface EducationalContent {
 
   // Media files
   thumbnail?: string;
-  file_url?: string; // For PDF/video files
+  file_name?: string; // For PDF/video files
 
   // Metadata
   penulis: string;
