@@ -26,12 +26,12 @@ export class PresensiIBKService {
     const res = await api.get(
       `/kader/presensi-ibk/${jadwalId}?${query.toString()}`,
     );
-    return res.data;
+    return res.data as PresensiIBKListResponse;
   }
 
   async detail(id: string): Promise<PresensiIBKDetailResponse> {
     const res = await api.get(`/kader/presensi-ibk/detail/${id}`);
-    return res.data;
+    return res.data as PresensiIBKDetailResponse;
   }
 
   async add(payload: {
@@ -48,7 +48,7 @@ export class PresensiIBKService {
     const res = await api.patch(`/kader/presensi-ibk/update/${id}`, {
       status_presensi: status,
     });
-    return res.data;
+    return res.data as PresensiIBKDetailResponse;
   }
 
   // New: Bulk update status for multiple IBK in a jadwal
@@ -68,14 +68,27 @@ export class PresensiIBKService {
       `/kader/presensi-ibk/ibk-not-registered/${jadwalId}/posyandu/${posyanduId}`,
     );
     // The backend returns an array; normalize to id and nama keys commonly used in UI
-    const data = Array.isArray(res.data?.data) ? res.data.data : res.data;
-    return (Array.isArray(data) ? data : []).map((row: any) => ({
-      id: row.id ?? row.ibk_id ?? row.user_ibk_id ?? row.user_id ?? "",
+    const body = res.data as
+      | { data?: Array<Record<string, unknown>> }
+      | Array<Record<string, unknown>>;
+    const arr = Array.isArray((body as { data?: unknown }).data)
+      ? (body as { data: Array<Record<string, unknown>> }).data
+      : (body as Array<Record<string, unknown>>);
+    return (Array.isArray(arr) ? arr : []).map((row) => ({
+      id:
+        (row.id as string | undefined) ||
+        (row.ibk_id as string | undefined) ||
+        (row.user_ibk_id as string | undefined) ||
+        (row.user_id as string | undefined) ||
+        "",
       nama:
-        row.nama ||
-        row.nama_lengkap ||
-        row.personal_data?.nama_lengkap ||
-        row.ibk?.nama ||
+        (row.nama as string | undefined) ||
+        (row.nama_lengkap as string | undefined) ||
+        ((row.personal_data as { nama_lengkap?: string } | undefined)
+          ?.nama_lengkap as string | undefined) ||
+        ((row.ibk as { nama?: string } | undefined)?.nama as
+          | string
+          | undefined) ||
         "(Tanpa Nama)",
     }));
   }

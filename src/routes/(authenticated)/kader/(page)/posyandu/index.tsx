@@ -18,7 +18,7 @@ import type {
 export default component$(() => {
   const posyanduList = useSignal<PosyanduItem[]>([]);
   const meta = useSignal<PaginationMeta | null>(null);
-  const loading = useSignal(true);
+  const loading = useSignal(false);
   const error = useSignal<string | null>(null);
 
   // Fix: computed signals for total and totalPage
@@ -32,6 +32,7 @@ export default component$(() => {
   const sortOptions = useSignal<PosyanduSortOptions>({
     sortBy: "nama_asc",
   });
+  const sortByKey = useComputed$(() => sortOptions.value.sortBy ?? "");
 
   const { isLoggedIn } = useAuth();
 
@@ -47,7 +48,10 @@ export default component$(() => {
     initialPage: 1,
     initialLimit: 10,
     fetchList: $(async (params) => {
-      if (!isLoggedIn.value) return; // Prevent fetch during SSG or unauthenticated
+      if (!isLoggedIn.value) {
+        loading.value = false;
+        return; // Prevent fetch during SSG or unauthenticated
+      }
       loading.value = true;
       error.value = null;
       try {
@@ -70,7 +74,7 @@ export default component$(() => {
     total: totalDataSignal,
     totalPage: totalPageSignal,
     filters: filterOptions,
-    dependencies: [isLoggedIn, sortOptions],
+    dependencies: [isLoggedIn, sortByKey],
   });
 
   const registerToPosyandu = $(async (posyanduId: string) => {

@@ -16,11 +16,11 @@ api.interceptors.request.use((config) => {
   const isFormData =
     typeof FormData !== "undefined" && config.data instanceof FormData;
   if (isFormData) {
-    const h: any = config.headers as any;
+    const h = config.headers as Headers | Record<string, string> | undefined;
     if (typeof Headers !== "undefined" && h instanceof Headers) {
       h.delete("Content-Type");
-    } else if (config.headers && (config.headers as any)["Content-Type"]) {
-      delete (config.headers as any)["Content-Type"];
+    } else if (h && typeof h === "object" && "Content-Type" in h) {
+      delete (h as Record<string, string>)["Content-Type"];
     }
   }
   return config;
@@ -44,7 +44,7 @@ api.interceptors.request.use(async (config) => {
   ) {
     try {
       const response = await fetchCsrfToken();
-      csrfTokenValue = response.csrfToken;
+      csrfTokenValue = response.csrfToken as string;
       csrfFetched = true;
     } catch (error) {
       console.error("Gagal mengambil CSRF token:", error);
@@ -58,11 +58,11 @@ api.interceptors.request.use(async (config) => {
     )
   ) {
     // Support both plain object and Headers instance in xior
-    const h: any = config.headers as any;
+    const h = config.headers as Headers | Record<string, string> | undefined;
     if (typeof Headers !== "undefined" && h instanceof Headers) {
       h.set("X-CSRF-TOKEN", csrfTokenValue);
-    } else {
-      config.headers["X-CSRF-TOKEN"] = csrfTokenValue;
+    } else if (h) {
+      (h as Record<string, string>)["X-CSRF-TOKEN"] = csrfTokenValue;
     }
   }
   return config;
@@ -180,7 +180,7 @@ export const authService = {
     const response = await api.post("/auth/refresh");
     return response.data;
   },
-  async login(data: any) {
+  async login(data: { email: string; password: string }) {
     // Prevent API calls during SSG/server
     if (typeof window === "undefined") {
       return null;
@@ -714,7 +714,7 @@ export const ibkService = {
     );
     return response.data;
   },
-  buildIbkUpdateFormData(payload: Record<string, any>): FormData {
+  buildIbkUpdateFormData(payload: Record<string, unknown>): FormData {
     const fd = new FormData();
 
     // Helpers to normalize values

@@ -16,6 +16,7 @@ export interface LowonganItem {
 }
 
 export interface LowonganFilterOptions {
+  [key: string]: unknown;
   nama_lowongan?: string;
   nama_perusahaan?: string;
   jenis_pekerjaan?: string;
@@ -34,7 +35,7 @@ export interface LowonganCreateRequest {
   status: string;
   tanggal_mulai?: string; // ISO-8601
   tanggal_selesai?: string; // ISO-8601
-  file?: File | string;
+  file?: File;
 }
 
 export interface LowonganUpdateRequest extends Partial<LowonganCreateRequest> {

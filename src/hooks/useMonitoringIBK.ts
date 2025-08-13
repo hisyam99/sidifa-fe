@@ -42,8 +42,8 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
       total.value = res.meta?.totalData ?? res.data?.length ?? 0;
       page.value = res.meta?.currentPage ?? page.value;
       limit.value = res.meta?.limit ?? limit.value;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -54,9 +54,9 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
     error.value = null;
     try {
       const res = await monitoringIBKService.detail(id);
-      selected.value = res.data || (res as any);
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+      selected.value = res.data ?? null;
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -70,8 +70,8 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
       await monitoringIBKService.create(payload);
       success.value = "Monitoring berhasil dibuat.";
       await fetchList();
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -86,8 +86,8 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
         await monitoringIBKService.update(id, payload);
         success.value = "Monitoring berhasil diupdate.";
         await fetchList();
-      } catch (err: any) {
-        error.value = extractErrorMessage(err);
+      } catch (err: unknown) {
+        error.value = extractErrorMessage(err as string);
       } finally {
         loading.value = false;
       }
@@ -102,8 +102,8 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
       await monitoringIBKService.delete(id);
       success.value = "Monitoring berhasil dihapus.";
       await fetchList();
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }

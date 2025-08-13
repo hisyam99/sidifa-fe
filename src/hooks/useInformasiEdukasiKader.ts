@@ -45,8 +45,9 @@ export const useInformasiEdukasiKader = () => {
           (meta.totalPage as number) ||
           Math.ceil((total.value || 0) / (limit.value || 9)) ||
           1;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal memuat data";
       } finally {
         loading.value = false;
       }
@@ -63,8 +64,9 @@ export const useInformasiEdukasiKader = () => {
         );
       if (!isUuid) return null;
       return (await informasiEdukasiKaderService.detail(id)) as InformasiItem;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal memuat detail";
       return null;
     } finally {
       loading.value = false;

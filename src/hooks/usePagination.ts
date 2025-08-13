@@ -17,11 +17,21 @@ export interface PaginationMeta {
   limit: number;
 }
 
+// JSON-serializable value type
+export type Serializable =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | Serializable[]
+  | { [key: string]: Serializable };
+
 /**
  * Options for the usePagination hook
  */
 export interface UsePaginationOptions<
-  TFilter extends Record<string, any> = Record<string, any>,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
 > {
   initialPage?: number;
   initialLimit?: number;
@@ -29,14 +39,14 @@ export interface UsePaginationOptions<
   total: Signal<number>;
   totalPage?: Signal<number>;
   filters?: Signal<TFilter>;
-  dependencies?: Array<Signal<any>>;
+  dependencies?: Array<Signal<Serializable>>;
 }
 
 /**
  * Reusable pagination hook for Qwik v2
  */
 export function usePagination<
-  TFilter extends Record<string, any> = Record<string, any>,
+  TFilter extends Record<string, unknown> = Record<string, unknown>,
 >({
   initialPage = 1,
   initialLimit = 10,
@@ -58,9 +68,14 @@ export function usePagination<
     limit: currentLimit.value,
   }));
 
+  // Stable, serializable hash for filters (always call useComputed$)
+  const filterHash = useComputed$(() =>
+    JSON.stringify((filters?.value ?? {}) as Record<string, unknown>),
+  );
+
   // Centralized fetch handler
   const handleFetchList = $(() => {
-    const filterObj = (filters?.value ?? {}) as Record<string, any>;
+    const filterObj = (filters?.value ?? {}) as Record<string, unknown>;
     fetchList({
       limit: currentLimit.value,
       page: currentPage.value,
@@ -72,11 +87,7 @@ export function usePagination<
   useTask$(({ track }) => {
     track(currentPage);
     track(currentLimit);
-    if (filters) {
-      Object.keys(filters.value || {}).forEach((key) => {
-        track(() => filters.value?.[key]);
-      });
-    }
+    track(filterHash);
     dependencies.forEach((dep) => track(dep));
     handleFetchList();
   });

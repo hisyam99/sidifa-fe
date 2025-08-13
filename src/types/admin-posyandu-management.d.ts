@@ -11,6 +11,7 @@ export interface AdminPosyanduItem {
 }
 
 export interface AdminPosyanduFilterOptions {
+  [key: string]: unknown;
   nama_posyandu?: string;
   status?: "Aktif" | "Tidak Aktif" | "";
   // Add other filter options

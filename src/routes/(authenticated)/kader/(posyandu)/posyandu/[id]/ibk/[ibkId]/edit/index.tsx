@@ -306,6 +306,7 @@ export default component$(() => {
           <a
             role="tab"
             key={s.id}
+            href="#"
             class={`tab ${currentStep.value === idx ? "tab-active" : ""}`}
             onClick$={() => (currentStep.value = idx)}
           >

@@ -1,5 +1,8 @@
 export const publicUploadsUrl =
-  (import.meta as any).env?.PUBLIC_UPLOADS_URL || "__PUBLIC_UPLOADS_URL__";
+  (typeof import.meta !== "undefined" &&
+    (import.meta as unknown as { env?: Record<string, string | undefined> }).env
+      ?.PUBLIC_UPLOADS_URL) ||
+  "__PUBLIC_UPLOADS_URL__";
 
 function isAbsoluteUrl(url: string): boolean {
   return /^(https?:)?\/\//i.test(url) || url.startsWith("data:");

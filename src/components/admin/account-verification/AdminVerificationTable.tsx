@@ -18,18 +18,16 @@ export const AdminVerificationTable = component$(
     const { items, loading = false, onVerify$, onDecline$, error } = props;
 
     const getStatusBadgeClass = (
-      verification: "verified" | "unverified" | "declined",
+      status: "verified" | "unverified" | "declined",
     ) => {
-      if (verification === "verified") return "badge-success";
-      if (verification === "declined") return "badge-error";
+      if (status === "verified") return "badge-success";
+      if (status === "declined") return "badge-error";
       return "badge-warning";
     };
 
-    const getStatusLabel = (
-      verification: "verified" | "unverified" | "declined",
-    ) => {
-      if (verification === "verified") return "Terverifikasi";
-      if (verification === "declined") return "Ditolak";
+    const getStatusLabel = (status: "verified" | "unverified" | "declined") => {
+      if (status === "verified") return "Terverifikasi";
+      if (status === "declined") return "Ditolak";
       return "Belum Terverifikasi";
     };
 
@@ -91,9 +89,9 @@ export const AdminVerificationTable = component$(
                       </td>
                       <td>
                         <span
-                          class={`badge ${getStatusBadgeClass(item.verification)}`}
+                          class={`badge ${getStatusBadgeClass(item.status)}`}
                         >
-                          {getStatusLabel(item.verification)}
+                          {getStatusLabel(item.status)}
                         </span>
                       </td>
                       <td class="table-pin-col">
@@ -155,10 +153,8 @@ export const AdminVerificationTable = component$(
                       </div>
                       <div class="text-sm mt-1">Peran: {item.role}</div>
                     </div>
-                    <span
-                      class={`badge ${getStatusBadgeClass(item.verification)}`}
-                    >
-                      {getStatusLabel(item.verification)}
+                    <span class={`badge ${getStatusBadgeClass(item.status)}`}>
+                      {getStatusLabel(item.status)}
                     </span>
                   </div>
                   <div class="mt-3">

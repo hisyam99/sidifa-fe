@@ -49,8 +49,9 @@ export const useInformasiEdukasiAdmin = () => {
           (meta.totalPage as number) ||
           Math.ceil((total.value || 0) / (limit.value || 10)) ||
           1;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal memuat data";
       } finally {
         loading.value = false;
       }
@@ -68,8 +69,9 @@ export const useInformasiEdukasiAdmin = () => {
         );
       if (!isUuid) return null;
       return (await informasiEdukasiAdminService.detail(id)) as InformasiItem; // Cast to InformasiItem
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal memuat detail";
       return null;
     } finally {
       loading.value = false;
@@ -89,8 +91,9 @@ export const useInformasiEdukasiAdmin = () => {
         file: (data.file as unknown as File) || undefined,
       });
       success.value = "Berhasil memperbarui informasi edukasi";
-    } catch (err: any) {
-      error.value = err.message || "Gagal memperbarui data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal memperbarui data";
       throw err;
     } finally {
       loading.value = false;
@@ -104,8 +107,9 @@ export const useInformasiEdukasiAdmin = () => {
     try {
       await informasiEdukasiAdminService.delete(id);
       success.value = "Berhasil menghapus informasi edukasi";
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal menghapus data";
       throw err;
     } finally {
       loading.value = false;
@@ -124,8 +128,9 @@ export const useInformasiEdukasiAdmin = () => {
         file: (data.file as unknown as File) || undefined,
       });
       success.value = "Berhasil menambah informasi edukasi";
-    } catch (err: any) {
-      error.value = err.message || "Gagal menambah data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal menambah data";
       throw err;
     } finally {
       loading.value = false;

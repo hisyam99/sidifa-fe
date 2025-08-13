@@ -30,16 +30,26 @@ export const useAdminPosyandu = () => {
         });
 
         // Transform response to AdminPosyanduItem format
-        items.value = (response.data || []).map((item: any) => ({
-          ...item,
-          status: item.deleted_at ? "Tidak Aktif" : "Aktif",
-        })) as AdminPosyanduItem[];
+        const rows = Array.isArray(response.data)
+          ? (response.data as Array<
+              Partial<AdminPosyanduItem> & { deleted_at?: string | null }
+            >)
+          : [];
+        items.value = rows.map(
+          (
+            item: Partial<AdminPosyanduItem> & { deleted_at?: string | null },
+          ) => ({
+            ...item,
+            status: item.deleted_at ? "Tidak Aktif" : "Aktif",
+          }),
+        ) as AdminPosyanduItem[];
         totalData.value = response.meta?.count || 0;
         totalPage.value = response.meta?.totalPage || 1;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data posyandu";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal memuat data posyandu";
         items.value = [];
       } finally {
         loading.value = false;
@@ -65,8 +75,9 @@ export const useAdminPosyandu = () => {
         await adminService.createPosyandu(createData);
         success.value = "Berhasil menambah posyandu";
         await fetchList(); // Refresh the list
-      } catch (err: any) {
-        error.value = err.message || "Gagal menambah posyandu";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal menambah posyandu";
       } finally {
         loading.value = false;
       }
@@ -94,8 +105,9 @@ export const useAdminPosyandu = () => {
         await adminService.updatePosyandu(updateData);
         success.value = "Berhasil memperbarui posyandu";
         await fetchList(); // Refresh the list
-      } catch (err: any) {
-        error.value = err.message || "Gagal memperbarui posyandu";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal memperbarui posyandu";
       } finally {
         loading.value = false;
       }
@@ -109,8 +121,9 @@ export const useAdminPosyandu = () => {
       await adminService.deletePosyandu(id);
       success.value = "Berhasil menghapus posyandu";
       await fetchList(); // Refresh the list
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus posyandu";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal menghapus posyandu";
     } finally {
       loading.value = false;
     }

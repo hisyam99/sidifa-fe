@@ -18,7 +18,7 @@ export class MonitoringIBKService {
   }
 
   async create(payload: MonitoringIBKCreateRequest): Promise<void> {
-    const body: any = { ...payload };
+    const body: MonitoringIBKCreateRequest = { ...payload };
     if (
       body.tanggal_kunjungan &&
       /^\d{4}-\d{2}-\d{2}$/.test(body.tanggal_kunjungan)
@@ -31,7 +31,7 @@ export class MonitoringIBKService {
   }
 
   async update(id: string, payload: MonitoringIBKUpdateRequest): Promise<void> {
-    const body: any = { ...payload };
+    const body: MonitoringIBKUpdateRequest = { ...payload };
     if (
       body.tanggal_kunjungan &&
       /^\d{4}-\d{2}-\d{2}$/.test(body.tanggal_kunjungan)
@@ -53,7 +53,7 @@ export class MonitoringIBKService {
     const res = await api.get(
       `/kader/monitoring-ibk/${jadwalId}?${query.toString()}`,
     );
-    return res.data;
+    return res.data as MonitoringIBKListResponse;
   }
 
   // New: fetch IBK hadir list (presensi-specific) for a jadwal
@@ -61,7 +61,7 @@ export class MonitoringIBKService {
     jadwalId: string,
     params: { limit?: number; page?: number } = {},
   ): Promise<{
-    data: any[];
+    data: Array<{ id: string; nama: string }>;
     meta?: {
       currentPage: number;
       totalPage: number;
@@ -75,12 +75,27 @@ export class MonitoringIBKService {
     const res = await api.get(
       `/kader/monitoring-ibk/list-hadir/${jadwalId}?${query.toString()}`,
     );
-    return res.data;
+    const body = res.data as {
+      data?: Array<{ id?: string; nama?: string; [key: string]: unknown }>;
+      meta?: {
+        currentPage: number;
+        totalPage: number;
+        limit: number;
+        totalData: number;
+      };
+    };
+    const normalized = (Array.isArray(body?.data) ? body.data : []).map(
+      (row) => ({
+        id: row.id ?? "",
+        nama: row.nama ?? "(Tanpa Nama)",
+      }),
+    );
+    return { data: normalized, meta: body.meta };
   }
 
   async detail(id: string): Promise<MonitoringIBKDetailResponse> {
     const res = await api.get(`/kader/monitoring-ibk/detail/${id}`);
-    return res.data;
+    return res.data as MonitoringIBKDetailResponse;
   }
 
   // New: delete monitoring

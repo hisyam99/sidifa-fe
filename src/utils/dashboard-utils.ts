@@ -1,4 +1,5 @@
 import { LuHeart, LuBrain, LuUser } from "~/components/icons/lucide-optimized"; // Updated import path
+import type { Component } from "@builder.io/qwik";
 
 export const getRoleDisplayName = (role?: string): string => {
   switch (role) {
@@ -35,7 +36,7 @@ export const getActivityTypeClass = (type: string): string => {
   }
 };
 
-export const getRoleIcon = (role?: string): any => {
+export const getRoleIcon = (role?: string): Component<any> => {
   switch (role) {
     case "kader":
       return LuHeart;

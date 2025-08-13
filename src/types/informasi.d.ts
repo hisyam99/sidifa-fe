@@ -4,12 +4,13 @@ export interface InformasiItem {
   tipe: string;
   deskripsi: string;
   file_url?: string;
-  file_name?: string;
-  // created_at, updated_at, etc. can be added if needed
+  created_at?: string;
+  updated_at?: string | null;
 }
 
 export interface InformasiFilterOptions {
-  judul?: string;
+  [key: string]: unknown;
   deskripsi?: string;
+  judul?: string;
   tipe?: string;
 }

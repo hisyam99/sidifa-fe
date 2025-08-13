@@ -3,14 +3,16 @@ export interface AdminVerificationItem {
   name: string;
   email: string;
   role: "admin" | "posyandu" | "psikolog";
-  verification: "verified" | "unverified" | "declined";
-  // Add other relevant properties like document details, etc.
+  status: "verified" | "unverified" | "declined";
+  requested_at: string;
+  verified_at?: string | null;
 }
 
 export interface AdminVerificationFilterOptions {
+  [key: string]: unknown;
   name?: string;
   role?: "admin" | "posyandu" | "psikolog" | "";
-  verification?: "verified" | "unverified" | "declined" | "";
+  status?: "verified" | "unverified" | "declined" | "";
   orderBy?: "asc" | "desc" | "";
 }
 

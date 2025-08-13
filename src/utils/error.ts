@@ -23,16 +23,34 @@ function isApiErrorResponse(
   return typeof error === "object" && error !== null;
 }
 
+function hasResponseStatus(
+  err: unknown,
+): err is { response?: { status?: number } } {
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "response" in err &&
+    typeof (err as { response?: { status?: unknown } }).response === "object"
+  );
+}
+
+function hasMessage(err: unknown): err is { message?: string } {
+  return typeof err === "object" && err !== null && "message" in err;
+}
+
 /**
  * Check if error is a rate limit error (429)
  * This prevents session clearing for rate limit errors
  */
-export const isRateLimitError = (error: any): boolean => {
+export const isRateLimitError = (error: unknown): boolean => {
+  const maybe = error as { isRateLimit?: boolean; name?: string };
   return (
-    error?.isRateLimit === true ||
-    error?.name === "RateLimitError" ||
-    error?.response?.status === 429 ||
-    (error?.message && error.message.includes("Terlalu banyak permintaan"))
+    maybe?.isRateLimit === true ||
+    maybe?.name === "RateLimitError" ||
+    (hasResponseStatus(error) && error.response?.status === 429) ||
+    (hasMessage(error) &&
+      !!error.message &&
+      error.message.includes("Terlalu banyak permintaan"))
   );
 };
 
@@ -40,10 +58,11 @@ export const isRateLimitError = (error: any): boolean => {
  * Check if error is an authentication error (401)
  * This indicates session should be cleared
  */
-export const isAuthError = (error: any): boolean => {
+export const isAuthError = (error: unknown): boolean => {
   return (
-    error?.response?.status === 401 ||
-    (error?.message &&
+    (hasResponseStatus(error) && error.response?.status === 401) ||
+    (hasMessage(error) &&
+      !!error.message &&
       (error.message.includes("401") ||
         error.message.includes("Sesi telah berakhir") ||
         error.message.includes("Unauthorized")))

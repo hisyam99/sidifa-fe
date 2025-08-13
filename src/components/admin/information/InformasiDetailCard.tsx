@@ -27,9 +27,9 @@ export const InformasiDetailCard = component$(
           </div>
           <div>
             <b>File:</b>{" "}
-            {item.file_url || item.file_name ? (
+            {item.file_url ? (
               <a
-                href={buildInformasiEdukasiUrl(item.file_url || item.file_name)}
+                href={buildInformasiEdukasiUrl(item.file_url)}
                 target="_blank"
                 class="link link-primary"
               >

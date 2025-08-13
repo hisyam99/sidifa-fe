@@ -50,8 +50,9 @@ export const useLowonganAdmin = () => {
           (meta.totalPage as number) ||
           Math.ceil((total.value || 0) / (limit.value || 10)) ||
           1;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data";
+      } catch (err: unknown) {
+        const msg = (err as { message?: string })?.message;
+        error.value = msg || "Gagal memuat data";
       } finally {
         loading.value = false;
       }
@@ -63,8 +64,9 @@ export const useLowonganAdmin = () => {
     error.value = null;
     try {
       return (await adminLowonganService.detail(id)) as LowonganItem;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal memuat detail";
       return null;
     } finally {
       loading.value = false;
@@ -76,10 +78,11 @@ export const useLowonganAdmin = () => {
     error.value = null;
     success.value = null;
     try {
-      await adminLowonganService.create(payload as any);
+      await adminLowonganService.create(payload);
       success.value = "Berhasil menambah lowongan";
-    } catch (err: any) {
-      error.value = err.message || "Gagal menambah data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal menambah data";
       throw err;
     } finally {
       loading.value = false;
@@ -91,10 +94,11 @@ export const useLowonganAdmin = () => {
     error.value = null;
     success.value = null;
     try {
-      await adminLowonganService.update(id, rest as any);
+      await adminLowonganService.update(id, rest);
       success.value = "Berhasil memperbarui lowongan";
-    } catch (err: any) {
-      error.value = err.message || "Gagal memperbarui data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal memperbarui data";
       throw err;
     } finally {
       loading.value = false;
@@ -108,8 +112,9 @@ export const useLowonganAdmin = () => {
     try {
       await adminLowonganService.delete(id);
       success.value = "Berhasil menghapus lowongan";
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus data";
+    } catch (err: unknown) {
+      const msg = (err as { message?: string })?.message;
+      error.value = msg || "Gagal menghapus data";
       throw err;
     } finally {
       loading.value = false;

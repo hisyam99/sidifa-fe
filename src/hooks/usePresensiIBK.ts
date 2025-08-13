@@ -38,8 +38,8 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
       total.value = res.meta?.totalData ?? res.data?.length ?? 0;
       page.value = res.meta?.currentPage ?? page.value;
       limit.value = res.meta?.limit ?? limit.value;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -50,9 +50,9 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
     error.value = null;
     try {
       const res = await presensiIBKService.detail(id);
-      selected.value = res.data || (res as any);
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+      selected.value = res.data ?? null;
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -66,8 +66,8 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
       await presensiIBKService.add({ ...payload, jadwal_id: jadwalId });
       success.value = "Berhasil menambahkan IBK ke presensi.";
       await fetchList();
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -81,8 +81,8 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
       await presensiIBKService.updateStatus(id, status);
       success.value = "Status presensi berhasil diperbarui.";
       await fetchList();
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     } finally {
       loading.value = false;
     }
@@ -99,8 +99,8 @@ export function usePresensiIBK(options: UsePresensiIBKOptions) {
         await presensiIBKService.bulkUpdate(jadwalId, updates);
         success.value = "Status presensi berhasil diperbarui (bulk).";
         await fetchList();
-      } catch (err: any) {
-        error.value = extractErrorMessage(err);
+      } catch (err: unknown) {
+        error.value = extractErrorMessage(err as string);
       } finally {
         loading.value = false;
       }

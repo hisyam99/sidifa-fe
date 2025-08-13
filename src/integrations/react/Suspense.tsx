@@ -4,18 +4,19 @@ import { qwikify$ } from "@builder.io/qwik-react";
 
 // Qwikified Suspense wrapper for smooth loading transitions
 type SuspenseWrapperProps = {
-  children?: ReactNode;
-  fallback?: ReactNode;
+  children?: unknown;
+  fallback?: unknown;
 };
 
 function SuspenseWrapper({
   children,
   fallback,
 }: Readonly<SuspenseWrapperProps>) {
-  return <Suspense fallback={fallback}>{children}</Suspense>;
+  const fallbackNode = fallback as ReactNode;
+  const childrenNode = children as ReactNode;
+  return <Suspense fallback={fallbackNode}>{childrenNode}</Suspense>;
 }
 
-// Explicitly type the Qwikified component to accept any children/fallback
 export const QSuspense = qwikify$(
-  SuspenseWrapper as (props: any) => JSX.Element,
+  SuspenseWrapper as unknown as (props: SuspenseWrapperProps) => JSX.Element,
 );

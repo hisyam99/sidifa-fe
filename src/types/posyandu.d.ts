@@ -25,6 +25,7 @@ export interface PaginationMeta {
 }
 
 export interface PosyanduFilterOptions {
+  [key: string]: unknown;
   nama_posyandu?: string;
   status?: "Aktif" | "Tidak Aktif" | "";
 }

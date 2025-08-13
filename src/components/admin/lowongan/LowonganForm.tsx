@@ -6,7 +6,7 @@ import FormFieldModular from "~/components/ui/FormFieldModular";
 import { buildLowonganUploadUrl } from "~/utils/url";
 
 export type LowonganFormData = Omit<LowonganCreateRequest, "file"> & {
-  file?: File | string;
+  file?: File;
 };
 
 const lowonganSchema = object({
