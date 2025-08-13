@@ -143,6 +143,7 @@ export default component$(() => {
       keterangan?: string;
     }>
   >([]);
+  const removedDisabilityIds = useSignal<string[]>([]);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
@@ -264,6 +265,18 @@ export default component$(() => {
               newDisabilities.value = items.filter(
                 (it) => !existingJenisIds.has(it.jenis_difabilitas_id),
               );
+
+              // Determine which existing disabilities were unselected (should be deleted)
+              const currentSelectedJenis = new Set(
+                items.map((it) => it.jenis_difabilitas_id),
+              );
+              const removed = (existingDisabilities.value || [])
+                .filter(
+                  (ex) => !currentSelectedJenis.has(ex.jenis_difabilitas_id),
+                )
+                .map((ex) => ex.id)
+                .filter(Boolean);
+              removedDisabilityIds.value = removed;
             },
           )}
         />
@@ -329,7 +342,12 @@ export default component$(() => {
                   sejak_kapan: it.sejak_kapan,
                   keterangan: it.keterangan,
                 }));
-          for (const ed of edits) {
+          // Skip updates for disabilities that are slated for deletion
+          const removedSet = new Set(removedDisabilityIds.value || []);
+          const filteredEdits = edits.filter(
+            (ed) => ed.id && !removedSet.has(ed.id),
+          );
+          for (const ed of filteredEdits) {
             try {
               await ibkService.updateIbkDisability(ed.id, {
                 jenis_difabilitas_id: ed.jenis_difabilitas_id,
@@ -353,6 +371,17 @@ export default component$(() => {
           }));
           if (createPayloads.length > 0) {
             await ibkService.createIbkDisabilities(createPayloads);
+          }
+
+          // 3) Delete removed disabilities
+          if (removedDisabilityIds.value && removedDisabilityIds.value.length) {
+            for (const id of removedDisabilityIds.value) {
+              try {
+                await ibkService.deleteIbkDisability(id);
+              } catch (e) {
+                console.error("Failed to delete disability", e);
+              }
+            }
           }
 
           nav(`/kader/posyandu/${posyanduId}/ibk`);

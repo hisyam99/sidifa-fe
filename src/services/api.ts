@@ -807,6 +807,9 @@ export const ibkService = {
       payload,
     );
   },
+  async deleteIbkDisability(id: string): Promise<void> {
+    await api.delete(`/kader/pendataan-ibk/disabilitas-ibk/delete/${id}`);
+  },
   // --- END NEW ---
   async getIbkListByPosyandu(params: {
     posyanduId: string;
