@@ -1,61 +1,68 @@
 import { component$, QRL } from "@builder.io/qwik";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
 import Spinner from "~/components/ui/Spinner";
-import { LuEye, LuPencil } from "~/components/icons/lucide-optimized";
+import { LuCheck, LuAlertTriangle } from "~/components/icons/lucide-optimized";
 
 interface AdminVerificationTableProps {
   items: AdminVerificationItem[];
   page: number;
   limit: number;
   loading?: boolean;
-  onViewDetail$?: QRL<(item: AdminVerificationItem) => void>;
   onVerify$?: QRL<(item: AdminVerificationItem) => void>;
-  onUnverify$?: QRL<(item: AdminVerificationItem) => void>;
+  onDecline$?: QRL<(item: AdminVerificationItem) => void>;
   error?: string | null;
 }
 
 export const AdminVerificationTable = component$(
   (props: AdminVerificationTableProps) => {
-    const {
-      items,
-      loading = false,
-      onViewDetail$,
-      onVerify$,
-      onUnverify$,
-      error,
-    } = props;
+    const { items, loading = false, onVerify$, onDecline$, error } = props;
 
-    const getStatusBadgeClass = (verification: "verified" | "unverified") => {
-      return verification === "verified" ? "badge-success" : "badge-warning";
+    const getStatusBadgeClass = (
+      verification: "verified" | "unverified" | "declined",
+    ) => {
+      if (verification === "verified") return "badge-success";
+      if (verification === "declined") return "badge-error";
+      return "badge-warning";
+    };
+
+    const getStatusLabel = (
+      verification: "verified" | "unverified" | "declined",
+    ) => {
+      if (verification === "verified") return "Terverifikasi";
+      if (verification === "declined") return "Ditolak";
+      return "Belum Terverifikasi";
     };
 
     return (
-      <div class="overflow-x-auto bg-base-100 p-2 ">
-        <h2
-          id="admin-verif-table-title"
-          tabIndex={-1}
-          class="text-lg font-bold mb-2 md:card-title md:text-xl md:mb-4"
-        >
-          Daftar Akun untuk Verifikasi
-        </h2>
+      <div class="bg-base-100 p-3 md:p-4 rounded-xl shadow-sm border border-base-200/60">
+        <div class="flex items-center justify-between mb-3">
+          <h2
+            id="admin-verif-table-title"
+            tabIndex={-1}
+            class="text-lg font-bold md:text-xl"
+          >
+            Daftar Akun untuk Verifikasi
+          </h2>
+        </div>
+
         {loading && <Spinner overlay />}
         {error && (
-          <div class="alert alert-error mb-2 md:mb-4">
+          <div class="alert alert-error mb-3">
             <span>{error}</span>
           </div>
         )}
-        <div class="overflow-x-auto">
-          <div class="max-h-[60vh] overflow-y-auto">
-            <table class="table table-xs xl:table-md table-pin-cols w-full">
+
+        {/* Desktop table */}
+        <div class="hidden md:block overflow-x-auto">
+          <div class="max-h-[60vh] overflow-y-auto rounded-lg">
+            <table class="table table-sm xl:table-md w-full">
               <thead>
-                <tr>
-                  <th class="sticky top-0 z-20 bg-base-100">Nama</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Email</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Peran</th>
-                  <th class="sticky top-0 z-20 bg-base-100">
-                    Status Verifikasi
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
+                <tr class="bg-base-200/60">
+                  <th class="sticky top-0 z-20 bg-base-200/60">Nama</th>
+                  <th class="sticky top-0 z-20 bg-base-200/60">Email</th>
+                  <th class="sticky top-0 z-20 bg-base-200/60">Peran</th>
+                  <th class="sticky top-0 z-20 bg-base-200/60">Status</th>
+                  <th class="sticky top-0 z-20 bg-base-200/60 table-pin-col">
                     Aksi
                   </th>
                 </tr>
@@ -72,80 +79,122 @@ export const AdminVerificationTable = component$(
                   </tr>
                 ) : (
                   items.map((item: AdminVerificationItem) => (
-                    <tr key={item.id}>
-                      <td
-                        class="font-medium max-w-[160px] line-clamp-2 break-words whitespace-normal"
-                        style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;"
-                        title={item.name}
-                      >
+                    <tr key={item.id} class="hover">
+                      <td class="font-medium max-w-[220px] whitespace-normal break-words">
                         {item.name}
                       </td>
-                      <td
-                        class="max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap"
-                        title={item.email}
-                      >
+                      <td class="max-w-[260px] whitespace-normal break-words">
                         {item.email}
                       </td>
-                      <td
-                        class="max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap"
-                        title={item.role}
-                      >
+                      <td class="max-w-[140px] whitespace-normal break-words">
                         {item.role}
                       </td>
                       <td>
                         <span
                           class={`badge ${getStatusBadgeClass(item.verification)}`}
                         >
-                          {item.verification === "verified"
-                            ? "Terverifikasi"
-                            : "Belum Terverifikasi"}
+                          {getStatusLabel(item.verification)}
                         </span>
                       </td>
-                      <th class="table-pin-col">
-                        <div class="flex gap-2">
-                          {onViewDetail$ && (
-                            <button
-                              class="btn btn-ghost btn-xs md:btn-sm"
-                              onClick$={() => onViewDetail$(item)}
+                      <td class="table-pin-col">
+                        <div class="join">
+                          {onVerify$ && (
+                            <div
+                              class="tooltip tooltip-success tooltip-top"
+                              data-tip="Verify account"
                             >
-                              <span class="inline xl:hidden">
-                                <LuEye class="w-4 h-4" />
-                              </span>
-                              <span class="hidden xl:inline">Lihat Detail</span>
-                            </button>
+                              <button
+                                class="btn btn-success btn-xs md:btn-sm join-item"
+                                onClick$={() => onVerify$(item)}
+                              >
+                                <LuCheck class="w-4 h-4" />
+                              </button>
+                            </div>
                           )}
-                          {item.verification === "unverified" && onVerify$ && (
-                            <button
-                              class="btn btn-success btn-xs md:btn-sm"
-                              onClick$={() => onVerify$(item)}
+                          {onDecline$ && (
+                            <div
+                              class="tooltip tooltip-error tooltip-top"
+                              data-tip="Decline account"
                             >
-                              <span class="inline xl:hidden">
-                                <LuPencil class="w-4 h-4" />
-                              </span>
-                              <span class="hidden xl:inline">Verifikasi</span>
-                            </button>
-                          )}
-                          {item.verification === "verified" && onUnverify$ && (
-                            <button
-                              class="btn btn-warning btn-xs md:btn-sm"
-                              onClick$={() => onUnverify$(item)}
-                            >
-                              <span class="inline xl:hidden">
-                                <LuPencil class="w-4 h-4" />
-                              </span>
-                              <span class="hidden xl:inline">
-                                Batalkan Verifikasi
-                              </span>
-                            </button>
+                              <button
+                                class="btn btn-error btn-xs md:btn-sm join-item"
+                                onClick$={() => onDecline$(item)}
+                              >
+                                <LuAlertTriangle class="w-4 h-4" />
+                              </button>
+                            </div>
                           )}
                         </div>
-                      </th>
+                      </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Mobile card list */}
+        <div class="md:hidden space-y-3">
+          {items.length === 0 && !loading ? (
+            <div class="text-center text-base-content/60 py-8">
+              Tidak ada data akun untuk verifikasi.
+            </div>
+          ) : (
+            items.map((item: AdminVerificationItem) => (
+              <div
+                key={item.id}
+                class="card bg-base-100 border border-base-200 shadow-sm"
+              >
+                <div class="card-body p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="font-semibold break-words">{item.name}</div>
+                      <div class="text-sm opacity-80 break-words">
+                        {item.email}
+                      </div>
+                      <div class="text-sm mt-1">Peran: {item.role}</div>
+                    </div>
+                    <span
+                      class={`badge ${getStatusBadgeClass(item.verification)}`}
+                    >
+                      {getStatusLabel(item.verification)}
+                    </span>
+                  </div>
+                  <div class="mt-3">
+                    <div class="join">
+                      {onVerify$ && (
+                        <div
+                          class="tooltip tooltip-success tooltip-top"
+                          data-tip="Verify"
+                        >
+                          <button
+                            class="btn btn-success btn-xs join-item"
+                            onClick$={() => onVerify$(item)}
+                          >
+                            <LuCheck class="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                      {onDecline$ && (
+                        <div
+                          class="tooltip tooltip-error tooltip-top"
+                          data-tip="Decline"
+                        >
+                          <button
+                            class="btn btn-error btn-xs join-item"
+                            onClick$={() => onDecline$(item)}
+                          >
+                            <LuAlertTriangle class="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     );

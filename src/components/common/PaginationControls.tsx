@@ -56,6 +56,7 @@ export const PaginationControls = component$(
             class="join-item btn btn-xs md:btn-sm"
             disabled={currentPage === 1}
             onClick$={() => onPageChange$(currentPage - 1)}
+            title={`Ke halaman sebelumnya ${currentPage > 1 ? `(Halaman ${currentPage - 1})` : "- Anda sudah di halaman pertama"}`}
           >
             <LuChevronLeft class="w-4 h-4" />
           </button>
@@ -70,6 +71,11 @@ export const PaginationControls = component$(
                     onPageChange$(page);
                   }
                 })}
+                title={
+                  typeof page === "number"
+                    ? `${page === currentPage ? `Halaman saat ini: ${page}` : `Pergi ke halaman ${page}`}`
+                    : "Halaman tersembunyi - gunakan navigasi sebelumnya/berikutnya"
+                }
               >
                 {page}
               </button>
@@ -79,6 +85,7 @@ export const PaginationControls = component$(
             class="join-item btn btn-xs md:btn-sm"
             disabled={currentPage === totalPages}
             onClick$={() => onPageChange$(currentPage + 1)}
+            title={`Ke halaman berikutnya ${currentPage < totalPages ? `(Halaman ${currentPage + 1})` : "- Anda sudah di halaman terakhir"}`}
           >
             <LuChevronRight class="w-4 h-4" />
           </button>

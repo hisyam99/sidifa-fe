@@ -3,6 +3,7 @@ import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 
 import "./global.css";
+import { ToastProvider } from "~/components/ui/toast/ToastProvider";
 
 export default component$(() => {
   /**
@@ -25,7 +26,9 @@ export default component$(() => {
         <RouterHead />
       </head>
       <body lang="en" data-theme="sidifa">
-        <RouterOutlet />
+        <ToastProvider>
+          <RouterOutlet />
+        </ToastProvider>
       </body>
     </QwikCityProvider>
   );

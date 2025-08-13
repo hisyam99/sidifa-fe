@@ -8,7 +8,6 @@ import {
   AdminVerificationListHeader,
   AdminVerificationFilterControls,
   AdminVerificationTable,
-  AdminVerificationDetailCard,
 } from "~/components/admin/account-verification";
 import { PaginationControls, ConfirmationModal } from "~/components/common";
 import Alert from "~/components/ui/Alert";
@@ -26,10 +25,10 @@ export default component$(() => {
     error,
     success,
     totalData,
-    totalPages, // <-- import this
+    totalPages,
     fetchList,
     verifyAccount,
-    unverifyAccount,
+    declineAccount,
     clearMessages,
   } = useAdminAccountVerification();
 
@@ -38,7 +37,7 @@ export default component$(() => {
     role: "",
     orderBy: "",
   });
-  // Use the reusable pagination hook
+
   const {
     currentPage,
     currentLimit: limit,
@@ -60,28 +59,17 @@ export default component$(() => {
     dependencies: [isLoggedIn],
   });
 
-  const showDetailModal = useSignal(false);
   const showVerifyModal = useSignal(false);
-  const showUnverifyModal = useSignal(false);
+  const showDeclineModal = useSignal(false);
   const selectedAccount = useSignal<AdminVerificationItem | null>(null);
 
-  // Filter change handler resets page and triggers fetch
   const handleFilterChange = $(async () => {
     await resetPage();
-    // After resetting page, force fetch in case page is already 1
     fetchList({
       ...filterOptions.value,
       page: 1,
       limit: limit.value,
     });
-  });
-
-  // (removed obsolete handleLimitChange)
-
-  const openDetailModal = $((account: AdminVerificationItem) => {
-    selectedAccount.value = account;
-    showDetailModal.value = true;
-    clearMessages();
   });
 
   const openVerifyModal = $((account: AdminVerificationItem) => {
@@ -90,16 +78,15 @@ export default component$(() => {
     clearMessages();
   });
 
-  const openUnverifyModal = $((account: AdminVerificationItem) => {
+  const openDeclineModal = $((account: AdminVerificationItem) => {
     selectedAccount.value = account;
-    showUnverifyModal.value = true;
+    showDeclineModal.value = true;
     clearMessages();
   });
 
   const closeModals = $(() => {
-    showDetailModal.value = false;
     showVerifyModal.value = false;
-    showUnverifyModal.value = false;
+    showDeclineModal.value = false;
     selectedAccount.value = null;
     clearMessages();
   });
@@ -107,18 +94,14 @@ export default component$(() => {
   const handleVerifyAccount = $(async () => {
     if (selectedAccount.value) {
       await verifyAccount(selectedAccount.value);
-      if (!error.value) {
-        closeModals();
-      }
+      if (!error.value) closeModals();
     }
   });
 
-  const handleUnverifyAccount = $(async () => {
+  const handleDeclineAccount = $(async () => {
     if (selectedAccount.value) {
-      await unverifyAccount(selectedAccount.value);
-      if (!error.value) {
-        closeModals();
-      }
+      await declineAccount(selectedAccount.value);
+      if (!error.value) closeModals();
     }
   });
 
@@ -144,9 +127,8 @@ export default component$(() => {
         page={currentPage.value}
         limit={limit.value}
         loading={loading.value}
-        onViewDetail$={openDetailModal}
         onVerify$={openVerifyModal}
-        onUnverify$={openUnverifyModal}
+        onDecline$={openDeclineModal}
       />
 
       {meta.value && meta.value.totalPage > 1 && (
@@ -165,50 +147,31 @@ export default component$(() => {
         />
       )}
 
-      {/* Detail Modal */}
-      {showDetailModal.value && selectedAccount.value && (
-        <ConfirmationModal
-          isOpen={showDetailModal}
-          title="Detail Akun"
-          message=""
-          onConfirm$={closeModals} // No direct confirm action for detail, just close
-          onCancel$={closeModals}
-          confirmButtonText="Tutup"
-          confirmButtonClass="btn-primary"
-        >
-          <AdminVerificationDetailCard
-            item={selectedAccount.value}
-            onVerify$={openVerifyModal}
-            onUnverify$={openUnverifyModal}
-          />
-        </ConfirmationModal>
-      )}
-
       {/* Verify Confirmation Modal */}
       {showVerifyModal.value && selectedAccount.value && (
         <ConfirmationModal
           isOpen={showVerifyModal}
-          title="Konfirmasi Verifikasi"
-          message={`Apakah Anda yakin ingin memverifikasi akun "${selectedAccount.value.name}"?`}
+          title="Konfirmasi Verifikasi Akun"
+          message={`Apakah Anda yakin ingin memverifikasi dan mengaktifkan akun "${selectedAccount.value.name}" dengan peran "${selectedAccount.value.role}"? Setelah diverifikasi, pengguna dapat mengakses sistem sesuai dengan hak akses perannya.`}
           onConfirm$={handleVerifyAccount}
           onCancel$={closeModals}
-          confirmButtonText="Verifikasi"
-          cancelButtonText="Batal"
+          confirmButtonText="✓ Verifikasi & Aktifkan Akun"
+          cancelButtonText="✕ Batal Verifikasi"
           confirmButtonClass="btn-success"
         />
       )}
 
-      {/* Unverify Confirmation Modal */}
-      {showUnverifyModal.value && selectedAccount.value && (
+      {/* Decline Confirmation Modal */}
+      {showDeclineModal.value && selectedAccount.value && (
         <ConfirmationModal
-          isOpen={showUnverifyModal}
-          title="Konfirmasi Pembatalan Verifikasi"
-          message={`Apakah Anda yakin ingin membatalkan verifikasi akun "${selectedAccount.value.name}"?`}
-          onConfirm$={handleUnverifyAccount}
+          isOpen={showDeclineModal}
+          title="Konfirmasi Penolakan Akun"
+          message={`Apakah Anda yakin ingin menolak dan memblokir akun "${selectedAccount.value.name}" dengan peran "${selectedAccount.value.role}"? Akun yang ditolak tidak akan dapat mengakses sistem dan pengguna akan menerima notifikasi penolakan.`}
+          onConfirm$={handleDeclineAccount}
           onCancel$={closeModals}
-          confirmButtonText="Batalkan Verifikasi"
-          cancelButtonText="Batal"
-          confirmButtonClass="btn-warning"
+          confirmButtonText="⚠ Tolak & Blokir Akun"
+          cancelButtonText="✕ Batal Penolakan"
+          confirmButtonClass="btn-error"
         />
       )}
     </div>

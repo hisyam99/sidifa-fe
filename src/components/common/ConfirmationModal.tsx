@@ -47,13 +47,23 @@ export const ConfirmationModal = component$((props: ConfirmationModalProps) => {
         </div>
 
         <div class="modal-action">
-          <button class={`btn ${cancelButtonClass}`} onClick$={onCancel$}>
-            {cancelButtonText}
-          </button>
-          {confirmButtonText && (
-            <button class={`btn ${confirmButtonClass}`} onClick$={onConfirm$}>
-              {confirmButtonText}
+          <div
+            class="tooltip tooltip-warning tooltip-top"
+            data-tip="Cancel action"
+          >
+            <button class={`btn ${cancelButtonClass}`} onClick$={onCancel$}>
+              {cancelButtonText}
             </button>
+          </div>
+          {confirmButtonText && (
+            <div
+              class={`tooltip ${confirmButtonClass.includes("error") ? "tooltip-error" : confirmButtonClass.includes("success") ? "tooltip-success" : "tooltip-primary"} tooltip-top`}
+              data-tip="Confirm action"
+            >
+              <button class={`btn ${confirmButtonClass}`} onClick$={onConfirm$}>
+                {confirmButtonText}
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -19,7 +19,7 @@ export const useAdminAccountVerification = () => {
         page?: number;
         name?: string;
         role?: "admin" | "posyandu" | "psikolog" | "";
-        verification?: "verified" | "unverified" | "";
+        verification?: "verified" | "unverified" | "declined" | "";
         orderBy?: "asc" | "desc" | "";
       } = {},
     ) => {
@@ -62,15 +62,15 @@ export const useAdminAccountVerification = () => {
     }
   });
 
-  const unverifyAccount = $(async (item: AdminVerificationItem) => {
+  const declineAccount = $(async (item: AdminVerificationItem) => {
     loading.value = true;
     error.value = null;
     try {
-      await adminService.verifyUser(item.id, "unverified");
-      success.value = `Akun ${item.name} berhasil dibatalkan verifikasinya.`;
+      await adminService.verifyUser(item.id, "declined");
+      success.value = `Akun ${item.name} ditolak.`;
       await fetchList();
     } catch (err: any) {
-      error.value = err.message || "Gagal membatalkan verifikasi akun";
+      error.value = err.message || "Gagal menandai declined";
     } finally {
       loading.value = false;
     }
@@ -92,7 +92,7 @@ export const useAdminAccountVerification = () => {
     limit,
     fetchList,
     verifyAccount,
-    unverifyAccount,
+    declineAccount,
     clearMessages,
   };
 };

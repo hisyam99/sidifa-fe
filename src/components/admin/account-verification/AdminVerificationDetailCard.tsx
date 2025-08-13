@@ -19,8 +19,18 @@ export const AdminVerificationDetailCard = component$(
       );
     }
 
-    const getStatusBadgeClass = (status: "verified" | "unverified") => {
-      return status === "verified" ? "badge-success" : "badge-warning";
+    const getStatusBadgeClass = (
+      status: "verified" | "unverified" | "declined",
+    ) => {
+      if (status === "verified") return "badge-success";
+      if (status === "declined") return "badge-error";
+      return "badge-warning";
+    };
+
+    const getStatusLabel = (status: "verified" | "unverified" | "declined") => {
+      if (status === "verified") return "Terverifikasi";
+      if (status === "declined") return "Ditolak";
+      return "Belum Terverifikasi";
     };
 
     return (
@@ -41,22 +51,19 @@ export const AdminVerificationDetailCard = component$(
           <div>
             <b>Status Verifikasi:</b>{" "}
             <span class={`badge ${getStatusBadgeClass(item.verification)}`}>
-              {item.verification === "verified"
-                ? "Terverifikasi"
-                : "Belum Terverifikasi"}
+              {getStatusLabel(item.verification)}
             </span>
           </div>
-          {/* Add more detail fields here as needed, e.g., document links */}
         </div>
-        <div class="flex gap-2 mt-4">
-          {item.verification === "unverified" && onVerify$ && (
+        <div class="flex flex-wrap gap-2 mt-4">
+          {item.verification !== "verified" && onVerify$ && (
             <button class="btn btn-success" onClick$={() => onVerify$(item)}>
               Verifikasi Akun
             </button>
           )}
-          {item.verification === "verified" && onUnverify$ && (
+          {item.verification !== "unverified" && onUnverify$ && (
             <button class="btn btn-warning" onClick$={() => onUnverify$(item)}>
-              Batalkan Verifikasi
+              Tandai Unverified
             </button>
           )}
         </div>

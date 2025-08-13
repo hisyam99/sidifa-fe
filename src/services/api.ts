@@ -200,7 +200,7 @@ export const adminService = {
     page?: number;
     name?: string;
     role?: "admin" | "posyandu" | "psikolog" | "";
-    verification?: "verified" | "unverified" | "";
+    verification?: "verified" | "unverified" | "declined" | "";
     orderBy?: string;
   }) {
     // Prevent API calls during SSG/server
@@ -222,7 +222,10 @@ export const adminService = {
     return response.data;
   },
 
-  async verifyUser(userId: string, verification: "verified" | "unverified") {
+  async verifyUser(
+    userId: string,
+    verification: "verified" | "unverified" | "declined",
+  ) {
     const response = await api.patch("/admin/verification", {
       userId,
       verification,

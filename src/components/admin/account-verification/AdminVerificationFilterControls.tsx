@@ -59,16 +59,23 @@ export const AdminVerificationFilterControls = component$(
                 Cari Nama Pengguna
               </span>
             </label>
-            <SearchBox
-              id="search-name"
-              placeholder="Cari berdasarkan nama..."
-              value={filterOptions.value.name || ""}
-              onInput$={(e) => {
-                filterOptions.value.name = (e.target as HTMLInputElement).value;
-                debouncedFilter();
-              }}
-              class="input-bordered input-md h-12 w-full"
-            />
+            <div
+              class="tooltip tooltip-info tooltip-right w-full"
+              data-tip="Search users"
+            >
+              <SearchBox
+                id="search-name"
+                placeholder="Cari berdasarkan nama..."
+                value={filterOptions.value.name || ""}
+                onInput$={(e) => {
+                  filterOptions.value.name = (
+                    e.target as HTMLInputElement
+                  ).value;
+                  debouncedFilter();
+                }}
+                class="input-bordered input-md h-12 w-full"
+              />
+            </div>
           </div>
           <div class="form-control flex-1 min-w-0">
             <label
@@ -79,22 +86,27 @@ export const AdminVerificationFilterControls = component$(
                 Filter berdasarkan Peran
               </span>
             </label>
-            <select
-              id="filter-role"
-              class="select select-bordered select-md h-12 w-full"
-              value={filterOptions.value.role}
-              onChange$={(e) => {
-                filterOptions.value.role = (e.target as HTMLSelectElement)
-                  .value as "admin" | "posyandu" | "psikolog" | "";
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-right w-full"
+              data-tip="Filter by role"
             >
-              {roleOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="filter-role"
+                class="select select-bordered select-md h-12 w-full"
+                value={filterOptions.value.role}
+                onChange$={(e) => {
+                  filterOptions.value.role = (e.target as HTMLSelectElement)
+                    .value as "admin" | "posyandu" | "psikolog" | "";
+                  onFilterChange$();
+                }}
+              >
+                {roleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div class="form-control flex-1 min-w-0">
             <label
@@ -105,22 +117,27 @@ export const AdminVerificationFilterControls = component$(
                 Urutkan Berdasarkan Verifikasi
               </span>
             </label>
-            <select
-              id="order-by"
-              class="select select-bordered select-md h-12 w-full"
-              value={filterOptions.value.orderBy}
-              onChange$={(e) => {
-                filterOptions.value.orderBy = (e.target as HTMLSelectElement)
-                  .value as "asc" | "desc" | "";
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-right w-full"
+              data-tip="Sort by status"
             >
-              {orderByOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="order-by"
+                class="select select-bordered select-md h-12 w-full"
+                value={filterOptions.value.orderBy}
+                onChange$={(e) => {
+                  filterOptions.value.orderBy = (e.target as HTMLSelectElement)
+                    .value as "asc" | "desc" | "";
+                  onFilterChange$();
+                }}
+              >
+                {orderByOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div class="form-control flex-1 min-w-0">
             <label
@@ -131,23 +148,28 @@ export const AdminVerificationFilterControls = component$(
                 Limit per Halaman
               </span>
             </label>
-            <select
-              id="limit-per-page"
-              class="select select-bordered select-md h-12 w-full"
-              value={props.limit.value}
-              onChange$={(e) => {
-                props.onLimitChange$(
-                  parseInt((e.target as HTMLSelectElement).value),
-                );
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-right w-full"
+              data-tip="Items per page"
             >
-              {limitOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="limit-per-page"
+                class="select select-bordered select-md h-12 w-full"
+                value={props.limit.value}
+                onChange$={(e) => {
+                  props.onLimitChange$(
+                    parseInt((e.target as HTMLSelectElement).value),
+                  );
+                  onFilterChange$();
+                }}
+              >
+                {limitOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         {/* Desktop: grid dua baris */}
@@ -187,80 +209,107 @@ export const AdminVerificationFilterControls = component$(
           </label>
           {/* Row 2: Inputs */}
           <div class="col-span-1 md:col-span-1 row-start-2 row-end-3">
-            <SearchBox
-              id="search-name"
-              placeholder="Cari berdasarkan nama..."
-              value={filterOptions.value.name || ""}
-              onInput$={(e) => {
-                filterOptions.value.name = (e.target as HTMLInputElement).value;
-                debouncedFilter();
-              }}
-              class="input-bordered input-md h-12 w-full"
-            />
+            <div
+              class="tooltip tooltip-info tooltip-top w-full"
+              data-tip="Search users"
+            >
+              <SearchBox
+                id="search-name"
+                placeholder="Cari berdasarkan nama..."
+                value={filterOptions.value.name || ""}
+                onInput$={(e) => {
+                  filterOptions.value.name = (
+                    e.target as HTMLInputElement
+                  ).value;
+                  debouncedFilter();
+                }}
+                class="input-bordered input-md h-12 w-full"
+              />
+            </div>
           </div>
           <div class="col-span-1 md:col-span-1 row-start-2 row-end-3">
-            <select
-              id="filter-role"
-              class="select select-bordered select-md h-12 w-full"
-              value={filterOptions.value.role}
-              onChange$={(e) => {
-                filterOptions.value.role = (e.target as HTMLSelectElement)
-                  .value as "admin" | "posyandu" | "psikolog" | "";
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-top w-full"
+              data-tip="Filter by role"
             >
-              {roleOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="filter-role"
+                class="select select-bordered select-md h-12 w-full"
+                value={filterOptions.value.role}
+                onChange$={(e) => {
+                  filterOptions.value.role = (e.target as HTMLSelectElement)
+                    .value as "admin" | "posyandu" | "psikolog" | "";
+                  onFilterChange$();
+                }}
+              >
+                {roleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div class="col-span-1 md:col-span-1 row-start-2 row-end-3">
-            <select
-              id="order-by"
-              class="select select-bordered select-md h-12 w-full"
-              value={filterOptions.value.orderBy}
-              onChange$={(e) => {
-                filterOptions.value.orderBy = (e.target as HTMLSelectElement)
-                  .value as "asc" | "desc" | "";
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-top w-full"
+              data-tip="Sort by status"
             >
-              {orderByOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="order-by"
+                class="select select-bordered select-md h-12 w-full"
+                value={filterOptions.value.orderBy}
+                onChange$={(e) => {
+                  filterOptions.value.orderBy = (e.target as HTMLSelectElement)
+                    .value as "asc" | "desc" | "";
+                  onFilterChange$();
+                }}
+              >
+                {orderByOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div class="col-span-1 md:col-span-1 row-start-2 row-end-3">
-            <select
-              id="limit-per-page"
-              class="select select-bordered select-md h-12 w-full"
-              value={props.limit.value}
-              onChange$={(e) => {
-                props.onLimitChange$(
-                  parseInt((e.target as HTMLSelectElement).value),
-                );
-                onFilterChange$();
-              }}
+            <div
+              class="tooltip tooltip-info tooltip-top w-full"
+              data-tip="Items per page"
             >
-              {limitOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <select
+                id="limit-per-page"
+                class="select select-bordered select-md h-12 w-full"
+                value={props.limit.value}
+                onChange$={(e) => {
+                  props.onLimitChange$(
+                    parseInt((e.target as HTMLSelectElement).value),
+                  );
+                  onFilterChange$();
+                }}
+              >
+                {limitOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         <div class="flex justify-end mt-4 md:mt-0">
-          <button
-            class="btn btn-primary w-full md:w-auto"
-            onClick$={onFilterChange$}
+          <div
+            class="tooltip tooltip-primary tooltip-left"
+            data-tip="Apply filters"
           >
-            Terapkan Filter
-          </button>
+            <button
+              class="btn btn-primary w-full md:w-auto"
+              onClick$={onFilterChange$}
+            >
+              Terapkan Filter
+            </button>
+          </div>
         </div>
       </div>
     );

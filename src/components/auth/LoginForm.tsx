@@ -3,13 +3,19 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
 import { sessionUtils } from "~/utils/auth";
-import { Alert, Card, FormField } from "~/components/ui";
+import { Card, FormField } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
 import { LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
+import {
+  emitToastSuccess,
+  emitToastError,
+} from "~/components/ui/toast/ToastProvider";
+import { AccountStatusCard } from "~/components/ui/AccountStatusCard";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
+  const accountStatus = useSignal<"unverified" | "declined" | null>(null);
 
   const [form, { Form, Field }] = useForm<LoginForm>({
     loader: { value: { email: "", password: "" } },
@@ -21,6 +27,7 @@ export default component$(() => {
   const handleSubmit = $(async (values: LoginForm) => {
     error.value = null;
     success.value = null;
+    accountStatus.value = null;
     try {
       await api.post("/auth/login", values);
       // Tandai status login berhasil di localStorage sebelum redirect
@@ -35,6 +42,7 @@ export default component$(() => {
         else if (profile.role === "kader" || profile.role === "posyandu")
           redirectTo = "/kader";
         success.value = "Login berhasil!";
+        await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
         setTimeout(() => {
           window.location.href = redirectTo;
         }, 1000);
@@ -42,11 +50,29 @@ export default component$(() => {
       }
       // Fallback jika tidak dapat role
       success.value = "Login berhasil!";
+      await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
       setTimeout(() => {
         window.location.href = "/dashboard";
       }, 1000);
     } catch (err: any) {
-      error.value = extractErrorMessage(err);
+      const raw = extractErrorMessage(err);
+      const msg = raw.toLowerCase();
+
+      // Tangani status khusus dari backend
+      if (msg.includes("unverified")) {
+        accountStatus.value = "unverified";
+        await emitToastError(
+          "Akun Anda belum terverifikasi. Silakan tunggu hingga admin memverifikasi akun Anda. Cek email Anda secara berkala untuk update.",
+        );
+        return;
+      }
+      if (msg.includes("declined") || msg.includes("ditolak")) {
+        accountStatus.value = "declined";
+        return;
+      }
+
+      error.value = raw;
+      await emitToastError(raw);
     }
   });
 
@@ -64,85 +90,74 @@ export default component$(() => {
         </p>
       </div>
 
-      <Form onSubmit$={handleSubmit} class="space-y-6 w-full">
-        <Field name="email">
-          {(field: any, props: any) => (
-            <FormField
-              field={field}
-              props={props}
-              type="email"
-              placeholder="Masukkan email Anda"
-              label="Email"
-              required
-            />
-          )}
-        </Field>
+      {accountStatus.value === "declined" ? (
+        <div class="space-y-6">
+          <AccountStatusCard variant="declined" />
+          <div class="text-center">
+            <a href="/" class="btn btn-ghost">
+              Kembali ke Beranda
+            </a>
+          </div>
+        </div>
+      ) : (
+        <Form onSubmit$={handleSubmit} class="space-y-6 w-full">
+          <Field name="email">
+            {(field: any, props: any) => (
+              <FormField
+                field={field}
+                props={props}
+                type="email"
+                placeholder="Masukkan email Anda"
+                label="Email"
+                required
+              />
+            )}
+          </Field>
 
-        <Field name="password">
-          {(field: any, props: any) => (
-            <FormField
-              field={field}
-              props={props}
-              type="password"
-              placeholder="Masukkan password Anda"
-              label="Password"
-              required
-            />
-          )}
-        </Field>
+          <Field name="password">
+            {(field: any, props: any) => (
+              <FormField
+                field={field}
+                props={props}
+                type="password"
+                placeholder="Masukkan password Anda"
+                label="Password"
+                required
+              />
+            )}
+          </Field>
 
-        <div class="flex items-center justify-between w-full">
-          <label class="label cursor-pointer justify-start gap-3">
-            <input
-              type="checkbox"
-              class="checkbox checkbox-primary checkbox-sm"
-            />
-            <span class="label-text font-medium">Ingat saya</span>
-          </label>
-          <a
-            href="/auth/forgot-password"
-            class="link link-primary text-sm font-medium"
+          <div class="flex items-center justify-between w-full">
+            <label class="label cursor-pointer justify-start gap-3">
+              <input
+                type="checkbox"
+                class="checkbox checkbox-primary checkbox-sm"
+              />
+              <span class="label-text font-medium">Ingat saya</span>
+            </label>
+            <a
+              href="/auth/forgot-password"
+              class="link link-primary text-sm font-medium"
+            >
+              Lupa Password?
+            </a>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary w-full"
+            disabled={form.submitting}
           >
-            Lupa Password?
-          </a>
-        </div>
-
-        <button
-          type="submit"
-          class="btn btn-primary w-full"
-          disabled={form.submitting}
-        >
-          {form.submitting ? (
-            <>
-              <div class="skeleton w-4 h-4"></div>
-              Masuk...
-            </>
-          ) : (
-            <>
-              Masuk ke SIDIFA <LuArrowRight class="w-4 h-4" />
-            </>
-          )}
-        </button>
-      </Form>
-
-      <div class="divider">atau</div>
-
-      <div class="text-center text-sm space-y-2">
-        <span class="text-base-content/70">Belum punya akun?</span>
-        <div class="flex flex-col sm:flex-row gap-2 justify-center mt-1">
-          <a href="/auth/signup/kader" class="link link-primary font-medium">
-            Daftar Kader
-          </a>
-          <span class="text-base-content/40">|</span>
-          <a href="/auth/signup/psikolog" class="link link-primary font-medium">
-            Daftar Psikolog
-          </a>
-        </div>
-      </div>
-
-      {error.value && <Alert type="error" message={error.value} class="mt-6" />}
-      {success.value && (
-        <Alert type="success" message={success.value} class="mt-6" />
+            {form.submitting ? (
+              <>
+                <div class="skeleton w-4 h-4"></div>
+                Memproses...
+              </>
+            ) : (
+              <>Masuk</>
+            )}
+          </button>
+        </Form>
       )}
     </Card>
   );
