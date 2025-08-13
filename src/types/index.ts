@@ -9,7 +9,7 @@ export * from "./monitoring-ibk";
 export * from "./lowongan";
 
 // Additional utility types that might be useful across the app
-export interface APIResponse<T = any> {
+export interface APIResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -25,7 +25,7 @@ export interface PaginationMeta {
   hasPrevPage: boolean;
 }
 
-export interface PaginatedResponse<T = any> extends APIResponse<T[]> {
+export interface PaginatedResponse<T = unknown> extends APIResponse<T[]> {
   meta: PaginationMeta;
 }
 
@@ -80,7 +80,7 @@ export interface Notification {
 // Dashboard summary types
 export interface DashboardSummary {
   user_role: string;
-  summary_data: Record<string, any>;
+  summary_data: Record<string, unknown>;
   recent_activities: Array<{
     id: string;
     title: string;

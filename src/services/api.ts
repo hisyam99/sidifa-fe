@@ -87,66 +87,63 @@ api.interceptors.response.use(
     });
     return response;
   },
-  async (error) => {
-    type RetriableConfig = {
+  async (error: unknown) => {
+    interface RetriableConfig {
       _retry?: boolean;
       url?: string;
+    }
+    const originalRequest =
+      (error as { config?: RetriableConfig })?.config ?? {};
+
+    const apiError = error as {
+      response?: {
+        status?: number;
+        data?: { message?: string };
+      };
+      message?: string;
     };
-    const originalRequest = (error?.config ?? {}) as RetriableConfig;
 
     console.log("❌ ERROR:", {
-      status: error.response?.status,
+      status: apiError.response?.status,
       url: originalRequest?.url,
-      data: error.response?.data,
-      message: error.message,
+      data: apiError.response?.data,
     });
 
-    // Tangani 429 (Too Many Requests) - JANGAN hapus session/data apapun
-    if (error.response?.status === 429) {
-      console.log("⚠️ Rate limit exceeded (429) - preserving session data");
-      // Buat error custom yang tidak akan menyebabkan session clearing
-      const rateLimitError = new Error(
-        "Terlalu banyak permintaan, silakan coba lagi nanti.",
+    // Extract error message
+    const extractMessage = (err: unknown): string => {
+      if (typeof err === "string") return err;
+      const e = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      return (
+        e.response?.data?.message ||
+        e.message ||
+        "Terjadi kesalahan. Silakan coba lagi."
       );
-      rateLimitError.name = "RateLimitError";
-      // Tambahkan flag untuk menandai ini adalah 429 error
-      (rateLimitError as any).isRateLimit = true;
-      (rateLimitError as any).response = error.response;
-      return Promise.reject(rateLimitError);
-    }
-
-    // Tangani token kadaluarsa (401)
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      originalRequest.url !== "/auth/refresh"
-    ) {
-      originalRequest._retry = true;
-
-      try {
-        console.log("🔄 Mencoba refresh token...");
-        await authService.refresh();
-        console.log("✅ Token berhasil di-refresh. Mengulang request asli...");
-        // In xior, use instance.request() rather than calling the instance as a function
-        return api.request(originalRequest as any);
-      } catch (refreshError) {
-        console.error("Gagal refresh token:", refreshError);
-        sessionUtils.clearAllAuthData();
-        return Promise.reject(new Error(error.response?.data.message));
-      }
-    }
-
-    // Untuk semua error lain, bungkus ke Error bila perlu, lalu teruskan.
-    const ensureError = (err: unknown): Error => {
-      if (err instanceof Error) return err;
-      try {
-        const msg = (err as any)?.message ?? JSON.stringify(err);
-        return new Error(String(msg));
-      } catch {
-        return new Error("Unknown error");
-      }
     };
-    return Promise.reject(ensureError(error));
+
+    const errorMessage = extractMessage(error);
+
+    // Handle 401 errors
+    if (apiError.response?.status === 401) {
+      console.log("🔐 Unauthorized - clearing session");
+      sessionUtils.clearAllAuthData();
+      sessionUtils.setAuthStatus(false);
+      return Promise.reject(
+        new Error("Sesi telah berakhir. Silakan login kembali."),
+      );
+    }
+
+    // Handle 429 rate limit errors
+    if (apiError.response?.status === 429) {
+      console.log("⚠️ Rate limit exceeded");
+      return Promise.reject(
+        new Error("Terlalu banyak permintaan. Silakan coba lagi nanti."),
+      );
+    }
+
+    return Promise.reject(new Error(errorMessage));
   },
 );
 
