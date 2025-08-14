@@ -4,6 +4,35 @@
   themes: sidifa;
 }
 
+/* Line Clamp Utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.line-clamp-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
 /* Smooth scrolling for anchor navigations */
 html:where(:not(.no-smooth-scroll)) {
   scroll-behavior: smooth;
@@ -35,6 +64,7 @@ html:where(:not(.no-smooth-scroll)) {
   --color-base-100: oklch(99% 0.002 240);
   --color-base-200: oklch(97% 0.003 240);
   --color-base-300: oklch(94% 0.004 240);
+  --color-base-50: oklch(99.5% 0.001 240);
   --color-base-content: oklch(25% 0.005 240);
 
   /* Status Colors */
