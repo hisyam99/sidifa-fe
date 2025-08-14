@@ -39,7 +39,7 @@ export const AdminPosyanduTable = component$(
         {/* Desktop table */}
         <div class="hidden md:block overflow-x-auto">
           <div class="max-h-[60vh] overflow-y-auto rounded-lg">
-            <table class="table table-sm xl:table-md w-full">
+            <table class="table table-sm xl:table-md w-full table-pin-rows">
               <thead>
                 <tr class="bg-base-200">
                   <th class="bg-base-200">Nama Posyandu</th>

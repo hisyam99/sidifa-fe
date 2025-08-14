@@ -106,7 +106,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="w-full max-w-5xl">
+    <div class="w-full">
       {/* Header */}
       <div class="mb-4">
         <div class="mb-3 flex items-center gap-2">
