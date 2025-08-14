@@ -41,22 +41,12 @@ export const AdminPosyanduTable = component$(
           <div class="max-h-[60vh] overflow-y-auto rounded-lg">
             <table class="table table-sm xl:table-md w-full">
               <thead>
-                <tr class="bg-base-200/60">
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Nama Posyandu
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Alamat
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    No. Telp
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Status
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur table-pin-col">
-                    Aksi
-                  </th>
+                <tr class="bg-base-200">
+                  <th class="bg-base-200">Nama Posyandu</th>
+                  <th class="bg-base-200">Alamat</th>
+                  <th class="bg-base-200">No. Telp</th>
+                  <th class="bg-base-200">Status</th>
+                  <th class="bg-base-200 table-pin-col">Aksi</th>
                 </tr>
               </thead>
               <tbody>

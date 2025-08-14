@@ -98,6 +98,7 @@ export const ToastProvider = component$(() => {
   useContextProvider(ToastContext, { toasts: toastsSig.value, api });
 
   // Bridge: listen to global events to trigger toasts without capturing context
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     if (typeof window === "undefined") return;
     const handler = (e: Event) => {
@@ -115,23 +116,31 @@ export const ToastProvider = component$(() => {
       window.removeEventListener("sidifa:toast", handler as EventListener);
   });
 
-  const toastColorBorder = (t: ToastType) =>
-    t === "success"
-      ? "border-success/60"
-      : t === "error"
-        ? "border-error/60"
-        : t === "warning"
-          ? "border-warning/60"
-          : "border-info/60";
+  const toastColorBorder = (t: ToastType) => {
+    switch (t) {
+      case "success":
+        return "border-success/60";
+      case "error":
+        return "border-error/60";
+      case "warning":
+        return "border-warning/60";
+      default:
+        return "border-info/60";
+    }
+  };
 
-  const toastBadge = (t: ToastType) =>
-    t === "success"
-      ? "badge-success"
-      : t === "error"
-        ? "badge-error"
-        : t === "warning"
-          ? "badge-warning"
-          : "badge-info";
+  const toastBadge = (t: ToastType) => {
+    switch (t) {
+      case "success":
+        return "badge-success";
+      case "error":
+        return "badge-error";
+      case "warning":
+        return "badge-warning";
+      default:
+        return "badge-info";
+    }
+  };
 
   return (
     <>
@@ -156,13 +165,18 @@ export const ToastProvider = component$(() => {
               <div class={`badge ${toastBadge(t.type)} badge-sm mt-1`} />
               <div class="min-w-0">
                 <div class="font-semibold tracking-wide">
-                  {t.type === "success"
-                    ? "Berhasil"
-                    : t.type === "error"
-                      ? "Gagal"
-                      : t.type === "warning"
-                        ? "Peringatan"
-                        : "Info"}
+                  {(() => {
+                    switch (t.type) {
+                      case "success":
+                        return "Berhasil";
+                      case "error":
+                        return "Gagal";
+                      case "warning":
+                        return "Peringatan";
+                      default:
+                        return "Info";
+                    }
+                  })()}
                 </div>
                 <div class="text-sm opacity-80 break-words">{t.message}</div>
               </div>

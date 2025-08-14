@@ -27,15 +27,13 @@ export const JadwalPosyanduTable = component$<JadwalPosyanduTableProps>(
           <div class="max-h-[60vh] overflow-y-auto">
             <table class="table table-xs xl:table-md table-pin-cols w-full">
               <thead>
-                <tr>
-                  <th class="sticky top-0 z-20 bg-base-100">Nama Kegiatan</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Jenis</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Lokasi</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Tanggal</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Waktu</th>
-                  <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
-                    Aksi
-                  </th>
+                <tr class="bg-base-200">
+                  <th class="bg-base-200">Nama Kegiatan</th>
+                  <th class="bg-base-200">Jenis</th>
+                  <th class="bg-base-200">Lokasi</th>
+                  <th class="bg-base-200">Tanggal</th>
+                  <th class="bg-base-200">Waktu</th>
+                  <th class="bg-base-200 table-pin-col">Aksi</th>
                 </tr>
               </thead>
               <tbody>

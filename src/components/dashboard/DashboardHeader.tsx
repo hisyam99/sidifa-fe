@@ -46,7 +46,7 @@ export const DashboardHeader = component$((props: DashboardHeaderProps) => {
               />
             </div>
           </label>
-          <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-52 border border-base-200/50">
+          <ul class="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-52 border border-base-200/50">
             <li>
               <a
                 href="/dashboard/profile"

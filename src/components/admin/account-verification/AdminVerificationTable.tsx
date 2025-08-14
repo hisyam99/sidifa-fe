@@ -53,24 +53,14 @@ export const AdminVerificationTable = component$(
         {/* Desktop table */}
         <div class="hidden md:block overflow-x-auto">
           <div class="max-h-[60vh] overflow-y-auto rounded-lg">
-            <table class="table table-sm xl:table-md w-full">
+            <table class="table table-sm xl:table-md w-full table-pin-rows table-pin-cols">
               <thead>
-                <tr class="bg-base-200/60">
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Nama
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Email
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Peran
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur">
-                    Status
-                  </th>
-                  <th class="sticky top-0 z-20 bg-base-200/60 backdrop-blur table-pin-col">
-                    Aksi
-                  </th>
+                <tr class="bg-base-200">
+                  <th class="bg-base-200">Nama</th>
+                  <th class="bg-base-200">Email</th>
+                  <th class="bg-base-200">Peran</th>
+                  <th class="bg-base-200">Status</th>
+                  <th class="bg-base-200 table-pin-col">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,7 +92,7 @@ export const AdminVerificationTable = component$(
                           {getStatusLabel(item.status)}
                         </span>
                       </td>
-                      <td class="table-pin-col">
+                      <td class="table-pin-col relative isolate">
                         <div class="join">
                           {onVerify$ && (
                             <div

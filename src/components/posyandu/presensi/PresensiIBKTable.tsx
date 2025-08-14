@@ -125,8 +125,8 @@ export const PresensiIBKTable = component$<PresensiIBKTableProps>(
           <div class="max-h-[60vh] overflow-y-auto">
             <table class="table table-xs xl:table-md w-full">
               <thead>
-                <tr>
-                  <th class="sticky top-0 z-20 bg-base-100 w-10">
+                <tr class="bg-base-200">
+                  <th class="bg-base-200 w-10">
                     <input
                       type="checkbox"
                       class="checkbox checkbox-primary"
@@ -135,13 +135,11 @@ export const PresensiIBKTable = component$<PresensiIBKTableProps>(
                       title="Pilih semua"
                     />
                   </th>
-                  <th class="sticky top-0 z-20 bg-base-100">Nama</th>
-                  <th class="sticky top-0 z-20 bg-base-100">NIK</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Alamat</th>
-                  <th class="sticky top-0 z-20 bg-base-100">Status</th>
-                  <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
-                    Aksi
-                  </th>
+                  <th class="bg-base-200">Nama</th>
+                  <th class="bg-base-200">NIK</th>
+                  <th class="bg-base-200">Alamat</th>
+                  <th class="bg-base-200">Status</th>
+                  <th class="bg-base-200 table-pin-col">Aksi</th>
                 </tr>
               </thead>
               <tbody>

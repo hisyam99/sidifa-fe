@@ -26,7 +26,7 @@ export default component$(() => {
       <RoleProtectedContent allowedRoles={["kader", "admin"]}>
         <div class="relative">
           {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}
-          <main class="container mx-auto py-4 md:py-8 transition-all duration-300">
+          <main class="container mx-auto p-4 md:py-8 transition-all duration-300">
             <Breadcrumbs />
             <AnimatedPageContainer>
               <Slot />

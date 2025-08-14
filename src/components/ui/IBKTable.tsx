@@ -32,14 +32,12 @@ export const IBKTable = component$((props: IBKTableProps) => {
         <div class="max-h-[60vh] overflow-y-auto">
           <table class="table table-xs xl:table-md table-pin-cols w-full">
             <thead>
-              <tr>
-                <th class="sticky top-0 z-20 bg-base-100">NIK</th>
-                <th class="sticky top-0 z-20 bg-base-100">Nama</th>
-                <th class="sticky top-0 z-20 bg-base-100">Jenis Kelamin</th>
-                <th class="sticky top-0 z-20 bg-base-100">Alamat</th>
-                <th class="sticky top-0 z-20 bg-base-100 table-pin-col">
-                  Aksi
-                </th>
+              <tr class="bg-base-200">
+                <th class="bg-base-200">NIK</th>
+                <th class="bg-base-200">Nama</th>
+                <th class="bg-base-200">Jenis Kelamin</th>
+                <th class="bg-base-200">Alamat</th>
+                <th class="bg-base-200 table-pin-col">Aksi</th>
               </tr>
             </thead>
             <tbody>
