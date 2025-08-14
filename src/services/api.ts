@@ -2,12 +2,11 @@ import axios from "xior";
 import { sessionUtils } from "~/utils/auth";
 
 const api = axios.create({
-  baseURL: import.meta.env.PUBLIC_API_URL || "__PUBLIC_API_URL__",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  // xior (fetch) uses credentials instead of withCredentials
   credentials: "include",
 });
 
@@ -20,15 +19,16 @@ api.interceptors.request.use((config) => {
     if (typeof Headers !== "undefined" && h instanceof Headers) {
       h.delete("Content-Type");
     } else if (h && typeof h === "object" && "Content-Type" in h) {
-      delete (h as Record<string, string>)["Content-Type"];
+      delete h["Content-Type"];
     }
   }
   return config;
 });
 
 // CSRF Token fetcher
-export async function fetchCsrfToken() {
-  const response = await api.get("/csrf/token");
+export type CsrfResponse = { csrfToken?: string } & Record<string, unknown>;
+export async function fetchCsrfToken(): Promise<CsrfResponse> {
+  const response = await api.get<CsrfResponse>("/csrf/token");
   return response.data;
 }
 
@@ -36,28 +36,19 @@ export async function fetchCsrfToken() {
 let csrfFetched = false;
 let csrfTokenValue: string | null = null;
 api.interceptors.request.use(async (config) => {
-  if (
-    ["post", "put", "patch", "delete"].includes(
-      config.method?.toLowerCase() || "",
-    ) &&
-    !csrfFetched
-  ) {
+  const method = (config.method || "").toLowerCase();
+  const isWrite = ["post", "put", "patch", "delete"].includes(method);
+  if (isWrite && !csrfFetched) {
     try {
       const response = await fetchCsrfToken();
-      csrfTokenValue = response.csrfToken as string;
-      csrfFetched = true;
+      csrfTokenValue = response.csrfToken ? String(response.csrfToken) : null;
+      csrfFetched = Boolean(csrfTokenValue);
     } catch (error) {
       console.error("Gagal mengambil CSRF token:", error);
       return Promise.reject(new Error("Tidak dapat mengambil CSRF token"));
     }
   }
-  if (
-    csrfTokenValue &&
-    ["post", "put", "patch", "delete"].includes(
-      config.method?.toLowerCase() || "",
-    )
-  ) {
-    // Support both plain object and Headers instance in xior
+  if (csrfTokenValue && isWrite) {
     const h = config.headers as Headers | Record<string, string> | undefined;
     if (typeof Headers !== "undefined" && h instanceof Headers) {
       h.set("X-CSRF-TOKEN", csrfTokenValue);
@@ -78,6 +69,128 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Response/error types
+type ApiErrorResponse = { status?: number; data?: { message?: string } };
+type ApiError = {
+  config?: Record<string, unknown> & {
+    _retry?: boolean;
+    url?: string;
+    method?: string;
+  };
+  response?: ApiErrorResponse;
+  message?: string;
+};
+
+// Helper utilities to reduce complexity
+function extractMessage(err: unknown): string {
+  if (typeof err === "string") return err;
+  const e = err as ApiError;
+  return (
+    e.response?.data?.message ||
+    e.message ||
+    "Terjadi kesalahan. Silakan coba lagi."
+  );
+}
+
+function isAuthEndpoint(url: string | undefined): boolean {
+  if (!url) return false;
+  return /\/auth\/(refresh|login|logout)/.test(url);
+}
+
+async function ensureCsrfToken(): Promise<void> {
+  if (csrfFetched && csrfTokenValue) return;
+  try {
+    const res = await fetch("/api/csrf/token", {
+      method: "GET",
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return;
+    const body = (await res.json().catch(() => ({}))) as CsrfResponse;
+    if (body?.csrfToken) {
+      csrfTokenValue = String(body.csrfToken);
+      csrfFetched = true;
+    }
+  } catch (err) {
+    console.warn("Failed to fetch CSRF token before refresh:", err);
+  }
+}
+
+async function tryRefreshToken(): Promise<boolean> {
+  await ensureCsrfToken();
+  const res = await fetch("/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...(csrfTokenValue ? { "X-CSRF-TOKEN": csrfTokenValue } : {}),
+    },
+  });
+  if (!res.ok) return false;
+  // After successful refresh, clear cached CSRF so it can be re-fetched if rotated
+  csrfFetched = false;
+  csrfTokenValue = null;
+  return true;
+}
+
+// Single-flight control to avoid double refresh requests
+let refreshInFlight: Promise<boolean> | null = null;
+async function refreshOnce(): Promise<boolean> {
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = (async () => {
+    try {
+      return await tryRefreshToken();
+    } finally {
+      // leave clearing to the awaiting caller below
+    }
+  })();
+  const result = await refreshInFlight;
+  refreshInFlight = null;
+  return result;
+}
+
+async function handleUnauthorized(
+  originalRequest: Record<string, unknown> & { _retry?: boolean; url?: string }
+): Promise<unknown> {
+  const canAttempt =
+    typeof window !== "undefined" && !isAuthEndpoint(originalRequest.url);
+  if (!canAttempt) {
+    sessionUtils.clearAllAuthData();
+    sessionUtils.setAuthStatus(false);
+    return Promise.reject(
+      new Error("Sesi telah berakhir. Silakan login kembali.")
+    );
+  }
+
+  if (!originalRequest._retry) {
+    originalRequest._retry = true;
+    try {
+      const refreshed = await refreshOnce();
+      if (refreshed) {
+        return api.request(originalRequest as never);
+      }
+    } catch (e) {
+      console.warn("Refresh attempt failed:", e);
+    }
+  } else if (refreshInFlight) {
+    try {
+      const ok = await refreshInFlight;
+      if (ok) {
+        return api.request(originalRequest as never);
+      }
+    } catch (e) {
+      console.warn("Waiting refresh failed:", e);
+    }
+  }
+
+  sessionUtils.clearAllAuthData();
+  sessionUtils.setAuthStatus(false);
+  return Promise.reject(
+    new Error("Sesi telah berakhir. Silakan login kembali.")
+  );
+}
+
 // Response interceptor untuk logging, penanganan error, dan refresh token
 api.interceptors.response.use(
   (response) => {
@@ -88,63 +201,35 @@ api.interceptors.response.use(
     return response;
   },
   async (error: unknown) => {
-    interface RetriableConfig {
-      _retry?: boolean;
-      url?: string;
-    }
-    const originalRequest =
-      (error as { config?: RetriableConfig })?.config ?? {};
-
-    const apiError = error as {
-      response?: {
-        status?: number;
-        data?: { message?: string };
-      };
-      message?: string;
-    };
+    const originalRequest = (error as ApiError)?.config ?? {};
+    const apiError = error as ApiError;
 
     console.log("❌ ERROR:", {
       status: apiError.response?.status,
-      url: originalRequest?.url,
+      url: (originalRequest as { url?: string }).url,
       data: apiError.response?.data,
     });
 
-    // Extract error message
-    const extractMessage = (err: unknown): string => {
-      if (typeof err === "string") return err;
-      const e = err as {
-        response?: { data?: { message?: string } };
-        message?: string;
-      };
-      return (
-        e.response?.data?.message ||
-        e.message ||
-        "Terjadi kesalahan. Silakan coba lagi."
-      );
-    };
-
     const errorMessage = extractMessage(error);
 
-    // Handle 401 errors
     if (apiError.response?.status === 401) {
-      console.log("🔐 Unauthorized - clearing session");
-      sessionUtils.clearAllAuthData();
-      sessionUtils.setAuthStatus(false);
-      return Promise.reject(
-        new Error("Sesi telah berakhir. Silakan login kembali."),
+      return handleUnauthorized(
+        originalRequest as Record<string, unknown> & {
+          _retry?: boolean;
+          url?: string;
+        }
       );
     }
 
-    // Handle 429 rate limit errors
     if (apiError.response?.status === 429) {
       console.log("⚠️ Rate limit exceeded");
       return Promise.reject(
-        new Error("Terlalu banyak permintaan. Silakan coba lagi nanti."),
+        new Error("Terlalu banyak permintaan. Silakan coba lagi nanti.")
       );
     }
 
     return Promise.reject(new Error(errorMessage));
-  },
+  }
 );
 
 // Profile service
@@ -214,14 +299,14 @@ export const adminService = {
     if (params.orderBy) queryParams.append("orderBy", params.orderBy);
 
     const response = await api.get(
-      `/admin/list-user?${queryParams.toString()}`,
+      `/admin/list-user?${queryParams.toString()}`
     );
     return response.data;
   },
 
   async verifyUser(
     userId: string,
-    verification: "verified" | "unverified" | "declined",
+    verification: "verified" | "unverified" | "declined"
   ) {
     const response = await api.patch("/admin/verification", {
       userId,
@@ -385,7 +470,7 @@ export const informasiEdukasiAdminService = {
     if (params.tipe) queryParams.append("tipe", params.tipe);
 
     const response = await api.get(
-      `/admin/informasi-edukasi?${queryParams.toString()}`,
+      `/admin/informasi-edukasi?${queryParams.toString()}`
     );
     return response.data;
   },
@@ -405,7 +490,7 @@ export const informasiEdukasiAdminService = {
     // Guard non-UUID id (e.g., "create")
     const isUuid =
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-        id,
+        id
       );
     if (!isUuid) return null;
 
@@ -565,7 +650,7 @@ export const adminLowonganService = {
       tanggal_mulai?: string;
       tanggal_selesai?: string;
       file?: File;
-    },
+    }
   ) {
     if (typeof window === "undefined") return null;
     const fd = new FormData();
@@ -678,7 +763,7 @@ export const informasiEdukasiKaderService = {
     if (params.judul) queryParams.append("judul", params.judul);
 
     const response = await api.get(
-      `/kader/informasi-edukasi-kader?${queryParams.toString()}`,
+      `/kader/informasi-edukasi-kader?${queryParams.toString()}`
     );
     return response.data;
   },
@@ -688,13 +773,13 @@ export const informasiEdukasiKaderService = {
     }
     const isUuid =
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-        id,
+        id
       );
     if (!isUuid) return null;
 
     // Direct GET without forcing CSRF for read-only endpoint
     const response = await api.get(
-      `/kader/informasi-edukasi-kader/detail/${id}`,
+      `/kader/informasi-edukasi-kader/detail/${id}`
     );
     const body = response.data;
     return body?.data ?? body;
@@ -710,7 +795,7 @@ export const ibkService = {
   async updateIbk(id: string, formData: FormData) {
     const response = await api.patch(
       `/kader/pendataan-ibk/update/${id}`,
-      formData,
+      formData
     );
     return response.data;
   },
@@ -762,7 +847,26 @@ export const ibkService = {
         handler(value);
         continue;
       }
-      fd.append(key, String(value));
+      // Avoid default [object Object] stringification for complex values
+      if (value instanceof Blob) {
+        fd.append(key, value);
+      } else if (value instanceof Date) {
+        fd.append(key, value.toISOString());
+      } else if (typeof value === "string") {
+        fd.append(key, value);
+      } else if (
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        typeof value === "bigint"
+      ) {
+        fd.append(key, String(value));
+      } else if (Array.isArray(value) || typeof value === "object") {
+        fd.append(key, JSON.stringify(value));
+      } else if (typeof value === "symbol") {
+        fd.append(key, value.description ?? "symbol");
+      } else if (typeof value === "function") {
+        fd.append(key, value.name || "anonymous");
+      }
     }
 
     return fd;
@@ -784,7 +888,7 @@ export const ibkService = {
       tingkat_keparahan: string;
       sejak_kapan?: string;
       keterangan?: string;
-    }>,
+    }>
   ): Promise<void> {
     if (!payloads || payloads.length === 0) return;
     if (payloads.length === 1) {
@@ -800,11 +904,11 @@ export const ibkService = {
       tingkat_keparahan: string;
       sejak_kapan?: string;
       keterangan?: string;
-    },
+    }
   ): Promise<void> {
     await api.patch(
       `/kader/pendataan-ibk/disabilitas-ibk/update/${id}`,
-      payload,
+      payload
     );
   },
   async deleteIbkDisability(id: string): Promise<void> {
@@ -825,7 +929,7 @@ export const ibkService = {
     if (params.posyanduId) queryParams.append("posyanduId", params.posyanduId);
     if (params.nama) queryParams.append("nama", params.nama);
     const response = await api.get(
-      `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`,
+      `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`
     );
     return response.data;
   },
