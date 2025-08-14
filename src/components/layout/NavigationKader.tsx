@@ -34,7 +34,7 @@ export const NavigationKader = component$(() => {
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto flex items-center min-w-0">
         {/* Logo dan menu biasa di kiri */}
-        <BrandLogo variant="nav" size="sm" href="/kader" />
+        <BrandLogo variant="nav" size="sm" href="/" />
         {/* Tombol menuItems dan avatar/login di kanan */}
         <div class="ml-auto flex items-center gap-2">
           {/* MenuItems utama desktop */}

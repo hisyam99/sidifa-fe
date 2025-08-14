@@ -1,20 +1,33 @@
 import { component$ } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import { getPrettyBreadcrumbName } from "~/utils/breadcrumb-utils";
+import { useAuth } from "~/hooks";
 
 export const Breadcrumbs = component$(() => {
   const location = useLocation();
+  const { user } = useAuth();
   const path = location.url.pathname;
   const segments = path.split("/").filter(Boolean);
 
   let href = "";
+
+  // Tentukan link "Home" sesuai role user
+  let homeHref = "/dashboard";
+  const role = user.value?.role;
+  if (role === "admin") {
+    homeHref = "/admin";
+  } else if (role === "kader" || role === "posyandu") {
+    homeHref = "/kader";
+  } else if (role === "psikolog") {
+    homeHref = "/psikolog";
+  }
 
   return (
     <div class="mb-4">
       <div class="breadcrumbs text-sm">
         <ul>
           <li>
-            <a href="/">Home</a>
+            <a href={homeHref}>Home</a>
           </li>
           {segments.map((seg, idx) => {
             href += "/" + seg;
