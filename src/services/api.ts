@@ -101,13 +101,8 @@ function isAuthEndpoint(url: string | undefined): boolean {
 async function ensureCsrfToken(): Promise<void> {
   if (csrfFetched && csrfTokenValue) return;
   try {
-    const res = await fetch("/api/csrf/token", {
-      method: "GET",
-      credentials: "include",
-      headers: { Accept: "application/json" },
-    });
-    if (!res.ok) return;
-    const body = (await res.json().catch(() => ({}))) as CsrfResponse;
+    const res = await api.get<CsrfResponse>("/csrf/token");
+    const body = res.data;
     if (body?.csrfToken) {
       csrfTokenValue = String(body.csrfToken);
       csrfFetched = true;
@@ -119,20 +114,15 @@ async function ensureCsrfToken(): Promise<void> {
 
 async function tryRefreshToken(): Promise<boolean> {
   await ensureCsrfToken();
-  const res = await fetch("/api/auth/refresh", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(csrfTokenValue ? { "X-CSRF-TOKEN": csrfTokenValue } : {}),
-    },
-  });
-  if (!res.ok) return false;
-  // After successful refresh, clear cached CSRF so it can be re-fetched if rotated
-  csrfFetched = false;
-  csrfTokenValue = null;
-  return true;
+  try {
+    await api.post("/auth/refresh");
+    // After successful refresh, clear cached CSRF so it can be re-fetched if rotated
+    csrfFetched = false;
+    csrfTokenValue = null;
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 // Single-flight control to avoid double refresh requests
