@@ -8,6 +8,7 @@ import {
 } from "@builder.io/qwik";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
+import { MdxEditor } from "~/components/common/MdxEditorWrapper";
 
 export interface InformasiFormData {
   judul: string;
@@ -100,15 +101,9 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         <label class="label">
           <span class="label-text">Deskripsi</span>
         </label>
-        <textarea
-          class="textarea textarea-bordered w-full"
-          value={formState.value.deskripsi}
-          onInput$={(e) =>
-            (formState.value.deskripsi = (
-              e.target as HTMLTextAreaElement
-            ).value)
-          }
-          required
+        <MdxEditor
+          content={formState.value.deskripsi}
+          onChange$={$((v: string) => (formState.value.deskripsi = v))}
         />
       </div>
       <div>

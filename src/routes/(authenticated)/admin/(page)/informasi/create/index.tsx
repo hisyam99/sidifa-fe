@@ -28,7 +28,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="p-4 max-w-xl mx-auto">
+    <div class="p-4 mx-auto">
       <h1 class="text-2xl font-bold mb-4">Tambah Informasi Edukasi</h1>
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
