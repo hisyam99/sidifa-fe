@@ -11,6 +11,7 @@ import {
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
+import { isActivePath } from "~/utils/path";
 
 export const NavigationAuth = component$(() => {
   const { user, logout } = useAuth();
@@ -40,6 +41,8 @@ export const NavigationAuth = component$(() => {
     { href: "/dashboard/settings", label: "Pengaturan", icon: LuSettings },
   ];
 
+  const currentPath = location.url.pathname;
+
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto flex items-center min-w-0">
@@ -54,7 +57,7 @@ export const NavigationAuth = component$(() => {
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
-                  location.url.pathname === item.href
+                  isActivePath(currentPath, item.href, item.href === "/")
                     ? " font-bold text-primary"
                     : ""
                 }`}
@@ -93,7 +96,7 @@ export const NavigationAuth = component$(() => {
                   <a
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
-                      location.url.pathname === item.href
+                      isActivePath(currentPath, item.href, item.href === "/")
                         ? " font-bold text-primary"
                         : ""
                     }`}

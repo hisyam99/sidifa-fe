@@ -9,6 +9,7 @@ import {
 } from "~/components/icons/lucide-optimized";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
+import { isActivePath } from "~/utils/path";
 
 export const NavigationAdmin = component$(() => {
   const { user, logout } = useAuth();
@@ -21,6 +22,7 @@ export const NavigationAdmin = component$(() => {
   });
 
   const menuItems = [{ href: "/admin/", label: "Dashboard", icon: LuHome }];
+  const currentPath = location.url.pathname;
 
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
@@ -36,7 +38,7 @@ export const NavigationAdmin = component$(() => {
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
-                  location.url.pathname === item.href
+                  isActivePath(currentPath, item.href)
                     ? " font-bold text-primary"
                     : ""
                 }`}
@@ -74,7 +76,11 @@ export const NavigationAdmin = component$(() => {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    class="flex items-center gap-3 hover:bg-primary/10"
+                    class={`flex items-center gap-3 hover:bg-primary/10${
+                      isActivePath(currentPath, item.href)
+                        ? " font-bold text-primary"
+                        : ""
+                    }`}
                   >
                     <item.icon class="w-5 h-5 text-primary" />
                     <span class="font-medium">{item.label}</span>
