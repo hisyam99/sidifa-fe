@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import {
   LuCalendar,
   LuClock,
@@ -21,12 +21,34 @@ export const InformationArticleCard = component$(
   (props: InformationArticleCardProps) => {
     const { title, category, image, excerpt, href, date, readTime = 3 } = props;
 
+    const titleRef = useSignal<HTMLElement>();
+    const excerptClamp = useSignal<number>(2);
+
+    useVisibleTask$(({ cleanup }) => {
+      const computeLines = () => {
+        const el = titleRef.value;
+        if (!el) return;
+        const style = window.getComputedStyle(el);
+        const lineHeight = parseFloat(style.lineHeight || "0");
+        const height = el.clientHeight;
+        if (lineHeight > 0) {
+          const lines = Math.round(height / lineHeight);
+          excerptClamp.value = lines <= 1 ? 3 : 2;
+        }
+      };
+      computeLines();
+      window.addEventListener("resize", computeLines);
+      cleanup(() => window.removeEventListener("resize", computeLines));
+    });
+
     const renderExcerptParagraphs = (md: string) => {
       const raw = (md || "").toString();
       const tokens = marked.lexer(raw);
       const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
-      const html = marked.parser(paragraphTokens as any);
-      const safe = DOMPurify.sanitize(html);
+      const firstParagraph =
+        paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
+      const html = marked.parser(firstParagraph as any);
+      const safe = DOMPurify.sanitize(html as string);
       return safe;
     };
 
@@ -44,7 +66,7 @@ export const InformationArticleCard = component$(
     };
 
     return (
-      <a href={href} class="group block">
+      <a href={href} class="group block h-full">
         <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
           {/* Image Header */}
           {image ? (
@@ -90,7 +112,7 @@ export const InformationArticleCard = component$(
           )}
 
           {/* Content */}
-          <div class="card-body">
+          <div class="card-body flex flex-col">
             {/* Meta Information */}
             <div class="flex items-center gap-4 text-xs text-base-content/60 mb-3">
               {date && (
@@ -106,18 +128,21 @@ export const InformationArticleCard = component$(
             </div>
 
             {/* Title */}
-            <h3 class="card-title text-base-content group-hover:text-primary transition-colors duration-200 line-clamp-2 mb-3">
+            <h3
+              ref={titleRef}
+              class="card-title text-base-content group-hover:text-primary transition-colors duration-200 line-clamp-2 mb-3"
+            >
               {title}
             </h3>
 
             {/* Excerpt as Markdown paragraphs only */}
             <div
-              class="prose prose-sm max-w-none text-base-content/80 leading-relaxed mb-4 line-clamp-4"
+              class={`prose prose-sm max-w-none text-base-content/80 leading-relaxed mb-4 ${excerptClamp.value === 3 ? "line-clamp-3" : "line-clamp-2"}`}
               dangerouslySetInnerHTML={renderExcerptParagraphs(excerpt)}
             />
 
             {/* Read More */}
-            <div class="card-actions justify-between">
+            <div class="card-actions justify-between mt-auto">
               <div class="badge badge-outline badge-sm">{category}</div>
               <div class="flex items-center text-primary text-sm font-medium group-hover:text-primary-focus transition-colors">
                 Baca selengkapnya
