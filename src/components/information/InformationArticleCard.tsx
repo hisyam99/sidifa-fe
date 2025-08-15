@@ -4,6 +4,8 @@ import {
   LuClock,
   LuArrowRight,
 } from "~/components/icons/lucide-optimized";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 interface InformationArticleCardProps {
   title: string;
@@ -19,11 +21,13 @@ export const InformationArticleCard = component$(
   (props: InformationArticleCardProps) => {
     const { title, category, image, excerpt, href, date, readTime = 3 } = props;
 
-    const stripHtml = (html: string) => {
-      if (typeof document === "undefined") return html;
-      const div = document.createElement("div");
-      div.innerHTML = html;
-      return div.textContent || div.innerText || "";
+    const renderExcerptParagraphs = (md: string) => {
+      const raw = (md || "").toString();
+      const tokens = marked.lexer(raw);
+      const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
+      const html = marked.parser(paragraphTokens as any);
+      const safe = DOMPurify.sanitize(html as string);
+      return safe;
     };
 
     const formatDate = (dateString?: string) => {
@@ -104,10 +108,11 @@ export const InformationArticleCard = component$(
               {title}
             </h3>
 
-            {/* Excerpt */}
-            <p class="text-sm text-base-content/70 line-clamp-3 leading-relaxed mb-4">
-              {stripHtml(excerpt).substring(0, 120)}...
-            </p>
+            {/* Excerpt as Markdown paragraphs only */}
+            <div
+              class="prose prose-sm max-w-none text-base-content/80 leading-relaxed mb-4 line-clamp-4"
+              dangerouslySetInnerHTML={renderExcerptParagraphs(excerpt)}
+            />
 
             {/* Read More */}
             <div class="card-actions justify-between">

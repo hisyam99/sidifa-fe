@@ -1,10 +1,12 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
 import { useAuth } from "~/hooks";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 import {
   LuCalendar,
   LuFileText,
@@ -15,6 +17,7 @@ import {
 
 export default component$(() => {
   const loc = useLocation();
+  const nav = useNavigate();
   const { isLoggedIn } = useAuth();
   const { fetchDetail, fetchList, error, items } = useInformasiEdukasiKader();
   const item = useSignal<any>(null);
@@ -62,6 +65,80 @@ export default component$(() => {
       ?.filter((article) => article.id !== item.value?.id)
       .slice(0, 4) || [];
 
+  const renderedHtml = useSignal<string>("");
+  const renderedHeaderHtml = useSignal<string>("");
+
+  useVisibleTask$(({ track, cleanup }) => {
+    track(() => item.value?.deskripsi);
+    const md = (item.value?.deskripsi || "").toString();
+    // Render full markdown then inject heading IDs on client
+    const html = marked.parse(md);
+    const sanitized = DOMPurify.sanitize(html as string);
+    const container = document.createElement("div");
+    container.innerHTML = sanitized;
+    const makeSlug = (input: string) =>
+      (input || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/[\s_-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    container.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((el) => {
+      const heading = el as HTMLElement;
+      if (!heading.id || heading.id.trim() === "") {
+        const slug = makeSlug(heading.textContent || "");
+        if (slug) heading.id = slug;
+      }
+    });
+    renderedHtml.value = container.innerHTML;
+
+    // Header: only paragraphs
+    const tokens = marked.lexer(md);
+    const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
+    const headerHtml = marked.parser(paragraphTokens as any);
+    renderedHeaderHtml.value = DOMPurify.sanitize(headerHtml as string);
+
+    const scrollToHash = () => {
+      const hash = window.location.hash?.slice(1);
+      if (!hash) return;
+      const id = decodeURIComponent(hash);
+      const findById = (candidate: string) =>
+        document.getElementById(candidate);
+      let target: HTMLElement | null = findById(id);
+      // Try normalized single-dash variant
+      if (!target) target = findById(id.replace(/--+/g, "-"));
+      // Fallback: compute slugs from headings text
+      if (!target) {
+        const makeVariants = (txt: string) => {
+          const base = makeSlug(txt);
+          return [base, base.replace(/-/g, "--")];
+        };
+        const headings = Array.from(
+          document.querySelectorAll<HTMLElement>("h1,h2,h3,h4,h5,h6"),
+        );
+        for (const h of headings) {
+          const variants = makeVariants(h.textContent || "");
+          if (variants.includes(id)) {
+            target = h;
+            break;
+          }
+        }
+      }
+      if (target) {
+        // Ensure future jumps work with the exact hash
+        target.id = id;
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    // Scroll after content renders
+    setTimeout(scrollToHash, 0);
+    window.addEventListener("hashchange", scrollToHash);
+    cleanup(() => window.removeEventListener("hashchange", scrollToHash));
+  });
+
   return (
     <div class="min-h-screen">
       {error.value && <div class="alert alert-error mb-4">{error.value}</div>}
@@ -82,7 +159,14 @@ export default component$(() => {
               <div class="pt-4 pb-12">
                 <button
                   class="btn btn-ghost btn-sm text-white/90 hover:text-white hover:bg-white/10 mb-6 self-start"
-                  onClick$={() => history.back()}
+                  onClick$={$(() => {
+                    const from = document.referrer || "";
+                    if (from.includes("/kader/informasi")) {
+                      history.back();
+                    } else {
+                      nav("/kader/informasi");
+                    }
+                  })}
                 >
                   <LuArrowLeft class="w-4 h-4 mr-2" />
                   Kembali
@@ -113,9 +197,10 @@ export default component$(() => {
                   {item.value.judul}
                 </h1>
 
-                <p class="text-lg md:text-xl text-white/95 max-w-3xl line-clamp-3 leading-relaxed">
-                  {stripHtml(item.value.deskripsi || "").substring(0, 200)}...
-                </p>
+                <div
+                  class="prose prose-invert max-w-3xl line-clamp-3 leading-relaxed prose-p:text-white/95 prose-a:text-white/95 prose-strong:text-white prose-em:text-white/90 prose-headings:text-white"
+                  dangerouslySetInnerHTML={renderedHeaderHtml.value}
+                />
 
                 {item.value.file_name && (
                   <div class="mt-8">
@@ -136,7 +221,7 @@ export default component$(() => {
 
           {/* Main Content Area */}
           <div class="py-4 md:py-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Article Content */}
               <div class="lg:col-span-2">
                 <article class="card bg-base-100 shadow-lg">
@@ -170,7 +255,7 @@ export default component$(() => {
                     {/* Article Body */}
                     <div
                       class="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-base-content prose-p:text-base-content/80 prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-img:shadow-md"
-                      dangerouslySetInnerHTML={item.value.deskripsi || ""}
+                      dangerouslySetInnerHTML={renderedHtml.value}
                     />
 
                     {/* Article Footer */}

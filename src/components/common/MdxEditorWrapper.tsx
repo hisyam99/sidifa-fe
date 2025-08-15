@@ -71,7 +71,8 @@ export const MdxEditor = qwikify$(
           directiveDescriptors: [AdmonitionDirectiveDescriptor],
         }),
       ],
-      contentEditableClassName: "prose dark:prose-invert",
+      contentEditableClassName:
+        "prose prose-sm md:prose-base dark:prose-invert max-w-none",
     });
   },
   { clientOnly: true, eagerness: "visible" },

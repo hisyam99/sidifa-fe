@@ -3,6 +3,15 @@
   root: ":root";
   themes: sidifa;
 }
+@plugin "@tailwindcss/typography";
+
+/* Enhance MDX/Markdown content */
+.prose {
+  max-width: 100%;
+}
+.prose :where(h1, h2, h3, h4) {
+  color: inherit;
+}
 
 /* Line Clamp Utilities */
 .line-clamp-1 {
