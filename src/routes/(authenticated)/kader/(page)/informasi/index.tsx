@@ -88,11 +88,11 @@ export default component$(() => {
       </div>
 
       {/* Sticky Search and Filter Section */}
-      <div class="pt-4 pb-6 sticky top-16 z-20 ">
-        <div class="bg-base-100 border-b border-base-300 card card-compact shadow-sm container mx-auto px-4 py-4">
-          <div class="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
-            <div class="flex-1 relative">
-              <LuSearch class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/40 w-5 h-5" />
+      <div class="pt-2 pb-4 md:pt-4 md:pb-6 sticky top-16 z-20">
+        <div class="bg-base-100 border-b border-base-300 card card-compact shadow-sm container mx-auto px-2 py-2 md:px-4 md:py-4">
+          <div class="flex flex-row flex-nowrap items-center gap-2">
+            <div class="flex-1 min-w-0 relative">
+              <LuSearch class="pointer-events-none absolute z-10 left-2 top-1/2 -translate-y-1/2 text-base-content/40 w-4 h-4 md:w-5 md:h-5" />
               <SearchBox
                 placeholder="Cari artikel, panduan, atau materi edukasi..."
                 value={filterOptions.value.judul || ""}
@@ -100,13 +100,13 @@ export default component$(() => {
                   handleSearchDebounced((e.target as HTMLInputElement).value)
                 }
                 onEnter$={$(() => {})}
-                class="pl-10 input input-bordered w-full"
+                class="input input-bordered input-sm md:input-md w-full pl-8"
               />
             </div>
-            <div class="flex items-center gap-3">
-              <LuFilter class="text-base-content/40 w-5 h-5" />
+            <div class="flex items-center gap-2 shrink-0">
+              <LuFilter class="text-base-content/40 w-4 h-4 md:w-5 md:h-5" />
               <select
-                class="select select-bordered min-w-fit"
+                class="select select-bordered select-sm md:select-md w-auto"
                 value={String(currentLimit.value)}
                 onChange$={$((e: Event) =>
                   handleLimitChange(
