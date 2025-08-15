@@ -17,7 +17,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="container mx-auto py-6">
+    <div class="mx-auto">
       {loading.value && <GenericLoadingSpinner />}
       {error.value && <div class="alert alert-error mb-4">{error.value}</div>}
       {item.value && (

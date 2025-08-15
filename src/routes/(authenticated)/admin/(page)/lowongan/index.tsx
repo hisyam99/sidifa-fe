@@ -133,7 +133,7 @@ export default component$(() => {
           >
             <button
               class="btn btn-ghost btn-xs btn-square text-primary"
-              onClick$={() => nav(`/admin/lowongan/detail/${item.id}/edit`)}
+              onClick$={() => nav(`/admin/lowongan/${item.id}/edit`)}
             >
               <svg
                 class="w-4 h-4"
