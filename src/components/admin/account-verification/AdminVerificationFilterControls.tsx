@@ -2,6 +2,7 @@ import { component$, Signal, QRL, $ } from "@builder.io/qwik";
 import { SearchBox } from "~/components/common";
 import type { AdminVerificationFilterOptions } from "~/types/admin-account-verification";
 import { useDebouncer } from "~/utils/debouncer";
+import { LuSearch } from "~/components/icons/lucide-optimized";
 
 interface AdminVerificationFilterControlsProps {
   filterOptions: Signal<AdminVerificationFilterOptions>;
@@ -50,7 +51,7 @@ export const AdminVerificationFilterControls = component$(
         </h2>
         {/* Mobile: stacked layout */}
         <div class="flex flex-col gap-4 md:hidden">
-          <div class="form-control flex-1 min-w-0">
+          <div class="form-control flex-1 min-w-0 relative">
             <label
               for="search-name"
               class="label w-full whitespace-normal break-words min-h-[2.5rem]"
@@ -63,6 +64,7 @@ export const AdminVerificationFilterControls = component$(
               class="tooltip tooltip-info tooltip-right w-full"
               data-tip="Search users"
             >
+              <LuSearch class="pointer-events-none absolute z-10 left-3 top-[3.5rem] -translate-y-1/2 text-base-content/40 w-4 h-4" />
               <SearchBox
                 id="search-name"
                 placeholder="Cari berdasarkan nama..."
@@ -73,7 +75,7 @@ export const AdminVerificationFilterControls = component$(
                   ).value;
                   debouncedFilter();
                 }}
-                class="input-bordered input-md h-12 w-full"
+                class="input-bordered input-md h-12 w-full pl-9"
               />
             </div>
           </div>
@@ -208,11 +210,12 @@ export const AdminVerificationFilterControls = component$(
             </span>
           </label>
           {/* Row 2: Inputs */}
-          <div class="col-span-1 md:col-span-1 row-start-2 row-end-3">
+          <div class="col-span-1 md:col-span-1 row-start-2 row-end-3 relative">
             <div
               class="tooltip tooltip-info tooltip-top w-full"
               data-tip="Search users"
             >
+              <LuSearch class="pointer-events-none absolute z-10 left-3 top-1/2 -translate-y-1/2 text-base-content/40 w-4 h-4" />
               <SearchBox
                 id="search-name"
                 placeholder="Cari berdasarkan nama..."
@@ -223,7 +226,7 @@ export const AdminVerificationFilterControls = component$(
                   ).value;
                   debouncedFilter();
                 }}
-                class="input-bordered input-md h-12 w-full"
+                class="input-bordered input-md h-12 w-full pl-9"
               />
             </div>
           </div>

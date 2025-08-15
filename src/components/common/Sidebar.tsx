@@ -24,7 +24,7 @@ export const Sidebar = component$<SidebarProps>((props) => {
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
-      <div class="h-full p-2 md:p-4 bg-base-100/95 lg:bg-transparent backdrop-blur supports-[backdrop-filter]:bg-base-100/70">
+      <div class="h-full py-2 md:py-4 bg-base-100/95 lg:bg-transparent backdrop-blur supports-[backdrop-filter]:bg-base-100/70">
         {/* Header dihapus total sesuai permintaan */}
         <ul class="menu px-2 py-3 gap-1">
           {props.menuItems.map((item) => (

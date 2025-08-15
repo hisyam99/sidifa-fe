@@ -12,6 +12,9 @@ import {
 import { PaginationControls, ConfirmationModal } from "~/components/common";
 import type { InformasiItem, InformasiFilterOptions } from "~/types/informasi";
 import { informasiEdukasiAdminService } from "~/services/api";
+import { buildInformasiEdukasiUrl } from "~/utils/url";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 export default component$(() => {
   const { isLoggedIn } = useAuth();
@@ -82,8 +85,13 @@ export default component$(() => {
   });
 
   // Filter change handler resets page and triggers fetch
-  const handleFilterChange = $(() => {
-    resetPage();
+  const handleFilterChange = $(async () => {
+    await resetPage();
+    await fetchList({
+      ...filterOptions.value,
+      page: 1,
+      limit: currentLimit.value,
+    });
   });
 
   const handleDeleteClick = $((id: string) => {
@@ -117,34 +125,48 @@ export default component$(() => {
     deleteId.value = null;
   });
 
+  const renderParagraphPreview = (md: string) => {
+    const raw = (md || "").toString();
+    const tokens = marked.lexer(raw);
+    const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
+    const firstParagraph =
+      paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
+    const html = marked.parser(firstParagraph as any);
+    return DOMPurify.sanitize(html as string);
+  };
+
   return (
-    <div class="p-4 space-y-6">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl font-bold">Manajemen Informasi Edukasi</h1>
-          <p class="text-base-content/70 mt-1">
+    <div class="space-y-6">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+        <div class="min-w-0">
+          <h1 class="text-xl sm:text-2xl font-bold break-words">
+            Manajemen Informasi Edukasi
+          </h1>
+          <p class="text-sm sm:text-base text-base-content/70 mt-1 break-words">
             Kelola artikel, panduan, dan materi edukasi untuk pengguna
           </p>
         </div>
-        <button
-          class="btn btn-primary gap-2"
-          onClick$={() => nav("/admin/informasi/create")}
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div class="w-full md:w-auto">
+          <button
+            class="btn btn-primary gap-2 w-full md:w-auto"
+            onClick$={() => nav("/admin/informasi/create")}
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Tambah Informasi Baru
-        </button>
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Tambah Informasi Baru
+          </button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -241,92 +263,171 @@ export default component$(() => {
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
 
-      <InformasiTable
-        items={items.value}
-        page={currentPage.value}
-        limit={currentLimit.value}
-        loading={loading.value}
-      >
-        {items.value.map((item: InformasiItem) => [
-          <div
-            q:slot={`edit-${item.id}`}
-            key={`edit-${item.id}`}
-            class="flex gap-1"
-          >
-            <div class="tooltip" data-tip="Lihat Detail">
-              <button
-                class="btn btn-ghost btn-xs btn-square text-info"
-                onClick$={() => nav(`/admin/informasi/${item.id}`)}
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+      {/* Mobile list (cards) */}
+      <div class="block md:hidden">
+        <div class="space-y-4">
+          {(items.value || []).map((item) => (
+            <div key={item.id} class="card bg-base-100 shadow-md">
+              {item.file_name ? (
+                <div class="relative h-36 overflow-hidden rounded-t-2xl">
+                  <img
+                    src={buildInformasiEdukasiUrl(item.file_name)}
+                    alt={item.judul}
+                    width={640}
+                    height={144}
+                    class="w-full h-full object-cover"
+                    loading="lazy"
                   />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div class="tooltip" data-tip="Edit">
-              <button
-                class="btn btn-ghost btn-xs btn-square text-primary"
-                onClick$={() => nav(`/admin/informasi/${item.id}/edit`)}
-              >
-                <svg
-                  class="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>,
-          <div
-            q:slot={`delete-${item.id}`}
-            key={`delete-${item.id}`}
-            class="tooltip"
-            data-tip="Hapus"
-          >
-            <button
-              class="btn btn-ghost btn-xs btn-square text-error"
-              onClick$={() => handleDeleteClick(item.id)}
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div class="absolute top-2 left-2">
+                    <span class="badge badge-primary badge-sm">
+                      {(item.tipe || "").toString().toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+              <div class="card-body p-4">
+                <div class="flex items-center gap-2 text-xs text-base-content/60 mb-2">
+                  <span>
+                    {new Date(item.created_at || "").toLocaleDateString(
+                      "id-ID",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      },
+                    )}
+                  </span>
+                </div>
+                <h3 class="font-semibold text-base-content text-lg leading-snug line-clamp-2">
+                  {item.judul}
+                </h3>
+                <div
+                  class="prose prose-sm max-w-none text-base-content/80 leading-relaxed line-clamp-3"
+                  dangerouslySetInnerHTML={renderParagraphPreview(
+                    item.deskripsi,
+                  )}
                 />
-              </svg>
-            </button>
-          </div>,
-        ])}
-      </InformasiTable>
+                <div class="card-actions justify-between mt-2">
+                  <div class="badge badge-outline badge-sm">
+                    {(item.tipe || "Informasi").toString()}
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="btn btn-ghost btn-xs text-info"
+                      onClick$={() => nav(`/admin/informasi/${item.id}`)}
+                    >
+                      Detail
+                    </button>
+                    <button
+                      class="btn btn-ghost btn-xs text-primary"
+                      onClick$={() => nav(`/admin/informasi/${item.id}/edit`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-ghost btn-xs text-error"
+                      onClick$={() => handleDeleteClick(item.id)}
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop table */}
+      <div class="hidden md:block">
+        <InformasiTable
+          items={items.value}
+          page={currentPage.value}
+          limit={currentLimit.value}
+          loading={loading.value}
+        >
+          {items.value.map((item: InformasiItem) => [
+            <div
+              q:slot={`edit-${item.id}`}
+              key={`edit-${item.id}`}
+              class="flex gap-1"
+            >
+              <div class="tooltip" data-tip="Lihat Detail">
+                <button
+                  class="btn btn-ghost btn-xs btn-square text-info"
+                  onClick$={() => nav(`/admin/informasi/${item.id}`)}
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div class="tooltip" data-tip="Edit">
+                <button
+                  class="btn btn-ghost btn-xs btn-square text-primary"
+                  onClick$={() => nav(`/admin/informasi/${item.id}/edit`)}
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>,
+            <div
+              q:slot={`delete-${item.id}`}
+              key={`delete-${item.id}`}
+              class="tooltip"
+              data-tip="Hapus"
+            >
+              <button
+                class="btn btn-ghost btn-xs btn-square text-error"
+                onClick$={() => handleDeleteClick(item.id)}
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>,
+          ])}
+        </InformasiTable>
+      </div>
 
       {meta.value && meta.value.totalPage > 1 && (
         <PaginationControls

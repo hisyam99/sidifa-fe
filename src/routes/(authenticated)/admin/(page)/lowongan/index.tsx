@@ -92,7 +92,7 @@ export default component$(() => {
   });
 
   return (
-    <div class="p-4 space-y-6">
+    <div class="space-y-6">
       <div class="flex justify-between items-center">
         <div>
           <h1 class="text-2xl font-bold">Manajemen Lowongan</h1>

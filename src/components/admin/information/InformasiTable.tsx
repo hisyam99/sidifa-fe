@@ -2,6 +2,8 @@ import { component$, Slot } from "@builder.io/qwik";
 import type { InformasiItem } from "~/types/informasi";
 import { Spinner } from "~/components/ui/Spinner";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
+import { marked } from "marked";
+import DOMPurify from "dompurify";
 
 interface InformasiTableProps {
   items: InformasiItem[];
@@ -12,6 +14,16 @@ interface InformasiTableProps {
 
 export const InformasiTable = component$((props: InformasiTableProps) => {
   const { items, page, limit, loading } = props;
+
+  const renderParagraphPreview = (md: string) => {
+    const raw = (md || "").toString();
+    const tokens = marked.lexer(raw);
+    const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
+    const firstParagraph =
+      paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
+    const html = marked.parser(firstParagraph as any);
+    return DOMPurify.sanitize(html as string);
+  };
 
   return (
     <div class="overflow-x-auto card bg-base-100 shadow-xl p-6 relative">
@@ -78,9 +90,12 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                     </td>
                     <td>
                       <div class="max-w-xs">
-                        <div class="truncate" title={item.deskripsi}>
-                          {item.deskripsi}
-                        </div>
+                        <div
+                          class="prose prose-sm max-w-none text-base-content/80 leading-relaxed line-clamp-2"
+                          dangerouslySetInnerHTML={renderParagraphPreview(
+                            item.deskripsi,
+                          )}
+                        />
                       </div>
                     </td>
                     <td>
@@ -138,9 +153,12 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
               <div class="card-body p-4">
                 <div class="font-semibold break-words">{item.judul}</div>
                 <div class="text-sm opacity-80 mt-1">Tipe: {item.tipe}</div>
-                <div class="text-sm mt-1 truncate" title={item.deskripsi}>
-                  {item.deskripsi}
-                </div>
+                <div
+                  class="prose prose-sm max-w-none text-base-content/80 leading-relaxed line-clamp-3"
+                  dangerouslySetInnerHTML={renderParagraphPreview(
+                    item.deskripsi,
+                  )}
+                />
                 <div class="mt-2">
                   {item.file_name ? (
                     <a

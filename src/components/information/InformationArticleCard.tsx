@@ -24,6 +24,7 @@ export const InformationArticleCard = component$(
     const titleRef = useSignal<HTMLElement>();
     const excerptClamp = useSignal<number>(2);
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(({ cleanup }) => {
       const computeLines = () => {
         const el = titleRef.value;
