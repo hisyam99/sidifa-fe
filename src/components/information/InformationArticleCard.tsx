@@ -26,7 +26,7 @@ export const InformationArticleCard = component$(
       const tokens = marked.lexer(raw);
       const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
       const html = marked.parser(paragraphTokens as any);
-      const safe = DOMPurify.sanitize(html as string);
+      const safe = DOMPurify.sanitize(html);
       return safe;
     };
 
@@ -52,6 +52,8 @@ export const InformationArticleCard = component$(
               <img
                 src={image}
                 alt={title}
+                width={640}
+                height={256}
                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 loading="lazy"
               />

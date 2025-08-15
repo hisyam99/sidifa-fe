@@ -22,6 +22,7 @@ export default component$(() => {
   const { fetchDetail, fetchList, error, items } = useInformasiEdukasiKader();
   const item = useSignal<any>(null);
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
     track(isLoggedIn);
     track(() => loc.params.id);
@@ -68,6 +69,7 @@ export default component$(() => {
   const renderedHtml = useSignal<string>("");
   const renderedHeaderHtml = useSignal<string>("");
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track, cleanup }) => {
     track(() => item.value?.deskripsi);
     const md = (item.value?.deskripsi || "").toString();
@@ -305,6 +307,8 @@ export default component$(() => {
                                         article.file_name,
                                       )}
                                       alt={article.judul}
+                                      width={64}
+                                      height={64}
                                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                                       loading="lazy"
                                     />

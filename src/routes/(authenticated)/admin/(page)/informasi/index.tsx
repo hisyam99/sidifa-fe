@@ -256,7 +256,7 @@ export default component$(() => {
             <div class="tooltip" data-tip="Lihat Detail">
               <button
                 class="btn btn-ghost btn-xs btn-square text-info"
-                onClick$={() => nav(`/admin/informasi/detail/${item.id}`)}
+                onClick$={() => nav(`/admin/informasi/${item.id}`)}
               >
                 <svg
                   class="w-4 h-4"
@@ -282,7 +282,7 @@ export default component$(() => {
             <div class="tooltip" data-tip="Edit">
               <button
                 class="btn btn-ghost btn-xs btn-square text-primary"
-                onClick$={() => nav(`/admin/informasi/detail/${item.id}/edit`)}
+                onClick$={() => nav(`/admin/informasi/${item.id}/edit`)}
               >
                 <svg
                   class="w-4 h-4"
