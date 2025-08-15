@@ -49,7 +49,7 @@ export const InformationArticleCard = component$(
       const firstParagraph =
         paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
       const html = marked.parser(firstParagraph as any);
-      const safe = DOMPurify.sanitize(html as string);
+      const safe = DOMPurify.sanitize(html);
       return safe;
     };
 

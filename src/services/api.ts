@@ -1,5 +1,6 @@
 import axios from "xior";
 import { sessionUtils } from "~/utils/auth";
+import { extractErrorMessage } from "~/utils/error";
 
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "__PUBLIC_API_URL__",
@@ -83,16 +84,6 @@ type ApiError = {
 };
 
 // Helper utilities to reduce complexity
-function extractMessage(err: unknown): string {
-  if (typeof err === "string") return err;
-  const e = err as ApiError;
-  return (
-    e.response?.data?.message ||
-    e.message ||
-    "Terjadi kesalahan. Silakan coba lagi."
-  );
-}
-
 function isAuthEndpoint(url: string | undefined): boolean {
   if (!url) return false;
   return /\/auth\/(refresh|login|logout)/.test(url);
@@ -143,6 +134,7 @@ async function refreshOnce(): Promise<boolean> {
 
 async function handleUnauthorized(
   originalRequest: Record<string, unknown> & { _retry?: boolean; url?: string },
+  fallbackMessage?: string,
 ): Promise<unknown> {
   const canAttempt =
     typeof window !== "undefined" && !isAuthEndpoint(originalRequest.url);
@@ -150,7 +142,9 @@ async function handleUnauthorized(
     sessionUtils.clearAllAuthData();
     sessionUtils.setAuthStatus(false);
     return Promise.reject(
-      new Error("Sesi telah berakhir. Silakan login kembali."),
+      new Error(
+        fallbackMessage || "Sesi telah berakhir. Silakan login kembali.",
+      ),
     );
   }
 
@@ -178,7 +172,7 @@ async function handleUnauthorized(
   sessionUtils.clearAllAuthData();
   sessionUtils.setAuthStatus(false);
   return Promise.reject(
-    new Error("Sesi telah berakhir. Silakan login kembali."),
+    new Error(fallbackMessage || "Sesi telah berakhir. Silakan login kembali."),
   );
 }
 
@@ -201,22 +195,26 @@ api.interceptors.response.use(
       data: apiError.response?.data,
     });
 
-    const errorMessage = extractMessage(error);
+    const url = (originalRequest as { url?: string }).url;
+    const errorMessage = extractErrorMessage(apiError as never);
 
     if (apiError.response?.status === 401) {
+      // For auth endpoints (login/logout/refresh), do not attempt refresh; return backend message
+      if (isAuthEndpoint(url)) {
+        return Promise.reject(new Error(errorMessage));
+      }
       return handleUnauthorized(
         originalRequest as Record<string, unknown> & {
           _retry?: boolean;
           url?: string;
         },
+        errorMessage,
       );
     }
 
     if (apiError.response?.status === 429) {
       console.log("⚠️ Rate limit exceeded");
-      return Promise.reject(
-        new Error("Terlalu banyak permintaan. Silakan coba lagi nanti."),
-      );
+      return Promise.reject(new Error(errorMessage));
     }
 
     return Promise.reject(new Error(errorMessage));

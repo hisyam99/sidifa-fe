@@ -22,7 +22,7 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
     const firstParagraph =
       paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
     const html = marked.parser(firstParagraph as any);
-    return DOMPurify.sanitize(html as string);
+    return DOMPurify.sanitize(html);
   };
 
   return (

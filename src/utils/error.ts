@@ -1,14 +1,14 @@
 // Error handling utilities for consistent error message extraction
 
 export interface BackendError {
-  message: string;
+  message: string | string[];
   error: string;
   statusCode: number;
 }
 
 export interface ApiErrorResponse {
   response?: {
-    data?: BackendError;
+    data?: BackendError | { message?: unknown; error?: unknown };
     status?: number;
   };
   message?: string;
@@ -83,9 +83,27 @@ export const extractErrorMessage = (
 
   // Check if it's an ApiErrorResponse object
   if (isApiErrorResponse(error)) {
-    // Backend already provides clear error messages
-    if (error.response?.data?.message) {
-      return error.response.data.message;
+    const data = error.response?.data as
+      | BackendError
+      | { message?: unknown; error?: unknown }
+      | undefined;
+    // Prefer message from backend
+    const rawMessage = data?.message;
+    if (Array.isArray(rawMessage)) {
+      const joined = rawMessage
+        .map((m) => (m == null ? "" : String(m)))
+        .filter(Boolean)
+        .join(", ");
+      if (joined) return joined;
+    }
+    if (typeof rawMessage === "string" && rawMessage.trim()) {
+      return rawMessage;
+    }
+
+    // Fallback to `error` field from backend if present
+    const rawError = (data as { error?: unknown })?.error;
+    if (typeof rawError === "string" && rawError.trim()) {
+      return rawError;
     }
 
     // Fallback for direct error message
