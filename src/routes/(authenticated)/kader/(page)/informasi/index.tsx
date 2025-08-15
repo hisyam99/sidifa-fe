@@ -27,6 +27,9 @@ export default component$(() => {
   const { items, loading, error, total, totalPage, fetchList } =
     useInformasiEdukasiKader();
 
+  const hasRequested = useSignal(false);
+  const gridRef = useSignal<HTMLElement>();
+
   const {
     currentPage,
     currentLimit,
@@ -38,7 +41,17 @@ export default component$(() => {
     initialLimit: 9,
     fetchList: $((params) => {
       if (isLoggedIn.value) {
+        hasRequested.value = true;
         fetchList(params);
+        // Scroll to top of the grid smoothly
+        setTimeout(() => {
+          const el = gridRef.value;
+          if (el) {
+            const offset = 170; // leave some space from the top
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }
+        }, 0);
       }
     }),
     total,
@@ -123,14 +136,11 @@ export default component$(() => {
         <div class="relative">
           {loading.value && <GenericLoadingSpinner overlay size="w-12 h-12" />}
 
-          {loading.value ? (
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: currentLimit.value }).map((_, index) => (
-                <InformationArticleCardSkeleton key={index} />
-              ))}
-            </div>
-          ) : (items.value?.length || 0) > 0 ? (
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(items.value?.length || 0) > 0 ? (
+            <div
+              ref={gridRef}
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {items.value.map((item) => (
                 <InformationArticleCard
                   key={item.id}
@@ -150,7 +160,16 @@ export default component$(() => {
                 />
               ))}
             </div>
-          ) : (
+          ) : loading.value ? (
+            <div
+              ref={gridRef}
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {Array.from({ length: currentLimit.value }).map((_, index) => (
+                <InformationArticleCardSkeleton key={index} />
+              ))}
+            </div>
+          ) : hasRequested.value ? (
             <div class="text-center py-12">
               <div class="w-24 h-24 bg-base-200 rounded-full flex items-center justify-center mx-auto mb-6">
                 <LuSearch class="w-12 h-12 text-base-content/40" />
@@ -163,7 +182,7 @@ export default component$(() => {
                 dipilih.
               </p>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Pagination */}

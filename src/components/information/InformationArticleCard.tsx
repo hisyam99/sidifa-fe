@@ -158,23 +158,34 @@ export const InformationArticleCard = component$(
 
 export const InformationArticleCardSkeleton = component$(() => {
   return (
-    <div class="card bg-base-100 shadow-lg animate-pulse">
-      <div class="h-48 bg-base-300" />
-      <div class="card-body">
-        <div class="flex gap-4 mb-3">
-          <div class="h-3 bg-base-300 rounded w-16" />
+    <div class="card bg-base-100 shadow-lg h-full animate-pulse">
+      {/* Header Image Placeholder */}
+      <div class="relative h-48 overflow-hidden rounded-t-3xl bg-base-300">
+        <div class="absolute inset-0 bg-gradient-to-t from-base-300 via-base-200/60 to-base-200/40" />
+        <div class="absolute top-3 left-3 h-6 w-20 bg-base-200 rounded" />
+      </div>
+      {/* Body */}
+      <div class="card-body flex flex-col">
+        {/* Meta Row */}
+        <div class="flex items-center gap-4 text-xs mb-3">
           <div class="h-3 bg-base-300 rounded w-20" />
+          <div class="h-3 bg-base-300 rounded w-16" />
         </div>
-        <div class="h-5 bg-base-300 rounded mb-2" />
-        <div class="h-5 bg-base-300 rounded w-3/4 mb-3" />
+        {/* Title (up to two lines) */}
+        <div class="space-y-2 mb-3">
+          <div class="h-5 bg-base-300 rounded w-3/4" />
+          <div class="h-5 bg-base-300 rounded w-5/6" />
+        </div>
+        {/* Excerpt (2-3 lines) */}
         <div class="space-y-2 mb-4">
-          <div class="h-3 bg-base-300 rounded" />
-          <div class="h-3 bg-base-300 rounded" />
-          <div class="h-3 bg-base-300 rounded w-2/3" />
+          <div class="h-3 bg-base-300 rounded w-full" />
+          <div class="h-3 bg-base-300 rounded w-11/12" />
+          <div class="h-3 bg-base-300 rounded w-10/12" />
         </div>
-        <div class="flex justify-between">
+        {/* Bottom actions pinned */}
+        <div class="card-actions justify-between mt-auto">
           <div class="h-6 bg-base-300 rounded w-16" />
-          <div class="h-4 bg-base-300 rounded w-24" />
+          <div class="h-4 bg-base-300 rounded w-28" />
         </div>
       </div>
     </div>
