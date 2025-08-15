@@ -10,6 +10,7 @@ export default component$(() => {
   const { fetchDetail, error } = useLowonganKader();
   const item = useSignal<any>(null);
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
     track(() => loc.params.id);
     const id = loc.params["id"];

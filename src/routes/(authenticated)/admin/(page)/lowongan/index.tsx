@@ -47,6 +47,7 @@ export default component$(() => {
   });
 
   // Lazy effects if needed in future (summary counts)
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {});
 
   const handleFilterChange = $(async () => {

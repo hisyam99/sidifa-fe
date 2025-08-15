@@ -11,6 +11,7 @@ export const TopLoader = component$(() => {
   const location = useLocation();
 
   // Animate progress bar on route change
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track, cleanup }) => {
     track(() => location.url.pathname);
 

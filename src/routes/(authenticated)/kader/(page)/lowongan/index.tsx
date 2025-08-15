@@ -41,6 +41,7 @@ export default component$(() => {
   });
 
   // Ensure initial client-side fetch occurs
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
     await fetchList({
       limit: currentLimit.value,

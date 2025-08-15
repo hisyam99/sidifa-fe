@@ -119,6 +119,7 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
       }
     });
 
+    // eslint-disable-next-line qwik/no-use-visible-task
     useVisibleTask$(() => {
       page.value = 1;
       items.value = [];
