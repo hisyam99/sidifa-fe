@@ -19,6 +19,7 @@ export const useHoverDelay = (delayMs: number = 300) => {
   });
 
   // Cleanup timeout on component unmount
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {
     cleanup(() => {
       if (timeoutId.value) {
@@ -32,4 +33,4 @@ export const useHoverDelay = (delayMs: number = 300) => {
     handleMouseEnter,
     handleMouseLeave,
   };
-}; 
+};

@@ -1,7 +1,7 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
 import type { RequestHandler } from "@builder.io/qwik-city";
-import { NavigationWrapper, SidifaFooter } from "~/components/layout";
+import { SidifaFooter } from "~/components/layout";
 
 export const onGet: RequestHandler = async ({ cacheControl, url }) => {
   // Default SWR caching site-wide
@@ -47,7 +47,6 @@ export const useAuthFromCookie = routeLoader$(async ({ cookie, pathname }) => {
 export default component$(() => {
   return (
     <>
-      <NavigationWrapper />
       <Slot />
       <SidifaFooter />
     </>

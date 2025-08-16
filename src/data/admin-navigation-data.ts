@@ -6,6 +6,7 @@ import {
   LuKey,
   LuBookOpen,
   LuBriefcase,
+  LuUser,
 } from "~/components/icons/lucide-optimized";
 
 interface AdminMenuItem {
@@ -44,5 +45,10 @@ export const getAdminMenuItems = (): AdminMenuItem[] => [
     href: "/admin/lowongan",
     label: "Lowongan",
     icon: LuBriefcase,
+  },
+  {
+    href: "/admin/profile",
+    label: "Profil Admin",
+    icon: LuUser,
   },
 ];

@@ -64,20 +64,23 @@ export const NavigationKader = component$(() => {
                     delayMs={300}
                     class="dropdown-start"
                   >
-                                            <div
-                          q:slot="trigger"
-                          tabIndex={0}
-                          class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300 mega-menu-trigger${
-                            isActivePath(currentPath, item.href, item.href === "/")
-                              ? " font-bold text-primary"
-                              : ""
-                          }`}
-                        >
+                    <div
+                      q:slot="trigger"
+                      tabIndex={0}
+                      class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300 mega-menu-trigger${
+                        isActivePath(currentPath, item.href, item.href === "/")
+                          ? " font-bold text-primary"
+                          : ""
+                      }`}
+                    >
                       <item.icon class="w-4 h-4 text-primary" />
                       <span class="truncate">{item.label}</span>
                       <LuChevronDown class="w-3 h-3 text-base-content/60 ml-1 chevron-rotate" />
                     </div>
-                    <div q:slot="content" class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-[480px]">
+                    <div
+                      q:slot="content"
+                      class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-[480px]"
+                    >
                       <div class="p-4">
                         <div class="mb-3">
                           <h3 class="font-semibold text-base text-primary flex items-center gap-2">

@@ -14,7 +14,25 @@ export const useAuthRedirect = () => {
 
     const userSession = sessionUtils.getUserProfile();
     if (userSession) {
-      nav("/dashboard");
+      // Redirect berdasarkan role user
+      switch (userSession.role) {
+        case "admin":
+          nav("/admin");
+          break;
+        case "kader":
+          nav("/kader");
+          break;
+        case "psikolog":
+          nav("/psikolog");
+          break;
+        case "posyandu":
+          nav("/posyandu");
+          break;
+        default:
+          // Fallback ke dashboard jika role tidak dikenali
+          nav("/");
+          break;
+      }
     }
   });
 };

@@ -23,11 +23,9 @@ import { MegaMenu } from "~/components/ui";
     <button class="btn btn-primary">Menu</button>
   </div>
   <div q:slot="content">
-    <div class="bg-base-100 border rounded-lg p-4">
-      Menu content here
-    </div>
+    <div class="bg-base-100 border rounded-lg p-4">Menu content here</div>
   </div>
-</MegaMenu>
+</MegaMenu>;
 ```
 
 ### Dengan Custom Delay
@@ -47,41 +45,35 @@ import { MegaMenu } from "~/components/ui";
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `delayMs` | `number` | `300` | Delay dalam milidetik sebelum menu hilang |
-| `class` | `string` | `""` | CSS class tambahan |
+| Prop      | Type     | Default | Description                               |
+| --------- | -------- | ------- | ----------------------------------------- |
+| `delayMs` | `number` | `300`   | Delay dalam milidetik sebelum menu hilang |
+| `class`   | `string` | `""`    | CSS class tambahan                        |
 
 ## Slots
 
-| Slot | Description |
-|------|-------------|
-| `trigger` | Elemen yang akan di-hover |
+| Slot      | Description                            |
+| --------- | -------------------------------------- |
+| `trigger` | Elemen yang akan di-hover              |
 | `content` | Konten mega menu yang akan ditampilkan |
 
 ## Implementasi di Navigation
 
 ### NavigationAdmin.tsx
+
 ```tsx
 <MegaMenu delayMs={300} class="dropdown-end">
-  <div q:slot="trigger">
-    {/* Trigger button */}
-  </div>
-  <div q:slot="content">
-    {/* Admin submenu content */}
-  </div>
+  <div q:slot="trigger">{/* Trigger button */}</div>
+  <div q:slot="content">{/* Admin submenu content */}</div>
 </MegaMenu>
 ```
 
 ### NavigationKader.tsx
+
 ```tsx
 <MegaMenu delayMs={300} class="dropdown-end">
-  <div q:slot="trigger">
-    {/* Trigger button */}
-  </div>
-  <div q:slot="content">
-    {/* Kader submenu content */}
-  </div>
+  <div q:slot="trigger">{/* Trigger button */}</div>
+  <div q:slot="content">{/* Kader submenu content */}</div>
 </MegaMenu>
 ```
 
@@ -103,4 +95,4 @@ Komponen menggunakan CSS custom untuk animasi:
 
 ## Contoh Demo
 
-Lihat `MegaMenuDemo.tsx` untuk contoh lengkap penggunaan komponen ini. 
+Lihat `MegaMenuDemo.tsx` untuk contoh lengkap penggunaan komponen ini.

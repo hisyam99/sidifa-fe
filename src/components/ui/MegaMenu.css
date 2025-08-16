@@ -24,7 +24,9 @@
 /* Hover delay enhancement */
 .mega-menu-content {
   pointer-events: auto;
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition:
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
 }
 
 .mega-menu-content:hover {
@@ -55,4 +57,4 @@
 /* Enhanced hover effects */
 .mega-menu-trigger:hover .chevron-rotate {
   transform: rotate(180deg);
-} 
+}

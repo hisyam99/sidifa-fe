@@ -1,7 +1,7 @@
 import { component$, Slot, useSignal, useTask$ } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { Breadcrumbs } from "~/components/layout";
+import { Breadcrumbs, NavigationAdmin } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";
 import { getAdminMenuItems } from "~/data/admin-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
@@ -29,37 +29,40 @@ export default component$(() => {
   });
 
   return (
-    <div class="min-h-screen bg-base-200/60">
-      <div class="container mx-auto drawer lg:drawer-open">
-        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content flex flex-col p-4 md:py-8 relative">
-          {/* Global loading overlay */}
-          {isNavigating.value && (
-            <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
-              <span class="loading loading-spinner loading-lg text-primary"></span>
-            </div>
-          )}
-          <label
-            for="my-drawer-2"
-            class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
-          >
-            <LuBarChart class="w-5 h-5" />
-            Buka Menu
-          </label>
-          <Breadcrumbs />
-          <AnimatedPageContainer>
-            <main class="bg-base-100 p-6 rounded-2xl shadow-lg transition-all duration-300">
-              <Slot />
-            </main>
-          </AnimatedPageContainer>
+    <>
+      <NavigationAdmin />
+      <div class="min-h-screen bg-base-200/60">
+        <div class="container mx-auto drawer lg:drawer-open">
+          <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+          <div class="drawer-content flex flex-col p-4 md:py-8 relative">
+            {/* Global loading overlay */}
+            {isNavigating.value && (
+              <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
+                <span class="loading loading-spinner loading-lg text-primary"></span>
+              </div>
+            )}
+            <label
+              for="my-drawer-2"
+              class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
+            >
+              <LuBarChart class="w-5 h-5" />
+              Buka Menu
+            </label>
+            <Breadcrumbs />
+            <AnimatedPageContainer>
+              <main class="bg-base-100 p-6 rounded-2xl shadow-lg transition-all duration-300">
+                <Slot />
+              </main>
+            </AnimatedPageContainer>
+          </div>
+          <Sidebar
+            title="Si-DIFA Admin"
+            menuItems={menuItems}
+            drawerId="my-drawer-2"
+            ptClass="pt-16"
+          />
         </div>
-        <Sidebar
-          title="Si-DIFA Admin"
-          menuItems={menuItems}
-          drawerId="my-drawer-2"
-          ptClass="pt-16"
-        />
       </div>
-    </div>
+    </>
   );
 });

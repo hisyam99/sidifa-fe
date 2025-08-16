@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { Breadcrumbs } from "~/components/layout";
+import { Breadcrumbs, NavigationKader } from "~/components/layout";
 import { RoleProtectedContent } from "~/components/common/RoleProtectedContent";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
@@ -21,18 +21,21 @@ export default component$(() => {
   // });
 
   return (
-    <div class="min-h-screen bg-base-200/60">
-      <RoleProtectedContent allowedRoles={["kader", "admin"]}>
-        <div class="relative">
-          {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}
-          <main class="container mx-auto p-4 md:py-8 transition-all duration-300">
-            <Breadcrumbs />
-            <AnimatedPageContainer>
-              <Slot />
-            </AnimatedPageContainer>
-          </main>
-        </div>
-      </RoleProtectedContent>
-    </div>
+    <>
+      <NavigationKader />
+      <div class="min-h-screen bg-base-200/60">
+        <RoleProtectedContent allowedRoles={["kader", "admin"]}>
+          <div class="relative">
+            {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}
+            <main class="container mx-auto p-4 md:py-8 transition-all duration-300">
+              <Breadcrumbs />
+              <AnimatedPageContainer>
+                <Slot />
+              </AnimatedPageContainer>
+            </main>
+          </div>
+        </RoleProtectedContent>
+      </div>
+    </>
   );
 });

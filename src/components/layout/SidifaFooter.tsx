@@ -15,8 +15,41 @@ import {
   SocialButton,
   BrandLogo,
 } from "~/components/common";
+import { useAuth } from "~/hooks/useAuth";
 
 export const SidifaFooter = component$(() => {
+  const { isLoggedIn, user } = useAuth();
+
+  // Fungsi untuk mendapatkan menu layanan berdasarkan status auth
+  const getLayananMenu = () => {
+    if (!isLoggedIn.value) {
+      // Menu untuk user yang belum login
+      return [
+        { href: "/", label: "Beranda" },
+        { href: "/auth/login", label: "Masuk" },
+        { href: "/auth/signup/kader", label: "Daftar Posyandu" },
+      ];
+    }
+
+    // Menu untuk user yang sudah login
+    const baseMenu = [{ href: "/", label: "Beranda" }];
+
+    // Tambahkan menu berdasarkan role
+    if (user.value?.role === "admin") {
+      baseMenu.push({ href: "/admin", label: "Dashboard Admin" });
+    } else if (user.value?.role === "kader") {
+      baseMenu.push({ href: "/kader", label: "Dashboard Kader" });
+    } else if (user.value?.role === "psikolog") {
+      baseMenu.push({ href: "/psikolog", label: "Dashboard Psikolog" });
+    } else if (user.value?.role === "posyandu") {
+      baseMenu.push({ href: "/posyandu", label: "Dashboard Posyandu" });
+    }
+
+    return baseMenu;
+  };
+
+  const layananMenu = getLayananMenu();
+
   return (
     <footer
       class="bg-base-200/80 border-t border-base-300/60 backdrop-blur supports-[backdrop-filter]:bg-base-200/70"
@@ -46,13 +79,13 @@ export const SidifaFooter = component$(() => {
             gradientClass="text-gradient-secondary"
           >
             <ul class="space-y-2">
-              <FooterLink href="/" label="Beranda" />
-              <FooterLink href="/auth/login" label="Masuk" />
-              <FooterLink href="/auth/signup/kader" label="Daftar Posyandu" />
-              {/* <FooterLink
-                href="/auth/signup/psikolog"
-                label="Daftar Psikolog"
-              /> */}
+              {layananMenu.map((menuItem) => (
+                <FooterLink
+                  key={menuItem.href}
+                  href={menuItem.href}
+                  label={menuItem.label}
+                />
+              ))}
             </ul>
           </FooterSection>
 
