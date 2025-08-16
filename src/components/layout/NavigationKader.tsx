@@ -11,8 +11,9 @@ import {
   LuClipboardList,
   LuBriefcase,
   LuBookOpen,
+  LuChevronDown,
 } from "~/components/icons/lucide-optimized";
-import { AvatarMenu } from "../ui";
+import { AvatarMenu, MegaMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";
 
@@ -58,88 +59,76 @@ export const NavigationKader = component$(() => {
             {menuItems.map((item) => {
               if (item.hasDropdown) {
                 return (
-                  <div
+                  <MegaMenu
                     key={item.href}
-                    class="dropdown dropdown-hover dropdown-bottom dropdown-end"
+                    delayMs={300}
+                    class="dropdown-start"
                   >
-                    <div
-                      tabIndex={0}
-                      class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
-                        isActivePath(currentPath, item.href, item.href === "/")
-                          ? " font-bold text-primary"
-                          : ""
-                      }`}
-                    >
+                                            <div
+                          q:slot="trigger"
+                          tabIndex={0}
+                          class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300 mega-menu-trigger${
+                            isActivePath(currentPath, item.href, item.href === "/")
+                              ? " font-bold text-primary"
+                              : ""
+                          }`}
+                        >
                       <item.icon class="w-4 h-4 text-primary" />
                       <span class="truncate">{item.label}</span>
-                      <svg
-                        class="w-3 h-3 text-base-content/60 ml-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      <LuChevronDown class="w-3 h-3 text-base-content/60 ml-1 chevron-rotate" />
                     </div>
-                    <div class="dropdown-content z-[1000] mt-1 mr-0">
-                      <div class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-[480px]">
-                        <div class="p-4">
-                          <div class="mb-3">
-                            <h3 class="font-semibold text-base text-primary flex items-center gap-2">
-                              <LuBarChart class="w-4 h-4" />
-                              Menu Kader
-                            </h3>
-                            <p class="text-xs text-base-content/60 mt-1">
-                              Kelola tugas dan aktivitas kader posyandu
-                            </p>
-                          </div>
-                          <div class="grid grid-cols-2 gap-2">
-                            {kaderSubmenuItems.map((subItem) => (
-                              <a
-                                key={subItem.href}
-                                href={subItem.href}
-                                class={`flex items-start gap-3 p-3 rounded-lg hover:bg-primary/10 transition-all duration-200 group${
-                                  isActivePath(
-                                    currentPath,
-                                    subItem.href,
-                                    subItem.href === "/kader",
-                                  )
-                                    ? " bg-primary/15 text-primary border border-primary/20"
-                                    : " text-base-content/80 hover:text-primary"
-                                }`}
-                              >
-                                <div class="flex-shrink-0 mt-0.5">
-                                  <subItem.icon class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                    <div q:slot="content" class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-[480px]">
+                      <div class="p-4">
+                        <div class="mb-3">
+                          <h3 class="font-semibold text-base text-primary flex items-center gap-2">
+                            <LuBarChart class="w-4 h-4" />
+                            Menu Kader
+                          </h3>
+                          <p class="text-xs text-base-content/60 mt-1">
+                            Kelola tugas dan aktivitas kader posyandu
+                          </p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          {kaderSubmenuItems.map((subItem) => (
+                            <a
+                              key={subItem.href}
+                              href={subItem.href}
+                              class={`flex items-start gap-3 p-3 rounded-lg hover:bg-primary/10 transition-all duration-200 group${
+                                isActivePath(
+                                  currentPath,
+                                  subItem.href,
+                                  subItem.href === "/kader",
+                                )
+                                  ? " bg-primary/15 text-primary border border-primary/20"
+                                  : " text-base-content/80 hover:text-primary"
+                              }`}
+                            >
+                              <div class="flex-shrink-0 mt-0.5">
+                                <subItem.icon class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                              </div>
+                              <div class="flex-1 min-w-0">
+                                <div class="font-medium text-sm group-hover:text-primary transition-colors truncate">
+                                  {subItem.label}
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                  <div class="font-medium text-sm group-hover:text-primary transition-colors truncate">
-                                    {subItem.label}
-                                  </div>
-                                  <div class="text-xs text-base-content/60 mt-0.5 leading-relaxed">
-                                    {subItem.href === "/kader" &&
-                                      "Lihat ringkasan kegiatan"}
-                                    {subItem.href === "/kader/posyandu" &&
-                                      "Daftar posyandu terdaftar"}
-                                    {subItem.href === "/kader/lowongan" &&
-                                      "Cari peluang kerja"}
-                                    {subItem.href === "/kader/informasi" &&
-                                      "Baca artikel edukasi"}
-                                    {subItem.href === "/kader/profile" &&
-                                      "Kelola profil pribadi"}
-                                  </div>
+                                <div class="text-xs text-base-content/60 mt-0.5 leading-relaxed">
+                                  {subItem.href === "/kader" &&
+                                    "Lihat ringkasan kegiatan"}
+                                  {subItem.href === "/kader/posyandu" &&
+                                    "Daftar posyandu terdaftar"}
+                                  {subItem.href === "/kader/lowongan" &&
+                                    "Cari peluang kerja"}
+                                  {subItem.href === "/kader/informasi" &&
+                                    "Baca artikel edukasi"}
+                                  {subItem.href === "/kader/profile" &&
+                                    "Kelola profil pribadi"}
                                 </div>
-                              </a>
-                            ))}
-                          </div>
+                              </div>
+                            </a>
+                          ))}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </MegaMenu>
                 );
               }
 

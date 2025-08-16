@@ -1,0 +1,58 @@
+/* MegaMenu Animation Styles */
+.mega-menu-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.2s ease-out;
+}
+
+.mega-menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mega-menu-exit {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.2s ease-in;
+}
+
+.mega-menu-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Hover delay enhancement */
+.mega-menu-content {
+  pointer-events: auto;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.mega-menu-content:hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Position adjustments for dropdown-start */
+.dropdown-start .mega-menu-content {
+  right: 0;
+  left: auto;
+}
+
+.dropdown-end .mega-menu-content {
+  left: 0;
+  right: auto;
+}
+
+/* Chevron rotation animation */
+.chevron-rotate {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chevron-rotate:hover {
+  transform: rotate(180deg);
+}
+
+/* Enhanced hover effects */
+.mega-menu-trigger:hover .chevron-rotate {
+  transform: rotate(180deg);
+} 

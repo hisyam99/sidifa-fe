@@ -10,3 +10,5 @@ export * from "./Avatar";
 export * from "./AvatarMenu";
 export * from "./IBKTable";
 export * from "./IBKTableSkeleton";
+export { MegaMenu } from "./MegaMenu";
+export { MegaMenuDemo } from "./MegaMenuDemo";

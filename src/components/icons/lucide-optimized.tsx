@@ -15,6 +15,7 @@ import {
   LuSearch as LucideLuSearch,
   LuChevronLeft as LucideLuChevronLeft,
   LuChevronRight as LucideLuChevronRight,
+  LuChevronDown as LucideLuChevronDown,
   LuLoader2 as LucideLuLoader2,
   LuStar as LucideLuStar,
   LuBell as LucideLuBell,
@@ -109,6 +110,9 @@ export const LuChevronLeft = component$((props: SVGProps<SVGSVGElement>) => (
 ));
 export const LuChevronRight = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuChevronRight {...props} />
+));
+export const LuChevronDown = component$((props: SVGProps<SVGSVGElement>) => (
+  <LucideLuChevronDown {...props} />
 ));
 export const LuLoader2 = component$((props: SVGProps<SVGSVGElement>) => (
   <LucideLuLoader2 {...props} />
