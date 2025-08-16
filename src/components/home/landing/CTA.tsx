@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { LuArrowRight } from "~/components/icons/lucide-optimized";
 import CtaImg from "~/media/home/section-6.jpg?w=800&h=520&jsx";
 
@@ -17,15 +18,15 @@ export const CTASection = component$(() => {
                   Daftar sebagai kader atau masuk jika sudah memiliki akun.
                 </p>
                 <div class="flex flex-wrap items-center gap-3">
-                  <a
+                  <Link
                     href="/auth/signup/kader"
                     class="btn btn-primary btn-lg gap-2"
                   >
                     Daftar sebagai Kader <LuArrowRight class="w-5 h-5" />
-                  </a>
-                  <a href="/auth/login" class="btn btn-ghost btn-lg gap-2">
+                  </Link>
+                  <Link href="/auth/login" class="btn btn-ghost btn-lg gap-2">
                     Masuk <LuArrowRight class="w-5 h-5" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

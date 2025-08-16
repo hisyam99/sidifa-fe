@@ -1,4 +1,5 @@
 import { component$, QRL } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { InformasiItem } from "~/types/informasi";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
 
@@ -28,13 +29,13 @@ export const InformasiDetailCard = component$(
           <div>
             <b>File:</b>{" "}
             {item.file_name ? (
-              <a
+              <Link
                 href={buildInformasiEdukasiUrl(item.file_name)}
                 target="_blank"
                 class="link link-primary"
               >
                 Lihat File
-              </a>
+              </Link>
             ) : (
               "-"
             )}

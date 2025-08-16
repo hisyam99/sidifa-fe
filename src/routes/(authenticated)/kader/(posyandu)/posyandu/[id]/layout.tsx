@@ -1,4 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { LuBarChart, LuArrowLeft } from "~/components/icons/lucide-optimized";
 import { Sidebar } from "~/components/common/Sidebar";
@@ -60,21 +61,21 @@ export default component$(() => {
           ptClass="pt-16"
         >
           <li class="mt-8">
-            <a
+            <Link
               href={`/kader/posyandu/${posyanduId}/ibk/create`}
               class="btn btn-primary w-full flex items-center gap-2"
             >
               Tambah IBK
-            </a>
+            </Link>
           </li>
           <li class="mt-4">
-            <a
+            <Link
               href="/kader/posyandu"
               class="btn btn-outline btn-primary w-full flex items-center gap-2"
             >
               <LuArrowLeft />
               Kembali ke List Posyandu
-            </a>
+            </Link>
           </li>
         </Sidebar>
       </div>

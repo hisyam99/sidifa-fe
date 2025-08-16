@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuStethoscope,
   LuBrain,
@@ -47,14 +48,14 @@ export const SignupCards = component$(() => {
           </div>
 
           <div class="card-actions justify-center">
-            <a
+            <Link
               href="/auth/signup/kader"
               class="btn-hero inline-flex items-center gap-3"
             >
               <LuPlus class="w-5 h-5" />
               Daftar Kader
               <LuArrowRight class="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -92,14 +93,14 @@ export const SignupCards = component$(() => {
           </div>
 
           <div class="card-actions justify-center">
-            <a
+            <Link
               href="/auth/signup/psikolog"
               class="btn btn-secondary btn-lg gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
             >
               <LuPlus class="w-5 h-5" />
               Daftar Psikolog
               <LuArrowRight class="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

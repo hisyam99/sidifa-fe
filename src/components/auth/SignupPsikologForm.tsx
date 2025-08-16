@@ -6,7 +6,7 @@ import { FormField, Alert, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
 import { sessionUtils } from "~/utils/auth";
 import { LuBrain, LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate, Link } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -129,13 +129,16 @@ export default component$(() => {
                   <p class="text-sm text-base-content/70">Butuh bantuan?</p>
                   <p class="text-sm">
                     Hubungi admin:{" "}
-                    <a href="mailto:info@sidifa.id" class="link link-primary">
+                    <Link
+                      href="mailto:info@sidifa.id"
+                      class="link link-primary"
+                    >
                       info@sidifa.id
-                    </a>{" "}
+                    </Link>{" "}
                     atau telepon{" "}
-                    <a href="tel:+62341123456" class="link">
+                    <Link href="tel:+62341123456" class="link">
                       +62 341 123456
-                    </a>
+                    </Link>
                     .
                   </p>
                 </div>
@@ -158,13 +161,16 @@ export default component$(() => {
                   <p class="text-sm text-base-content/70">Kontak Admin</p>
                   <p class="text-sm">
                     Email:{" "}
-                    <a href="mailto:info@sidifa.id" class="link link-primary">
+                    <Link
+                      href="mailto:info@sidifa.id"
+                      class="link link-primary"
+                    >
                       info@sidifa.id
-                    </a>{" "}
+                    </Link>{" "}
                     — Telepon:{" "}
-                    <a href="tel:+62341123456" class="link">
+                    <Link href="tel:+62341123456" class="link">
                       +62 341 123456
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
@@ -172,9 +178,9 @@ export default component$(() => {
           )}
 
           <div class="text-center">
-            <a href="/" class="btn btn-ghost">
+            <Link href="/" class="btn btn-ghost">
               Kembali ke Beranda
-            </a>
+            </Link>
           </div>
         </div>
       ) : (
@@ -302,9 +308,9 @@ export default component$(() => {
                 <input type="checkbox" class="checkbox checkbox-sm" required />
                 <span class="label-text">
                   Saya setuju dengan{" "}
-                  <a href="/terms" class="link link-primary">
+                  <Link href="/terms" class="link link-primary">
                     syarat dan ketentuan
-                  </a>
+                  </Link>
                 </span>
               </label>
             </div>
@@ -331,9 +337,9 @@ export default component$(() => {
 
           <div class="text-center text-sm">
             <span class="text-base-content/70">Sudah punya akun? </span>
-            <a href="/auth/login" class="link link-primary font-medium">
+            <Link href="/auth/login" class="link link-primary font-medium">
               Masuk sekarang
-            </a>
+            </Link>
           </div>
         </>
       )}

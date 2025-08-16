@@ -1,4 +1,5 @@
 import { component$, QRL } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { Avatar } from "./Avatar";
 
 interface MenuItem {
@@ -46,13 +47,13 @@ export const AvatarMenu = component$<AvatarMenuProps>(
           <div class="divider my-0"></div>
           {menuItems.map((item) => (
             <li key={item.href}>
-              <a
+              <Link
                 href={item.href}
                 class="flex items-center gap-3 hover:bg-primary/10"
               >
                 {item.icon && <item.icon class="w-4 h-4 text-primary" />}
                 <span class="font-medium">{item.label}</span>
-              </a>
+              </Link>
             </li>
           ))}
           {children}

@@ -6,6 +6,7 @@ import {
   noSerialize,
   type NoSerialize,
 } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
 import { MdxEditor } from "~/components/common/MdxEditorWrapper";
@@ -126,13 +127,13 @@ export const InformasiForm = component$((props: InformasiFormProps) => {
         )}
         {formState.value.file_name && !selectedFile.value && (
           <div class="mt-2">
-            <a
+            <Link
               href={buildInformasiEdukasiUrl(formState.value.file_name)}
               target="_blank"
               class="link link-primary text-sm"
             >
               File saat ini: Lihat File
-            </a>
+            </Link>
           </div>
         )}
       </div>

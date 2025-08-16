@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { monitoringIBKService } from "~/services/monitoring-ibk.service";
 import type { MonitoringIBKItem } from "~/types";
@@ -84,12 +85,12 @@ export default component$(() => {
 
         {/* Back button */}
         <div class="flex justify-start">
-          <a
+          <Link
             href={`/kader/posyandu/${loc.params.id}/jadwal/${loc.params.jadwalId}/monitoring`}
             class="btn btn-ghost btn-sm gap-2 hover:btn-primary transition-all duration-300"
           >
             ← Kembali ke Monitoring
-          </a>
+          </Link>
         </div>
       </div>
 

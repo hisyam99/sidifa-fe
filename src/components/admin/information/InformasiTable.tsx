@@ -1,4 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { InformasiItem } from "~/types/informasi";
 import { Spinner } from "~/components/ui/Spinner";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
@@ -100,7 +101,7 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                     </td>
                     <td>
                       {item.file_name ? (
-                        <a
+                        <Link
                           href={buildInformasiEdukasiUrl(item.file_name)}
                           target="_blank"
                           class="btn btn-ghost btn-xs link link-primary"
@@ -119,7 +120,7 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                               d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
                             />
                           </svg>
-                        </a>
+                        </Link>
                       ) : (
                         <span class="text-base-content/40">-</span>
                       )}
@@ -161,13 +162,13 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
                 />
                 <div class="mt-2">
                   {item.file_name ? (
-                    <a
+                    <Link
                       href={buildInformasiEdukasiUrl(item.file_name)}
                       target="_blank"
                       class="btn btn-ghost btn-xs link link-primary"
                     >
                       Lihat File
-                    </a>
+                    </Link>
                   ) : (
                     <span class="text-base-content/40 text-sm">
                       Tidak ada file

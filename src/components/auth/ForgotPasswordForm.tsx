@@ -1,4 +1,5 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "~/types/auth";
 import api from "~/services/api";
@@ -78,12 +79,12 @@ export default component$(() => {
       <div class="divider">atau</div>
 
       <div class="text-center text-sm mt-2">
-        <a
+        <Link
           href="/auth/login"
           class="link link-primary font-medium w-full block"
         >
           Kembali ke Login
-        </a>
+        </Link>
       </div>
 
       {error.value && <Alert type="error" message={error.value} class="mt-4" />}

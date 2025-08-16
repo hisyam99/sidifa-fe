@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuCalendar,
   LuClock,
@@ -67,7 +68,7 @@ export const InformationArticleCard = component$(
     };
 
     return (
-      <a href={href} class="group block h-full">
+      <Link href={href} class="group block h-full">
         <div class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
           {/* Image Header */}
           {image ? (
@@ -152,7 +153,7 @@ export const InformationArticleCard = component$(
             </div>
           </div>
         </div>
-      </a>
+      </Link>
     );
   },
 );

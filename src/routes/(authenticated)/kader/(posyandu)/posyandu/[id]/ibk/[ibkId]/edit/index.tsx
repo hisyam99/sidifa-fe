@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
@@ -303,7 +304,7 @@ export default component$(() => {
       {/* Stepper simple */}
       <div class="tabs tabs-lifted mb-4">
         {steps.map((s, idx) => (
-          <a
+          <Link
             role="tab"
             key={s.id}
             href="#"
@@ -311,7 +312,7 @@ export default component$(() => {
             onClick$={() => (currentStep.value = idx)}
           >
             {s.title}
-          </a>
+          </Link>
         ))}
       </div>
 

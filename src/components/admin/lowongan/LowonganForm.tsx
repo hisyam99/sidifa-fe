@@ -1,4 +1,5 @@
 import { component$, PropFunction, useSignal } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { LowonganCreateRequest, LowonganItem } from "~/types/lowongan";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { object, string, nonEmpty, pipe, optional } from "valibot";
@@ -245,14 +246,14 @@ export const LowonganForm = component$<LowonganFormProps>((props) => {
       {typeof init.file_name === "string" && init.file_name && (
         <div class="alert alert-info p-2 text-xs">
           File lama:{" "}
-          <a
+          <Link
             href={buildLowonganUploadUrl(init.file_name)}
             target="_blank"
             rel="noopener noreferrer"
             class="link link-primary underline break-all"
           >
             {init.file_name}
-          </a>
+          </Link>
         </div>
       )}
 

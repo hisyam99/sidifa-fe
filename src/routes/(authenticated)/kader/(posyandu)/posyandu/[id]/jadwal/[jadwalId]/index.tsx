@@ -5,6 +5,7 @@ import {
   $,
   QRL,
 } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
 import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
@@ -221,12 +222,12 @@ export default component$(() => {
     <div class="w-full max-w-[1200px]">
       {/* Back button to Jadwal List */}
       <div class="mb-4">
-        <a
+        <Link
           href={`/kader/posyandu/${location.params.id}/jadwal`}
           class="btn btn-ghost btn-sm gap-2 hover:btn-primary transition-all duration-300"
         >
           ← Kembali ke Jadwal
-        </a>
+        </Link>
       </div>
 
       {loading.value && (
@@ -315,14 +316,14 @@ export default component$(() => {
                     <div>
                       <div class="text-xs text-base-content/60">Dokumen</div>
                       {jadwal.value.file_name ? (
-                        <a
+                        <Link
                           href={buildJadwalPosyanduUrl(jadwal.value.file_name)}
                           target="_blank"
                           class="btn btn-xs btn-primary gap-1"
                         >
                           <LuDownload class="w-3 h-3" />
                           File
-                        </a>
+                        </Link>
                       ) : (
                         <span class="text-xs text-base-content/50">
                           Tidak ada
@@ -415,7 +416,7 @@ export default component$(() => {
       {/* Tabs Section */}
       <div id="jadwal-tabs" class="mt-4">
         <div role="tablist" class="tabs tabs-lifted">
-          <a
+          <Link
             role="tab"
             id="tab-monitoring"
             class={`tab ${activeTab.value === "monitoring" ? "tab-active" : ""}`}
@@ -433,8 +434,8 @@ export default component$(() => {
             <span class="flex items-center gap-2">
               <LuBarChart class="w-4 h-4" /> Monitoring
             </span>
-          </a>
-          <a
+          </Link>
+          <Link
             role="tab"
             id="tab-presensi"
             class={`tab ${activeTab.value === "presensi" ? "tab-active" : ""}`}
@@ -452,7 +453,7 @@ export default component$(() => {
             <span class="flex items-center gap-2">
               <LuCalendar class="w-4 h-4" /> Presensi
             </span>
-          </a>
+          </Link>
         </div>
         <div class="border border-base-300 rounded-b-box bg-base-100 p-4">
           {activeTab.value === "monitoring" && (

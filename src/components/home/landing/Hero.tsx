@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuArrowRight,
   LuYoutube,
@@ -23,7 +24,7 @@ export const Hero = component$(() => {
                 <LuZap class="w-4 h-4" /> Platform Pendataan Posyandu
                 Disabilitas
               </div>
-              <a
+              <Link
                 href="https://youtube.com/@lingkarsosialindonesia"
                 target="_blank"
                 rel="noopener"
@@ -31,7 +32,7 @@ export const Hero = component$(() => {
                 aria-label="YouTube Lingkar Sosial Indonesia"
               >
                 <LuYoutube class="w-4 h-4" /> Kemitraan LINKSOS
-              </a>
+              </Link>
             </div>
             <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight mb-4 text-gradient-primary">
               SI-DIFA — Digitalisasi Layanan Posyandu Disabilitas
@@ -42,12 +43,15 @@ export const Hero = component$(() => {
               pemangku kepentingan.
             </p>
             <div class="flex flex-wrap items-center gap-3">
-              <a href="#tentang" class="btn btn-primary btn-lg gap-2 shadow-lg">
+              <Link
+                href="#tentang"
+                class="btn btn-primary btn-lg gap-2 shadow-lg"
+              >
                 Pelajari SI-DIFA <LuArrowRight class="w-5 h-5" />
-              </a>
-              <a href="#fitur" class="btn btn-ghost btn-lg gap-2">
+              </Link>
+              <Link href="#fitur" class="btn btn-ghost btn-lg gap-2">
                 Lihat Fitur <LuArrowRight class="w-5 h-5" />
-              </a>
+              </Link>
             </div>
 
             <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">

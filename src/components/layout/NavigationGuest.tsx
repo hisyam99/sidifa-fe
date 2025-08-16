@@ -10,7 +10,7 @@ import {
   LuHelpCircle,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
-import { useLocation } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";
 
@@ -81,7 +81,7 @@ export const NavigationGuest = component$(() => {
           {/* MenuItems utama desktop */}
           <div class="hidden lg:flex items-center gap-2">
             {menuItems.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
@@ -92,26 +92,26 @@ export const NavigationGuest = component$(() => {
               >
                 <item.icon class="w-4 h-4 text-primary" />
                 <span class="truncate">{item.label}</span>
-              </a>
+              </Link>
             ))}
           </div>
           {/* Tombol login/dashboard */}
           {!isAuthenticated.value ? (
-            <a
+            <Link
               href="/auth/login"
               class="btn btn-primary btn-sm gap-2 whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
             >
               <LuLogIn class="w-4 h-4" />
               <span class="max-[360px]:hidden">Masuk</span>
-            </a>
+            </Link>
           ) : (
-            <a
+            <Link
               href={dashboardPath.value}
               class="btn btn-primary btn-sm gap-2 whitespace-nowrap shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 auth-dependent"
             >
               <LuBarChart class="w-4 h-4" />
               <span class="max-[360px]:hidden">Dashboard</span>
-            </a>
+            </Link>
           )}
           {/* Hamburger mobile menu */}
           <div class="dropdown dropdown-end lg:hidden">
@@ -125,7 +125,7 @@ export const NavigationGuest = component$(() => {
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
                       isActivePath(currentPath, item.href, item.href === "/")
@@ -135,28 +135,28 @@ export const NavigationGuest = component$(() => {
                   >
                     <item.icon class="w-5 h-5 text-primary" />
                     <span class="font-medium">{item.label}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
               {!isAuthenticated.value ? (
                 <li>
-                  <a
+                  <Link
                     href="/auth/login"
                     class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200 auth-dependent"
                   >
                     <LuLogIn class="w-5 h-5 text-primary" />
                     <span class="font-medium">Masuk</span>
-                  </a>
+                  </Link>
                 </li>
               ) : (
                 <li>
-                  <a
+                  <Link
                     href={dashboardPath.value}
                     class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200 auth-dependent"
                   >
                     <LuBarChart class="w-5 h-5 text-primary" />
                     <span class="font-medium">Dashboard</span>
-                  </a>
+                  </Link>
                 </li>
               )}
             </ul>

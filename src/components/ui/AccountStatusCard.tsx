@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 
 export type AccountStatusVariant = "unverified" | "declined";
 
@@ -40,13 +41,13 @@ export const AccountStatusCard = component$<AccountStatusCardProps>(
             <p class="text-sm text-base-content/70">Kontak Admin</p>
             <p class="text-sm">
               Email:{" "}
-              <a href={`mailto:${contactEmail}`} class="link link-primary">
+              <Link href={`mailto:${contactEmail}`} class="link link-primary">
                 {contactEmail}
-              </a>{" "}
+              </Link>{" "}
               — Telepon:{" "}
-              <a href={`tel:${contactPhone}`} class="link">
+              <Link href={`tel:${contactPhone}`} class="link">
                 {contactPhone}
-              </a>
+              </Link>
             </p>
           </div>
         </div>

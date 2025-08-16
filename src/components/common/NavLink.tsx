@@ -1,5 +1,5 @@
 import { component$, QRL, Slot } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 
 interface NavLinkProps {
   href: string;
@@ -15,7 +15,7 @@ export const NavLink = component$((props: NavLinkProps) => {
 
   return (
     <li>
-      <a
+      <Link
         href={href}
         onClick$={onClick$}
         class={`flex items-center gap-3 hover:bg-primary/10 ${
@@ -25,7 +25,7 @@ export const NavLink = component$((props: NavLinkProps) => {
         {Icon && <Icon class="w-5 h-5 text-primary" />}
         <span class="font-medium">{label}</span>
         <Slot /> {/* For additional content like badges or counters */}
-      </a>
+      </Link>
     </li>
   );
 });

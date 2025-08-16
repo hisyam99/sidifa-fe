@@ -1,4 +1,5 @@
 import { component$, QRL } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuBell,
   LuSettings,
@@ -48,24 +49,24 @@ export const DashboardHeader = component$((props: DashboardHeaderProps) => {
           </label>
           <ul class="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-52 border border-base-200/50">
             <li>
-              <a
+              <Link
                 href="/dashboard/profile"
                 onClick$={() => nav("/dashboard/profile")}
                 class="flex items-center gap-3 hover:bg-primary/10"
               >
                 <LuUser class="w-5 h-5 text-primary" />
                 Profil
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="/dashboard/settings"
                 onClick$={() => nav("/dashboard/settings")}
                 class="flex items-center gap-3 hover:bg-primary/10"
               >
                 <LuSettings class="w-5 h-5 text-primary" />
                 Pengaturan
-              </a>
+              </Link>
             </li>
             <li>
               <button

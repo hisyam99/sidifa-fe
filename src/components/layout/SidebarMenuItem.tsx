@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 
 const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;
@@ -93,7 +93,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
                     current.startsWith(subItem.href + "/");
 
                   return (
-                    <a
+                    <Link
                       key={subItem.href}
                       href={subItem.href}
                       class={`flex items-start gap-3 p-2 rounded-lg hover:bg-primary/10 transition-all duration-200 group ${
@@ -117,7 +117,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
                           </div>
                         )}
                       </div>
-                    </a>
+                    </Link>
                   );
                 })}
               </div>
@@ -130,7 +130,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
 
   return (
     <li>
-      <a
+      <Link
         href={href}
         class={`flex items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-primary/10 hover:text-primary ${
           isActive ? "bg-primary/10 text-primary font-semibold" : ""
@@ -144,7 +144,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
           </span>
         )}
         <span class="truncate">{label}</span>
-      </a>
+      </Link>
     </li>
   );
 });

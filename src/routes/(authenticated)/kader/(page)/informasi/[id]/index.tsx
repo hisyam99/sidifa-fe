@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
@@ -210,7 +211,7 @@ export default component$(() => {
 
                 {item.value.file_name && (
                   <div class="mt-8">
-                    <a
+                    <Link
                       class="btn btn-outline btn-primary bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white hover:text-primary"
                       href={buildInformasiEdukasiUrl(item.value.file_name)}
                       target="_blank"
@@ -218,7 +219,7 @@ export default component$(() => {
                     >
                       <LuShare class="w-4 h-4 mr-2" />
                       Lihat Lampiran
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
@@ -298,7 +299,7 @@ export default component$(() => {
                       <div class="space-y-4">
                         {recentArticles.length > 0 ? (
                           recentArticles.map((article) => (
-                            <a
+                            <Link
                               key={article.id}
                               href={`/kader/informasi/${article.id}`}
                               class="block group"
@@ -331,7 +332,7 @@ export default component$(() => {
                                   </p>
                                 </div>
                               </div>
-                            </a>
+                            </Link>
                           ))
                         ) : (
                           <p class="text-sm text-base-content/60">
@@ -355,12 +356,12 @@ export default component$(() => {
                         Dapatkan informasi terbaru seputar disabilitas dan
                         layanan posyandu.
                       </p>
-                      <a
+                      <Link
                         href="/kader/informasi"
                         class="btn btn-primary btn-sm btn-block"
                       >
                         Lihat Semua Artikel
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>

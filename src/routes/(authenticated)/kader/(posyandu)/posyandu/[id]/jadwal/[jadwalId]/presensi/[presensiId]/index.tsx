@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 import type { PresensiIBKItem } from "~/types";
@@ -115,12 +116,12 @@ export default component$(() => {
 
         {/* Back button */}
         <div class="flex justify-start">
-          <a
+          <Link
             href={`/kader/posyandu/${loc.params.id}/jadwal/${loc.params.jadwalId}/presensi`}
             class="btn btn-ghost btn-sm gap-2 hover:btn-primary transition-all duration-300"
           >
             ← Kembali ke Presensi
-          </a>
+          </Link>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 import { getPrettyBreadcrumbName } from "~/utils/breadcrumb-utils";
 import { useAuth } from "~/hooks";
 
@@ -27,7 +27,7 @@ export const Breadcrumbs = component$(() => {
       <div class="breadcrumbs text-sm">
         <ul>
           <li>
-            <a href={homeHref}>Home</a>
+            <Link href={homeHref}>Home</Link>
           </li>
           {segments.map((seg, idx) => {
             href += "/" + seg;
@@ -47,7 +47,7 @@ export const Breadcrumbs = component$(() => {
             }
             return (
               <li key={seg}>
-                <a href={href}>{getPrettyBreadcrumbName(seg)}</a>
+                <Link href={href}>{getPrettyBreadcrumbName(seg)}</Link>
               </li>
             );
           })}

@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuArrowRight,
   LuBarChart,
@@ -63,17 +64,17 @@ export const About = component$(() => {
               </li>
             </ul>
             <div class="flex flex-wrap items-center gap-3">
-              <a href="#fitur" class="btn btn-primary gap-2">
+              <Link href="#fitur" class="btn btn-primary gap-2">
                 Jelajahi Fitur <LuArrowRight class="w-5 h-5" />
-              </a>
-              <a
+              </Link>
+              <Link
                 href="https://youtube.com/@lingkarsosialindonesia"
                 target="_blank"
                 rel="noopener"
                 class="btn btn-ghost gap-2"
               >
                 <LuYoutube class="w-5 h-5" /> LINKSOS
-              </a>
+              </Link>
             </div>
           </div>
           <div>

@@ -1,4 +1,5 @@
 import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { useLocation } from "@builder.io/qwik-city";
 import { adminService } from "~/services/api";
@@ -183,12 +184,12 @@ export default component$(() => {
               Kelola kader yang terdaftar di posyandu ini
             </p>
             <div class="card-actions justify-end">
-              <a
+              <Link
                 href={`/admin/posyandu/${posyanduId}/manajemen-kader`}
                 class="btn btn-primary btn-sm"
               >
                 Kelola Kader
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -203,12 +204,12 @@ export default component$(() => {
               Lihat dan kelola data IBK posyandu
             </p>
             <div class="card-actions justify-end">
-              <a
+              <Link
                 href={`/admin/posyandu/${posyanduId}/ibk`}
                 class="btn btn-secondary btn-sm"
               >
                 Lihat Data
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -223,12 +224,12 @@ export default component$(() => {
               Lihat laporan dan statistik posyandu
             </p>
             <div class="card-actions justify-end">
-              <a
+              <Link
                 href={`/admin/posyandu/${posyanduId}/laporan-statistik`}
                 class="btn btn-accent btn-sm"
               >
                 Lihat Laporan
-              </a>
+              </Link>
             </div>
           </div>
         </div>

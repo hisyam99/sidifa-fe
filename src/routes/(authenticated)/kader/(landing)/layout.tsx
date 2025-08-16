@@ -1,4 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 import { useAuth } from "~/hooks";
 import { LuUser } from "~/components/icons/lucide-optimized";
@@ -36,9 +37,12 @@ export default component$(() => {
                 </div>
               </div>
               <div class="mt-6 space-y-3">
-                <a href="/kader/profile" class="btn btn-primary w-full gap-2">
+                <Link
+                  href="/kader/profile"
+                  class="btn btn-primary w-full gap-2"
+                >
                   <LuUser class="w-4 h-4" /> Lihat Profil
-                </a>
+                </Link>
               </div>
             </div>
           </aside>

@@ -1,11 +1,12 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import sidifaLogoUrl from "~/media/logo/sidifa.svg?url";
 
 interface BrandLogoProps {
   hideTextOnMobile?: boolean;
   variant?: "plain" | "nav"; // nav: gunakan gaya tombol untuk navbar; plain: minimal untuk footer/umum
   size?: "sm" | "md" | "lg";
-  href?: string | null; // jika null/undefined, tidak merender <a>
+  href?: string | null; // jika null/undefined, tidak merender <Link>
 }
 
 const variantToClass: Record<NonNullable<BrandLogoProps["variant"]>, string> = {
@@ -88,13 +89,13 @@ export const BrandLogo = component$((props: BrandLogoProps) => {
 
   if (href) {
     return (
-      <a
+      <Link
         href={href}
         class={anchorClass}
         aria-label="SIDIFA - Sistem Informasi Difabel"
       >
         {content}
-      </a>
+      </Link>
     );
   }
 

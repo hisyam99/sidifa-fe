@@ -1,4 +1,5 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
@@ -101,9 +102,9 @@ export default component$(() => {
         <div class="space-y-6">
           <AccountStatusCard variant="declined" />
           <div class="text-center">
-            <a href="/" class="btn btn-ghost">
+            <Link href="/" class="btn btn-ghost">
               Kembali ke Beranda
-            </a>
+            </Link>
           </div>
         </div>
       ) : (
@@ -142,12 +143,12 @@ export default component$(() => {
               />
               <span class="label-text font-medium">Ingat saya</span>
             </label>
-            <a
+            <Link
               href="/auth/forgot-password"
               class="link link-primary text-sm font-medium"
             >
               Lupa Password?
-            </a>
+            </Link>
           </div>
 
           <button

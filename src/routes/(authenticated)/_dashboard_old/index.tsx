@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import {
@@ -325,38 +326,38 @@ export default component$(() => {
                   Menu Cepat
                 </h2>
                 <div class="space-y-3">
-                  <a
+                  <Link
                     href="/dashboard/profile"
                     class="btn btn-outline btn-primary w-full justify-start gap-3"
                   >
                     <LuUser class="w-4 h-4" />
                     Profil Saya
-                  </a>
+                  </Link>
                   {user.value?.role === "kader" && (
-                    <a
+                    <Link
                       href="/dashboard/posyandu"
                       class="btn btn-outline btn-secondary w-full justify-start gap-3"
                     >
                       <LuHeart class="w-4 h-4" />
                       Data Posyandu
-                    </a>
+                    </Link>
                   )}
                   {user.value?.role === "psikolog" && (
-                    <a
+                    <Link
                       href="/dashboard/psikolog"
                       class="btn btn-outline btn-secondary w-full justify-start gap-3"
                     >
                       <LuBrain class="w-4 h-4" />
                       Data Psikolog
-                    </a>
+                    </Link>
                   )}
-                  <a
+                  <Link
                     href="/dashboard/settings"
                     class="btn btn-outline btn-accent w-full justify-start gap-3"
                   >
                     <LuSettings class="w-4 h-4" />
                     Pengaturan
-                  </a>
+                  </Link>
                   <button
                     onClick$={() => logout()}
                     class="btn btn-outline btn-error w-full justify-start gap-3"

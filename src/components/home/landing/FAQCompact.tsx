@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { FAQItem } from "~/components/home";
 import { faqCategories } from "~/data/faqs";
 
@@ -30,9 +31,9 @@ export const FAQCompact = component$(() => {
             />
           ))}
           <div class="text-center mt-6">
-            <a href="/faq" class="btn btn-primary">
+            <Link href="/faq" class="btn btn-primary">
               Lihat Semua FAQ
-            </a>
+            </Link>
           </div>
         </div>
       </div>

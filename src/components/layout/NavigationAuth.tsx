@@ -8,7 +8,7 @@ import {
   LuHelpCircle,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";
@@ -54,7 +54,7 @@ export const NavigationAuth = component$(() => {
           {/* MenuItems utama desktop */}
           <div class="hidden lg:flex items-center gap-2">
             {menuItems.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
@@ -65,7 +65,7 @@ export const NavigationAuth = component$(() => {
               >
                 <item.icon class="w-4 h-4 text-primary" />
                 <span class="truncate">{item.label}</span>
-              </a>
+              </Link>
             ))}
           </div>
           {/* Avatar/login */}
@@ -94,7 +94,7 @@ export const NavigationAuth = component$(() => {
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
                       isActivePath(currentPath, item.href, item.href === "/")
@@ -104,7 +104,7 @@ export const NavigationAuth = component$(() => {
                   >
                     <item.icon class="w-5 h-5 text-primary" />
                     <span class="font-medium">{item.label}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

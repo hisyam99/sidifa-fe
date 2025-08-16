@@ -1,6 +1,7 @@
 // File: /sidifa-fev2/src/routes/posyandu/index.tsx
 
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
 import { useLocation } from "@builder.io/qwik-city";
 import { getPosyanduDetail } from "~/services/api";
@@ -154,12 +155,12 @@ export default component$(() => {
           {loading.value ? (
             <div class="skeleton h-10 w-36"></div>
           ) : (
-            <a
+            <Link
               href={`/kader/posyandu/${data.value?.id}/ibk/create`}
               class="btn btn-primary gap-2"
             >
               Tambah IBK
-            </a>
+            </Link>
           )}
         </div>
         <div class="card bg-base-100 shadow-xl border border-base-200/50 relative">

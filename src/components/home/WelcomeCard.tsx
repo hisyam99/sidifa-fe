@@ -1,4 +1,5 @@
 import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import {
   LuHeart,
   LuUser,
@@ -44,14 +45,14 @@ export const WelcomeCard = component$<WelcomeCardProps>(
           </p>
 
           <div class="card-actions justify-center">
-            <a
+            <Link
               href="/dashboard"
               class="btn-hero inline-flex items-center gap-3"
             >
               <LuBarChart class="w-5 h-5" />
               Dashboard
               <LuArrowRight class="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

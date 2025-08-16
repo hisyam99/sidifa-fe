@@ -1,4 +1,5 @@
 import { component$, type Component, type SVGProps } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 
 interface DashboardQuickLinkCardProps {
   href: string;
@@ -11,7 +12,7 @@ export const DashboardQuickLinkCard = component$(
   (props: DashboardQuickLinkCardProps) => {
     const { href, label, icon: Icon, description } = props;
     return (
-      <a
+      <Link
         href={href}
         class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-200 border border-base-200 hover:border-primary group"
       >
@@ -24,7 +25,7 @@ export const DashboardQuickLinkCard = component$(
           </h2>
           <p class="text-base-content/70 text-sm">{description}</p>
         </div>
-      </a>
+      </Link>
     );
   },
 );

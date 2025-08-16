@@ -1,4 +1,5 @@
 import { component$, useTask$, useSignal } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
@@ -39,14 +40,14 @@ export default component$(() => {
           <p class="mt-2">{item.value.deskripsi}</p>
           {item.value.file_name && (
             <p class="mt-4">
-              <a
+              <Link
                 class="link link-primary"
                 href={buildLowonganUploadUrl(item.value.file_name)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Lihat Lampiran
-              </a>
+              </Link>
             </p>
           )}
         </article>

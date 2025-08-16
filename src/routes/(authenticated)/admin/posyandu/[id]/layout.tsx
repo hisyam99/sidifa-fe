@@ -1,4 +1,5 @@
 import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { sessionUtils } from "~/utils/auth";
@@ -101,13 +102,13 @@ export default component$(() => {
           ptClass="pt-16"
         >
           <li class="mt-8">
-            <a
+            <Link
               href="/admin/manajemen-posyandu"
               class="btn btn-outline btn-primary w-full flex items-center gap-2"
             >
               <LuArrowLeft />
               Kembali ke List Posyandu
-            </a>
+            </Link>
           </li>
         </Sidebar>
       </div>

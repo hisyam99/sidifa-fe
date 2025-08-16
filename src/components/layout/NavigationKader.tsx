@@ -1,5 +1,5 @@
 import { component$, $ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import {
   LuHome,
@@ -93,7 +93,7 @@ export const NavigationKader = component$(() => {
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                           {kaderSubmenuItems.map((subItem) => (
-                            <a
+                            <Link
                               key={subItem.href}
                               href={subItem.href}
                               class={`flex items-start gap-3 p-3 rounded-lg hover:bg-primary/10 transition-all duration-200 group${
@@ -126,7 +126,7 @@ export const NavigationKader = component$(() => {
                                     "Kelola profil pribadi"}
                                 </div>
                               </div>
-                            </a>
+                            </Link>
                           ))}
                         </div>
                       </div>
@@ -136,7 +136,7 @@ export const NavigationKader = component$(() => {
               }
 
               return (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
                   class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
@@ -147,7 +147,7 @@ export const NavigationKader = component$(() => {
                 >
                   <item.icon class="w-4 h-4 text-primary" />
                   <span class="truncate">{item.label}</span>
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -175,7 +175,7 @@ export const NavigationKader = component$(() => {
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
                       isActivePath(currentPath, item.href, item.href === "/")
@@ -185,7 +185,7 @@ export const NavigationKader = component$(() => {
                   >
                     <item.icon class="w-5 h-5 text-primary" />
                     <span class="font-medium">{item.label}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
               {/* Kader submenu in mobile */}
@@ -194,7 +194,7 @@ export const NavigationKader = component$(() => {
               </li>
               {kaderSubmenuItems.map((subItem) => (
                 <li key={subItem.href}>
-                  <a
+                  <Link
                     href={subItem.href}
                     class={`flex items-center gap-3 hover:bg-primary/10 pl-6${
                       isActivePath(
@@ -208,7 +208,7 @@ export const NavigationKader = component$(() => {
                   >
                     <subItem.icon class="w-4 h-4 text-primary" />
                     <span class="font-medium">{subItem.label}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

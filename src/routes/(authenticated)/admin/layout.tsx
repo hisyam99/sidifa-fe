@@ -35,12 +35,6 @@ export default component$(() => {
         <div class="container mx-auto drawer lg:drawer-open">
           <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
           <div class="drawer-content flex flex-col p-4 md:py-8 relative">
-            {/* Global loading overlay */}
-            {isNavigating.value && (
-              <div class="fixed inset-0 z-50 flex items-center justify-center bg-base-100/70 transition-opacity">
-                <span class="loading loading-spinner loading-lg text-primary"></span>
-              </div>
-            )}
             <label
               for="my-drawer-2"
               class="btn btn-primary drawer-button lg:hidden mb-4 self-start"

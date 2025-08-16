@@ -1,4 +1,5 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { useLowonganKader } from "~/hooks/useLowonganKader";
@@ -43,14 +44,14 @@ export default component$(() => {
                 </div>
               </div>
               {item.value.file_name && (
-                <a
+                <Link
                   class="btn btn-outline btn-primary"
                   href={buildLowonganUploadUrl(item.value.file_name)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Lihat Lampiran
-                </a>
+                </Link>
               )}
             </div>
 

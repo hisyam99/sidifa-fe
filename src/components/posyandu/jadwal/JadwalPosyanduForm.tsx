@@ -1,4 +1,5 @@
 import { component$, QRL, noSerialize, useTask$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 import { useForm, valiForm$, setValues } from "@modular-forms/qwik";
 import { object, string, nonEmpty, minLength, pipe, optional } from "valibot";
 import type {
@@ -223,14 +224,14 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
           initialData?.file_name && (
             <div class="alert alert-info p-2 text-xs">
               File lama:{" "}
-              <a
+              <Link
                 href={buildJadwalPosyanduUrl(initialData?.file_name)}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link link-primary underline break-all"
               >
                 {initialData?.file_name}
-              </a>
+              </Link>
             </div>
           )}
         <div class="space-y-2">

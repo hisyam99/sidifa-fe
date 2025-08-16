@@ -1,4 +1,5 @@
 import { component$, QRL } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 
 interface FooterLinkProps {
   href?: string;
@@ -23,9 +24,9 @@ export const FooterLink = component$((props: FooterLinkProps) => {
 
   return (
     <li>
-      <a href={href} class={baseClass} aria-label={label}>
+      <Link href={href} class={baseClass} aria-label={label}>
         {label}
-      </a>
+      </Link>
     </li>
   );
 });
