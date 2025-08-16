@@ -15,3 +15,4 @@ export * from "./PaginationControls";
 export * from "./GenericLoadingSpinner";
 export * from "./RoleProtectedContent";
 export * from "./ConfirmationModal";
+export * from "./AnimatedLink";
