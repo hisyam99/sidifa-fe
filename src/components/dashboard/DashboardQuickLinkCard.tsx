@@ -1,5 +1,5 @@
-import { component$, type Component, type SVGProps, $ } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
+import { component$, type Component, type SVGProps } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
 
 interface DashboardQuickLinkCardProps {
   href: string;
@@ -8,20 +8,13 @@ interface DashboardQuickLinkCardProps {
   description: string;
 }
 
-export const DashboardQuickLinkCard = component$<DashboardQuickLinkCardProps>(
-  (props) => {
+export const DashboardQuickLinkCard = component$(
+  (props: DashboardQuickLinkCardProps) => {
     const { href, label, icon: Icon, description } = props;
-    const nav = useNavigate();
-
-    // Handle navigation with Qwik best practices
-    const handleNavigation = $(async () => {
-      await nav(href);
-    });
-
     return (
-      <button
-        onClick$={handleNavigation}
-        class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-200 border border-base-200 hover:border-primary group w-full text-left"
+      <Link
+        href={href}
+        class="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-200 border border-base-200 hover:border-primary group"
       >
         <div class="card-body flex flex-col items-center text-center">
           <div class="mb-4">
@@ -32,7 +25,7 @@ export const DashboardQuickLinkCard = component$<DashboardQuickLinkCardProps>(
           </h2>
           <p class="text-base-content/70 text-sm">{description}</p>
         </div>
-      </button>
+      </Link>
     );
   },
 );
