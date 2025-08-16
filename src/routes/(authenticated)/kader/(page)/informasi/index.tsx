@@ -88,7 +88,7 @@ export default component$(() => {
       </div>
 
       {/* Sticky Search and Filter Section */}
-      <div class="pt-2 pb-4 md:pt-4 md:pb-6 sticky top-16 z-20">
+      <div class="pt-2 pb-4 md:pt-4 md:pb-6 sticky top-16 z-10">
         <div class="bg-base-100 border-b border-base-300 card card-compact shadow-sm container mx-auto px-2 py-2 md:px-4 md:py-4">
           <div class="flex flex-row flex-nowrap items-center gap-2">
             <div class="flex-1 min-w-0 relative">

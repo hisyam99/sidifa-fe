@@ -4,8 +4,8 @@ import { SidebarMenuItem } from "~/components/layout/SidebarMenuItem";
 export interface SidebarMenuItemType {
   href: string;
   label: string;
-  icon?: any; // Accepts a Qwik/React component, not QRL
-  exact?: boolean; // when true, only highlight on exact path
+  icon?: any; // accept component reference or string key
+  exact?: boolean; // when true, only highlight on exact path match (ignoring trailing slash)
   hasDropdown?: boolean; // indicates this item has dropdown
   submenuItems?: Array<{
     href: string;
@@ -25,7 +25,9 @@ export interface SidebarProps {
 
 export const Sidebar = component$<SidebarProps>((props) => {
   return (
-    <aside class={`drawer-side h-screen pt-16 lg:pt-0 ${props.class ?? ""}`}>
+    <aside
+      class={`z-20 drawer-side h-screen pt-16 lg:pt-0 ${props.class ?? ""}`}
+    >
       <label
         for={props.drawerId}
         aria-label="close sidebar"
@@ -43,6 +45,7 @@ export const Sidebar = component$<SidebarProps>((props) => {
               exact={item.exact}
               hasDropdown={item.hasDropdown}
               submenuItems={item.submenuItems}
+              drawerId={props.drawerId}
             />
           ))}
           <Slot />

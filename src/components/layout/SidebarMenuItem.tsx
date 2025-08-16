@@ -1,5 +1,6 @@
-import { component$ } from "@builder.io/qwik";
-import { useLocation, Link } from "@builder.io/qwik-city";
+import { component$, $ } from "@builder.io/qwik";
+import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useDrawer } from "~/hooks/useDrawer";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 
 const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;
@@ -16,11 +17,15 @@ interface SidebarMenuItemProps {
     icon?: any;
     description?: string;
   }>;
+  drawerId?: string; // drawer ID to close when clicked
 }
 
-export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
-  const { href, label, icon, exact, hasDropdown, submenuItems } = props;
+export const SidebarMenuItem = component$<SidebarMenuItemProps>((props) => {
+  const { href, label, icon, exact, hasDropdown, submenuItems, drawerId } =
+    props;
   const location = useLocation();
+  const nav = useNavigate();
+  const { closeDrawer } = useDrawer();
 
   const current = location.url.pathname;
   const normalize = (p: string) => (p !== "/" ? p.replace(/\/+$/, "") : "/");
@@ -34,6 +39,17 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
     submenuItems?.some(
       (item) => current === item.href || current.startsWith(item.href + "/"),
     ) || false;
+
+  // Handle navigation with drawer close
+  const handleNavigation = $(async (targetHref: string) => {
+    // Close drawer first if drawerId is provided
+    if (drawerId) {
+      await closeDrawer(drawerId);
+    }
+
+    // Navigate to the target URL
+    await nav(targetHref);
+  });
 
   if (hasDropdown && submenuItems) {
     return (
@@ -93,10 +109,10 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
                     current.startsWith(subItem.href + "/");
 
                   return (
-                    <Link
+                    <button
                       key={subItem.href}
-                      href={subItem.href}
-                      class={`flex items-start gap-3 p-2 rounded-lg hover:bg-primary/10 transition-all duration-200 group ${
+                      onClick$={() => handleNavigation(subItem.href)}
+                      class={`w-full text-left flex items-start gap-3 p-2 rounded-lg hover:bg-primary/10 transition-all duration-200 group ${
                         isSubActive
                           ? "bg-primary/15 text-primary border border-primary/20"
                           : "text-base-content/80 hover:text-primary"
@@ -117,7 +133,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
                           </div>
                         )}
                       </div>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
@@ -130,9 +146,9 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
 
   return (
     <li>
-      <Link
-        href={href}
-        class={`flex items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-primary/10 hover:text-primary ${
+      <button
+        onClick$={() => handleNavigation(href)}
+        class={`w-full text-left flex items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-primary/10 hover:text-primary ${
           isActive ? "bg-primary/10 text-primary font-semibold" : ""
         }`}
       >
@@ -144,7 +160,7 @@ export const SidebarMenuItem = component$((props: SidebarMenuItemProps) => {
           </span>
         )}
         <span class="truncate">{label}</span>
-      </Link>
+      </button>
     </li>
   );
 });
