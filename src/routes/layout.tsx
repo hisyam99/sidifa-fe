@@ -1,6 +1,32 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
+import type { RequestHandler } from "@builder.io/qwik-city";
 import { NavigationWrapper, SidifaFooter } from "~/components/layout";
+
+export const onGet: RequestHandler = async ({ cacheControl, url }) => {
+  // Default SWR caching site-wide
+  cacheControl({
+    staleWhileRevalidate: 60 * 60 * 24 * 7,
+    maxAge: 5,
+  });
+
+  // Homepage: public + shared-cache + duplicate CDN header
+  if (url.pathname === "/") {
+    cacheControl({
+      public: true,
+      maxAge: 5,
+      sMaxAge: 10,
+      staleWhileRevalidate: 60 * 60 * 24 * 365,
+    });
+    cacheControl(
+      {
+        maxAge: 5,
+        staleWhileRevalidate: 60 * 60 * 24 * 365,
+      },
+      "CDN-Cache-Control",
+    );
+  }
+};
 
 // Read UI-only auth cookies to avoid client flicker
 export const useAuthFromCookie = routeLoader$(async ({ cookie, pathname }) => {

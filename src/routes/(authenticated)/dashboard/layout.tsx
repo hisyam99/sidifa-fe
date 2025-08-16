@@ -2,6 +2,16 @@ import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useNavigate } from "@builder.io/qwik-city";
 import { DashboardSkeletonLoader } from "~/components/common";
+import type { RequestHandler } from "@builder.io/qwik-city";
+
+export const onGet: RequestHandler = async ({ cacheControl }) => {
+  cacheControl({
+    public: false,
+    maxAge: 0,
+    sMaxAge: 0,
+    staleWhileRevalidate: 0,
+  });
+};
 
 export default component$(() => {
   const { user, isLoggedIn, loading } = useAuth();
