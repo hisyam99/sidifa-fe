@@ -1,5 +1,10 @@
 import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
-import { profileService, authService } from "~/services/api";
+import {
+  profileService,
+  authService,
+  registerRefreshTokenFailureCallback,
+  unregisterRefreshTokenFailureCallback,
+} from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
 import { isRateLimitError, isAuthError } from "~/utils/error";
 import { clearUiAuthCookies } from "~/utils/ui-auth-cookie";
@@ -130,6 +135,29 @@ export const useAuth = () => {
       return;
     }
     await checkAuthStatus(true); // Force check
+  });
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    if (isServer) {
+      return;
+    }
+
+    // Buat callback function yang akan digunakan untuk register dan unregister
+    const refreshTokenFailureHandler = () => {
+      console.log(
+        "🔄 Refresh token failure callback triggered - executing logout",
+      );
+      logout();
+    };
+
+    // Register callback untuk refresh token failure
+    registerRefreshTokenFailureCallback(refreshTokenFailureHandler);
+
+    // Cleanup callback saat komponen unmount
+    return () => {
+      unregisterRefreshTokenFailureCallback(refreshTokenFailureHandler);
+    };
   });
 
   // eslint-disable-next-line qwik/no-use-visible-task

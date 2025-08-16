@@ -2,6 +2,29 @@ import axios from "xior";
 import { sessionUtils } from "~/utils/auth";
 import { extractErrorMessage } from "~/utils/error";
 
+// Callback system untuk memberitahu useAuth ketika refresh token gagal
+type RefreshTokenFailureCallback = () => void;
+const refreshTokenFailureCallbacks: RefreshTokenFailureCallback[] = [];
+
+export const registerRefreshTokenFailureCallback = (
+  callback: RefreshTokenFailureCallback,
+) => {
+  refreshTokenFailureCallbacks.push(callback);
+};
+
+export const unregisterRefreshTokenFailureCallback = (
+  callback: RefreshTokenFailureCallback,
+) => {
+  const index = refreshTokenFailureCallbacks.indexOf(callback);
+  if (index > -1) {
+    refreshTokenFailureCallbacks.splice(index, 1);
+  }
+};
+
+const triggerRefreshTokenFailure = () => {
+  refreshTokenFailureCallbacks.forEach((callback) => callback());
+};
+
 const api = axios.create({
   baseURL: import.meta.env.PUBLIC_API_URL || "__PUBLIC_API_URL__",
   headers: {
@@ -111,7 +134,12 @@ async function tryRefreshToken(): Promise<boolean> {
     csrfFetched = false;
     csrfTokenValue = null;
     return true;
-  } catch {
+  } catch (error: any) {
+    // Jika refresh token mendapat 401, trigger callback untuk logout
+    if (error?.response?.status === 401) {
+      console.log("🔐 Refresh token failed with 401 - triggering logout");
+      triggerRefreshTokenFailure();
+    }
     return false;
   }
 }
@@ -141,6 +169,8 @@ async function handleUnauthorized(
   if (!canAttempt) {
     sessionUtils.clearAllAuthData();
     sessionUtils.setAuthStatus(false);
+    // Trigger callback untuk logout jika ini adalah auth endpoint
+    triggerRefreshTokenFailure();
     return Promise.reject(
       new Error(
         fallbackMessage || "Sesi telah berakhir. Silakan login kembali.",
@@ -171,6 +201,8 @@ async function handleUnauthorized(
 
   sessionUtils.clearAllAuthData();
   sessionUtils.setAuthStatus(false);
+  // Trigger callback untuk logout setelah semua percobaan refresh gagal
+  triggerRefreshTokenFailure();
   return Promise.reject(
     new Error(fallbackMessage || "Sesi telah berakhir. Silakan login kembali."),
   );
@@ -201,6 +233,11 @@ api.interceptors.response.use(
     if (apiError.response?.status === 401) {
       // For auth endpoints (login/logout/refresh), do not attempt refresh; return backend message
       if (isAuthEndpoint(url)) {
+        // Jika ini adalah endpoint refresh dan mendapat 401, trigger logout
+        if (url === "/auth/refresh") {
+          console.log("🔐 /auth/refresh failed with 401 - triggering logout");
+          triggerRefreshTokenFailure();
+        }
         return Promise.reject(new Error(errorMessage));
       }
       return handleUnauthorized(
