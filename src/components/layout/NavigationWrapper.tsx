@@ -12,8 +12,8 @@ export const NavigationWrapper = component$(() => {
   const ssrAuth = useAuthFromCookie();
 
   // Prefer SSR auth snapshot (no flicker)
-  if (ssrAuth.value.isLoggedIn && ssrAuth.value.user?.role) {
-    const role = ssrAuth.value.user.role;
+  if (ssrAuth.value.isLoggedIn && ssrAuth.value.role) {
+    const role = ssrAuth.value.role;
     switch (role) {
       case "admin":
         return <NavigationAdmin />;

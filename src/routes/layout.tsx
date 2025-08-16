@@ -30,16 +30,29 @@ export const onGet: RequestHandler = async ({ cacheControl, url }) => {
 
 // Read UI-only auth cookies to avoid client flicker
 export const useAuthFromCookie = routeLoader$(async ({ cookie, pathname }) => {
-  const isLoggedIn = cookie.get("is_logged_in")?.value === "true";
-  const role = cookie.get("user_role")?.value || null;
-  const userId = cookie.get("user_id")?.value || null;
-  const email = cookie.get("user_email")?.value || null;
+  const isLoggedIn = cookie.get("auth_status")?.value === "true";
+  const roleCode = cookie.get("r")?.value || null;
+
+  // Decode obfuscated role: r=0 (admin), r=1 (kader), r=2 (psikolog)
+  const getRoleFromCode = (code: string | null) => {
+    if (!code) return null;
+    switch (code) {
+      case "0":
+        return "admin";
+      case "1":
+        return "kader";
+      case "2":
+        return "psikolog";
+      default:
+        return null;
+    }
+  };
+
+  const role = getRoleFromCode(roleCode);
+
   return {
-    isLoggedIn: Boolean(isLoggedIn && userId && role),
-    user:
-      isLoggedIn && userId && role
-        ? { id: userId, email: email || "", role }
-        : null,
+    isLoggedIn: Boolean(isLoggedIn && role),
+    role: role,
     path: pathname,
   };
 });

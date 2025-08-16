@@ -38,10 +38,9 @@ export default component$(() => {
       const profile = await profileService.getProfile();
       if (profile?.role) {
         sessionUtils.setUserProfile(profile);
+
         // Set UI auth cookies untuk SSR snapshot
         setUiAuthCookies({
-          userId: profile.id,
-          email: profile.email,
           role: profile.role,
         });
         let redirectTo = "/dashboard";
