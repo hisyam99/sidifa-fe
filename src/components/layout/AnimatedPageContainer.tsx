@@ -27,10 +27,14 @@ export const AnimatedPageContainer = component$(() => {
   });
 
   return (
-    <div
-      class={[isAnimating.value && "page-transition"].filter(Boolean).join(" ")}
-    >
-      <Slot />
+    <div class="page-transition">
+      <div
+        class={[isAnimating.value && "page-transition"]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        <Slot />
+      </div>
     </div>
   );
 });

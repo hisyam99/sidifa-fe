@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 import { Sidebar } from "~/components/common/Sidebar";
 import {
@@ -9,7 +9,6 @@ import {
   LuUser,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
-import { useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { Avatar } from "~/components/ui";
 import { getRoleDisplayName, getRoleIcon } from "~/utils/dashboard-utils";
