@@ -1,8 +1,8 @@
 import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
-import { useNavigate } from "@builder.io/qwik-city";
 import { profileService, authService } from "~/services/api";
 import { sessionUtils, type User } from "~/utils/auth";
 import { isRateLimitError, isAuthError } from "~/utils/error";
+import { clearUiAuthCookies } from "~/utils/ui-auth-cookie";
 
 // Global state untuk mencegah multiple API calls dan initialization
 const globalAuthState = {
@@ -21,7 +21,6 @@ export const useAuth = () => {
   const user = useSignal<User | null>(globalAuthState.globalUser);
   const loading = useSignal(globalAuthState.globalLoading);
   const error = useSignal<string | null>(null);
-  const nav = useNavigate();
 
   const checkAuthStatus = $(async (forceCheck = false) => {
     // Prevent API calls during SSG/server
@@ -45,8 +44,12 @@ export const useAuth = () => {
     globalAuthState.isChecking = true;
 
     try {
-      loading.value = true;
-      globalAuthState.globalLoading = true;
+      // Do not flip loading to true if we already consider user logged in (avoid flicker)
+      const wasLoggedIn = isLoggedIn.value;
+      if (!wasLoggedIn) {
+        loading.value = true;
+        globalAuthState.globalLoading = true;
+      }
       error.value = null;
       const profileData = await profileService.getProfile();
       user.value = profileData;
@@ -77,7 +80,10 @@ export const useAuth = () => {
         error.value = "Sesi tidak valid atau telah berakhir.";
         sessionUtils.clearAllAuthData();
         sessionUtils.setAuthStatus(false);
-        nav("/auth/login");
+        clearUiAuthCookies();
+        if (typeof window !== "undefined") {
+          window.location.href = "/";
+        }
       } else {
         // Untuk error lain yang tidak spesifik, jangan hapus session
         console.log(
@@ -105,13 +111,16 @@ export const useAuth = () => {
     } finally {
       sessionUtils.clearAllAuthData();
       sessionUtils.setAuthStatus(false);
+      clearUiAuthCookies();
       user.value = null;
       isLoggedIn.value = false;
       globalAuthState.globalUser = null;
       globalAuthState.globalIsLoggedIn = false;
       globalAuthState.isInitialized = false;
       globalAuthState.lastCheck = 0;
-      nav("/auth/login");
+      if (typeof window !== "undefined") {
+        window.location.href = "/";
+      }
     }
   });
 
@@ -166,10 +175,10 @@ export const useAuth = () => {
       globalAuthState.globalLoading = false;
       globalAuthState.isInitialized = true;
 
-      // Validasi dengan API di background (non-blocking)
+      // Validasi dengan API di background (non-blocking) tanpa toggling loading
       setTimeout(() => {
         checkAuthStatus();
-      }, 100);
+      }, 50);
       return;
     }
 

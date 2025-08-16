@@ -9,11 +9,13 @@ import {
   LuStethoscope,
   LuArrowRight,
 } from "~/components/icons/lucide-optimized"; // Updated import path
+import { useNavigate } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
   const verificationStatus = useSignal<"unverified" | "declined" | null>(null);
+  const nav = useNavigate();
 
   const [form, { Form, Field }] = useForm<SignupKaderForm>({
     loader: {
@@ -86,7 +88,7 @@ export default component$(() => {
 
         success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
         setTimeout(() => {
-          window.location.href = redirectTo;
+          nav(redirectTo);
         }, 1000);
         return;
       }
@@ -94,7 +96,7 @@ export default component$(() => {
       // Fallback jika role tidak tersedia
       success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        nav("/dashboard");
       }, 1000);
     } catch (err: any) {
       error.value = extractErrorMessage(err);

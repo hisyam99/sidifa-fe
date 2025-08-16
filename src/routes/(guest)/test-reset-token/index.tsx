@@ -100,8 +100,8 @@ export default component$(() => {
           class="btn btn-accent btn-sm mt-2"
           onClick$={() => {
             console.log("🔍 Manual Debug Info:", debugInfo.value);
-            console.log("🔍 Current URL:", window.location.href);
-            console.log("🔍 URL Search Params:", window.location.search);
+            console.log("🔍 Current URL:", location.url.href);
+            console.log("🔍 URL Search Params:", location.url.search);
           }}
         >
           Log Manual Debug Info

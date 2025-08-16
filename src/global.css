@@ -349,3 +349,125 @@ html:where(:not(.no-smooth-scroll)) {
     background 0.2s,
     box-shadow 0.2s;
 }
+
+/* === Page Transition Loader === */
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 4px;
+  background: #2299dd;
+  box-shadow:
+    0 0 10px #2299dd,
+    0 0 5px #2299dd;
+  z-index: 1600;
+  pointer-events: none;
+  transition:
+    width 0.2s ease,
+    opacity 0.4s ease,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+
+/* === Navigation Dropdown Enhancement === */
+/* Hover-based dropdowns (for navigation menus) */
+.dropdown.dropdown-hover:hover .dropdown-content,
+.dropdown.dropdown-hover.dropdown-open .dropdown-content,
+.dropdown.dropdown-hover:focus-within .dropdown-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dropdown.dropdown-hover .dropdown-content {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure dropdown stays open when hovering content */
+.dropdown.dropdown-hover .dropdown-content:hover {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Click-based dropdowns (for avatar menu) */
+.dropdown:not(.dropdown-hover) .dropdown-content {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown:not(.dropdown-hover):focus-within .dropdown-content,
+.dropdown:not(.dropdown-hover).dropdown-open .dropdown-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* === Sidebar Dropdown Enhancement === */
+/* Sidebar dropdown hover behavior (right positioning) */
+.sidebar-dropdown.dropdown-hover:hover .dropdown-content,
+.sidebar-dropdown.dropdown-hover.dropdown-open .dropdown-content,
+.sidebar-dropdown.dropdown-hover:focus-within .dropdown-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.sidebar-dropdown.dropdown-hover .dropdown-content {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure sidebar dropdown stays open when hovering content */
+.sidebar-dropdown.dropdown-hover .dropdown-content:hover {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Sidebar dropdown positioning */
+.sidebar-dropdown .dropdown-content {
+  left: 100%;
+  top: 0;
+  margin-left: 0.5rem;
+}
+
+/* Glass effect enhancement */
+.dropdown-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-glass {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dropdown .dropdown-content {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Focus ring for accessibility */
+.focus-ring:focus {
+  outline: 2px solid hsl(var(--p));
+  outline-offset: 2px;
+}

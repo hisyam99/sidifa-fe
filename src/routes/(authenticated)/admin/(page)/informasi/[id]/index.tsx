@@ -75,6 +75,7 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track, cleanup }) => {
     track(() => detail.value?.deskripsi);
+    track(() => loc.url.hash);
     const md = (detail.value?.deskripsi || "").toString();
 
     // Render full markdown then inject heading IDs on client
@@ -107,7 +108,8 @@ export default component$(() => {
     renderedHeaderHtml.value = DOMPurify.sanitize(headerHtml as string);
 
     const scrollToHash = () => {
-      const hash = window.location.hash?.slice(1);
+      const rawHash = loc.url.hash;
+      const hash = rawHash ? rawHash.slice(1) : "";
       if (!hash) return;
       const id = decodeURIComponent(hash);
       const findById = (candidate: string) =>
@@ -133,8 +135,9 @@ export default component$(() => {
     };
 
     setTimeout(scrollToHash, 0);
-    window.addEventListener("hashchange", scrollToHash);
-    cleanup(() => window.removeEventListener("hashchange", scrollToHash));
+    const onHashChange = () => scrollToHash();
+    window.addEventListener("hashchange", onHashChange);
+    cleanup(() => window.removeEventListener("hashchange", onHashChange));
   });
 
   const recentArticles = (items.value || []).filter(
@@ -156,12 +159,12 @@ export default component$(() => {
                 style={`background-image: url('${buildInformasiEdukasiUrl(detail.value.file_name)}'); filter: brightness(0.3);`}
               />
             )}
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div class="absolute inset-0 bg-gradient-to-t from_black/70 via-black/30 to-transparent" />
 
             <div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-8 md:pb-12">
               <div class="pt-4 pb-12">
                 <button
-                  class="btn btn-ghost btn-sm text-white/90 hover:text-white hover:bg-white/10 mb-6 self-start"
+                  class="btn btn-ghost btn-sm text_white/90 hover:text-white hover:bg-white/10 mb-6 self-start"
                   onClick$={$(() => {
                     const from = document.referrer || "";
                     if (from.includes("/admin/informasi")) {

@@ -6,6 +6,13 @@ export interface SidebarMenuItemType {
   label: string;
   icon?: any; // Accepts a Qwik/React component, not QRL
   exact?: boolean; // when true, only highlight on exact path
+  hasDropdown?: boolean; // indicates this item has dropdown
+  submenuItems?: Array<{
+    href: string;
+    label: string;
+    icon?: any;
+    description?: string;
+  }>;
 }
 
 export interface SidebarProps {
@@ -34,6 +41,8 @@ export const Sidebar = component$<SidebarProps>((props) => {
               label={item.label}
               icon={item.icon}
               exact={item.exact}
+              hasDropdown={item.hasDropdown}
+              submenuItems={item.submenuItems}
             />
           ))}
           <Slot />

@@ -8,19 +8,20 @@ import {
   LuHelpCircle,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
-import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@builder.io/qwik-city";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";
 
 export const NavigationAuth = component$(() => {
   const { user, logout } = useAuth();
-  const nav = useNavigate();
   const location = useLocation();
 
   const handleLogout = $(async () => {
     await logout();
-    nav("/auth/login");
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   });
 
   // Build menuItems for desktop and mobile

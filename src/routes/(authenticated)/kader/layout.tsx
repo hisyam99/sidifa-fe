@@ -1,5 +1,5 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { NavigationKader, Breadcrumbs } from "~/components/layout";
+import { Breadcrumbs } from "~/components/layout";
 import { RoleProtectedContent } from "~/components/common/RoleProtectedContent";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 
@@ -22,7 +22,6 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <NavigationKader />
       <RoleProtectedContent allowedRoles={["kader", "admin"]}>
         <div class="relative">
           {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}

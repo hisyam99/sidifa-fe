@@ -5,32 +5,29 @@ import { NavigationAdmin } from "./NavigationAdmin";
 import { NavigationKader } from "./NavigationKader";
 import { NavigationPsikolog } from "./NavigationPsikolog";
 import { NavigationAuth } from "./NavigationAuth";
-import { LuMenu } from "~/components/icons/lucide-optimized";
-import { BrandLogo } from "~/components/common";
+import { useAuthFromCookie } from "~/routes/layout";
 
 export const NavigationWrapper = component$(() => {
-  const { isLoggedIn, user, loading } = useAuth();
+  const { isLoggedIn, user } = useAuth();
+  const ssrAuth = useAuthFromCookie();
 
-  // Show skeleton while loading auth state
-  if (loading.value) {
-    return (
-      <nav class="navbar bg-base-100/80 border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
-        <div class="container mx-auto flex items-center justify-between">
-          <div class="navbar-start">
-            <button
-              class="btn btn-ghost btn-circle lg:hidden focus-ring"
-              aria-label="Buka menu navigasi"
-            >
-              <LuMenu class="w-6 h-6 text-base-content" />
-            </button>
-            <BrandLogo variant="nav" />
-          </div>
-        </div>
-      </nav>
-    );
+  // Prefer SSR auth snapshot (no flicker)
+  if (ssrAuth.value.isLoggedIn && ssrAuth.value.user?.role) {
+    const role = ssrAuth.value.user.role;
+    switch (role) {
+      case "admin":
+        return <NavigationAdmin />;
+      case "kader":
+      case "posyandu":
+        return <NavigationKader />;
+      case "psikolog":
+        return <NavigationPsikolog />;
+      default:
+        return <NavigationAuth />;
+    }
   }
 
-  // Guest navigation for non-logged in users
+  // Guest navigation for non-logged in users (no loading guard)
   if (!isLoggedIn.value) {
     return <NavigationGuest />;
   }

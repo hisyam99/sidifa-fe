@@ -2,7 +2,6 @@ import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useNavigate } from "@builder.io/qwik-city";
 import { DashboardSkeletonLoader } from "~/components/common";
-import { NavigationGuest } from "~/components/layout";
 
 export default component$(() => {
   const { user, isLoggedIn, loading } = useAuth();
@@ -51,7 +50,6 @@ export default component$(() => {
   // Render nothing, as redirect will happen
   return (
     <div class="min-h-screen">
-      <NavigationGuest />
       <Slot />
     </div>
   );

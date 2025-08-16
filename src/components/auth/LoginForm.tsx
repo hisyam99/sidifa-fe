@@ -11,6 +11,7 @@ import {
   emitToastError,
 } from "~/components/ui/toast/ToastProvider";
 import { AccountStatusCard } from "~/components/ui/AccountStatusCard";
+import { setUiAuthCookies } from "~/utils/ui-auth-cookie";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -36,6 +37,12 @@ export default component$(() => {
       const profile = await profileService.getProfile();
       if (profile?.role) {
         sessionUtils.setUserProfile(profile);
+        // Set UI auth cookies untuk SSR snapshot
+        setUiAuthCookies({
+          userId: profile.id,
+          email: profile.email,
+          role: profile.role,
+        });
         let redirectTo = "/dashboard";
         if (profile.role === "admin") redirectTo = "/admin";
         else if (profile.role === "psikolog") redirectTo = "/psikolog";

@@ -1,6 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { Breadcrumbs, NavigationPsikolog } from "~/components/layout";
+import { Breadcrumbs } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";
 import { getPsikologMenuItems } from "~/data/psikolog-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
@@ -14,7 +14,6 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <NavigationPsikolog />
       <div class="drawer lg:drawer-open">
         <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:p-8">

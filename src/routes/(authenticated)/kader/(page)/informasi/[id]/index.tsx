@@ -72,6 +72,7 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track, cleanup }) => {
     track(() => item.value?.deskripsi);
+    track(() => loc.url.hash);
     const md = (item.value?.deskripsi || "").toString();
     // Render full markdown then inject heading IDs on client
     const html = marked.parse(md);
@@ -103,7 +104,8 @@ export default component$(() => {
     renderedHeaderHtml.value = DOMPurify.sanitize(headerHtml as string);
 
     const scrollToHash = () => {
-      const hash = window.location.hash?.slice(1);
+      const rawHash = loc.url.hash; // includes leading '#'
+      const hash = rawHash ? rawHash.slice(1) : "";
       if (!hash) return;
       const id = decodeURIComponent(hash);
       const findById = (candidate: string) =>
@@ -137,8 +139,10 @@ export default component$(() => {
 
     // Scroll after content renders
     setTimeout(scrollToHash, 0);
-    window.addEventListener("hashchange", scrollToHash);
-    cleanup(() => window.removeEventListener("hashchange", scrollToHash));
+    // No direct window event: track loc.url.hash via track above; optional listener for manual hashchange
+    const onHashChange = () => scrollToHash();
+    window.addEventListener("hashchange", onHashChange);
+    cleanup(() => window.removeEventListener("hashchange", onHashChange));
   });
 
   return (

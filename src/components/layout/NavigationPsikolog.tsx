@@ -1,5 +1,5 @@
 import { component$, $ } from "@builder.io/qwik";
-import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import {
   LuHome,
@@ -14,12 +14,13 @@ import { isActivePath } from "~/utils/path";
 
 export const NavigationPsikolog = component$(() => {
   const { user, logout } = useAuth();
-  const nav = useNavigate();
   const location = useLocation();
 
   const handleLogout = $(async () => {
     await logout();
-    nav("/auth/login");
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   });
 
   const menuItems = [
@@ -36,11 +37,8 @@ export const NavigationPsikolog = component$(() => {
   return (
     <nav class="navbar bg-base-100/80 backdrop-blur-md border-b border-base-200/50 sticky top-0 z-50 shadow-sm">
       <div class="container mx-auto flex items-center min-w-0">
-        {/* Logo dan menu biasa di kiri */}
         <BrandLogo variant="nav" size="sm" href="/" />
-        {/* Tombol menuItems dan avatar/login di kanan */}
         <div class="ml-auto flex items-center gap-2">
-          {/* MenuItems utama desktop */}
           <div class="hidden lg:flex items-center gap-2">
             {menuItems.map((item) => (
               <a
@@ -57,10 +55,9 @@ export const NavigationPsikolog = component$(() => {
               </a>
             ))}
           </div>
-          {/* Avatar/login */}
           <AvatarMenu
             email={user.value?.email}
-            role="Psikolog"
+            role={user.value?.role}
             menuItems={[
               { href: "/psikolog/profile", label: "Profil", icon: LuUser },
               {
@@ -71,7 +68,6 @@ export const NavigationPsikolog = component$(() => {
             ]}
             onLogout={handleLogout}
           />
-          {/* Hamburger mobile menu - setelah avatar */}
           <div class="dropdown dropdown-end lg:hidden">
             <button
               class="btn btn-ghost btn-circle"

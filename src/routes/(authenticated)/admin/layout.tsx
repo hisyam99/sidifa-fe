@@ -1,7 +1,7 @@
 import { component$, Slot, useSignal, useTask$ } from "@builder.io/qwik";
 import { useLocation } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { Breadcrumbs, NavigationAdmin } from "~/components/layout";
+import { Breadcrumbs } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";
 import { getAdminMenuItems } from "~/data/admin-navigation-data";
 import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
@@ -30,7 +30,6 @@ export default component$(() => {
 
   return (
     <div class="min-h-screen bg-base-200/60">
-      <NavigationAdmin />
       <div class="container mx-auto drawer lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content flex flex-col p-4 md:py-8 relative">
