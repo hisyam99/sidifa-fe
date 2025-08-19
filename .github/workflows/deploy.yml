@@ -3,12 +3,12 @@ name: Deploy Frontend with Docker
 on:
   push:
     branches:
-      - main # Trigger on pushes to the main branch
+      - main
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    environment: production # Use an environment if you have one configured for production
+    environment: production
 
     steps:
       - name: Checkout code
@@ -40,26 +40,31 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            bash -c '
-            # Get the CONTAINER_ENGINE secret or default to docker
-            ENGINE="${{ secrets.CONTAINER_ENGINE }}"
-            if [ -z "$ENGINE" ]; then
-              ENGINE="docker"
-            fi
+            set -euo pipefail
+
+            # --- Context dari GitHub Actions untuk URL raw ---
+            REPO='${{ github.repository }}'      # e.g. owner/repo
+            REF='${{ github.ref_name }}'         # e.g. main
+            RAW_URL_DEFAULT="https://raw.githubusercontent.com/${REPO}/${REF}/compose.yaml"
+            RAW_URL_FALLBACK="https://raw.githubusercontent.com/hisyam99/sidifa-fe/refs/heads/main/compose.yaml"
+
+            # --- Container engine (default docker) ---
+            ENGINE='${{ secrets.CONTAINER_ENGINE }}'
+            if [ -z "${ENGINE:-}" ]; then ENGINE="docker"; fi
 
             echo "--- Navigating to deployment directory ---"
-            cd ${{ secrets.DEPLOY_PATH }}
+            cd "${{ secrets.DEPLOY_PATH }}"
 
-            # --- BEST PRACTICE: Backup existing .env file ---
+            # --- Backup .env bila ada ---
             if [ -f .env ]; then
               echo "--- Backing up existing .env file ---"
-              mv .env .env.bak_"$(date +%Y%m%d_%H%M%S)"
+              mv .env ".env.bak_$(date +%Y%m%d_%H%M%S)"
             else
               echo "--- No existing .env file found to backup ---"
             fi
 
             echo "--- Creating new .env file from secrets ---"
-            cat > .env <<EOF
+            cat <<'EOF' > .env
             ORIGIN="${{ secrets.ORIGIN }}"
             PUBLIC_BASE_URL="${{ secrets.PUBLIC_BASE_URL }}"
             PUBLIC_API_URL="${{ secrets.PUBLIC_API_URL }}"
@@ -70,26 +75,37 @@ jobs:
             OUTSIDE_PORT="${{ secrets.OUTSIDE_PORT }}"
             EOF
 
-            echo "--- Pulling latest Docker image ---"
-            REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
-            if [ -z "$REGISTRY" ]; then
-              REGISTRY="docker.io"
+            # --- Pastikan compose.yaml tersedia ---
+            if [ ! -f compose.yaml ]; then
+              echo "--- compose.yaml not found. Attempting to download from current repo/branch ---"
+              if ! curl -fsSL "$RAW_URL_DEFAULT" -o compose.yaml; then
+                echo "--- Fallback: downloading compose.yaml from provided link ---"
+                curl -fsSL "$RAW_URL_FALLBACK" -o compose.yaml
+              fi
+              echo "--- compose.yaml downloaded ---"
+            else
+              echo "--- compose.yaml already exists ---"
             fi
-            "$ENGINE" pull "$REGISTRY/${{ secrets.DOCKER_USERNAME }}/sidifa-fe:latest"
 
-            "$ENGINE" compose -f compose.yaml pull sidifa-fe
+            echo "--- Pulling latest Docker image ---"
+            REGISTRY='${{ secrets.DOCKER_REGISTRY }}'
+            if [ -z "${REGISTRY:-}" ]; then REGISTRY="docker.io"; fi
+            IMAGE_USER='${{ secrets.DOCKER_USERNAME }}'
+            "$ENGINE" pull "$REGISTRY/${IMAGE_USER}/sidifa-fe:latest" || true
 
-            echo "--- Stopping and removing old container if exists ---"
+            echo "--- docker compose pull ---"
+            "$ENGINE" compose -f compose.yaml pull sidifa-fe || true
+
+            echo "--- Stopping & removing old containers ---"
             "$ENGINE" compose -f compose.yaml down || true
 
-            # Remove sidifa-fe container if it exists
+            # Remove sidifa-fe container if exists (extra safety)
             if "$ENGINE" ps -a --format '{{.Names}}' | grep -wq sidifa-fe; then
               echo "--- Removing existing sidifa-fe container ---"
               "$ENGINE" rm -f sidifa-fe || true
             fi
 
-            echo "--- Starting new container with latest image ---"
+            echo "--- Starting new container ---"
             "$ENGINE" compose -f compose.yaml up -d --remove-orphans
 
             echo "--- Deployment complete ---"
-            '
