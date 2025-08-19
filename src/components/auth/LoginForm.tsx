@@ -32,26 +32,17 @@ export default component$(() => {
     accountStatus.value = null;
     try {
       await api.post("/auth/login", values);
-      // Tandai status login berhasil di localStorage sebelum redirect
       sessionUtils.setAuthStatus(true);
-      // Fetch user profile
       const profile = await profileService.getProfile();
       if (profile?.role) {
         sessionUtils.setUserProfile(profile);
-
-        // Set UI auth cookies untuk SSR snapshot
         setUiAuthCookies({
           role: profile.role,
         });
-        let redirectTo = "/dashboard";
-        if (profile.role === "admin") redirectTo = "/admin";
-        else if (profile.role === "psikolog") redirectTo = "/psikolog";
-        else if (profile.role === "kader" || profile.role === "posyandu")
-          redirectTo = "/kader";
         success.value = "Login berhasil!";
         await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
         setTimeout(() => {
-          window.location.href = redirectTo;
+          window.location.reload();
         }, 1000);
         return;
       }
@@ -59,8 +50,9 @@ export default component$(() => {
       success.value = "Login berhasil!";
       await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
       setTimeout(() => {
-        window.location.href = "/dashboard";
+        window.location.reload();
       }, 1000);
+      return;
     } catch (err: any) {
       const raw = extractErrorMessage(err);
       const msg = raw.toLowerCase();

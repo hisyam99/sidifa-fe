@@ -19,7 +19,7 @@ export const NavigationPsikolog = component$(() => {
   const handleLogout = $(async () => {
     await logout();
     if (typeof window !== "undefined") {
-      window.location.href = "/";
+      window.location.reload();
     }
   });
 

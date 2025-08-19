@@ -17,20 +17,20 @@ export const useAuthRedirect = () => {
       // Redirect berdasarkan role user
       switch (userSession.role) {
         case "admin":
-          nav("/admin");
+          nav("/admin", { replaceState: true });
           break;
         case "kader":
-          nav("/kader");
+          nav("/kader", { replaceState: true });
           break;
         case "psikolog":
-          nav("/psikolog");
+          nav("/psikolog", { replaceState: true });
           break;
         case "posyandu":
-          nav("/posyandu");
+          nav("/posyandu", { replaceState: true });
           break;
         default:
           // Fallback ke dashboard jika role tidak dikenali
-          nav("/");
+          nav("/", { replaceState: true });
           break;
       }
     }
