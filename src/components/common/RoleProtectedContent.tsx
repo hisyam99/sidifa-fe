@@ -29,7 +29,7 @@ export const RoleProtectedContent = component$(
 
       if (!isLoggedIn.value) {
         // Redirect if not logged in after loading is complete
-        nav("/auth/login");
+        nav("/", { replaceState: true });
         hasAccess.value = false;
         return;
       }
@@ -38,7 +38,7 @@ export const RoleProtectedContent = component$(
         hasAccess.value = true;
       } else {
         // Redirect if role is not allowed after loading is complete
-        nav("/dashboard"); // Redirect to a generic dashboard or unauthorized page
+        nav("/", { replaceState: true }); // Redirect to a generic dashboard or unauthorized page
         hasAccess.value = false;
       }
     });
