@@ -11,7 +11,7 @@ jobs:
     environment: production
     steps:
       - name: List files for debug
-        run: ls -la
+        run: cd .. && ls -la
       - name: Renovate
         uses: renovatebot/github-action@v43.0.8
         with:
