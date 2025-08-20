@@ -1,0 +1,15 @@
+{
+  "extends": ["config:base"],
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "description": "Automerge minor dan patch",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    }
+  ],
+  "semanticCommits": true,
+  "semanticCommitType": "fix",
+  "semanticCommitScope": "deps",
+  "commitMessageTopic": "Update dependencies"
+}

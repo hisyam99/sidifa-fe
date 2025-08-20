@@ -15,6 +15,7 @@ node_modules
 .env.staging
 .env.bak*
 *.local
+.secrets
 
 # Cache
 .cache
