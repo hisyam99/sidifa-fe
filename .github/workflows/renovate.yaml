@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: List files for debug
-        run: cd .. && ls -la
+        run: ls -la
       - name: Renovate
         uses: renovatebot/github-action@v43.0.8
         with:
