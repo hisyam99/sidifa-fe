@@ -2,11 +2,15 @@ import { component$, useSignal, $ } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { signupPsikologSchema, type SignupPsikologForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
-import { FormField, Alert, Card } from "~/components/ui";
+import { FormField, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
 import { sessionUtils } from "~/utils/auth";
 import { LuBrain, LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
 import { useNavigate, Link } from "@builder.io/qwik-city";
+import {
+  emitToastSuccess,
+  emitToastError,
+} from "~/components/ui/toast/ToastProvider";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -27,20 +31,14 @@ export default component$(() => {
       },
     },
     validate: valiForm$(signupPsikologSchema),
-    validateOn: "blur",
-    revalidateOn: "blur",
+    validateOn: "change",
+    revalidateOn: "change",
   });
 
   const handleSubmit = $(async (values: SignupPsikologForm) => {
     error.value = null;
     success.value = null;
     verificationStatus.value = null;
-
-    // Custom validation untuk memastikan password dan confirmPassword sama
-    if (values.password !== values.confirmPassword) {
-      error.value = "Password dan konfirmasi password tidak sama";
-      return;
-    }
 
     try {
       await api.post("/auth/signup/psikolog", values);
@@ -55,10 +53,16 @@ export default component$(() => {
         const msg = extractErrorMessage(loginErr).toLowerCase();
         if (msg.includes("unverified")) {
           verificationStatus.value = "unverified";
+          await emitToastError(
+            "Akun Anda belum terverifikasi. Silakan tunggu hingga admin memverifikasi akun Anda. Cek email Anda secara berkala untuk update.",
+          );
           return;
         }
         if (msg.includes("declined") || msg.includes("ditolak")) {
           verificationStatus.value = "declined";
+          await emitToastError(
+            "Pendaftaran akun Anda ditolak oleh admin. Silakan hubungi admin untuk klarifikasi.",
+          );
           return;
         }
         throw loginErr;
@@ -73,6 +77,9 @@ export default component$(() => {
         verificationStatus.value =
           profile.verification === "unverified" ? "unverified" : "declined";
         sessionUtils.clearAllAuthData();
+        await emitToastError(
+          "Akun Anda belum terverifikasi atau ditolak. Silakan hubungi admin.",
+        );
         return;
       }
 
@@ -85,6 +92,7 @@ export default component$(() => {
           redirectTo = "/kader";
 
         success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
+        await emitToastSuccess(success.value, 1200);
         setTimeout(() => {
           nav(redirectTo);
         }, 1000);
@@ -92,16 +100,18 @@ export default component$(() => {
       }
 
       success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
+      await emitToastSuccess(success.value, 1200);
       setTimeout(() => {
         nav("/dashboard");
       }, 1000);
     } catch (err: any) {
       error.value = extractErrorMessage(err);
+      await emitToastError(error.value);
     }
   });
 
   return (
-    <Card class="w_full mx-auto">
+    <Card class="w-full mx-auto">
       <div class="text-center mb-8">
         <div class="bg-primary text-primary-content rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center shadow-xl">
           <LuBrain class="w-8 h-8" />
@@ -342,11 +352,6 @@ export default component$(() => {
             </Link>
           </div>
         </>
-      )}
-
-      {error.value && <Alert type="error" message={error.value} class="mt-6" />}
-      {success.value && (
-        <Alert type="success" message={success.value} class="mt-6" />
       )}
     </Card>
   );

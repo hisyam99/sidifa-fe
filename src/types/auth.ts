@@ -6,48 +6,82 @@ import {
   regex,
   pipe,
   type InferInput,
+  forward,
+  check,
 } from "valibot";
 
 // Signup Posyandu schema
-export const signupKaderSchema = object({
-  name: pipe(string(), minLength(1, "Nama harus diisi")),
-  email: pipe(string(), email("Email tidak valid")),
-  password: pipe(
-    string(),
-    minLength(8, "Password minimal 8 karakter"),
-    regex(
-      /^(?=.*[A-Z])(?=.*\d).+$/,
-      "Password harus mengandung huruf besar dan angka",
+export const signupKaderSchema = pipe(
+  object({
+    name: pipe(string(), minLength(1, "Nama harus diisi")),
+    email: pipe(string(), email("Email tidak valid")),
+    password: pipe(
+      string(),
+      minLength(8, "Password minimal 8 karakter"),
+      regex(
+        /^(?=.*[A-Z])(?=.*\d).+$/,
+        "Password harus mengandung huruf besar dan angka",
+      ),
     ),
+    confirmPassword: pipe(
+      string(),
+      minLength(1, "Konfirmasi password harus diisi"),
+    ),
+    no_telp: pipe(
+      string(),
+      minLength(1, "No telepon harus diisi"),
+      regex(
+        /^08\d{8,13}$/,
+        "Nomor telepon harus format Indonesia dan hanya angka, contoh: 081234567890",
+      ),
+    ),
+    jabatan: pipe(string(), minLength(1, "Jabatan harus diisi")),
+  }),
+  forward(
+    check(
+      ({ password, confirmPassword }) => password === confirmPassword,
+      "Password dan konfirmasi password tidak sama",
+    ),
+    ["confirmPassword"],
   ),
-  confirmPassword: pipe(
-    string(),
-    minLength(1, "Konfirmasi password harus diisi"),
-  ),
-  no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
-  jabatan: pipe(string(), minLength(1, "Jabatan harus diisi")),
-});
+);
 
 // Signup Psikolog schema
-export const signupPsikologSchema = object({
-  name: pipe(string(), minLength(1, "Nama harus diisi")),
-  email: pipe(string(), email("Email tidak valid")),
-  password: pipe(
-    string(),
-    minLength(8, "Password minimal 8 karakter"),
-    regex(
-      /^(?=.*[A-Z])(?=.*\d).+$/,
-      "Password harus mengandung huruf besar dan angka",
+export const signupPsikologSchema = pipe(
+  object({
+    name: pipe(string(), minLength(1, "Nama harus diisi")),
+    email: pipe(string(), email("Email tidak valid")),
+    password: pipe(
+      string(),
+      minLength(8, "Password minimal 8 karakter"),
+      regex(
+        /^(?=.*[A-Z])(?=.*\d).+$/,
+        "Password harus mengandung huruf besar dan angka",
+      ),
     ),
+    confirmPassword: pipe(
+      string(),
+      minLength(1, "Konfirmasi password harus diisi"),
+    ),
+    no_telp: pipe(
+      string(),
+      minLength(1, "No telepon harus diisi"),
+      regex(
+        /^08\d{8,13}$/,
+        "Nomor telepon harus format Indonesia dan hanya angka, contoh: 081234567890",
+      ),
+    ),
+    spesialis: pipe(string(), minLength(1, "Spesialis harus diisi")),
+    lokasi: pipe(string(), minLength(1, "Lokasi harus diisi")),
+  }),
+  forward(
+    check(
+      ({ password, confirmPassword }) => password === confirmPassword,
+      "Password dan konfirmasi password tidak sama",
+    ),
+    ["confirmPassword"],
   ),
-  confirmPassword: pipe(
-    string(),
-    minLength(1, "Konfirmasi password harus diisi"),
-  ),
-  no_telp: pipe(string(), minLength(1, "No telepon harus diisi")),
-  spesialis: pipe(string(), minLength(1, "Spesialis harus diisi")),
-  lokasi: pipe(string(), minLength(1, "Lokasi harus diisi")),
-});
+);
 
 // Login schema
 export const loginSchema = object({

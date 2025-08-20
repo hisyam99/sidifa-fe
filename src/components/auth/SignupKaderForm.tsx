@@ -10,6 +10,10 @@ import {
   LuArrowRight,
 } from "~/components/icons/lucide-optimized"; // Updated import path
 import { useNavigate, Link } from "@builder.io/qwik-city";
+import {
+  emitToastSuccess,
+  emitToastError,
+} from "~/components/ui/toast/ToastProvider";
 
 export default component$(() => {
   const error = useSignal<string | null>(null);
@@ -29,20 +33,14 @@ export default component$(() => {
       },
     },
     validate: valiForm$(signupKaderSchema),
-    validateOn: "blur",
-    revalidateOn: "blur",
+    validateOn: "change",
+    revalidateOn: "change",
   });
 
   const handleSubmit = $(async (values: SignupKaderForm) => {
     error.value = null;
     success.value = null;
     verificationStatus.value = null;
-
-    // Custom validation untuk memastikan password dan confirmPassword sama
-    if (values.password !== values.confirmPassword) {
-      error.value = "Password dan konfirmasi password tidak sama";
-      return;
-    }
 
     try {
       await api.post("/auth/signup/kader", values);
@@ -57,10 +55,16 @@ export default component$(() => {
         const msg = extractErrorMessage(loginErr).toLowerCase();
         if (msg.includes("unverified")) {
           verificationStatus.value = "unverified";
+          await emitToastError(
+            "Akun Anda belum terverifikasi. Silakan tunggu hingga admin memverifikasi akun Anda. Cek email Anda secara berkala untuk update.",
+          );
           return;
         }
         if (msg.includes("declined") || msg.includes("ditolak")) {
           verificationStatus.value = "declined";
+          await emitToastError(
+            "Pendaftaran akun Anda ditolak oleh admin. Silakan hubungi admin untuk klarifikasi.",
+          );
           return;
         }
         throw loginErr;
@@ -75,6 +79,9 @@ export default component$(() => {
         verificationStatus.value =
           profile.verification === "unverified" ? "unverified" : "declined";
         sessionUtils.clearAllAuthData();
+        await emitToastError(
+          "Akun Anda belum terverifikasi atau ditolak. Silakan hubungi admin.",
+        );
         return;
       }
 
@@ -87,6 +94,7 @@ export default component$(() => {
           redirectTo = "/kader";
 
         success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
+        await emitToastSuccess(success.value, 1200);
         setTimeout(() => {
           nav(redirectTo);
         }, 1000);
@@ -95,11 +103,13 @@ export default component$(() => {
 
       // Fallback jika role tidak tersedia
       success.value = "Pendaftaran berhasil! Anda akan diarahkan...";
+      await emitToastSuccess(success.value, 1200);
       setTimeout(() => {
         nav("/dashboard");
       }, 1000);
     } catch (err: any) {
       error.value = extractErrorMessage(err);
+      await emitToastError(error.value);
     }
   });
 
@@ -228,7 +238,7 @@ export default component$(() => {
                     <FormField
                       field={field}
                       props={props}
-                      type="tel"
+                      type="number"
                       placeholder="Masukkan nomor telepon"
                       label="Nomor Telepon"
                       required
