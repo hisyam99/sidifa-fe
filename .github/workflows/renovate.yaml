@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: Renovate
         uses: renovatebot/github-action@v43.0.8
-        env:
-          GITHUB_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
         with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
