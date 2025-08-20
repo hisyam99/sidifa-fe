@@ -40,16 +40,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            bash -c '
             set -euo pipefail
 
             # --- Context dari GitHub Actions untuk URL raw ---
-            REPO='${{ github.repository }}'      # e.g. owner/repo
-            REF='${{ github.ref_name }}'         # e.g. main
+            REPO="${{ github.repository }}"      # e.g. owner/repo
+            REF="${{ github.ref_name }}"         # e.g. main
             RAW_URL_DEFAULT="https://raw.githubusercontent.com/${REPO}/${REF}/compose.yaml"
             RAW_URL_FALLBACK="https://raw.githubusercontent.com/hisyam99/sidifa-fe/refs/heads/main/compose.yaml"
 
             # --- Container engine (default docker) ---
-            ENGINE='${{ secrets.CONTAINER_ENGINE }}'
+            ENGINE="${{ secrets.CONTAINER_ENGINE }}"
             if [ -z "${ENGINE:-}" ]; then ENGINE="docker"; fi
 
             echo "--- Navigating to deployment directory ---"
@@ -88,9 +89,9 @@ jobs:
             fi
 
             echo "--- Pulling latest Docker image ---"
-            REGISTRY='${{ secrets.DOCKER_REGISTRY }}'
+            REGISTRY="${{ secrets.DOCKER_REGISTRY }}"
             if [ -z "${REGISTRY:-}" ]; then REGISTRY="docker.io"; fi
-            IMAGE_USER='${{ secrets.DOCKER_USERNAME }}'
+            IMAGE_USER="${{ secrets.DOCKER_USERNAME }}"
             "$ENGINE" pull "$REGISTRY/${IMAGE_USER}/sidifa-fe:latest" || true
 
             echo "--- docker compose pull ---"
@@ -100,7 +101,7 @@ jobs:
             "$ENGINE" compose -f compose.yaml down || true
 
             # Remove sidifa-fe container if exists (extra safety)
-            if "$ENGINE" ps -a --format '{{.Names}}' | grep -wq sidifa-fe; then
+            if "$ENGINE" ps -a --format "{{.Names}}" | grep -wq sidifa-fe; then
               echo "--- Removing existing sidifa-fe container ---"
               "$ENGINE" rm -f sidifa-fe || true
             fi
@@ -109,3 +110,4 @@ jobs:
             "$ENGINE" compose -f compose.yaml up -d --remove-orphans
 
             echo "--- Deployment complete ---"
+            '
