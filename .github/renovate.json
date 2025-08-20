@@ -1,15 +1,31 @@
 {
-  "extends": ["config:base"],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "dependencyDashboard": true,
-  "packageRules": [
-    {
-      "description": "Automerge minor dan patch",
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
-    }
-  ],
-  "semanticCommits": true,
+  "semanticCommits": "enabled",
   "semanticCommitType": "fix",
   "semanticCommitScope": "deps",
-  "commitMessageTopic": "Update dependencies"
+  "commitMessageTopic": "Update dependencies",
+  "packageRules": [
+    {
+      "description": "Automerge minor and patch updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Group all dependencies updates",
+      "groupName": "all dependencies",
+      "matchPackagePatterns": [".*"]
+    },
+    {
+      "description": "Require approval for major updates",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ],
+  "reviewers": [],
+  "labels": ["dependencies", "renovate"],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "timezone": "Asia/Jakarta",
+  "schedule": ["before 5am on monday"]
 }
