@@ -1,6 +1,7 @@
 {
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "dependencyDashboard": true,
+  "autodiscover": true,
   "semanticCommits": "enabled",
   "semanticCommitType": "fix",
   "semanticCommitScope": "deps",
@@ -14,7 +15,7 @@
     {
       "description": "Group all dependencies updates",
       "groupName": "all dependencies",
-      "matchPackagePatterns": [".*"]
+      "matchPackageNames": ["/.*/"]
     },
     {
       "description": "Require approval for major updates",
