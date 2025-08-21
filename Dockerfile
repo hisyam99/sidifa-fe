@@ -33,7 +33,7 @@ RUN bun run build
 # ----------------------------
 # Final runtime image (lean)
 # ----------------------------
-FROM oven/bun:1 AS final
+FROM oven/bun:1-alpine AS final
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
