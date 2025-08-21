@@ -59,8 +59,9 @@
     "mdx-editor": "^0.0.1",
     "motion": "^12.23.12",
     "tailwindcss": "^4.1.12",
-    "valibot": "^1.1.0",
-    "xior": "^0.7.8"
+    "valibot": "^1.1.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "xior": "^0.7.8"
+  }
 }
