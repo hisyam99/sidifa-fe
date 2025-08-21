@@ -55,13 +55,13 @@
     "dompurify": "^3.2.6",
     "dotenv": "^17.2.1",
     "install": "^0.13.0",
-    "marked": "^16.2.0",
     "mdx-editor": "^0.0.1",
     "motion": "^12.23.12",
     "tailwindcss": "^4.1.12",
     "valibot": "^1.1.0"
   },
   "dependencies": {
-    "xior": "^0.7.8"
+    "xior": "^0.7.8",
+    "marked": "^16.2.0"
   }
 }
