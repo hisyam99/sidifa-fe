@@ -4,8 +4,8 @@
     "": {
       "name": "my-qwik-basic-starter",
       "devDependencies": {
-        "@builder.io/qwik": "^1.15.0",
-        "@builder.io/qwik-city": "^1.15.0",
+        "@builder.io/qwik": "^1.16.0",
+        "@builder.io/qwik-city": "^1.16.0",
         "@builder.io/qwik-react": "^0.5.6",
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
@@ -23,7 +23,7 @@
         "dompurify": "^3.2.6",
         "dotenv": "^17.2.1",
         "eslint": "^9.33.0",
-        "eslint-plugin-qwik": "^1.15.0",
+        "eslint-plugin-qwik": "^1.16.0",
         "globals": "^16.3.0",
         "install": "^0.13.0",
         "marked": "^16.2.0",
