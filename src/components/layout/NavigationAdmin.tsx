@@ -71,7 +71,6 @@ export const NavigationAdmin = component$(() => {
                   >
                     <div
                       q:slot="trigger"
-                      tabIndex={0}
                       class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300 mega-menu-trigger${
                         isActivePath(currentPath, item.href, item.href === "/")
                           ? " font-bold text-primary"
