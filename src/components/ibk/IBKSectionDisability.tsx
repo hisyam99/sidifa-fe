@@ -7,6 +7,7 @@ import {
   LuEye,
   LuCheck,
 } from "~/components/icons/lucide-optimized";
+import { TYPE_TO_ID, ID_TO_TYPE, disabilityTypes } from "./ibkDisabilityTypes";
 
 const DISABILITY_ICON_MAP = {
   fisik: LuActivity,
@@ -61,66 +62,6 @@ export const IBKSectionDisability = component$(
     >({});
     const didPrefill = useSignal(false);
 
-    // Map jenis_difabilitas_id -> type key for prefill
-    const ID_TO_TYPE: Record<string, string> = {
-      "b8afb93f-0232-45b7-9c9f-c2063215a8f2": "fisik",
-      "889c26c0-1624-4280-aa05-f28ae71816db": "intelektual",
-      "6f469ea4-974a-4240-b062-693acbd47d17": "mental",
-      "9e8c9f6d-3e05-4b62-a9df-768effa0316d": "sensorik_penglihatan",
-      "712e4398-c116-4040-a762-bd3bc44ab835": "sensorik_rungu",
-    };
-
-    const TYPE_TO_ID: Record<string, string> = {
-      fisik: "b8afb93f-0232-45b7-9c9f-c2063215a8f2",
-      intelektual: "889c26c0-1624-4280-aa05-f28ae71816db",
-      mental: "6f469ea4-974a-4240-b062-693acbd47d17",
-      sensorik_penglihatan: "9e8c9f6d-3e05-4b62-a9df-768effa0316d",
-      sensorik_rungu: "712e4398-c116-4040-a762-bd3bc44ab835",
-    };
-
-    const disabilityTypes = [
-      {
-        type: "fisik",
-        title: "Disabilitas Fisik",
-        description: "Gangguan fungsi gerak dan mobilitas tubuh",
-        icon: "fisik",
-        color: "border-primary bg-primary/5",
-        examples: ["Lumpuh kaki", "Cacat tangan", "Kelainan tulang belakang"],
-      },
-      {
-        type: "intelektual",
-        title: "Disabilitas Intelektual",
-        description: "Keterbatasan fungsi kognitif dan adaptif",
-        icon: "intelektual",
-        color: "border-secondary bg-secondary/5",
-        examples: ["Down Syndrome", "Autisme", "Keterlambatan perkembangan"],
-      },
-      {
-        type: "mental",
-        title: "Disabilitas Mental (Termasuk ODGJ)",
-        description: "Gangguan fungsi psikis dan emosional",
-        icon: "mental",
-        color: "border-accent bg-accent/5",
-        examples: ["Bipolar", "Depresi", "Gangguan kecemasan"],
-      },
-      {
-        type: "sensorik_penglihatan",
-        title: "Sensorik Penglihatan",
-        description: "Gangguan penglihatan",
-        icon: "sensorik",
-        color: "border-warning bg-warning/5",
-        examples: ["Tuna netra", "Gangguan penglihatan"],
-      },
-      {
-        type: "sensorik_rungu",
-        title: "Sensorik Rungu",
-        description: "Gangguan pendengaran/komunikasi",
-        icon: "sensorik",
-        color: "border-warning bg-warning/5",
-        examples: ["Tuna rungu", "Gangguan bicara"],
-      },
-    ];
-
     const emitChange = $(() => {
       const items = selected.value.map((type) => {
         const id = TYPE_TO_ID[type];
@@ -139,11 +80,7 @@ export const IBKSectionDisability = component$(
       if (props.onChangeSelections$) props.onChangeSelections$(items);
 
       // If we have initial items, also emit edit changes for those currently visible
-      if (
-        props.onEditChanges$ &&
-        props.initialItems &&
-        props.initialItems.length
-      ) {
+      if (props.onEditChanges$ && props.initialItems?.length) {
         const edited: Array<{
           id: string;
           jenis_difabilitas_id: string;
@@ -155,10 +92,10 @@ export const IBKSectionDisability = component$(
           const type = ID_TO_TYPE[it.jenis_difabilitas_id];
           if (!type) continue;
           // If the card is rendered (either selected or initial), read details from state; otherwise use original
-          const d = details[type] || {
+          const d = details[type] ?? {
             tingkat_keparahan: it.tingkat_keparahan,
-            sejak_kapan: it.sejak_kapan || "",
-            deskripsi_kondisi: it.keterangan || "",
+            sejak_kapan: it.sejak_kapan ?? "",
+            deskripsi_kondisi: it.keterangan ?? "",
           };
           edited.push({
             id: it.id,
@@ -173,7 +110,7 @@ export const IBKSectionDisability = component$(
     });
 
     // Prefill from initialItems (once) and notify parent
-    if (!didPrefill.value && props.initialItems && props.initialItems.length) {
+    if (!didPrefill.value && props.initialItems?.length) {
       for (const it of props.initialItems) {
         const type = ID_TO_TYPE[it.jenis_difabilitas_id];
         if (!type) continue;
@@ -188,7 +125,7 @@ export const IBKSectionDisability = component$(
       didPrefill.value = true;
       // Emit once after prefill so parent gets edited and new states
       // Note: emitChange is a $ QRL, safe to call here
-      emitChange();
+      emitChange?.();
     }
 
     const toggleDisability = $((type: string) => {
@@ -285,65 +222,65 @@ export const IBKSectionDisability = component$(
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label class="label" for={`${type}-severity`}>
+                        <label class="label">
                           <span class="label-text font-semibold">
                             Tingkat Keparahan
                           </span>
+                          <select
+                            id={`${type}-severity`}
+                            class="select select-bordered w-full"
+                            value={details[type].tingkat_keparahan}
+                            onChange$={(e) => {
+                              details[type].tingkat_keparahan = (
+                                e.target as HTMLSelectElement
+                              ).value;
+                              emitChange();
+                            }}
+                          >
+                            <option value="ringan">Ringan</option>
+                            <option value="sedang">Sedang</option>
+                            <option value="berat">Berat</option>
+                          </select>
                         </label>
-                        <select
-                          id={`${type}-severity`}
-                          class="select select-bordered w-full"
-                          value={details[type].tingkat_keparahan}
-                          onChange$={(e) => {
-                            details[type].tingkat_keparahan = (
-                              e.target as HTMLSelectElement
-                            ).value;
-                            emitChange();
-                          }}
-                        >
-                          <option value="ringan">Ringan</option>
-                          <option value="sedang">Sedang</option>
-                          <option value="berat">Berat</option>
-                        </select>
                       </div>
                       <div>
-                        <label class="label" for={`${type}-sejak`}>
+                        <label class="label">
                           <span class="label-text font-semibold">
                             Sejak Kapan
                           </span>
+                          <input
+                            id={`${type}-sejak`}
+                            type="datetime-local"
+                            class="input input-bordered w-full"
+                            placeholder="2025-08-10T13:30"
+                            value={details[type].sejak_kapan}
+                            onInput$={(e) => {
+                              details[type].sejak_kapan = (
+                                e.target as HTMLInputElement
+                              ).value;
+                              emitChange();
+                            }}
+                          />
                         </label>
-                        <input
-                          id={`${type}-sejak`}
-                          type="datetime-local"
-                          class="input input-bordered w-full"
-                          placeholder="2025-08-10T13:30"
-                          value={details[type].sejak_kapan}
-                          onInput$={(e) => {
-                            details[type].sejak_kapan = (
-                              e.target as HTMLInputElement
-                            ).value;
-                            emitChange();
-                          }}
-                        />
                       </div>
                       <div>
-                        <label class="label" for={`${type}-desc`}>
+                        <label class="label">
                           <span class="label-text font-semibold">
                             Keterangan
                           </span>
+                          <textarea
+                            id={`${type}-desc`}
+                            class="textarea textarea-bordered w-full"
+                            placeholder="Jelaskan kondisi disabilitas"
+                            value={details[type].deskripsi_kondisi}
+                            onInput$={(e) => {
+                              details[type].deskripsi_kondisi = (
+                                e.target as HTMLTextAreaElement
+                              ).value;
+                              emitChange();
+                            }}
+                          ></textarea>
                         </label>
-                        <textarea
-                          id={`${type}-desc`}
-                          class="textarea textarea-bordered w-full"
-                          placeholder="Jelaskan kondisi disabilitas"
-                          value={details[type].deskripsi_kondisi}
-                          onInput$={(e) => {
-                            details[type].deskripsi_kondisi = (
-                              e.target as HTMLTextAreaElement
-                            ).value;
-                            emitChange();
-                          }}
-                        ></textarea>
                       </div>
                     </div>
                   </div>

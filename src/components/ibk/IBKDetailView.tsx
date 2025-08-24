@@ -16,6 +16,8 @@ import {
   LuShield,
 } from "~/components/icons/lucide-optimized";
 
+import { ID_TO_TYPE } from "./ibkDisabilityTypes";
+
 interface IBKDetailViewProps {
   data: any; // API shape varies across pages; keep flexible
   onBack$?: QRL<() => void>;
@@ -27,54 +29,45 @@ const getDisabilityTheme = (jenisNama: string) => {
   switch (jenisNama?.toLowerCase()) {
     case "fisik":
       return {
-        bgColor: "bg-orange-100/50",
-        borderColor: "border-orange-200",
-        textColor: "text-orange-800",
-        iconBg: "bg-orange-100",
-        iconColor: "text-orange-600",
+        bgColor: "bg-primary/5",
+        borderColor: "border-primary",
+        textColor: "text-primary",
+        iconBg: "bg-primary/5",
+        iconColor: "text-primary",
         icon: LuActivity,
         badgeColor: "badge-warning",
       };
     case "intelektual":
       return {
-        bgColor: "bg-purple-100/50",
-        borderColor: "border-purple-200",
-        textColor: "text-purple-800",
-        iconBg: "bg-purple-100",
-        iconColor: "text-purple-600",
+        bgColor: "bg-secondary/5",
+        borderColor: "border-secondary",
+        textColor: "text-secondary",
+        iconBg: "bg-secondary/5",
+        iconColor: "text-secondary",
         icon: LuBrain,
         badgeColor: "badge-secondary",
       };
-    case "mental (termasuk odgj)":
-    case "mental":
+    case "mental_psikososial":
+    case "mental_perkembangan":
       return {
-        bgColor: "bg-pink-100/50",
-        borderColor: "border-pink-200",
-        textColor: "text-pink-800",
-        iconBg: "bg-pink-100",
-        iconColor: "text-pink-600",
+        bgColor: "bg-accent/5",
+        borderColor: "border-accent",
+        textColor: "text-accent",
+        iconBg: "bg-accent/5",
+        iconColor: "text-accent",
         icon: LuHeart,
         badgeColor: "badge-accent",
       };
-    case "sensorik penglihatan":
+    case "pendengaran":
+    case "wicara":
       return {
-        bgColor: "bg-blue-100/50",
-        borderColor: "border-blue-200",
-        textColor: "text-blue-800",
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
+        bgColor: "bg-warning/5",
+        borderColor: "border-warning",
+        textColor: "text-warning",
+        iconBg: "bg-warning/5",
+        iconColor: "text-warning",
         icon: LuEye,
-        badgeColor: "badge-info",
-      };
-    case "sensorik rungu":
-      return {
-        bgColor: "bg-green-100/50",
-        borderColor: "border-green-200",
-        textColor: "text-green-800",
-        iconBg: "bg-green-100",
-        iconColor: "text-green-600",
-        icon: LuShield,
-        badgeColor: "badge-success",
+        badgeColor: "badge-warning",
       };
     default:
       return {
@@ -460,7 +453,7 @@ export const IBKDetailView = component$<IBKDetailViewProps>(
                         {disabilitasIbk.map(
                           (disabilitas: any, index: number) => {
                             const theme = getDisabilityTheme(
-                              disabilitas.jenis_difasilitas?.nama,
+                              ID_TO_TYPE[disabilitas.jenis_difasilitas?.id],
                             );
                             const severityColor = getSeverityColor(
                               disabilitas.tingkat_keparahan,
