@@ -31,6 +31,7 @@ export default extendConfig(baseConfig as any, () => {
         ssg: {
           include: ["/*"],
           exclude: [
+            "/auth/login",
             "/auth/reset-password", // Exclude reset-password karena butuh dynamic token
             "/auth/reset-password/*", // Exclude semua sub-routes juga
           ],
