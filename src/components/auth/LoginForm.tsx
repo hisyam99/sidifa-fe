@@ -40,6 +40,23 @@ export default component$(() => {
       // Refresh global auth state
       await refreshUserData();
       const profile = await profileService.getProfile();
+      let redirectPath: string;
+      switch (profile?.role) {
+        case "admin":
+          redirectPath = "/admin";
+          break;
+        case "kader":
+          redirectPath = "/kader";
+          break;
+        case "psikolog":
+          redirectPath = "/psikolog";
+          break;
+        case "posyandu":
+          redirectPath = "/posyandu";
+          break;
+        default:
+          redirectPath = "/";
+      }
       if (profile?.role) {
         sessionUtils.setUserProfile(profile);
         setUiAuthCookies({
@@ -47,25 +64,13 @@ export default component$(() => {
         });
         success.value = "Login berhasil!";
         await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
-        // SPA navigation with replaceState to prevent back to login
-        await nav(
-          profile.role === "admin"
-            ? "/admin"
-            : profile.role === "kader"
-              ? "/kader"
-              : profile.role === "psikolog"
-                ? "/psikolog"
-                : profile.role === "posyandu"
-                  ? "/posyandu"
-                  : "/",
-          { replaceState: true },
-        );
+        await nav(redirectPath, { replaceState: true });
         return;
       }
       // Fallback jika tidak dapat role
       success.value = "Login berhasil!";
       await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
-      await nav("/", { replaceState: true });
+      await nav(redirectPath, { replaceState: true });
       return;
     } catch (err: any) {
       const raw = extractErrorMessage(err);
@@ -86,6 +91,7 @@ export default component$(() => {
 
       error.value = raw;
       await emitToastError(raw);
+      return;
     }
   });
 
