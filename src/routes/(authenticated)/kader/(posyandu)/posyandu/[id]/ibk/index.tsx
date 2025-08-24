@@ -14,7 +14,8 @@ import { ibkService } from "~/services/api";
 import { useDebouncer } from "~/utils/debouncer";
 
 export default component$(() => {
-  const search = useSignal("");
+  const searchNama = useSignal("");
+  const searchNik = useSignal("");
   const loading = useSignal(false);
   const error = useSignal<string | null>(null);
   const location = useLocation();
@@ -25,7 +26,7 @@ export default component$(() => {
   const navigate = useNavigate();
 
   // Search/filter state
-  const genderFilter = useSignal("");
+  // HAPUS: const genderFilter = useSignal("");
 
   const limitOptions = ["5", "10", "20", "50", "100"];
 
@@ -36,6 +37,7 @@ export default component$(() => {
   const existingIBK = useSignal<IBKRecord[]>([]);
   const tableRef = useSignal<HTMLDivElement | undefined>(undefined);
   const hasInteracted = useSignal(false);
+  const nikError = useSignal<string | null>(null);
 
   const { isLoggedIn } = useAuth(); // Get isLoggedIn
 
@@ -58,7 +60,8 @@ export default component$(() => {
         page: page.value,
         limit: limit.value,
         orderBy: "created_at",
-        nama: search.value ? search.value : undefined,
+        nama: searchNama.value ? searchNama.value : undefined,
+        nik: searchNik.value ? searchNik.value : undefined,
       });
       existingIBK.value = (res.data || []).map((item: any) => ({
         personal_data: {
@@ -161,13 +164,13 @@ export default component$(() => {
   const filteredIBK = useSignal<IBKRecord[]>([]);
   useTask$(({ track }) => {
     track(() => existingIBK.value);
-    track(() => genderFilter.value);
-    let data = existingIBK.value;
-    if (genderFilter.value) {
-      data = data.filter(
-        (ibk) => ibk.personal_data.gender === genderFilter.value,
-      );
-    }
+    // HAPUS: track(() => genderFilter.value);
+    const data = existingIBK.value;
+    // HAPUS: if (genderFilter.value) {
+    // HAPUS:   data = data.filter(
+    // HAPUS:     (ibk) => ibk.personal_data.gender === genderFilter.value,
+    // HAPUS:   );
+    // HAPUS: }
     filteredIBK.value = data;
   });
   // View Detail: navigate to dedicated page
@@ -233,39 +236,50 @@ export default component$(() => {
               <div class="flex flex-col md:flex-row gap-4 mb-4 items-end w-full">
                 <div class="w-full md:w-auto flex-1">
                   <label class="label">
-                    <span class="label-text">Cari Nama/NIK</span>
+                    <span class="label-text">Cari Nama</span>
                   </label>
                   <input
                     class="input input-bordered w-full"
                     type="text"
-                    placeholder="Cari berdasarkan nama atau NIK..."
-                    value={search.value}
+                    placeholder="Cari berdasarkan nama..."
+                    value={searchNama.value}
                     onInput$={(e) => {
-                      search.value = (e.target as HTMLInputElement).value;
+                      searchNama.value = (e.target as HTMLInputElement).value;
                       debouncedFetch();
                     }}
                   />
                 </div>
-                <div class="w-full md:w-auto">
+                <div class="w-full md:w-auto flex-1">
                   <label class="label">
-                    <span class="label-text">Jenis Kelamin</span>
+                    <span class="label-text">Cari NIK</span>
                   </label>
-                  <select
-                    class="select select-bordered w-full"
-                    value={genderFilter.value}
-                    onChange$={(e) => {
-                      genderFilter.value = (
-                        e.target as HTMLSelectElement
-                      ).value;
-                      page.value = 1;
-                      fetchIbkList();
-                    }}
-                  >
-                    <option value="">Semua</option>
-                    <option value="laki-laki">Laki-laki</option>
-                    <option value="perempuan">Perempuan</option>
-                  </select>
+                  <div class="relative">
+                    <input
+                      class={`input input-bordered w-full ${nikError.value ? "border-error focus:border-error" : ""}`}
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="Cari berdasarkan NIK..."
+                      value={searchNik.value}
+                      onInput$={(e) => {
+                        const val = (
+                          e.target as HTMLInputElement
+                        ).value.replace(/[^\d]/g, "");
+                        searchNik.value = val;
+                        nikError.value =
+                          val.length > 0 && val.length !== 16
+                            ? "NIK harus 16 digit angka"
+                            : null;
+                        debouncedFetch();
+                      }}
+                    />
+                    {nikError.value && (
+                      <div class="absolute left-0 top-full mt-1 text-error text-xs rounded px-2 py-1 z-10 w-full">
+                        {nikError.value}
+                      </div>
+                    )}
+                  </div>
                 </div>
+                {/* HAPUS: <div class="w-full md:w-auto"> ... <label class="label"><span class="label-text">Jenis Kelamin</span></label> ... <select ...>...</select> ... </div> */}
                 <div class="w-full md:w-auto">
                   <label class="label">
                     <span class="label-text">Limit per Halaman</span>

@@ -947,6 +947,7 @@ export const ibkService = {
     limit?: number;
     orderBy?: string;
     nama?: string;
+    nik?: string;
   }) {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page.toString());
@@ -954,6 +955,7 @@ export const ibkService = {
     if (params.orderBy) queryParams.append("orderBy", params.orderBy);
     if (params.posyanduId) queryParams.append("posyanduId", params.posyanduId);
     if (params.nama) queryParams.append("nama", params.nama);
+    if (params.nik) queryParams.append("nik", params.nik);
     const response = await api.get(
       `/kader/pendataan-ibk/${params.posyanduId}?${queryParams.toString()}`,
     );

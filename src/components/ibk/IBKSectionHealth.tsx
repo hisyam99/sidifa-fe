@@ -13,7 +13,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
         </span>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field of={form} name="odgj" type="string">
+        {/* <Field of={form} name="odgj" type="string">
           {(field: any, props: any) => (
             <FormFieldModular
               field={field}
@@ -28,7 +28,7 @@ export function IBKSectionHealth({ form }: Readonly<{ form: any }>) {
               ]}
             />
           )}
-        </Field>
+        </Field> */}
         <Field of={form} name="hasil_diagnosa" type="string">
           {(field: any, props: any) => (
             <FormFieldModular

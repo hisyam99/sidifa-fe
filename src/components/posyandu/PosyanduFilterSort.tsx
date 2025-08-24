@@ -1,13 +1,10 @@
-import { component$, Signal, QRL } from "@builder.io/qwik";
+import { component$, $, Signal, QRL } from "@builder.io/qwik";
 import { SearchBox } from "~/components/common";
-import type {
-  PosyanduFilterOptions,
-  PosyanduSortOptions,
-} from "~/types/posyandu";
+import type { PosyanduFilterOptions } from "~/types/posyandu";
+import { useDebouncer } from "~/utils/debouncer";
 
 interface PosyanduFilterSortProps {
   filterOptions: Signal<PosyanduFilterOptions>;
-  sortOptions: Signal<PosyanduSortOptions>;
   onFilterSortChange$: QRL<() => void>;
   onLimitChange$?: QRL<(event: Event) => void>; // Add onLimitChange$
   limit: Signal<number>; // Add limit signal
@@ -15,30 +12,34 @@ interface PosyanduFilterSortProps {
 
 export const PosyanduFilterSort = component$(
   (props: PosyanduFilterSortProps) => {
-    const {
-      filterOptions,
-      sortOptions,
-      onFilterSortChange$,
-      onLimitChange$,
-      limit,
-    } = props;
+    const { filterOptions, onFilterSortChange$, onLimitChange$, limit } = props;
 
-    const sortByOptions = [
-      { label: "Nama Posyandu (A-Z)", value: "nama_asc" },
-      { label: "Nama Posyandu (Z-A)", value: "nama_desc" },
-    ];
+    // const sortByOptions = [
+    //   { label: "Nama Posyandu (A-Z)", value: "nama_asc" },
+    //   { label: "Nama Posyandu (Z-A)", value: "nama_desc" },
+    // ];
 
-    const statusOptions = [
-      { label: "Semua Status", value: "" },
-      { label: "Aktif", value: "Aktif" },
-      { label: "Tidak Aktif", value: "Tidak Aktif" },
-    ];
+    // const statusOptions = [
+    //   { label: "Semua Status", value: "" },
+    //   { label: "Aktif", value: "Aktif" },
+    //   { label: "Tidak Aktif", value: "Tidak Aktif" },
+    // ];
 
     const limitOptions = [
+      { label: "5 per halaman", value: 5 },
       { label: "10 per halaman", value: 10 },
       { label: "20 per halaman", value: 20 },
       { label: "50 per halaman", value: 50 },
+      { label: "100 per halaman", value: 100 },
     ];
+
+    // Debounced filter trigger for search input
+    const debouncedFilterSort = useDebouncer(
+      $(() => {
+        onFilterSortChange$();
+      }),
+      500, // 500ms debounce, adjust as needed
+    );
 
     return (
       <div class="card mb-6 p-6 bg-base-100 shadow-md">
@@ -54,17 +55,18 @@ export const PosyanduFilterSort = component$(
               id="search-name"
               placeholder="Cari berdasarkan nama..."
               value={filterOptions.value.nama_posyandu || ""}
-              onInput$={(e) =>
-                (filterOptions.value.nama_posyandu = (
+              onInput$={(e) => {
+                filterOptions.value.nama_posyandu = (
                   e.target as HTMLInputElement
-                ).value)
-              }
+                ).value;
+                debouncedFilterSort();
+              }}
               onEnter$={onFilterSortChange$}
               size="sm"
               variant="minimal"
             />
           </div>
-          <div class="form-control">
+          {/* <div class="form-control">
             <label for="sort-by" class="label">
               <span class="label-text">Urutkan Berdasarkan</span>
             </label>
@@ -85,8 +87,8 @@ export const PosyanduFilterSort = component$(
                 </option>
               ))}
             </select>
-          </div>
-          <div class="form-control">
+          </div> */}
+          {/* <div class="form-control">
             <label for="filter-status" class="label">
               <span class="label-text">Filter Status</span>
             </label>
@@ -106,7 +108,7 @@ export const PosyanduFilterSort = component$(
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
           <div class="form-control">
             <label for="limit-select" class="label">
               <span class="label-text">Tampilkan Per Halaman</span>
@@ -125,11 +127,7 @@ export const PosyanduFilterSort = component$(
             </select>
           </div>
         </div>
-        <div class="flex justify-end mt-4">
-          <button class="btn btn-primary" onClick$={onFilterSortChange$}>
-            Terapkan Filter & Urutkan
-          </button>
-        </div>
+        {/* Terapkan Filter & Urutkan button removed, filter/sort now applies automatically */}
       </div>
     );
   },

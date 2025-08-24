@@ -72,8 +72,13 @@ export default component$(() => {
   const selectedPosyandu = useSignal<AdminPosyanduItem | null>(null);
 
   // Filter change handler resets page and triggers fetch
-  const handleFilterChange = $(() => {
-    resetPage();
+  const handleFilterChange = $(async () => {
+    await resetPage();
+    fetchList({
+      ...filterOptions.value,
+      page: 1,
+      limit: limit.value,
+    });
   });
 
   // Modal handlers

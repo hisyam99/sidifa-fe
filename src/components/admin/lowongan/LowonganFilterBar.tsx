@@ -1,4 +1,10 @@
-import { component$, PropFunction, Signal, $ } from "@builder.io/qwik";
+import {
+  component$,
+  PropFunction,
+  Signal,
+  $,
+  useSignal,
+} from "@builder.io/qwik";
 import type { LowonganFilterOptions } from "~/types/lowongan";
 import { useDebouncer } from "~/utils/debouncer";
 
@@ -11,70 +17,88 @@ interface LowonganFilterBarProps {
 
 export const LowonganFilterBar = component$<LowonganFilterBarProps>(
   ({ filterOptions, onFilterChange$, limit, onLimitChange$ }) => {
-    const applyChange = $(async () => onFilterChange$());
-    const debouncedApply = useDebouncer(applyChange, 400);
-
-    const setFilter = $((key: keyof LowonganFilterOptions, value: string) => {
-      filterOptions.value = { ...filterOptions.value, [key]: value };
+    // Signal lokal untuk input
+    const localFilter = useSignal<LowonganFilterOptions>({
+      ...filterOptions.value,
     });
+
+    // Debounced apply: update signal parent dan trigger handler
+    const debouncedApply = useDebouncer(
+      $(() => {
+        filterOptions.value = { ...localFilter.value };
+        onFilterChange$();
+      }),
+      400,
+    );
+
+    // Handler input: update signal lokal, trigger debounced
+    const setLocalFilter = $(
+      (key: keyof LowonganFilterOptions, value: string) => {
+        localFilter.value = { ...localFilter.value, [key]: value };
+        debouncedApply();
+      },
+    );
 
     return (
       <div class="grid grid-cols-1 md:grid-cols-6 gap-3 bg-base-100 p-4 rounded-lg shadow">
         <input
           class="input input-bordered w-full"
           placeholder="Nama lowongan"
-          value={filterOptions.value.nama_lowongan || ""}
-          onInput$={(e) => {
-            setFilter("nama_lowongan", (e.target as HTMLInputElement).value);
-            debouncedApply();
-          }}
+          value={localFilter.value.nama_lowongan || ""}
+          onInput$={(e) =>
+            setLocalFilter(
+              "nama_lowongan",
+              (e.target as HTMLInputElement).value,
+            )
+          }
         />
         <input
           class="input input-bordered w-full"
           placeholder="Perusahaan"
-          value={filterOptions.value.nama_perusahaan || ""}
-          onInput$={(e) => {
-            setFilter("nama_perusahaan", (e.target as HTMLInputElement).value);
-            debouncedApply();
-          }}
+          value={localFilter.value.nama_perusahaan || ""}
+          onInput$={(e) =>
+            setLocalFilter(
+              "nama_perusahaan",
+              (e.target as HTMLInputElement).value,
+            )
+          }
         />
         <input
           class="input input-bordered w-full"
           placeholder="Jenis pekerjaan"
-          value={filterOptions.value.jenis_pekerjaan || ""}
-          onInput$={(e) => {
-            setFilter("jenis_pekerjaan", (e.target as HTMLInputElement).value);
-            debouncedApply();
-          }}
+          value={localFilter.value.jenis_pekerjaan || ""}
+          onInput$={(e) =>
+            setLocalFilter(
+              "jenis_pekerjaan",
+              (e.target as HTMLInputElement).value,
+            )
+          }
         />
         <input
           class="input input-bordered w-full"
           placeholder="Lokasi"
-          value={filterOptions.value.lokasi || ""}
-          onInput$={(e) => {
-            setFilter("lokasi", (e.target as HTMLInputElement).value);
-            debouncedApply();
-          }}
+          value={localFilter.value.lokasi || ""}
+          onInput$={(e) =>
+            setLocalFilter("lokasi", (e.target as HTMLInputElement).value)
+          }
         />
         <input
           class="input input-bordered w-full"
           placeholder="Jenis disabilitas"
-          value={filterOptions.value.jenis_difasilitas || ""}
-          onInput$={(e) => {
-            setFilter(
+          value={localFilter.value.jenis_difasilitas || ""}
+          onInput$={(e) =>
+            setLocalFilter(
               "jenis_difasilitas",
               (e.target as HTMLInputElement).value,
-            );
-            debouncedApply();
-          }}
+            )
+          }
         />
         <select
           class="select select-bordered w-full"
-          value={filterOptions.value.status || ""}
-          onChange$={(e) => {
-            setFilter("status", (e.target as HTMLSelectElement).value);
-            debouncedApply();
-          }}
+          value={localFilter.value.status || ""}
+          onChange$={(e) =>
+            setLocalFilter("status", (e.target as HTMLSelectElement).value)
+          }
         >
           <option value="">Semua Status</option>
           <option value="aktif">Aktif</option>

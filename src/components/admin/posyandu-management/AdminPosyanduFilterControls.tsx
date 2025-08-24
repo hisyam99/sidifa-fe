@@ -1,6 +1,7 @@
-import { component$, Signal, QRL } from "@builder.io/qwik";
+import { component$, $, Signal, QRL } from "@builder.io/qwik";
 import { SearchBox } from "~/components/common";
 import type { AdminPosyanduFilterOptions } from "~/types/admin-posyandu-management";
+import { useDebouncer } from "~/utils/debouncer";
 
 interface AdminPosyanduFilterControlsProps {
   filterOptions: Signal<AdminPosyanduFilterOptions>;
@@ -13,11 +14,11 @@ export const AdminPosyanduFilterControls = component$(
   (props: AdminPosyanduFilterControlsProps) => {
     const { filterOptions, onFilterChange$ } = props;
 
-    const statusOptions = [
-      { label: "Semua Status", value: "" },
-      { label: "Aktif", value: "Aktif" },
-      { label: "Tidak Aktif", value: "Tidak Aktif" },
-    ];
+    // const statusOptions = [
+    //   { label: "Semua Status", value: "" },
+    //   { label: "Aktif", value: "Aktif" },
+    //   { label: "Tidak Aktif", value: "Tidak Aktif" },
+    // ];
 
     const limitOptions = [
       { label: "5", value: 5 },
@@ -26,6 +27,14 @@ export const AdminPosyanduFilterControls = component$(
       { label: "50", value: 50 },
       { label: "100", value: 100 },
     ];
+
+    // Debounced filter trigger for search input
+    const debouncedFilter = useDebouncer(
+      $(() => {
+        onFilterChange$();
+      }),
+      500, // 500ms debounce, adjust as needed
+    );
 
     return (
       <div class="mb-6 p-6 bg-base-100 rounded-lg shadow-md">
@@ -39,16 +48,17 @@ export const AdminPosyanduFilterControls = component$(
               id="search-posyandu"
               placeholder="Cari berdasarkan nama posyandu..."
               value={filterOptions.value.nama_posyandu || ""}
-              onInput$={(e) =>
-                (filterOptions.value.nama_posyandu = (
+              onInput$={(e) => {
+                filterOptions.value.nama_posyandu = (
                   e.target as HTMLInputElement
-                ).value)
-              }
+                ).value;
+                debouncedFilter();
+              }}
               onEnter$={onFilterChange$}
               class="input-bordered"
             />
           </div>
-          <div class="form-control flex-1">
+          {/* <div class="form-control flex-1">
             <label for="filter-status" class="label">
               <span class="label-text">Filter berdasarkan Status</span>
             </label>
@@ -68,7 +78,7 @@ export const AdminPosyanduFilterControls = component$(
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
           <div class="form-control flex-1">
             <label for="limit-per-page" class="label">
               <span class="label-text">Limit per Halaman</span>
@@ -91,11 +101,7 @@ export const AdminPosyanduFilterControls = component$(
             </select>
           </div>
         </div>
-        <div class="flex justify-end mt-4">
-          <button class="btn btn-primary" onClick$={onFilterChange$}>
-            Terapkan Filter
-          </button>
-        </div>
+        {/* Terapkan Filter button removed, filter now applies automatically */}
       </div>
     );
   },

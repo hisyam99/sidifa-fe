@@ -8,8 +8,8 @@ import { useForm, valiForm$, setValues } from "@modular-forms/qwik";
 import { object, string, nonEmpty, pipe, custom, InferOutput } from "valibot";
 import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
 import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
-import { IBKSectionAssessment } from "~/components/ibk/IBKPsikologiStep";
-import { IBKSectionHealth } from "~/components/ibk/IBKDisabilitasStep";
+import { IBKSectionAssessment } from "~/components/ibk/IBKSectionAssessment";
+import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
 
 // Schema sama dengan create agar field konsisten
@@ -42,7 +42,7 @@ const ibkSchema = object({
   bakat: string(),
   keterampilan: string(),
   // Step 3: Kesehatan
-  odgj: string(),
+  // odgj: string(),
   hasil_diagnosa: string(),
   jenis_bantuan: string(),
   riwayat_terapi: string(),
@@ -79,7 +79,7 @@ const defaultIBKForm: IBKForm = {
   minat: "",
   bakat: "",
   keterampilan: "",
-  odgj: "",
+  // odgj: "",
   hasil_diagnosa: "",
   jenis_bantuan: "",
   riwayat_terapi: "",
@@ -180,7 +180,7 @@ export default component$(() => {
         minat: asses?.minat ?? "",
         bakat: asses?.bakat ?? "",
         keterampilan: asses?.keterampilan ?? "",
-        odgj: String(sehat?.odgj ?? ""),
+        // odgj: String(sehat?.odgj ?? ""),
         hasil_diagnosa: sehat?.hasil_diagnosa ?? "",
         jenis_bantuan: sehat?.jenis_bantuan ?? "",
         riwayat_terapi: sehat?.riwayat_terapi ?? "",

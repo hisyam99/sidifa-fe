@@ -7,7 +7,7 @@ import {
   PosyanduFilterSort,
   PosyanduTable,
 } from "~/components/posyandu";
-import { PaginationControls, GenericLoadingSpinner } from "~/components/common";
+import { PaginationControls } from "~/components/common";
 import type {
   PosyanduItem,
   PaginationMeta,
@@ -100,8 +100,28 @@ export default component$(() => {
     }
   });
 
-  const handleFilterSortChange = $(() => {
-    resetPage();
+  // Perbaikan: Handler filter/sort sama seperti admin
+  const handleFilterSortChange = $(async () => {
+    await resetPage();
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await kaderService.getKaderPosyanduList({
+        ...filterOptions.value,
+        limit: limit.value,
+        page: 1,
+        // sortBy: sortOptions.value.sortBy, // Hapus jika API tidak mendukung
+      });
+      posyanduList.value = response.data.map((item: PosyanduItem) => ({
+        ...item,
+        isRegistered: item.is_registered ?? false,
+      }));
+      meta.value = response.meta;
+    } catch (err: any) {
+      error.value = err.message || "Gagal memuat data posyandu.";
+    } finally {
+      loading.value = false;
+    }
   });
 
   return (
@@ -113,7 +133,7 @@ export default component$(() => {
 
       <PosyanduFilterSort
         filterOptions={filterOptions}
-        sortOptions={sortOptions}
+        // sortOptions={sortOptions}
         onFilterSortChange$={handleFilterSortChange}
         limit={limit}
         onLimitChange$={$((event: Event) => {
@@ -123,16 +143,12 @@ export default component$(() => {
         })}
       />
 
-      {loading.value ? (
-        <GenericLoadingSpinner />
-      ) : (
-        <PosyanduTable
-          posyanduList={posyanduList}
-          loading={loading}
-          error={error}
-          onRegister$={registerToPosyandu}
-        />
-      )}
+      <PosyanduTable
+        posyanduList={posyanduList}
+        loading={loading}
+        error={error}
+        onRegister$={registerToPosyandu}
+      />
 
       {meta.value && meta.value.totalPage > 1 && (
         <PaginationControls

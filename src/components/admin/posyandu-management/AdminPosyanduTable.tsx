@@ -24,9 +24,9 @@ export const AdminPosyanduTable = component$(
       // onToggleStatus$,
     } = props;
 
-    const getStatusBadgeClass = (status: string) => {
-      return status === "Aktif" ? "badge-success" : "badge-error";
-    };
+    // const getStatusBadgeClass = (status: string) => {
+    //   return status === "Aktif" ? "badge-success" : "badge-error";
+    // };
 
     return (
       <div class="bg-base-100 p-3 md:p-4 rounded-xl shadow-sm border border-base-200/60">
@@ -45,7 +45,7 @@ export const AdminPosyanduTable = component$(
                   <th class="bg-base-200">Nama Posyandu</th>
                   <th class="bg-base-200">Alamat</th>
                   <th class="bg-base-200">No. Telp</th>
-                  <th class="bg-base-200">Status</th>
+                  {/* <th class="bg-base-200">Status</th> */}
                   <th class="bg-base-200 table-pin-col">Aksi</th>
                 </tr>
               </thead>
@@ -71,13 +71,13 @@ export const AdminPosyanduTable = component$(
                       <td class="max-w-[160px] whitespace-normal break-words">
                         {item.no_telp}
                       </td>
-                      <td>
+                      {/* <td>
                         <span
                           class={`badge ${getStatusBadgeClass(item.status)}`}
                         >
                           {item.status}
                         </span>
-                      </td>
+                      </td> */}
                       <td class="table-pin-col">
                         <div class="join">
                           {onViewDetail$ && (
@@ -137,9 +137,9 @@ export const AdminPosyanduTable = component$(
                       </div>
                       <div class="text-sm mt-1">No. Telp: {item.no_telp}</div>
                     </div>
-                    <span class={`badge ${getStatusBadgeClass(item.status)}`}>
+                    {/* <span class={`badge ${getStatusBadgeClass(item.status)}`}>
                       {item.status}
-                    </span>
+                    </span> */}
                   </div>
                   <div class="mt-3">
                     <div class="join">

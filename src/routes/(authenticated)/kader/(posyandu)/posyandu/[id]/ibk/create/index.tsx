@@ -12,8 +12,8 @@ import { extractErrorMessage } from "~/utils/error";
 import { object, string, nonEmpty, pipe, custom, InferOutput } from "valibot";
 import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
 import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
-import { IBKSectionAssessment } from "~/components/ibk/IBKPsikologiStep";
-import { IBKSectionHealth } from "~/components/ibk/IBKDisabilitasStep";
+import { IBKSectionAssessment } from "~/components/ibk/IBKSectionAssessment";
+import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
 
 const ibkSchema = object({
