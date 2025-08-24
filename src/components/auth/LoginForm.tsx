@@ -1,5 +1,5 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useNavigate } from "@builder.io/qwik-city";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
@@ -13,11 +13,16 @@ import {
 } from "~/components/ui/toast/ToastProvider";
 import { AccountStatusCard } from "~/components/ui/AccountStatusCard";
 import { setUiAuthCookies } from "~/utils/ui-auth-cookie";
+import { useAuth } from "~/hooks/useAuth";
+import { useAuthRedirect } from "~/hooks/useAuthRedirect";
 
 export default component$(() => {
+  useAuthRedirect(); // Prevent access if already logged in
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
   const accountStatus = useSignal<"unverified" | "declined" | null>(null);
+  const nav = useNavigate();
+  const { refreshUserData } = useAuth();
 
   const [form, { Form, Field }] = useForm<LoginForm>({
     loader: { value: { email: "", password: "" } },
@@ -32,7 +37,8 @@ export default component$(() => {
     accountStatus.value = null;
     try {
       await api.post("/auth/login", values);
-      sessionUtils.setAuthStatus(true);
+      // Refresh global auth state
+      await refreshUserData();
       const profile = await profileService.getProfile();
       if (profile?.role) {
         sessionUtils.setUserProfile(profile);
@@ -41,17 +47,25 @@ export default component$(() => {
         });
         success.value = "Login berhasil!";
         await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // SPA navigation with replaceState to prevent back to login
+        await nav(
+          profile.role === "admin"
+            ? "/admin"
+            : profile.role === "kader"
+              ? "/kader"
+              : profile.role === "psikolog"
+                ? "/psikolog"
+                : profile.role === "posyandu"
+                  ? "/posyandu"
+                  : "/",
+          { replaceState: true },
+        );
         return;
       }
       // Fallback jika tidak dapat role
       success.value = "Login berhasil!";
       await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      await nav("/", { replaceState: true });
       return;
     } catch (err: any) {
       const raw = extractErrorMessage(err);

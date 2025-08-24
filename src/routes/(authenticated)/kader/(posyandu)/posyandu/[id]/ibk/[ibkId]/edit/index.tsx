@@ -17,7 +17,7 @@ const ibkSchema = object({
   nama: pipe(string(), nonEmpty("Nama wajib diisi")),
   nik: pipe(
     string(),
-    custom((val) => /^\d{16}$/.test(val as string), "NIK harus 16 digit angka")
+    custom((val) => /^\d{16}$/.test(val as string), "NIK harus 16 digit angka"),
   ),
   tempat_lahir: string(),
   tanggal_lahir: pipe(string(), nonEmpty("Tanggal lahir wajib diisi")),
@@ -239,10 +239,10 @@ export default component$(() => {
                       tingkat_keparahan: string;
                       sejak_kapan?: string;
                       keterangan?: string;
-                    }>
+                    }>,
                   ) => {
                     editedDisabilities.value = items;
-                  }
+                  },
                 )
               : undefined
           }
@@ -253,31 +253,31 @@ export default component$(() => {
                 tingkat_keparahan: string;
                 sejak_kapan?: string;
                 keterangan?: string;
-              }>
+              }>,
             ) => {
               // Items here are all currently visible, but we only want NEW creations.
               // Filter out ones that match existing initial items' IDs (by jenis id)
               const existingJenisIds = new Set(
                 (existingDisabilities.value || []).map(
-                  (x) => x.jenis_difabilitas_id
-                )
+                  (x) => x.jenis_difabilitas_id,
+                ),
               );
               newDisabilities.value = items.filter(
-                (it) => !existingJenisIds.has(it.jenis_difabilitas_id)
+                (it) => !existingJenisIds.has(it.jenis_difabilitas_id),
               );
 
               // Determine which existing disabilities were unselected (should be deleted)
               const currentSelectedJenis = new Set(
-                items.map((it) => it.jenis_difabilitas_id)
+                items.map((it) => it.jenis_difabilitas_id),
               );
               const removed = (existingDisabilities.value || [])
                 .filter(
-                  (ex) => !currentSelectedJenis.has(ex.jenis_difabilitas_id)
+                  (ex) => !currentSelectedJenis.has(ex.jenis_difabilitas_id),
                 )
                 .map((ex) => ex.id)
                 .filter(Boolean);
               removedDisabilityIds.value = removed;
-            }
+            },
           )}
         />
       </div>
@@ -346,7 +346,7 @@ export default component$(() => {
           // Skip updates for disabilities that are slated for deletion
           const removedSet = new Set(removedDisabilityIds.value || []);
           const filteredEdits = edits.filter(
-            (ed) => ed.id && !removedSet.has(ed.id)
+            (ed) => ed.id && !removedSet.has(ed.id),
           );
           for (const ed of filteredEdits) {
             try {
