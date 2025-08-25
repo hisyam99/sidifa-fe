@@ -1,7 +1,8 @@
 import { component$ } from "@builder.io/qwik";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface FeatureCardProps {
-  icon: any; // Lucide icon component
+  icon: FunctionComponent<{ class?: string }>;
   title: string;
   description: string;
 }

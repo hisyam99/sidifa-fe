@@ -1,7 +1,8 @@
 import { component$ } from "@builder.io/qwik";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface AuthFeatureItemProps {
-  icon: any; // Lucide icon component
+  icon: FunctionComponent<{ class?: string }>;
   title: string;
   description: string;
   iconBgClass: string; // e.g., "bg-primary/10"

@@ -1,8 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { LuCheckCircle } from "~/components/icons/lucide-optimized"; // Updated import path
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface HomeFeatureCardProps {
-  icon: any; // Lucide icon component
+  icon: FunctionComponent<{ class?: string }>;
   title: string;
   description: string;
   iconBgGradientClass: string; // e.g., "bg-gradient-primary"

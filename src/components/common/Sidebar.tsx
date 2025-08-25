@@ -1,16 +1,17 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { SidebarMenuItem } from "~/components/layout/SidebarMenuItem";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 export interface SidebarMenuItemType {
   href: string;
   label: string;
-  icon?: any; // accept component reference or string key
+  icon?: FunctionComponent<{ class?: string }>;
   exact?: boolean; // when true, only highlight on exact path match (ignoring trailing slash)
   hasDropdown?: boolean; // indicates this item has dropdown
   submenuItems?: Array<{
     href: string;
     label: string;
-    icon?: any;
+    icon?: FunctionComponent<{ class?: string }>;
     description?: string;
   }>;
 }

@@ -49,8 +49,8 @@ export default component$(() => {
           email: values.email,
           password: values.password,
         });
-      } catch (loginErr: any) {
-        const msg = extractErrorMessage(loginErr).toLowerCase();
+      } catch (loginErr: unknown) {
+        const msg = extractErrorMessage(loginErr as any).toLowerCase();
         if (msg.includes("unverified")) {
           verificationStatus.value = "unverified";
           await emitToastError(
@@ -104,8 +104,8 @@ export default component$(() => {
       setTimeout(() => {
         nav("/dashboard");
       }, 1000);
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
       await emitToastError(error.value);
     }
   });
@@ -203,7 +203,7 @@ export default component$(() => {
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field name="name">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -216,7 +216,7 @@ export default component$(() => {
                 </Field>
 
                 <Field name="email">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -231,7 +231,7 @@ export default component$(() => {
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field name="no_telp">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -252,7 +252,7 @@ export default component$(() => {
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field name="password">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -265,7 +265,7 @@ export default component$(() => {
                 </Field>
 
                 <Field name="confirmPassword">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -286,7 +286,7 @@ export default component$(() => {
               </h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field name="spesialis">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}
@@ -299,7 +299,7 @@ export default component$(() => {
                 </Field>
 
                 <Field name="lokasi">
-                  {(field: any, props: any) => (
+                  {(field, props) => (
                     <FormField
                       field={field}
                       props={props}

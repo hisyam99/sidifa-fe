@@ -1,12 +1,13 @@
 import { component$, useSignal, useTask$, $, QRL } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
+import type { JSXChildren } from "@builder.io/qwik";
 
 interface AnimatedLinkProps {
   href: string;
   class?: string;
   prefetch?: boolean;
   onClick$?: QRL<() => void>;
-  children?: any;
+  children?: JSXChildren;
 }
 
 /**

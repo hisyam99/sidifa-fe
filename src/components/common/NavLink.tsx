@@ -1,10 +1,11 @@
 import { component$, QRL, Slot } from "@builder.io/qwik";
 import { useLocation, Link } from "@builder.io/qwik-city";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface NavLinkProps {
   href: string;
   label: string;
-  icon?: any; // Lucide icon component
+  icon?: FunctionComponent<{ class?: string }>;
   onClick$?: QRL<() => void>;
 }
 

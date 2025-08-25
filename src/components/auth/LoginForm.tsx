@@ -72,8 +72,8 @@ export default component$(() => {
       await emitToastSuccess("Login berhasil! Mengalihkan...", 1200);
       await nav(redirectPath, { replaceState: true });
       return;
-    } catch (err: any) {
-      const raw = extractErrorMessage(err);
+    } catch (err: unknown) {
+      const raw = extractErrorMessage(err as string);
       const msg = raw.toLowerCase();
 
       // Tangani status khusus dari backend
@@ -121,7 +121,7 @@ export default component$(() => {
       ) : (
         <Form onSubmit$={handleSubmit} class="space-y-6 w-full">
           <Field name="email">
-            {(field: any, props: any) => (
+            {(field, props) => (
               <FormField
                 field={field}
                 props={props}
@@ -134,7 +134,7 @@ export default component$(() => {
           </Field>
 
           <Field name="password">
-            {(field: any, props: any) => (
+            {(field, props) => (
               <FormField
                 field={field}
                 props={props}

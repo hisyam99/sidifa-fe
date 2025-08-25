@@ -1,7 +1,8 @@
 import { component$, QRL } from "@builder.io/qwik";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface SocialButtonProps {
-  icon: any; // Lucide icon component
+  icon: FunctionComponent<{ class?: string }>;
   ariaLabel: string;
   onClick$?: QRL<() => void>;
 }

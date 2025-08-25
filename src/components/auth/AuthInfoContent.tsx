@@ -1,15 +1,16 @@
 import { component$ } from "@builder.io/qwik";
 import { AuthProcessStep } from "./AuthProcessStep";
 import { AuthSecurityTip } from "./AuthSecurityTip";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface AuthInfoContentProps {
   title: string;
   description: string;
-  heroIcon: any; // Lucide icon component
+  heroIcon: FunctionComponent<{ class?: string }>;
   heroIconBgClass: string; // e.g., "bg-gradient-primary"
   heroTitleGradientClass: string; // e.g., "text-gradient-primary"
   processSteps: {
-    icon: any;
+    icon: FunctionComponent<{ class?: string }>;
     title: string;
     description: string;
     iconBgClass: string;

@@ -45,7 +45,7 @@ interface LowonganFormProps {
 
 export const LowonganForm = component$<LowonganFormProps>((props) => {
   const init = props.initialData || {};
-  const isEdit = Boolean((init as any).id || init.file_name);
+  const isEdit = Boolean(init.id || init.file_name);
   const fileError = useSignal<string | null>(null);
 
   const [form, { Form, Field }] = useForm<LowonganFormValues>({

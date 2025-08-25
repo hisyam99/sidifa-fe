@@ -28,9 +28,8 @@ export default component$(() => {
       const response = await api.post("/auth/forgot-password", values);
       console.log("Forgot Password - Success Response:", response.data);
       success.value = "Email reset password telah dikirim!";
-    } catch (err: any) {
-      console.log("Forgot Password - Error:", err);
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     }
   });
 

@@ -1,9 +1,10 @@
 import { component$ } from "@builder.io/qwik";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface AdminStatCardProps {
   title: string;
   value: string;
-  icon: any; // Lucide icon component
+  icon: FunctionComponent<{ class?: string }>;
   description: string;
 }
 

@@ -1,13 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import { AuthBenefitItem } from "./AuthBenefitItem";
 import { AuthRequirementsList } from "./AuthRequirementsList";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface SignupHeroContentProps {
   title: string;
   description: string;
   heroTitleGradientClass: string; // e.g., "text-gradient-primary"
   benefits: {
-    icon: any;
+    icon: FunctionComponent<{ class?: string }>;
     title: string;
     description: string;
     iconBgClass: string;

@@ -4,6 +4,7 @@ import type { InformasiItem } from "~/types/informasi";
 import { Spinner } from "~/components/ui/Spinner";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
 import { marked } from "marked";
+import type { Tokens } from "marked";
 import DOMPurify from "dompurify";
 
 interface InformasiTableProps {
@@ -22,7 +23,7 @@ export const InformasiTable = component$((props: InformasiTableProps) => {
     const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
     const firstParagraph =
       paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
-    const html = marked.parser(firstParagraph as any);
+    const html = marked.parser(firstParagraph as Tokens.Paragraph[]);
     return DOMPurify.sanitize(html);
   };
 

@@ -1,9 +1,14 @@
 import { component$, Slot } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { useCheckRole } from "~/hooks/useCheckRole";
-import { LuBarChart, LuArrowLeft } from "~/components/icons/lucide-optimized";
+import {
+  LuBarChart,
+  LuArrowLeft,
+  LuClipboardList,
+  LuCalendarClock,
+  LuLineChart,
+} from "~/components/icons/lucide-optimized";
 import { Sidebar } from "~/components/common/Sidebar";
-import { useLocation } from "@builder.io/qwik-city";
 
 export default component$(() => {
   const location = useLocation();
@@ -16,21 +21,21 @@ export default component$(() => {
   const base = `/kader/posyandu/${posyanduId}`;
 
   const menuItems = [
-    { href: base, label: "Dashboard", icon: "LuBarChart", exact: true },
+    { href: base, label: "Dashboard", icon: LuBarChart, exact: true },
     {
       href: `${base}/ibk`,
       label: "Pendataan IBK",
-      icon: "LuClipboardList",
+      icon: LuClipboardList,
     },
     {
       href: `${base}/jadwal`,
       label: "Jadwal Posyandu",
-      icon: "LuCalendarClock", // You may need to import or use a suitable icon
+      icon: LuCalendarClock, // You may need to import or use a suitable icon
     },
     {
       href: `${base}/laporan-statistik`,
       label: "Laporan Statistik",
-      icon: "LuLineChart",
+      icon: LuLineChart,
     },
   ];
 

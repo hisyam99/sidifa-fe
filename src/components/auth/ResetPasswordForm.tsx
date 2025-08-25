@@ -51,8 +51,8 @@ export default component$(() => {
       setTimeout(() => {
         window.location.href = "/auth/login";
       }, 2000);
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as string);
     }
   });
 
@@ -72,13 +72,11 @@ export default component$(() => {
 
       <Form onSubmit$={handleSubmit} class="space-y-4">
         <Field name="token">
-          {(field: any, props: any) => (
-            <input {...props} type="hidden" value={token} />
-          )}
+          {(field, props) => <input {...props} type="hidden" value={token} />}
         </Field>
 
         <Field name="password">
-          {(field: any, props: any) => {
+          {(field, props) => {
             // Debug: Log perubahan password
             console.log("🔍 Password Field Change:", {
               value: field.value,
@@ -101,7 +99,7 @@ export default component$(() => {
         </Field>
 
         <Field name="confirmPassword">
-          {(field: any, props: any) => {
+          {(field, props) => {
             // Debug: Log perubahan confirm password
             console.log("🔍 Confirm Password Field Change:", {
               value: field.value,

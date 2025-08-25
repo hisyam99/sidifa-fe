@@ -1,7 +1,8 @@
 import { component$ } from "@builder.io/qwik";
+import type { FunctionComponent } from "@builder.io/qwik";
 
 interface ContactItemProps {
-  icon: any; // Using 'any' for the Lucide icon component, can be more specific with actual icon type if needed
+  icon: FunctionComponent<{ class?: string }>;
   text: string;
 }
 
