@@ -35,7 +35,6 @@ export const useRoutingProgressProvider = () => {
         }
       }, 50);
     } else if (isLoading.value) {
-      // Selesaikan progres bar dengan cepat
       clearInterval(interval);
       const finish = () => {
         if (progress.value < 100) {
@@ -43,8 +42,8 @@ export const useRoutingProgressProvider = () => {
           if (progress.value > 100) progress.value = 100;
           setTimeout(finish, 20);
         } else {
-          isLoading.value = false;
           setTimeout(() => {
+            isLoading.value = false;
             progress.value = 0;
           }, 300);
         }
