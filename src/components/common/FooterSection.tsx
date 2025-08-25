@@ -12,7 +12,7 @@ export const FooterSection = component$((props: FooterSectionProps) => {
 
   return (
     <div class={`${alignClass} lg:text-left`}>
-      <h6 class={`footer-title mb-4 ${gradientClass}`}>{title}</h6>
+      <h2 class={`footer-title mb-4 ${gradientClass}`}>{title}</h2>
       <Slot />
     </div>
   );

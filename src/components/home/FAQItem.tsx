@@ -12,7 +12,7 @@ export const FAQItem = component$((props: FAQItemProps) => {
 
   return (
     <div
-      tabIndex={index}
+      tabIndex={0}
       class="collapse collapse-plus bg-base-100 shadow-md border border-base-200/50 rounded-box mb-4"
     >
       <input type="checkbox" id={checkboxId} class="peer" />

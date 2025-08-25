@@ -33,7 +33,7 @@ export const FAQCategory = component$((props: FAQCategoryProps) => {
               key={`${category.judul}-${item.pertanyaan}`}
               question={item.pertanyaan}
               answer={item.jawaban}
-              index={categoryIndex * 100 + qaIndex} // Unique index for checkbox id
+              index={qaIndex} // Use qaIndex for unique id
             />
           ))}
         </div>
