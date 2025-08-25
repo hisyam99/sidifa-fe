@@ -41,7 +41,7 @@ const ibkSchema = object({
   catatan_psikolog: string(),
   rekomendasi_intervensi: string(),
   // Step 3: Kesehatan (hanya odgj wajib)
-  odgj: pipe(string(), nonEmpty("ODGJ wajib diisi")),
+  // odgj: pipe(string(), nonEmpty("ODGJ wajib diisi")),
   hasil_diagnosa: string(),
   jenis_bantuan: string(),
   riwayat_terapi: string(),
@@ -84,7 +84,7 @@ const defaultIBKForm = {
   deskripsi_kepribadian: "",
   catatan_psikolog: "",
   rekomendasi_intervensi: "",
-  odgj: "",
+  // odgj: "",
   hasil_diagnosa: "",
   jenis_bantuan: "",
   riwayat_terapi: "",
@@ -205,11 +205,11 @@ export default component$(() => {
     if (currentStep.value === 2) return true;
 
     // Step Kesehatan: hanya odgj yang wajib (sekarang step terakhir index 4)
-    if (currentStep.value === 4) {
-      const fld =
-        form.internal.fields["odgj" as keyof typeof form.internal.fields];
-      return !fld?.error && fld?.value !== "";
-    }
+    // if (currentStep.value === 4) {
+    //   const fld =
+    //     form.internal.fields["odgj" as keyof typeof form.internal.fields];
+    //   return !fld?.error && fld?.value !== "";
+    // }
 
     // Default: Step 1 (Data Diri) wajib kecuali foto
     const requiredStep1 = [
@@ -285,7 +285,7 @@ export default component$(() => {
         "rekomendasi_intervensi",
         formDataStore.rekomendasi_intervensi,
       );
-      formData.append("odgj", formDataStore.odgj);
+      // formData.append("odgj", formDataStore.odgj);
       formData.append("hasil_diagnosa", formDataStore.hasil_diagnosa);
       formData.append("jenis_bantuan", formDataStore.jenis_bantuan);
       formData.append("riwayat_terapi", formDataStore.riwayat_terapi);
