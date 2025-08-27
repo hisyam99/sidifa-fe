@@ -32,7 +32,7 @@ export const AdminVerificationTable = component$(
     };
 
     return (
-      <div class="bg-base-100 p-3 md:p-4 rounded-xl shadow-sm border border-base-200/60">
+      <div class="bg-base-100 p-3 md:p-4 rounded-xl shadow-sm border border-base-200/60 relative">
         <div class="flex items-center justify-between mb-3">
           <h2
             id="admin-verif-table-title"
@@ -43,7 +43,12 @@ export const AdminVerificationTable = component$(
           </h2>
         </div>
 
-        {loading && <Spinner overlay />}
+        {/* Spinner overlay hanya pada area tabel */}
+        {loading && (
+          <div class="absolute inset-0 z-20 flex items-center justify-center bg-base-100/60 pointer-events-auto">
+            <Spinner />
+          </div>
+        )}
         {error && (
           <div class="alert alert-error mb-3">
             <span>{error}</span>
