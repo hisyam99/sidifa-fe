@@ -165,7 +165,7 @@ export default component$(() => {
             <div class="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-8 md:pb-12">
               <div class="pt-4 pb-12">
                 <button
-                  class="btn btn-ghost btn-sm text_white/90 hover:text-white hover:bg-white/10 mb-6 self-start"
+                  class="btn btn-ghost btn-sm text-white hover:text-white hover:bg-white/10 mb-6 self-start"
                   onClick$={$(() => {
                     const from = document.referrer || "";
                     if (from.includes("/admin/informasi")) {
