@@ -1,3 +1,5 @@
+import { isBrowser } from "@builder.io/qwik";
+
 // Auth utilities for consistent sessionStorage management
 
 export type UserRole = "admin" | "psikolog" | "posyandu" | "kader";
@@ -11,13 +13,13 @@ export interface User {
 // SessionStorage management
 export const sessionUtils = {
   setUserProfile(profile: User): void {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       sessionStorage.setItem("user_profile", JSON.stringify(profile));
     }
   },
 
   getUserProfile(): User | null {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       const sessionUser = sessionStorage.getItem("user_profile");
       if (sessionUser) {
         try {
@@ -35,20 +37,20 @@ export const sessionUtils = {
   },
 
   removeUserProfile(): void {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       sessionStorage.removeItem("user_profile");
     }
   },
 
   // --- NEW: Login status helpers using localStorage ---
   setAuthStatus(isLoggedIn: boolean): void {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       localStorage.setItem("auth_status", JSON.stringify(isLoggedIn));
     }
   },
 
   getAuthStatus(): boolean | null {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       const raw = localStorage.getItem("auth_status");
       if (raw !== null) {
         try {
@@ -62,7 +64,7 @@ export const sessionUtils = {
   },
 
   removeAuthStatus(): void {
-    if (typeof window !== "undefined") {
+    if (isBrowser) {
       localStorage.removeItem("auth_status");
     }
   },

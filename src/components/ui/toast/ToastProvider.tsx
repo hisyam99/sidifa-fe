@@ -7,6 +7,7 @@ import {
   useContext,
   Slot,
   useVisibleTask$,
+  isServer,
 } from "@builder.io/qwik";
 
 export type ToastType = "success" | "error" | "warning" | "info";
@@ -100,7 +101,7 @@ export const ToastProvider = component$(() => {
   // Bridge: listen to global events to trigger toasts without capturing context
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    if (typeof window === "undefined") return;
+    if (isServer) return;
     const handler = (e: Event) => {
       const ce = e as CustomEvent<{
         type: ToastType;
@@ -148,7 +149,7 @@ export const ToastProvider = component$(() => {
       <Slot />
 
       {/* Toast viewport */}
-      <div class="fixed top-20 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
+      <div class="z-[9999] fixed top-20 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 pointer-events-none">
         <div class="flex flex-col gap-2">
           {toastsSig.value.map((t) => (
             <div
@@ -202,7 +203,7 @@ export const useToast = (): ToastApi => {
 
 export const emitToast = $(
   (type: ToastType, message: string, durationMs = 4000) => {
-    if (typeof window === "undefined") return;
+    if (isServer) return;
     window.dispatchEvent(
       new CustomEvent("sidifa:toast", {
         detail: { type, message, durationMs },

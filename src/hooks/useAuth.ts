@@ -1,4 +1,10 @@
-import { useSignal, useVisibleTask$, $, isServer } from "@builder.io/qwik";
+import {
+  useSignal,
+  useVisibleTask$,
+  $,
+  isServer,
+  isBrowser,
+} from "@builder.io/qwik";
 import {
   profileService,
   authService,
@@ -86,7 +92,7 @@ export const useAuth = () => {
         sessionUtils.clearAllAuthData();
         sessionUtils.setAuthStatus(false);
         clearUiAuthCookies();
-        if (typeof window !== "undefined") {
+        if (isBrowser) {
           window.location.href = "/";
         }
       } else {
@@ -123,7 +129,7 @@ export const useAuth = () => {
       globalAuthState.globalIsLoggedIn = false;
       globalAuthState.isInitialized = false;
       globalAuthState.lastCheck = 0;
-      if (typeof window !== "undefined") {
+      if (isBrowser) {
         window.location.href = "/";
       }
     }

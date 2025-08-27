@@ -1,3 +1,4 @@
+import { isServer, isBrowser } from "@builder.io/qwik";
 import axios from "xior";
 import { sessionUtils } from "~/utils/auth";
 import { extractErrorMessage } from "~/utils/error";
@@ -164,8 +165,7 @@ async function handleUnauthorized(
   originalRequest: Record<string, unknown> & { _retry?: boolean; url?: string },
   fallbackMessage?: string,
 ): Promise<unknown> {
-  const canAttempt =
-    typeof window !== "undefined" && !isAuthEndpoint(originalRequest.url);
+  const canAttempt = isBrowser && !isAuthEndpoint(originalRequest.url);
   if (!canAttempt) {
     sessionUtils.clearAllAuthData();
     sessionUtils.setAuthStatus(false);
@@ -262,7 +262,7 @@ api.interceptors.response.use(
 export const profileService = {
   async getProfile() {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const response = await api.get("/auth/me");
@@ -274,7 +274,7 @@ export const profileService = {
 export const authService = {
   async logout() {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     // Saat logout, reset status csrf agar diambil ulang jika login lagi.
@@ -285,7 +285,7 @@ export const authService = {
   },
   async refresh() {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const response = await api.post("/auth/refresh");
@@ -293,7 +293,7 @@ export const authService = {
   },
   async login(data: { email: string; password: string }) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const response = await api.post("/auth/login", data);
@@ -312,7 +312,7 @@ export const adminService = {
     orderBy?: string;
   }) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return [];
     }
     const queryParams = new URLSearchParams();
@@ -479,7 +479,7 @@ export const informasiEdukasiAdminService = {
     tipe?: string;
   }) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return {
         data: [],
         meta: {
@@ -502,7 +502,7 @@ export const informasiEdukasiAdminService = {
   },
   // NEW: Statistik endpoint for counts summary
   async statistik() {
-    if (typeof window === "undefined") {
+    if (isServer) {
       return { count: { total: 0, panduan: 0, artikel: 0, regulasi: 0 } };
     }
     const response = await api.get(`/admin/informasi-edukasi/statistik`);
@@ -510,7 +510,7 @@ export const informasiEdukasiAdminService = {
   },
   async detail(id: string) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     // Guard non-UUID id (e.g., "create")
@@ -532,7 +532,7 @@ export const informasiEdukasiAdminService = {
     file?: File;
   }) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const formData = new FormData();
@@ -549,7 +549,7 @@ export const informasiEdukasiAdminService = {
   },
   async delete(id: string) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const response = await api.delete(`/admin/informasi-edukasi`, {
@@ -565,7 +565,7 @@ export const informasiEdukasiAdminService = {
     file?: File;
   }) {
     // Prevent API calls during SSG/server
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const formData = new FormData();
@@ -593,7 +593,7 @@ export const adminLowonganService = {
     jenis_difasilitas?: string;
     status?: string;
   }) {
-    if (typeof window === "undefined") {
+    if (isServer) {
       return {
         data: [],
         meta: {
@@ -622,7 +622,7 @@ export const adminLowonganService = {
     return response.data;
   },
   async detail(id: string) {
-    if (typeof window === "undefined") return null;
+    if (isServer) return null;
     const response = await api.get(`/admin/lowongan/detail/${id}`);
     const body = response.data;
     return body?.data ?? body;
@@ -639,7 +639,7 @@ export const adminLowonganService = {
     tanggal_selesai?: string;
     file?: File;
   }) {
-    if (typeof window === "undefined") return null;
+    if (isServer) return null;
     const fd = new FormData();
     const appendDate = (key: string, value?: string) => {
       if (!value) return;
@@ -678,7 +678,7 @@ export const adminLowonganService = {
       file?: File;
     },
   ) {
-    if (typeof window === "undefined") return null;
+    if (isServer) return null;
     const fd = new FormData();
     const appendIf = (k: string, v?: string) => {
       if (v !== undefined && v !== null) fd.append(k, v);
@@ -707,7 +707,7 @@ export const adminLowonganService = {
     return response.data;
   },
   async delete(id: string) {
-    if (typeof window === "undefined") return null;
+    if (isServer) return null;
     const response = await api.delete(`/admin/lowongan`, { data: { id } });
     return response.data;
   },
@@ -726,7 +726,7 @@ export const kaderLowonganService = {
     jenis_difasilitas?: string;
     status?: string;
   }) {
-    if (typeof window === "undefined") {
+    if (isServer) {
       return {
         data: [],
         meta: {
@@ -755,7 +755,7 @@ export const kaderLowonganService = {
     return response.data;
   },
   async detail(id: string) {
-    if (typeof window === "undefined") return null;
+    if (isServer) return null;
     const response = await api.get(`/kader/lowongan-kader/detail/${id}`);
     const body = response.data;
     return body?.data ?? body;
@@ -771,7 +771,7 @@ export const informasiEdukasiKaderService = {
     deskripsi?: string;
     judul?: string;
   }) {
-    if (typeof window === "undefined") {
+    if (isServer) {
       return {
         data: [],
         meta: {
@@ -794,7 +794,7 @@ export const informasiEdukasiKaderService = {
     return response.data;
   },
   async detail(id: string) {
-    if (typeof window === "undefined") {
+    if (isServer) {
       return null;
     }
     const isUuid =
