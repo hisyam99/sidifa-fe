@@ -4,6 +4,8 @@ import {
   LuUserCheck,
   LuBuilding,
   LuActivity,
+  LuClipboardList,
+  LuCalendar,
 } from "~/components/icons/lucide-optimized"; // Changed import source
 
 export interface AdminStatItem {
@@ -21,29 +23,47 @@ export interface AdminRecentActivityItem {
 }
 
 export const adminStatsData: AdminStatItem[] = [
+  // total posyandu
+  {
+    title: "Total Posyandu",
+    value: "78",
+    icon: LuBuilding,
+    description: "+2 baru bulan ini",
+  },
+  // total kader
+  {
+    title: "Total Kader",
+    value: "1,024",
+    icon: LuClipboardList,
+    description: "+35 aktif minggu ini",
+  },
+  // total ibk dari keseluruhan posyandu
+  {
+    title: "Total IBK (All)",
+    value: "3,560",
+    icon: LuActivity,
+    description: "92% sudah terverifikasi",
+  },
+  // total akun yang memerlukan verifikasi
+  {
+    title: "Perlu Verifikasi",
+    value: "14",
+    icon: LuUserCheck,
+    description: "Menunggu review admin",
+  },
+  // total jadwal hari ini
+  {
+    title: "Jadwal Hari Ini",
+    value: "26",
+    icon: LuCalendar,
+    description: "Termasuk kunjungan & konsultasi",
+  },
+  // total pengguna keseluruhan
   {
     title: "Total Pengguna",
-    value: "1,200",
+    value: "2,410",
     icon: LuUsers,
-    description: "Naik 21% dari bulan lalu",
-  },
-  {
-    title: "Total IBK",
-    value: "350",
-    icon: LuUserCheck,
-    description: "Naik 15% dari bulan lalu",
-  },
-  {
-    title: "Posyandu Aktif",
-    value: "45",
-    icon: LuBuilding,
-    description: "2 Posyandu baru bergabung",
-  },
-  {
-    title: "Aktivitas Hari Ini",
-    value: "12",
-    icon: LuActivity,
-    description: "Laporan & Pendaftaran baru",
+    description: "+12% dari bulan lalu",
   },
 ];
 
