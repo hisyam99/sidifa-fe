@@ -189,7 +189,6 @@ export default component$(() => {
 
   return (
     <div class="relative">
-      {loading.value && <Spinner overlay={true} />}
       <AdminPosyanduListHeader
         title="Manajemen Data Posyandu"
         description="Kelola data posyandu yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
@@ -220,7 +219,9 @@ export default component$(() => {
         onEdit$={openEditModal}
         onDelete$={openDeleteModal}
         onToggleStatus$={openToggleStatusModal}
-      />
+      >
+        {loading.value && <Spinner overlay={true} />}
+      </AdminPosyanduTable>
 
       {meta.value.totalPage > 1 && (
         <PaginationControls
