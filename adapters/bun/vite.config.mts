@@ -29,7 +29,7 @@ export default extendConfig(baseConfig as any, () => {
     plugins: [
       bunServerAdapter({
         ssg: {
-          include: ["/*"],
+          include: ["/auth/*", "/admin/*", "/kader/*", "/psikolog/*"],
           exclude: [
             "/auth/login",
             "/auth/reset-password", // Exclude reset-password karena butuh dynamic token
