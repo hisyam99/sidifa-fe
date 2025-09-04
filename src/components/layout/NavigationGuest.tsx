@@ -1,6 +1,5 @@
 import { component$, useTask$, useSignal } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
-import { sessionUtils } from "~/utils/auth";
 import {
   LuMenu,
   LuHome,
@@ -27,9 +26,8 @@ export const NavigationGuest = component$(() => {
     track(() => user.value?.role);
 
     isClient.value = true;
-    const storedAuth = sessionUtils.getAuthStatus();
-    const hasUserProfile = !!sessionUtils.getUserProfile();
-    isAuthenticated.value = storedAuth === true && hasUserProfile;
+    // Ambil status auth langsung dari hasil fetch /auth/me melalui useAuth
+    isAuthenticated.value = Boolean(isLoggedIn.value && user.value?.role);
 
     // Set dashboard path based on user role
     const role = user.value?.role;
