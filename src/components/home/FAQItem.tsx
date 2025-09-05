@@ -11,9 +11,7 @@ export const FAQItem = component$((props: FAQItemProps) => {
   const checkboxId = `faq-${index}`;
 
   return (
-    <div
-      class="collapse collapse-plus bg-base-100 shadow-md border border-base-200/50 rounded-box mb-4"
-    >
+    <div class="collapse collapse-plus bg-base-100 shadow-md border border-base-200/50 rounded-box mb-4">
       <input type="checkbox" id={checkboxId} class="peer" />
       <div class="collapse-title text-xl font-medium text-primary peer-checked:text-primary-focus">
         <label for={checkboxId} class="cursor-pointer w-full block">

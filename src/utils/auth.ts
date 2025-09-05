@@ -1,6 +1,6 @@
 import { isBrowser } from "@builder.io/qwik";
 
-// Auth utilities for consistent sessionStorage management
+// Auth utilities for consistent localStorage management
 
 export type UserRole = "admin" | "psikolog" | "posyandu" | "kader";
 
@@ -10,17 +10,17 @@ export interface User {
   role: UserRole;
 }
 
-// SessionStorage management
+// LocalStorage management
 export const sessionUtils = {
   setUserProfile(profile: User): void {
     if (isBrowser) {
-      sessionStorage.setItem("user_profile", JSON.stringify(profile));
+      localStorage.setItem("user_profile", JSON.stringify(profile));
     }
   },
 
   getUserProfile(): User | null {
     if (isBrowser) {
-      const sessionUser = sessionStorage.getItem("user_profile");
+      const sessionUser = localStorage.getItem("user_profile");
       if (sessionUser) {
         try {
           const parsedUser = JSON.parse(sessionUser);
@@ -38,7 +38,7 @@ export const sessionUtils = {
 
   removeUserProfile(): void {
     if (isBrowser) {
-      sessionStorage.removeItem("user_profile");
+      localStorage.removeItem("user_profile");
     }
   },
 
