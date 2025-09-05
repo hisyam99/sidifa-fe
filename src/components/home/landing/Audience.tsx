@@ -33,8 +33,10 @@ export const Audience = component$(() => {
     <section id="untuk-siapa" class="py-14 lg:py-20" data-animate="section">
       <div class="container mx-auto px-4">
         <div class="text-center max-w-3xl mx-auto mb-10">
-          <h2 class="text-3xl lg:text-4xl font-bold mb-3">Untuk Siapa</h2>
-          <p class="text-base-content/70">
+          <h2 class="text-3xl lg:text-4xl font-bold mb-3 text-base-content">
+            Untuk Siapa
+          </h2>
+          <p class="text-base-content/80">
             Semua pihak yang terlibat dalam layanan posyandu disabilitas
           </p>
         </div>
@@ -50,9 +52,9 @@ export const Audience = component$(() => {
               <div class="card-body">
                 <div class="flex items-center gap-2">
                   <Icon class="w-5 h-5 text-primary" />
-                  <h3 class="card-title text-lg">{title}</h3>
+                  <h3 class="card-title text-lg text-base-content">{title}</h3>
                 </div>
-                <p class="text-base-content/70">{desc}</p>
+                <p class="text-base-content/80">{desc}</p>
               </div>
             </div>
           ))}

@@ -79,7 +79,7 @@ export const BrandLogo = component$((props: BrandLogoProps) => {
           SI-DIFA
         </span>
         <span
-          class={`text-base-content/60 font-medium leading-none ${subTextSize}`}
+          class={`text-base-content/80 font-medium leading-none ${subTextSize}`}
         >
           Sistem Informasi Difabel
         </span>

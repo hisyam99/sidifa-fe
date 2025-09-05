@@ -12,7 +12,6 @@ export const FAQItem = component$((props: FAQItemProps) => {
 
   return (
     <div
-      tabIndex={0}
       class="collapse collapse-plus bg-base-100 shadow-md border border-base-200/50 rounded-box mb-4"
     >
       <input type="checkbox" id={checkboxId} class="peer" />
@@ -21,7 +20,7 @@ export const FAQItem = component$((props: FAQItemProps) => {
           {question}
         </label>
       </div>
-      <div class="collapse-content text-base-content/70">
+      <div class="collapse-content text-base-content/80">
         <p class="py-4 leading-relaxed">{answer}</p>
       </div>
     </div>

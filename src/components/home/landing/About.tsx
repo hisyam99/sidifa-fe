@@ -19,10 +19,10 @@ export const About = component$(() => {
       <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 class="text-3xl lg:text-5xl font-extrabold leading-tight text-gradient-primary mb-4">
+            <h2 class="text-3xl lg:text-5xl font-extrabold leading-tight text-gradient-primary mb-4 text-base-content">
               Tentang SI-DIFA
             </h2>
-            <p class="text-base-content/70 text-lg leading-relaxed mb-6">
+            <p class="text-base-content text-lg leading-relaxed mb-6">
               SI-DIFA adalah portal sederhana dan modern untuk mendukung layanan
               Posyandu Disabilitas: pendataan IBK terpusat, akses materi
               inklusi, publikasi lowongan kerja ramah disabilitas, serta laporan
@@ -34,8 +34,10 @@ export const About = component$(() => {
                   <LuClipboardList class="w-4 h-4" />
                 </span>
                 <div>
-                  <p class="font-semibold leading-tight">Pendataan Terpusat</p>
-                  <p class="text-sm text-base-content/70">
+                  <p class="font-semibold leading-tight text-base-content">
+                    Pendataan Terpusat
+                  </p>
+                  <p class="text-sm text-base-content/80">
                     Form IBK terstruktur, aman, dan mudah ditelusuri.
                   </p>
                 </div>
@@ -45,8 +47,10 @@ export const About = component$(() => {
                   <LuBookOpen class="w-4 h-4" />
                 </span>
                 <div>
-                  <p class="font-semibold leading-tight">Edukasi Inklusi</p>
-                  <p class="text-sm text-base-content/70">
+                  <p class="font-semibold leading-tight text-base-content">
+                    Edukasi Inklusi
+                  </p>
+                  <p class="text-sm text-base-content/80">
                     Materi ringkas untuk kader dan tenaga profesional.
                   </p>
                 </div>
@@ -56,8 +60,10 @@ export const About = component$(() => {
                   <LuBarChart class="w-4 h-4" />
                 </span>
                 <div>
-                  <p class="font-semibold leading-tight">Statistik & Laporan</p>
-                  <p class="text-sm text-base-content/70">
+                  <p class="font-semibold leading-tight text-base-content">
+                    Statistik & Laporan
+                  </p>
+                  <p class="text-sm text-base-content/80">
                     Grafik ringkas dan siap ekspor untuk pengambilan kebijakan.
                   </p>
                 </div>

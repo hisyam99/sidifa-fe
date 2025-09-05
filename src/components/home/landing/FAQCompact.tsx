@@ -14,10 +14,10 @@ export const FAQCompact = component$(() => {
     >
       <div class="container mx-auto px-4">
         <div class="text-center max-w-3xl mx-auto mb-10">
-          <h3 class="text-3xl font-bold mb-3">
+          <h3 class="text-3xl font-bold mb-3 text-base-content">
             Pertanyaan yang Sering Diajukan
           </h3>
-          <p class="text-base-content/70">
+          <p class="text-base-content/80">
             Ringkasan dari FAQ lengkap. Lihat semua di halaman FAQ.
           </p>
         </div>

@@ -52,7 +52,7 @@ export const SidifaFooter = component$(() => {
 
   return (
     <footer
-      class="bg-base-200/80 border-t border-base-300/60 backdrop-blur supports-[backdrop-filter]:bg-base-200/70"
+      class="bg-base-200 border-t border-base-300 backdrop-blur supports-[backdrop-filter]:bg-base-200"
       role="contentinfo"
     >
       {/* Decorative wave */}
@@ -117,7 +117,7 @@ export const SidifaFooter = component$(() => {
         {/* Bottom Section */}
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-6">
           <aside class="text-left">
-            <p class="text-sm text-base-content/60">
+            <p class="text-sm text-base-content/80">
               © 2025 SIDIFA — All rights reserved
             </p>
           </aside>

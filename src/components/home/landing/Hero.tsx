@@ -17,31 +17,34 @@ export const Hero = component$(() => {
       </div>
 
       <div class="container mx-auto px-4 pt-10 lg:pt-16">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <div class="flex flex-wrap items-center gap-2 mb-4">
-              <div class="badge badge-primary badge-lg gap-2">
-                <LuZap class="w-4 h-4" /> Platform Pendataan Posyandu
-                Disabilitas
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center pb-8">
+          <div class="space-y-8">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <div class="badge badge-primary badge-lg gap-2">
+                  <LuZap class="w-4 h-4" /> Platform Pendataan Posyandu
+                  Disabilitas
+                </div>
+                <Link
+                  href="https://youtube.com/@lingkarsosialindonesia"
+                  target="_blank"
+                  rel="noopener"
+                  class="badge badge-ghost gap-2"
+                  aria-label="YouTube Lingkar Sosial Indonesia"
+                >
+                  <LuYoutube class="w-4 h-4" /> Kemitraan LINKSOS
+                </Link>
               </div>
-              <Link
-                href="https://youtube.com/@lingkarsosialindonesia"
-                target="_blank"
-                rel="noopener"
-                class="badge badge-ghost gap-2"
-                aria-label="YouTube Lingkar Sosial Indonesia"
-              >
-                <LuYoutube class="w-4 h-4" /> Kemitraan LINKSOS
-              </Link>
+              <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight text-gradient-primary">
+                SI-DIFA — Digitalisasi Layanan Posyandu Disabilitas
+              </h1>
+              <p class="text-base-content/70 text-lg lg:text-xl leading-relaxed">
+                Satu portal untuk pendataan IBK, informasi inklusi, lowongan
+                kerja ramah disabilitas, dan laporan statistik bagi kader,
+                psikolog, dan pemangku kepentingan.
+              </p>
             </div>
-            <h1 class="text-4xl lg:text-6xl font-extrabold leading-tight mb-4 text-gradient-primary">
-              SI-DIFA — Digitalisasi Layanan Posyandu Disabilitas
-            </h1>
-            <p class="text-base-content/70 text-lg lg:text-xl leading-relaxed mb-6">
-              Satu portal untuk pendataan IBK, informasi inklusi, lowongan kerja
-              ramah disabilitas, dan laporan statistik bagi kader, psikolog, dan
-              pemangku kepentingan.
-            </p>
+
             <div class="flex flex-wrap items-center gap-3">
               <Link
                 href="#tentang"
@@ -53,24 +56,6 @@ export const Hero = component$(() => {
                 Lihat Fitur <LuArrowRight class="w-5 h-5" />
               </Link>
             </div>
-
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
-              <div class="stat bg-base-200 rounded-box min-w-0">
-                <div class="stat-title">Untuk</div>
-                <div class="stat-value text-primary">Kader</div>
-                <div class="stat-desc">Pencatatan IBK</div>
-              </div>
-              <div class="stat bg-base-200 rounded-box min-w-0">
-                <div class="stat-title">Untuk</div>
-                <div class="stat-value text-secondary">Psikolog</div>
-                <div class="stat-desc">Asesmen & Rujukan</div>
-              </div>
-              <div class="stat bg-base-200 rounded-box min-w-0">
-                <div class="stat-title">Untuk</div>
-                <div class="stat-value text-accent">Instansi</div>
-                <div class="stat-desc">Laporan & Kebijakan</div>
-              </div>
-            </div>
           </div>
 
           <div class="relative">
@@ -80,7 +65,7 @@ export const Hero = component$(() => {
               </div>
             </div>
             <div class="absolute -bottom-6 -left-6 hidden lg:block">
-              <div class="card bg-base-100 shadow-xl border">
+              <div class="card bg-base-100 shadow-md border">
                 <div class="card-body py-4 px-5">
                   <div class="flex items-center gap-3">
                     <div class="avatar">

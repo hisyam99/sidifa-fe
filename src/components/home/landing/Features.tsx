@@ -33,10 +33,10 @@ export const Features = component$(() => {
     <section id="fitur" class="py-14 lg:py-20" data-animate="section">
       <div class="container mx-auto px-4">
         <div class="text-center max-w-3xl mx-auto mb-12">
-          <h2 class="text-3xl lg:text-4xl font-bold text-gradient-primary mb-3">
+          <h2 class="text-3xl lg:text-4xl font-bold text-gradient-primary mb-3 text-base-content">
             Fitur Utama
           </h2>
-          <p class="text-base-content/70">
+          <p class="text-base-content/80">
             Dirancang untuk kebutuhan posyandu disabilitas dan ekosistem inklusi
           </p>
         </div>
@@ -51,8 +51,8 @@ export const Features = component$(() => {
                 <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-3">
                   <Icon class="w-6 h-6" />
                 </div>
-                <h3 class="card-title">{title}</h3>
-                <p class="text-base-content/70">{desc}</p>
+                <h3 class="card-title text-base-content">{title}</h3>
+                <p class="text-base-content/80">{desc}</p>
               </div>
             </div>
           ))}

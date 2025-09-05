@@ -11,10 +11,10 @@ export const CTASection = component$(() => {
           <div class="card-body grid grid-cols-1 lg:grid-cols-2 items-center">
             <div class="flex flex-col items-center">
               <div class="flex flex-col items-start">
-                <h3 class="text-3xl font-bold mb-2 text-gradient-secondary">
+                <h3 class="text-3xl font-bold mb-2 text-gradient-secondary text-base-content">
                   Mulai Menggunakan SI-DIFA
                 </h3>
-                <p class="text-base-content/70 mb-4">
+                <p class="text-base-content/80 mb-4">
                   Daftar sebagai kader atau masuk jika sudah memiliki akun.
                 </p>
                 <div class="flex flex-wrap items-center gap-3">

@@ -16,7 +16,7 @@ export const PartnersMarquee = component$(() => {
     <section class="py-8 lg:py-10" aria-label="Mitra">
       <div class="container mx-auto px-4">
         <div class="text-center mb-6">
-          <p class="text-base-content/60">
+          <p class="text-base-content/80">
             Didukung komunitas dan pemangku kepentingan
           </p>
         </div>
