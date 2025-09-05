@@ -9,3 +9,4 @@ export * from "./NavigationKader";
 export * from "./NavigationPsikolog";
 export * from "./NavigationAuth";
 export * from "./SidebarMenuItem";
+export * from "./NavigationLoading";

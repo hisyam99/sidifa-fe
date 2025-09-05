@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, isBrowser } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { NavigationGuest } from "./NavigationGuest";
 import { NavigationAdmin } from "./NavigationAdmin";
@@ -6,10 +6,25 @@ import { NavigationKader } from "./NavigationKader";
 import { NavigationPsikolog } from "./NavigationPsikolog";
 import { NavigationAuth } from "./NavigationAuth";
 import { useAuthFromCookie } from "~/routes/layout";
+import { NavigationLoading } from "./NavigationLoading";
+import { sessionUtils } from "~/utils/auth";
 
 export const NavigationWrapper = component$(() => {
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn, user, loading } = useAuth();
   const ssrAuth = useAuthFromCookie();
+
+  // Determine if client storage suggests authenticated
+  const clientThinksAuthenticated = isBrowser
+    ? sessionUtils.getAuthStatus() === true
+    : false;
+
+  // Guard: if cookies or localStorage indicate authenticated but client is still loading, show loading navbar
+  if (
+    (ssrAuth.value.isLoggedIn || clientThinksAuthenticated) &&
+    loading.value
+  ) {
+    return <NavigationLoading />;
+  }
 
   // Prefer SSR auth snapshot (no flicker)
   if (ssrAuth.value.isLoggedIn && ssrAuth.value.role) {
