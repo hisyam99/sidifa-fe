@@ -5,6 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 import tailwindcss from "@tailwindcss/vite";
 import { qwikReact } from "@builder.io/qwik-react/vite";
+import { qwikPwa } from "@qwikdev/pwa";
 
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
@@ -23,6 +24,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
       tsconfigPaths(),
       tailwindcss(),
       qwikReact(),
+      qwikPwa(),
     ],
     optimizeDeps: {
       exclude: [],

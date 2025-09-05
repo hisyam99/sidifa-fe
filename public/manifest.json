@@ -5,5 +5,27 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#fff",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/src/media/logo/sidifa.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/src/media/logo/umm-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/src/media/logo/umm-logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
   "description": "Sistem Informasi Difabel"
 }
