@@ -23,13 +23,11 @@
       "url": "/profile"
     }
   ],
-  "display_override": ["standalone", "minimal-ui"],
   "icons": [
     {
       "src": "/media/logo/sidifa.svg",
       "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "type": "image/svg+xml"
     }
   ],
   "screenshots": [
