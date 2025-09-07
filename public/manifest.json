@@ -4,27 +4,62 @@
   "short_name": "SI-DIFA",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#fff",
-  "icons": [
+  "orientation": "natural",
+  "background_color": "#fcfdfe",
+  "theme_color": "#fcfdfe",
+  "categories": ["social", "information", "accessibility", "productivity"],
+  "shortcuts": [
     {
-      "src": "/src/media/logo/sidifa.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Akses cepat ke dashboard utama",
+      "url": "/dashboard",
+      "icons": [{ "src": "/media/logo/sidifa.svg", "sizes": "any" }]
     },
     {
-      "src": "/src/media/logo/umm-logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "name": "Profil Saya",
+      "short_name": "Profil",
+      "description": "Lihat dan edit profil difabel",
+      "url": "/profile"
+    }
+  ],
+  "display_override": ["standalone", "minimal-ui"],
+  "icons": [
+    {
+      "src": "/media/logo/sidifa.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "/src/media/logo/umm-logo.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "src": "/media/screenshots/1.webp",
+      "type": "image/webp",
+      "sizes": "1080x1920",
+      "form_factor": "narrow",
+      "label": "Halaman utama SI-DIFA"
+    },
+    {
+      "src": "/media/screenshots/2.webp",
+      "type": "image/webp",
+      "sizes": "1080x1920",
+      "form_factor": "narrow",
+      "label": "Halaman login SI-DIFA"
+    },
+    {
+      "src": "/media/screenshots/3.webp",
+      "type": "image/webp",
+      "sizes": "1920x1080",
+      "form_factor": "wide",
+      "label": "Halaman utama SI-DIFA"
+    },
+    {
+      "src": "/media/screenshots/4.webp",
+      "type": "image/webp",
+      "sizes": "1920x1080",
+      "form_factor": "wide",
+      "label": "Halaman login SI-DIFA"
     }
   ],
   "description": "Sistem Informasi Difabel"
