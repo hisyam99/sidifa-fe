@@ -5,8 +5,7 @@ import {
   $,
   QRL,
 } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
 import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
 import {
@@ -44,7 +43,7 @@ function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
     tanggal: apiData.tanggal,
     waktu_mulai: apiData.waktu_mulai,
     waktu_selesai: apiData.waktu_selesai,
-    file_name: buildJadwalPosyanduUrl(apiData.file_name || apiData.file_name),
+    file_name: buildJadwalPosyanduUrl(apiData.file_name),
     created_at: apiData.created_at,
     updated_at: apiData.updated_at,
     posyandu: apiData.posyandu || undefined,
@@ -58,13 +57,18 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const jadwal = useSignal<JadwalPosyanduItem | null>(null);
+
+  function getInitialActiveTab(location: ReturnType<typeof useLocation>) {
+    if ((location.url.hash || "").includes("tab=presensi")) {
+      return "presensi";
+    }
+    if (location.url.pathname.includes("/presensi")) {
+      return "presensi";
+    }
+    return "monitoring";
+  }
   const activeTab = useSignal<"monitoring" | "presensi">(
-    // Prefer hash (#tab=presensi) to avoid full route nav; fallback to path
-    (location.url.hash || "").includes("tab=presensi")
-      ? "presensi"
-      : location.url.pathname.includes("/presensi")
-        ? "presensi"
-        : "monitoring",
+    getInitialActiveTab(location),
   );
   const monitoringShowForm = useSignal(false);
   const monitoringEditId = useSignal<string | null>(null);
@@ -231,8 +235,80 @@ export default component$(() => {
       </div>
 
       {loading.value && (
-        <div class="flex justify-center items-center h-40">
-          <span class="loading loading-spinner loading-lg text-primary"></span>
+        <div class="card bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20 overflow-hidden mb-4 animate-pulse">
+          <div class="card-body p-0">
+            <div class="bg-base-100/50 backdrop-blur-sm p-3 border-b border-base-200">
+              <div class="flex flex-col lg:flex-row items-center justify-between gap-2">
+                <div class="flex items-center gap-3">
+                  <div class="skeleton w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary-focus"></div>
+                  <div class="text-center lg:text-left">
+                    <div class="skeleton h-6 w-32 mb-2"></div>
+                    <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
+                      <div class="skeleton badge badge-primary badge-sm font-semibold w-20 h-6"></div>
+                      <div class="skeleton badge badge-outline badge-sm w-20 h-6"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="skeleton w-5 h-5 rounded-full bg-success"></div>
+                  <div class="skeleton badge badge-success font-semibold w-20 h-6"></div>
+                </div>
+              </div>
+            </div>
+            <div class="p-3">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div>
+                    <div class="skeleton h-4 w-16 mb-1"></div>
+                    <div class="skeleton h-5 w-24"></div>
+                  </div>
+                </div>
+                <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div class="flex-1 min-w-0">
+                    <div class="skeleton h-4 w-16 mb-1"></div>
+                    <div class="skeleton h-5 w-32"></div>
+                  </div>
+                </div>
+                <div class="bg-base-200/50 rounded-lg p-2 flex items-center gap-2">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div>
+                    <div class="skeleton h-4 w-16 mb-1"></div>
+                    <div class="skeleton h-5 w-20"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div class="skeleton h-4 w-24"></div>
+                </div>
+                <div class="bg-primary/5 border border-primary/20 rounded-lg p-2">
+                  <div class="skeleton h-5 w-full"></div>
+                  <div class="skeleton h-5 w-3/4 mt-2"></div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div class="skeleton h-4 w-24"></div>
+                </div>
+                <div class="bg-info/5 border border-info/20 rounded-lg p-2">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div class="flex items-center gap-2">
+                      <div class="skeleton w-4 h-4"></div>
+                      <div class="skeleton h-4 w-20"></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="skeleton w-4 h-4"></div>
+                      <div class="skeleton h-4 w-20"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
       {error.value && (
@@ -685,17 +761,15 @@ export default component$(() => {
                         Tambah IBK ke Presensi
                       </h3>
                       <div class="space-y-4">
-                        <div>
-                          <label class="label label-text font-medium mb-1">
-                            Pilih IBK
-                          </label>
-                        </div>
-                        <IBKSearchSelect
-                          posyanduId={location.params.id as string}
-                          jadwalId={location.params.jadwalId as string}
-                          targetInputId="presensi-ibk-id"
-                          placeholder="Cari nama IBK..."
-                        />
+                        <label class="label label-text font-medium mb-1 w-full">
+                          <IBKSearchSelect
+                            posyanduId={location.params.id as string}
+                            jadwalId={location.params.jadwalId as string}
+                            targetInputId="presensi-ibk-id"
+                            placeholder="Cari nama IBK..."
+                          />
+                          Pilih IBK
+                        </label>
                         <input id="presensi-ibk-id" type="hidden" />
                         <button
                           class="btn btn-primary btn-sm w-full gap-2"

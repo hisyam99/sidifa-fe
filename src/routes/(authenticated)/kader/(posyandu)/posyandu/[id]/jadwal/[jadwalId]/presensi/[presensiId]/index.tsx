@@ -1,6 +1,5 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import { useLocation } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 import type { PresensiIBKItem } from "~/types";
 import {
@@ -126,10 +125,64 @@ export default component$(() => {
       </div>
 
       {loading.value && (
-        <div class="flex justify-center items-center h-40">
-          <div class="text-center">
-            <span class="loading loading-spinner loading-lg text-primary"></span>
-            <p class="text-base-content/60 mt-4">Memuat detail presensi...</p>
+        <div class="card bg-gradient-to-br from-primary/5 to-secondary/10 border-2 border-primary/20 overflow-hidden mb-4 animate-pulse">
+          <div class="card-body p-0">
+            <div class="bg-base-100/50 backdrop-blur-sm p-3 border-b border-base-200">
+              <div class="flex flex-col lg:flex-row items-center justify-between gap-2">
+                <div class="flex items-center gap-4">
+                  <div class="skeleton w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary"></div>
+                  <div class="text-center lg:text-left">
+                    <div class="skeleton h-6 w-32 mb-2"></div>
+                    <div class="skeleton h-4 w-40"></div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="skeleton w-5 h-5 rounded-full bg-success"></div>
+                  <div class="skeleton badge badge-success font-semibold w-20 h-6"></div>
+                </div>
+              </div>
+            </div>
+            <div class="p-3">
+              <div class="mb-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="skeleton w-5 h-5"></div>
+                  <div class="skeleton h-5 w-32"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div class="bg-base-200/50 rounded-lg p-3 flex items-center gap-3">
+                    <div class="skeleton w-4 h-4"></div>
+                    <div>
+                      <div class="skeleton h-4 w-16 mb-1"></div>
+                      <div class="skeleton h-5 w-24"></div>
+                    </div>
+                  </div>
+                  <div class="bg-base-200/50 rounded-lg p-3 flex items-center gap-3">
+                    <div class="skeleton w-4 h-4"></div>
+                    <div>
+                      <div class="skeleton h-4 w-16 mb-1"></div>
+                      <div class="skeleton h-5 w-32"></div>
+                    </div>
+                  </div>
+                  <div class="bg-base-200/50 rounded-lg p-3 flex items-center gap-3">
+                    <div class="skeleton w-4 h-4"></div>
+                    <div>
+                      <div class="skeleton h-4 w-16 mb-1"></div>
+                      <div class="skeleton h-5 w-20"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="skeleton w-4 h-4"></div>
+                  <div class="skeleton h-4 w-24"></div>
+                </div>
+                <div class="bg-primary/5 border border-primary/20 rounded-lg p-2">
+                  <div class="skeleton h-5 w-full"></div>
+                  <div class="skeleton h-5 w-3/4 mt-2"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
