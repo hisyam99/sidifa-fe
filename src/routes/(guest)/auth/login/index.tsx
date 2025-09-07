@@ -25,7 +25,7 @@ export const onGet: RequestHandler = async ({ cookie, redirect }) => {
 
 export default component$(() => {
   return (
-    <div class="flex flex-col lg:flex-row">
+    <div class="min-h-[90vh] flex flex-col lg:flex-row">
       {/* Left Side - Content (Hidden on mobile, visible on desktop) */}
       <AuthHeroContent
         title="Selamat Datang Kembali"

@@ -44,7 +44,6 @@ export const NavigationKader = component$(() => {
     { href: "/kader/posyandu", label: "List Posyandu", icon: LuClipboardList },
     { href: "/kader/lowongan", label: "Lowongan", icon: LuBriefcase },
     { href: "/kader/informasi", label: "Informasi", icon: LuBookOpen },
-    { href: "/kader/profile", label: "Profil Saya", icon: LuUser },
   ];
 
   const currentPath = location.url.pathname;
@@ -171,21 +170,23 @@ export const NavigationKader = component$(() => {
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
-              {menuItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    class={`flex items-center gap-3 hover:bg-primary/10${
-                      isActivePath(currentPath, item.href, item.href === "/")
-                        ? " font-bold text-primary"
-                        : ""
-                    }`}
-                  >
-                    <item.icon class="w-5 h-5 text-primary" />
-                    <span class="font-medium">{item.label}</span>
-                  </Link>
-                </li>
-              ))}
+              {menuItems
+                .filter((item) => item.href !== "/kader")
+                .map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      class={`flex items-center gap-3 hover:bg-primary/10${
+                        isActivePath(currentPath, item.href, item.href === "/")
+                          ? " font-bold text-primary"
+                          : ""
+                      }`}
+                    >
+                      <item.icon class="w-5 h-5 text-primary" />
+                      <span class="font-medium">{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
               {/* Kader submenu in mobile */}
               <li class="menu-title">
                 <span class="text-primary font-semibold">Menu Kader</span>

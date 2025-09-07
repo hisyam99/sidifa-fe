@@ -41,7 +41,7 @@ export const NavigationAdmin = component$(() => {
 
   // Admin dashboard submenu items
   const adminSubmenuItems = [
-    { href: "/admin", label: "Dashboard", icon: LuHome },
+    { href: "/admin", label: "Dashboard Admin", icon: LuBarChart },
     { href: "/admin/verifikasi-akun", label: "Verifikasi Akun", icon: LuKey },
     { href: "/admin/posyandu", label: "Manajemen Posyandu", icon: LuBuilding },
     {
@@ -176,21 +176,23 @@ export const NavigationAdmin = component$(() => {
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
-              {menuItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    class={`flex items-center gap-3 hover:bg-primary/10${
-                      isActivePath(currentPath, item.href, item.href === "/")
-                        ? " font-bold text-primary"
-                        : ""
-                    }`}
-                  >
-                    <item.icon class="w-5 h-5 text-primary" />
-                    <span class="font-medium">{item.label}</span>
-                  </Link>
-                </li>
-              ))}
+              {menuItems
+                .filter((item) => item.href !== "/admin")
+                .map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      class={`flex items-center gap-3 hover:bg-primary/10${
+                        isActivePath(currentPath, item.href, item.href === "/")
+                          ? " font-bold text-primary"
+                          : ""
+                      }`}
+                    >
+                      <item.icon class="w-5 h-5 text-primary" />
+                      <span class="font-medium">{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
               {/* Admin submenu in mobile */}
               <li class="menu-title">
                 <span class="text-primary font-semibold">Menu Admin</span>
