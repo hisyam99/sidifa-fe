@@ -1,9 +1,8 @@
 // File: /sidifa-fev2/src/routes/posyandu/index.tsx
 
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
-import { useLocation } from "@builder.io/qwik-city";
 import { getPosyanduDetail } from "~/services/api";
 import type { PosyanduDetail } from "~/types";
 import { extractErrorMessage } from "~/utils/error";
@@ -248,15 +247,6 @@ export default component$(() => {
                 </div>
                 <div class="divider">Aksi Lainnya</div>
                 <div class="flex flex-wrap gap-3 justify-end">
-                  <button class="btn btn-primary gap-2" onClick$={() => {}}>
-                    <LuPencil class="w-4 h-4" /> Edit Data
-                  </button>
-                  <button class="btn btn-error gap-2" onClick$={() => {}}>
-                    <LuTrash class="w-4 h-4" /> Hapus Data
-                  </button>
-                  <button class="btn btn-info gap-2" onClick$={() => {}}>
-                    <LuShare class="w-4 h-4" /> Bagikan
-                  </button>
                   <button class="btn btn-outline gap-2" onClick$={() => {}}>
                     <LuArrowRight class="w-4 h-4" /> Salin ID
                   </button>

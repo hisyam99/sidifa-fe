@@ -178,20 +178,21 @@ export const JadwalPosyanduForm = component$<JadwalPosyanduFormProps>(
             <input type="hidden" {...props} value={field.value || ""} />
           )}
         </Field>
-        <div class="flex gap-4">
-          <Field name="tanggal" type="string">
-            {(field, props) => (
-              <>
-                <FormFieldModular
-                  field={field}
-                  props={props}
-                  type="date"
-                  label="Tanggal"
-                  required
-                />
-              </>
-            )}
-          </Field>
+        {/* Tanggal, lalu Waktu Mulai & Waktu Selesai dalam satu baris */}
+        <Field name="tanggal" type="string">
+          {(field, props) => (
+            <>
+              <FormFieldModular
+                field={field}
+                props={props}
+                type="date"
+                label="Tanggal"
+                required
+              />
+            </>
+          )}
+        </Field>
+        <div class="flex flex-row gap-4 w-full">
           <Field name="waktu_mulai" type="string">
             {(field, props) => (
               <>
