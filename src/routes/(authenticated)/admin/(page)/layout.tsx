@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { RoleProtectedContent } from "~/components/common";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
 

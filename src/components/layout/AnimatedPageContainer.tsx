@@ -1,5 +1,5 @@
-import { component$, Slot, useSignal, useTask$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { component$, Slot, useSignal, useTask$ } from "@qwik.dev/core";
+import { useLocation } from "@qwik.dev/router";
 
 /**
  * Enhanced AnimatedPageContainer that detects route changes and triggers animations

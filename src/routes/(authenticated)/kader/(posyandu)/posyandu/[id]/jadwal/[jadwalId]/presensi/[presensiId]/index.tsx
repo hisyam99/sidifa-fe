@@ -1,5 +1,5 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
-import { Link, useLocation } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$, $ } from "@qwik.dev/core";
+import { Link, useLocation } from "@qwik.dev/router";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 import type { PresensiIBKItem } from "~/types";
 import {

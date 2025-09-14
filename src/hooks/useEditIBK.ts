@@ -1,4 +1,4 @@
-import { $, useSignal } from "@builder.io/qwik";
+import { $, useSignal } from "@qwik.dev/core";
 import { ibkService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 

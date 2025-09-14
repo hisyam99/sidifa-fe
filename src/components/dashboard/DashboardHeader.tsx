@@ -1,5 +1,5 @@
-import { component$, QRL } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, QRL } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import {
   LuBell,
   LuSettings,
@@ -7,7 +7,7 @@ import {
   LuLogOut,
 } from "~/components/icons/lucide-optimized"; // Updated import path
 import { getRoleDisplayName, getRoleIcon } from "~/utils/dashboard-utils";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 
 interface DashboardHeaderProps {
   userName: string;

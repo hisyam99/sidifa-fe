@@ -1,6 +1,6 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { SidebarMenuItem } from "~/components/layout/SidebarMenuItem";
-import type { FunctionComponent } from "@builder.io/qwik";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 export interface SidebarMenuItemType {
   href: string;

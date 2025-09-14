@@ -1,5 +1,5 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
-import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$, $ } from "@qwik.dev/core";
+import { Link, useLocation, useNavigate } from "@qwik.dev/router";
 import { ibkService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import { useEditIBK } from "~/hooks/useEditIBK";

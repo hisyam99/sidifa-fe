@@ -1,5 +1,5 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
-import { Link, useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, $ } from "@qwik.dev/core";
+import { Link, useNavigate } from "@qwik.dev/router";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { loginSchema, type LoginForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";

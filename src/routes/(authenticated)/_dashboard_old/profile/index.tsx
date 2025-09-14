@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { PageContainer } from "~/components/layout";
 import { ProfileCard } from "~/components/profile";
 

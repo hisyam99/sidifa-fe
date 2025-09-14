@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { signupPsikologSchema, type SignupPsikologForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
@@ -6,7 +6,7 @@ import { FormField, Card } from "~/components/ui";
 import { extractErrorMessage } from "~/utils/error";
 import { sessionUtils } from "~/utils/auth";
 import { LuBrain, LuArrowRight } from "~/components/icons/lucide-optimized"; // Updated import path
-import { useNavigate, Link } from "@builder.io/qwik-city";
+import { useNavigate, Link } from "@qwik.dev/router";
 import {
   emitToastSuccess,
   emitToastError,

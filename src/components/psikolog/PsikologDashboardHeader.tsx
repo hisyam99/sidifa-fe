@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { LuPlus } from "~/components/icons/lucide-optimized"; // Updated import path
-import { QRL } from "@builder.io/qwik";
+import { QRL } from "@qwik.dev/core";
 
 interface PsikologDashboardHeaderProps {
   onButtonClick$: QRL<() => void>;

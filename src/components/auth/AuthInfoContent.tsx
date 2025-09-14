@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { AuthProcessStep } from "./AuthProcessStep";
 import { AuthSecurityTip } from "./AuthSecurityTip";
-import type { FunctionComponent } from "@builder.io/qwik";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 interface AuthInfoContentProps {
   title: string;

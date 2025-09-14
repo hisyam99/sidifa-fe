@@ -1,9 +1,9 @@
-import { component$, useVisibleTask$, useSignal, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, useVisibleTask$, useSignal, $ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
-import { useNavigate, useLocation } from "@builder.io/qwik-city";
+import { useNavigate, useLocation } from "@qwik.dev/router";
 import { GenericLoadingSpinner, ConfirmationModal } from "~/components/common";
 import type { InformasiItem } from "~/types/informasi";
 import { buildInformasiEdukasiUrl } from "~/utils/url";

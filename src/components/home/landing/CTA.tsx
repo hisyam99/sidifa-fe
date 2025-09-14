@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { LuArrowRight } from "~/components/icons/lucide-optimized";
 import CtaImg from "~/media/home/section-6.jpg?w=800&h=520&jsx";
 

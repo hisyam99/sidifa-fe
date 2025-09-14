@@ -1,4 +1,4 @@
-import { component$, $, Signal, QRL } from "@builder.io/qwik";
+import { component$, $, Signal, QRL } from "@qwik.dev/core";
 import { SearchBox } from "~/components/common";
 import type { AdminPosyanduFilterOptions } from "~/types/admin-posyandu-management";
 import { useDebouncer } from "~/utils/debouncer";

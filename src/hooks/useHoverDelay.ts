@@ -1,4 +1,4 @@
-import { useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import { useSignal, useVisibleTask$, $ } from "@qwik.dev/core";
 
 export const useHoverDelay = (delayMs: number = 300) => {
   const isHovered = useSignal(false);

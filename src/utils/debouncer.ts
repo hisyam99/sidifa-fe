@@ -1,4 +1,4 @@
-import { $, useSignal, type QRL } from "@builder.io/qwik";
+import { $, useSignal, type QRL } from "@qwik.dev/core";
 
 /**
  * Debouncer for Qwik - returns a QRL function that debounces the given function.

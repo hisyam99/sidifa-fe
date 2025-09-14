@@ -1,6 +1,6 @@
-import { component$, useSignal, $, useVisibleTask$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import { useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, $, useVisibleTask$ } from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router";
+import { useNavigate } from "@qwik.dev/router";
 import { JobCard } from "~/components/jobs";
 import { LowonganFilterBar } from "~/components/admin/lowongan/LowonganFilterBar";
 import { PaginationControls } from "~/components/common/PaginationControls";

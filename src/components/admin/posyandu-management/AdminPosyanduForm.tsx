@@ -1,4 +1,4 @@
-import { component$, $, type QRL } from "@builder.io/qwik";
+import { component$, $, type QRL } from "@qwik.dev/core";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { object, string, nonEmpty, pipe } from "valibot";
 import FormFieldModular from "~/components/ui/FormFieldModular";

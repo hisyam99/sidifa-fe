@@ -1,5 +1,5 @@
-import { useSignal, useTask$, type QRL } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { useSignal, useTask$, type QRL } from "@qwik.dev/core";
+import { useLocation } from "@qwik.dev/router";
 
 /**
  * Custom hook to detect route changes and trigger callbacks

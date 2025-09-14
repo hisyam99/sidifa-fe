@@ -1,4 +1,4 @@
-import { isBrowser } from "@builder.io/qwik";
+import { isBrowser } from "@qwik.dev/core";
 
 // Auth utilities for consistent localStorage management
 

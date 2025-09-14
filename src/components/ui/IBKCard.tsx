@@ -1,4 +1,4 @@
-import { QRL } from "@builder.io/qwik"; // FIX: Added $, QRL
+import { QRL } from "@qwik.dev/core"; // FIX: Added $, QRL
 import type { IBKRecord } from "~/types";
 
 export interface IBKCardProps {

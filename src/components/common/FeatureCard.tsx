@@ -1,5 +1,5 @@
-import { component$ } from "@builder.io/qwik";
-import type { FunctionComponent } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 interface FeatureCardProps {
   icon: FunctionComponent<{ class?: string }>;

@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import LogoSidifa from "~/media/logo/umm-logo.png?jsx";
 import LogoLinksos from "~/media/logo/linksos-logo.png?jsx";
 

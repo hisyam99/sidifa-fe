@@ -1,4 +1,4 @@
-import { $, useSignal } from "@builder.io/qwik";
+import { $, useSignal } from "@qwik.dev/core";
 import { kaderLowonganService } from "~/services/api";
 import type { LowonganItem, LowonganFilterOptions } from "~/types/lowongan";
 

@@ -1,4 +1,4 @@
-import { component$, isBrowser } from "@builder.io/qwik";
+import { component$, isBrowser } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { NavigationGuest } from "./NavigationGuest";
 import { NavigationAdmin } from "./NavigationAdmin";

@@ -1,7 +1,7 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$, $ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
+import type { DocumentHead } from "@qwik.dev/router";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
 import { useAuth } from "~/hooks";
 import { GenericLoadingSpinner } from "~/components/common";

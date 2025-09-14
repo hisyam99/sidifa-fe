@@ -4,8 +4,8 @@ import {
   useSignal,
   useTask$,
   Signal,
-} from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+} from "@qwik.dev/core";
+import { useLocation } from "@qwik.dev/router";
 
 export interface RoutingProgressContext {
   progress: Signal<number>;

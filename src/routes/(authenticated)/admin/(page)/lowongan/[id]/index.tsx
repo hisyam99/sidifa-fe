@@ -1,7 +1,7 @@
-import { component$, useTask$, useSignal } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation } from "@builder.io/qwik-city";
+import { component$, useTask$, useSignal } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
+import type { DocumentHead } from "@qwik.dev/router";
+import { useLocation } from "@qwik.dev/router";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildLowonganUploadUrl } from "~/utils/url";

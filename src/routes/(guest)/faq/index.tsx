@@ -1,5 +1,5 @@
-import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { component$, useSignal, $, useComputed$ } from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router";
 import { LuHelpCircle } from "~/components/icons/lucide-optimized"; // Updated import path
 import { SearchBox } from "~/components/common";
 import { FAQCategory } from "~/components/faq";
@@ -8,9 +8,9 @@ import type { FAQCategory as FAQCategoryType } from "~/data/faqs"; // Import FAQ
 
 export default component$(() => {
   const searchTerm = useSignal("");
-  const displayedFaqCategories = useSignal<FAQCategoryType[]>([]);
 
-  const filterFaqCategories = $(() => {
+  // Use useComputed$ instead of useTask$ to avoid lexical scope issues
+  const displayedFaqCategories = useComputed$(() => {
     const lowerCaseSearchTerm = searchTerm.value.toLowerCase();
     if (!lowerCaseSearchTerm) {
       return allFaqCategories;
@@ -27,11 +27,6 @@ export default component$(() => {
         ),
       }))
       .filter((category) => category.qa.length > 0);
-  });
-
-  useTask$(async ({ track }) => {
-    track(() => searchTerm.value);
-    displayedFaqCategories.value = await filterFaqCategories();
   });
 
   return (

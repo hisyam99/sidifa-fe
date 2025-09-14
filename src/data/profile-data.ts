@@ -1,4 +1,4 @@
-import { Component, SVGProps } from "@builder.io/qwik";
+import { Component, SVGProps } from "@qwik.dev/core";
 import { LuCheckCircle } from "~/components/icons/lucide-optimized"; // Updated import path
 
 interface ProfileBenefitItem {

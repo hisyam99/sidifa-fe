@@ -5,8 +5,8 @@ import {
   useSignal,
   noSerialize,
   type NoSerialize,
-} from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+} from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildInformasiEdukasiUrl } from "~/utils/url";
 import { MdxEditor } from "~/components/common/MdxEditorWrapper";

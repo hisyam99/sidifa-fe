@@ -1,5 +1,5 @@
-import { component$, QRL, noSerialize, useTask$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, QRL, noSerialize, useTask$ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { useForm, valiForm$, setValues } from "@modular-forms/qwik";
 import { object, string, nonEmpty, minLength, pipe, optional } from "valibot";
 import type {

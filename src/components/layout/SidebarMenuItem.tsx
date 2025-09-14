@@ -1,5 +1,5 @@
-import { component$, $ } from "@builder.io/qwik";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, $ } from "@qwik.dev/core";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { useDrawer } from "~/hooks/useDrawer";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 

@@ -1,6 +1,6 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { Link, useLocation } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@qwik.dev/router";
 import { BrandLogo } from "~/components/common";
 import { AvatarMenu } from "../ui";
 import { isActivePath } from "~/utils/path";

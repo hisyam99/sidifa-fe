@@ -159,7 +159,7 @@ touch src/routes/dashboard/new-feature/index.tsx
 ### Template untuk Route Baru:
 
 ```typescript
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { PageContainer } from "~/components/layout";
 
 export default component$(() => {

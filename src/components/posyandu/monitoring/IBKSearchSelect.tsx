@@ -1,4 +1,4 @@
-import { component$, useSignal, $, useTask$, QRL } from "@builder.io/qwik";
+import { component$, useSignal, $, useTask$, QRL } from "@qwik.dev/core";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 
 interface IBKSearchSelectProps {

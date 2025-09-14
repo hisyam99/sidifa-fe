@@ -1,4 +1,4 @@
-import { component$, useComputed$, useContext } from "@builder.io/qwik";
+import { component$, useComputed$, useContext } from "@qwik.dev/core";
 import clsx from "clsx";
 import {
   RoutingProgressContextId,

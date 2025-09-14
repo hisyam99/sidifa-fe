@@ -1,18 +1,13 @@
-import {
-  component$,
-  PropFunction,
-  Signal,
-  $,
-  useSignal,
-} from "@builder.io/qwik";
+import { component$, Signal, $, useSignal } from "@qwik.dev/core";
+import type { QRL } from "@qwik.dev/core";
 import type { LowonganFilterOptions } from "~/types/lowongan";
 import { useDebouncer } from "~/utils/debouncer";
 
 interface LowonganFilterBarProps {
   filterOptions: Signal<LowonganFilterOptions>;
-  onFilterChange$: PropFunction<() => void>;
+  onFilterChange$: QRL<() => void>;
   limit: Signal<number>;
-  onLimitChange$: PropFunction<(limit: number) => void>;
+  onLimitChange$: QRL<(limit: number) => void>;
 }
 
 export const LowonganFilterBar = component$<LowonganFilterBarProps>(

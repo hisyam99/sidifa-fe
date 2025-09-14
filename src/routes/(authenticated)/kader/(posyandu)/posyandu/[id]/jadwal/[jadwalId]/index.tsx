@@ -1,11 +1,5 @@
-import {
-  component$,
-  useSignal,
-  useVisibleTask$,
-  $,
-  QRL,
-} from "@builder.io/qwik";
-import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$, $, QRL } from "@qwik.dev/core";
+import { Link, useLocation, useNavigate } from "@qwik.dev/router";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
 import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
 import {

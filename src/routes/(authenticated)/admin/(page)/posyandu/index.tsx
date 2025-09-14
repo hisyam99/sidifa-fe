@@ -1,8 +1,8 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
 import { usePagination } from "~/hooks/usePagination";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import type { DocumentHead } from "@qwik.dev/router";
 
 import {
   AdminPosyanduListHeader,

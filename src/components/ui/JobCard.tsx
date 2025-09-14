@@ -1,4 +1,4 @@
-import { component$, $, QRL } from "@builder.io/qwik"; // FIX: Added $, QRL
+import { component$, $, QRL } from "@qwik.dev/core"; // FIX: Added $, QRL
 import type { JobOpportunity } from "~/types";
 import {
   LuBuilding,

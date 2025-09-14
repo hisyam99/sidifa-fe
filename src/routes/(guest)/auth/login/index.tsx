@@ -1,6 +1,6 @@
 // File: /src/routes/(guest)/auth/login/index.tsx
-import { component$ } from "@builder.io/qwik";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import { component$ } from "@qwik.dev/core";
+import type { RequestHandler } from "@qwik.dev/router";
 import { LoginForm, AuthHeroContent } from "~/components/auth";
 import { getUiAuthFromCookie } from "~/utils/ui-auth-cookie";
 

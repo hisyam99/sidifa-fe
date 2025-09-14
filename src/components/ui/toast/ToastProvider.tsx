@@ -8,7 +8,7 @@ import {
   Slot,
   useVisibleTask$,
   isServer,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 

@@ -4,7 +4,7 @@ import {
   $,
   isServer,
   isBrowser,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 import {
   profileService,
   authService,

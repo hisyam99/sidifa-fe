@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { Spinner } from "~/components/ui/Spinner";
 
 export default component$(() => {

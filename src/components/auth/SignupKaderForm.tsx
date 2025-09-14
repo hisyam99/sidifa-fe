@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
+import { component$, useSignal, $ } from "@qwik.dev/core";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { signupKaderSchema, type SignupKaderForm } from "~/types/auth";
 import api, { profileService } from "~/services/api";
@@ -9,7 +9,7 @@ import {
   LuStethoscope,
   LuArrowRight,
 } from "~/components/icons/lucide-optimized"; // Updated import path
-import { useNavigate, Link } from "@builder.io/qwik-city";
+import { useNavigate, Link } from "@qwik.dev/router";
 import {
   emitToastSuccess,
   emitToastError,

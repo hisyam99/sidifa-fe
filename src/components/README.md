@@ -147,7 +147,7 @@ import { ProfileCard } from "~/components/profile";
 ### Penggunaan dalam Route
 
 ```typescript
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { PageContainer } from "~/components/layout";
 import { LoginForm } from "~/components/auth";
 
@@ -163,7 +163,7 @@ export default component$(() => {
 ## Contoh Penggunaan SearchBox
 
 ```typescript
-import { component$, useSignal } from "@builder.io/qwik";
+import { component$, useSignal } from "@qwik.dev/core";
 import { SearchBox } from "~/components/common";
 
 export default component$(() => {

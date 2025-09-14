@@ -1,5 +1,6 @@
-import { component$, PropFunction, useSignal } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, useSignal } from "@qwik.dev/core";
+import type { QRL } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import type { LowonganCreateRequest, LowonganItem } from "~/types/lowongan";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { object, string, nonEmpty, pipe, optional } from "valibot";
@@ -38,7 +39,7 @@ type LowonganFormValues = {
 
 interface LowonganFormProps {
   initialData?: Partial<LowonganItem>;
-  onSubmit$: PropFunction<(data: LowonganFormData) => void>;
+  onSubmit$: QRL<(data: LowonganFormData) => void>;
   loading?: boolean;
   submitButtonText?: string;
 }

@@ -4,9 +4,9 @@ import {
   useVisibleTask$,
   $,
   type QRL,
-} from "@builder.io/qwik";
-import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+} from "@qwik.dev/core";
+import type { DocumentHead } from "@qwik.dev/router";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { ibkService } from "~/services/api";
 import { IBKDetailView } from "~/components/ibk/IBKDetailView";
 import { extractErrorMessage } from "~/utils/error";

@@ -1,4 +1,4 @@
-import { component$, QRL, $ } from "@builder.io/qwik";
+import { component$, QRL, $ } from "@qwik.dev/core";
 import type { JadwalPosyanduItem } from "~/types";
 import { LuEye, LuPencil, LuTrash } from "~/components/icons/lucide-optimized";
 import { Spinner } from "~/components/ui/Spinner";

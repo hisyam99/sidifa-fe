@@ -1,4 +1,4 @@
-import { component$, QRL, $, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, QRL, $, useSignal, useTask$ } from "@qwik.dev/core";
 import type { PresensiIBKItem, PresensiStatus } from "~/types";
 import {
   LuCheck,

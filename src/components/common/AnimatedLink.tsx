@@ -1,6 +1,6 @@
-import { component$, useSignal, useTask$, $, QRL } from "@builder.io/qwik";
-import { Link, useLocation } from "@builder.io/qwik-city";
-import type { JSXChildren } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, $, QRL } from "@qwik.dev/core";
+import { Link, useLocation } from "@qwik.dev/router";
+import type { JSXChildren } from "@qwik.dev/core";
 
 interface AnimatedLinkProps {
   href: string;

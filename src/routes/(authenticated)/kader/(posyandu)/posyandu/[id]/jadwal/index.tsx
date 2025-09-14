@@ -1,11 +1,5 @@
-import {
-  component$,
-  useSignal,
-  useVisibleTask$,
-  $,
-  QRL,
-} from "@builder.io/qwik";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useSignal, useVisibleTask$, $, QRL } from "@qwik.dev/core";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { useJadwalPosyandu } from "~/hooks/useJadwalPosyandu";
 import { JadwalPosyanduTable } from "~/components/posyandu/jadwal/JadwalPosyanduTable";
 import { JadwalPosyanduForm } from "~/components/posyandu/jadwal/JadwalPosyanduForm";

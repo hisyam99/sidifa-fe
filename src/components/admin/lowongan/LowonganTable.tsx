@@ -1,4 +1,4 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import type { LowonganItem } from "~/types/lowongan";
 import { Spinner } from "~/components/ui/Spinner";
 

@@ -1,5 +1,5 @@
 // File: /src/utils/ui-auth-cookie.ts
-import type { Cookie } from "@builder.io/qwik-city";
+import type { Cookie } from "@qwik.dev/router";
 
 // Helper function to encode role to obfuscated value
 function encodeRole(role: string): string {

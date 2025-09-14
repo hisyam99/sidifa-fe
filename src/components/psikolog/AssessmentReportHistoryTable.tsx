@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import type { AssessmentReportItem } from "~/data/assessment-report-data";
 
 interface AssessmentReportHistoryTableProps {

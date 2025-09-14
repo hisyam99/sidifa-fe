@@ -1,4 +1,4 @@
-import { useSignal, useStore, $, useComputed$ } from "@builder.io/qwik";
+import { useSignal, useStore, $, useComputed$ } from "@qwik.dev/core";
 import type {
   JadwalPosyanduItem,
   JadwalPosyanduCreateRequest,

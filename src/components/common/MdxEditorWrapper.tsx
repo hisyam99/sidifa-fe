@@ -1,4 +1,4 @@
-import { qwikify$ } from "@builder.io/qwik-react";
+import { qwikify$ } from "@qwik.dev/react";
 import React from "react";
 import {
   MDXEditor,

@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { LuLoader2 } from "~/components/icons/lucide-optimized"; // Updated import path
 
 interface GenericLoadingSpinnerOldProps {

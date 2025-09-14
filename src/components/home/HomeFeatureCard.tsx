@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { LuCheckCircle } from "~/components/icons/lucide-optimized"; // Updated import path
-import type { FunctionComponent } from "@builder.io/qwik";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 interface HomeFeatureCardProps {
   icon: FunctionComponent<{ class?: string }>;

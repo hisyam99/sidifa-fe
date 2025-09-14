@@ -1,4 +1,4 @@
-import { isServer, isBrowser } from "@builder.io/qwik";
+import { isServer, isBrowser } from "@qwik.dev/core";
 import axios from "xior";
 import { sessionUtils } from "~/utils/auth";
 import { extractErrorMessage } from "~/utils/error";

@@ -1,4 +1,4 @@
-import { $, useComputed$, useSignal, useStore } from "@builder.io/qwik";
+import { $, useComputed$, useSignal, useStore } from "@qwik.dev/core";
 import { extractErrorMessage } from "~/utils/error";
 import type { PresensiIBKItem, PresensiStatus } from "~/types";
 import { presensiIBKService } from "~/services/presensi-ibk.service";

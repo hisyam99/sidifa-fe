@@ -1,5 +1,5 @@
-import { component$, type Component, type SVGProps } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, type Component, type SVGProps } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 
 interface DashboardQuickLinkCardProps {
   href: string;

@@ -1,5 +1,5 @@
-import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { sessionUtils } from "~/utils/auth";
@@ -11,7 +11,7 @@ import {
   LuUsers,
   LuSettings,
 } from "~/components/icons/lucide-optimized"; // Changed import source
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@qwik.dev/router";
 import { Sidebar } from "~/components/common/Sidebar";
 
 export default component$(() => {

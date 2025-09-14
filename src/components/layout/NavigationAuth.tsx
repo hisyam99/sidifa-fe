@@ -1,4 +1,4 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
 import {
   LuMenu,
@@ -8,7 +8,7 @@ import {
   LuHelpCircle,
   LuBarChart,
 } from "~/components/icons/lucide-optimized";
-import { useLocation, Link, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, Link, useNavigate } from "@qwik.dev/router";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";

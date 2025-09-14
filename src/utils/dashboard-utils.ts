@@ -1,5 +1,5 @@
 import { LuHeart, LuBrain, LuUser } from "~/components/icons/lucide-optimized"; // Updated import path
-import type { Component } from "@builder.io/qwik";
+import type { Component } from "@qwik.dev/core";
 
 export const getRoleDisplayName = (role?: string): string => {
   switch (role) {

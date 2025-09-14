@@ -1,4 +1,4 @@
-import { component$, useSignal, useStore, $, QRL } from "@builder.io/qwik";
+import { component$, useSignal, useStore, $, QRL } from "@qwik.dev/core";
 import {
   LuInfo,
   LuActivity,

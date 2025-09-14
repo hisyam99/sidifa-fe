@@ -1,10 +1,4 @@
-import {
-  component$,
-  QRL,
-  useSignal,
-  useVisibleTask$,
-  $,
-} from "@builder.io/qwik";
+import { component$, QRL, useSignal, useVisibleTask$, $ } from "@qwik.dev/core";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { object, string, nonEmpty, minLength, pipe, optional } from "valibot";
 import type {

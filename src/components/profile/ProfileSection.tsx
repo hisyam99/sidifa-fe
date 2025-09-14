@@ -1,5 +1,5 @@
-import { component$, Slot } from "@builder.io/qwik";
-import type { JSXChildren } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
+import type { JSXChildren } from "@qwik.dev/core";
 
 interface ProfileSectionProps {
   title: string;

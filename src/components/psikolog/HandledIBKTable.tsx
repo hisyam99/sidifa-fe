@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import type { HandledIBKItem } from "~/data/psikolog-dashboard-data";
 
 interface HandledIBKTableProps {

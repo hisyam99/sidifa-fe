@@ -1,6 +1,6 @@
-import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal, $, useTask$ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks"; // Add this import
-import type { DocumentHead } from "@builder.io/qwik-city";
+import type { DocumentHead } from "@qwik.dev/router";
 import { IBKTable, Alert } from "~/components/ui";
 import { PaginationControls } from "~/components/common";
 import type { IBKRecord } from "~/types";
@@ -9,7 +9,7 @@ import {
   LuActivity,
   // Ensure all necessary icons are imported
 } from "~/components/icons/lucide-optimized"; // Changed import source
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { ibkService } from "~/services/api";
 import { useDebouncer } from "~/utils/debouncer";
 

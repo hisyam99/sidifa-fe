@@ -5,7 +5,7 @@ import {
   $,
   type QRL,
   type Signal,
-} from "@builder.io/qwik";
+} from "@qwik.dev/core";
 
 /**
  * Pagination meta type (can be extended as needed)
@@ -68,11 +68,6 @@ export function usePagination<
     limit: currentLimit.value,
   }));
 
-  // Stable, serializable hash for filters (always call useComputed$)
-  const filterHash = useComputed$(() =>
-    JSON.stringify((filters?.value ?? {}) as Record<string, unknown>),
-  );
-
   // Centralized fetch handler
   const handleFetchList = $(() => {
     const filterObj = (filters?.value ?? {}) as Record<string, unknown>;
@@ -87,14 +82,22 @@ export function usePagination<
   useTask$(({ track }) => {
     track(currentPage);
     track(currentLimit);
-    track(filterHash);
+    // Track filters directly instead of computed filterHash
+    if (filters) {
+      track(filters);
+    }
     dependencies.forEach((dep) => track(dep));
     handleFetchList();
   });
 
-  // Handlers
+  // Handlers - avoid capturing meta signal by using currentPage and total directly
   const handlePageChange = $((newPage: number) => {
-    if (meta.value && (newPage < 1 || newPage > meta.value.totalPage)) return;
+    const totalDataValue = total.value;
+    const limitValue = currentLimit.value;
+    const calculatedTotalPage =
+      totalPage?.value || Math.ceil(totalDataValue / limitValue) || 1;
+
+    if (newPage < 1 || newPage > calculatedTotalPage) return;
     currentPage.value = newPage;
   });
 

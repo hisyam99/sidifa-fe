@@ -1,5 +1,5 @@
-import { component$, QRL } from "@builder.io/qwik";
-import type { FunctionComponent } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 interface SocialButtonProps {
   icon: FunctionComponent<{ class?: string }>;

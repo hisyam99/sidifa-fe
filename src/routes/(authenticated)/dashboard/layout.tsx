@@ -1,8 +1,8 @@
-import { component$, Slot, useTask$, useSignal } from "@builder.io/qwik";
+import { component$, Slot, useTask$, useSignal } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 import { DashboardSkeletonLoader } from "~/components/common";
-import type { RequestHandler } from "@builder.io/qwik-city";
+import type { RequestHandler } from "@qwik.dev/router";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   cacheControl({

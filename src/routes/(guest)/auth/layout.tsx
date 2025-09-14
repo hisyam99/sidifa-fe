@@ -1,7 +1,7 @@
-import { component$, Slot } from "@builder.io/qwik";
+import { component$, Slot } from "@qwik.dev/core";
 import { AnimatedBackground } from "~/components/common";
 import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
-// import type { RequestHandler } from "@builder.io/qwik-city";
+// import type { RequestHandler } from "@qwik.dev/router";
 
 // Middleware: Redirect to dashboard if already logged in (user_session cookie check)
 // export const onRequest: RequestHandler = async ({ redirect, cookie }) => {

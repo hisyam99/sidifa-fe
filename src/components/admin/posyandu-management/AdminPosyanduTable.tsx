@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import Spinner from "~/components/ui/Spinner";
 import type { AdminPosyanduItem } from "~/types/admin-posyandu-management";
 

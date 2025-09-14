@@ -1,6 +1,6 @@
-import { component$ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
-import type { DocumentHead } from "@builder.io/qwik-city";
+import { component$ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
+import type { DocumentHead } from "@qwik.dev/router";
 import { useAuth } from "~/hooks";
 import {
   LuHeart,

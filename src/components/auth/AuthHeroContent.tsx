@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { LuHeart, LuShield, LuZap } from "~/components/icons/lucide-optimized"; // Changed import source
 import { AuthFeatureItem } from "./AuthFeatureItem";
 

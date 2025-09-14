@@ -1,5 +1,5 @@
-import { component$, useSignal, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { component$, useSignal, $ } from "@qwik.dev/core";
+import { Link } from "@qwik.dev/router";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { forgotPasswordSchema, type ForgotPasswordForm } from "~/types/auth";
 import api from "~/services/api";

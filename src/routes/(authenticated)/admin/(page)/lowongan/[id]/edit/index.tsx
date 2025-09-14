@@ -1,5 +1,5 @@
-import { component$, useTask$, useSignal, $ } from "@builder.io/qwik";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
+import { component$, useTask$, useSignal, $ } from "@qwik.dev/core";
+import { useLocation, useNavigate } from "@qwik.dev/router";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import Alert from "~/components/ui/Alert";
 import {

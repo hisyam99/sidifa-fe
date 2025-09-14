@@ -1,7 +1,7 @@
-import { component$, Signal, QRL } from "@builder.io/qwik";
+import { component$, Signal, QRL } from "@qwik.dev/core";
 import { Spinner } from "../ui/Spinner";
 import type { PosyanduItem } from "~/types/posyandu";
-import { useNavigate } from "@builder.io/qwik-city";
+import { useNavigate } from "@qwik.dev/router";
 
 interface PosyanduTableProps {
   posyanduList: Signal<PosyanduItem[]>;

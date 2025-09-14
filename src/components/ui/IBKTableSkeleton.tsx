@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 
 export const IBKTableSkeleton = component$(() => {
   const rows = Array.from({ length: 5 });

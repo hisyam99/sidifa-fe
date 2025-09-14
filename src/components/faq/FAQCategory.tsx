@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$ } from "@qwik.dev/core";
 import { FAQItem } from "~/components/home"; // Assuming FAQItem is in home for now
 import type { FAQCategory as FAQCategoryType } from "~/data/faqs";
 

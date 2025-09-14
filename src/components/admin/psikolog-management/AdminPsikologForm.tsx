@@ -1,4 +1,4 @@
-import { component$, $, QRL, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, $, QRL, useSignal, useTask$ } from "@qwik.dev/core";
 import { GenericLoadingSpinner } from "~/components/common";
 
 export interface AdminPsikologFormData {

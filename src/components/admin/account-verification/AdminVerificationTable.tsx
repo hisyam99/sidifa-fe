@@ -1,4 +1,4 @@
-import { component$, QRL } from "@builder.io/qwik";
+import { component$, QRL } from "@qwik.dev/core";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
 import Spinner from "~/components/ui/Spinner";
 import { LuCheck, LuAlertTriangle } from "~/components/icons/lucide-optimized";

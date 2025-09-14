@@ -1,6 +1,6 @@
-import { component$, QRL, Slot } from "@builder.io/qwik";
-import { useLocation, Link } from "@builder.io/qwik-city";
-import type { FunctionComponent } from "@builder.io/qwik";
+import { component$, QRL, Slot } from "@qwik.dev/core";
+import { useLocation, Link } from "@qwik.dev/router";
+import type { FunctionComponent } from "@qwik.dev/core";
 
 interface NavLinkProps {
   href: string;

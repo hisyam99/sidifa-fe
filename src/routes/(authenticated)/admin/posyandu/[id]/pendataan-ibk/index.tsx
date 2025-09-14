@@ -1,6 +1,6 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, $ } from "@qwik.dev/core";
 import { useAuth } from "~/hooks";
-import { useLocation } from "@builder.io/qwik-city";
+import { useLocation } from "@qwik.dev/router";
 import { getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import {
