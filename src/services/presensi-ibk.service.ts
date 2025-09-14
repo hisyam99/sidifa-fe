@@ -92,11 +92,9 @@ export class PresensiIBKService {
       nama:
         (row.nama as string | undefined) ||
         (row.nama_lengkap as string | undefined) ||
-        ((row.personal_data as { nama_lengkap?: string } | undefined)
-          ?.nama_lengkap as string | undefined) ||
-        ((row.ibk as { nama?: string } | undefined)?.nama as
-          | string
-          | undefined) ||
+        (row.personal_data as { nama_lengkap?: string } | undefined)
+          ?.nama_lengkap ||
+        (row.ibk as { nama?: string } | undefined)?.nama ||
         "(Tanpa Nama)",
     }));
   }
