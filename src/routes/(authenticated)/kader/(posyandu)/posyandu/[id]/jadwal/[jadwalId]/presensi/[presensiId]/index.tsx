@@ -85,12 +85,14 @@ export default component$(() => {
 
   const loadIbkDetail = $(async () => {
     if (ibkLoading.value || ibkDetail.value) return;
-    const ibkId = item.value?.ibk?.id;
+    const ibkId = item.value?.ibk?.id || item.value?.ibk_id;
     if (!ibkId) return;
     ibkLoading.value = true;
     try {
       const ibkRes = await ibkService.getIbkDetail(ibkId);
       ibkDetail.value = ibkRes?.data || ibkRes;
+    } catch {
+      // Silently handle error - user will see loading state end without data
     } finally {
       ibkLoading.value = false;
     }
@@ -99,9 +101,10 @@ export default component$(() => {
   // If accordion is already open when item arrives, fetch details
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
-    track(() => item.value?.ibk?.id);
+    track(() => item.value?.ibk?.id || item.value?.ibk_id);
     track(() => ibkAccordionOpen.value);
-    if (ibkAccordionOpen.value && item.value?.ibk?.id && !ibkDetail.value) {
+    const ibkId = item.value?.ibk?.id || item.value?.ibk_id;
+    if (ibkAccordionOpen.value && ibkId && !ibkDetail.value) {
       loadIbkDetail();
     }
   });
@@ -211,7 +214,9 @@ export default component$(() => {
                     </div>
                     <div class="text-center lg:text-left">
                       <h2 class="text-xl font-bold text-base-content">
-                        {item.value.ibk?.nama || "-"}
+                        {item.value.ibk?.nama ||
+                          item.value.ibk_id ||
+                          "IBK Tidak Dikenal"}
                       </h2>
                       <p class="text-base-content/60 font-mono">
                         NIK: {item.value.ibk?.nik || "-"}
@@ -309,38 +314,53 @@ export default component$(() => {
           </div>
 
           {/* IBK Detail Accordion */}
-          <div class="collapse collapse-arrow bg-base-100 border border-base-300">
-            <input
-              type="checkbox"
-              checked={ibkAccordionOpen.value}
-              onChange$={(e) => {
-                const checked = (e.target as HTMLInputElement).checked;
-                ibkAccordionOpen.value = checked;
-                if (checked) loadIbkDetail();
-              }}
-              aria-label="Toggle detail IBK"
-            />
-            <div class="collapse-title text-lg font-semibold">
-              Detail Data IBK
-            </div>
-            <div class="collapse-content">
-              {ibkLoading.value && (
-                <div class="flex justify-center items-center h-20 my-4">
-                  <div class="text-center">
-                    <span class="loading loading-spinner loading-lg text-primary"></span>
-                    <p class="text-base-content/60 mt-4">
-                      Memuat detail IBK...
-                    </p>
+          {item.value?.ibk?.id || item.value?.ibk_id ? (
+            <div class="collapse collapse-arrow bg-base-100 border border-base-300">
+              <input
+                type="checkbox"
+                checked={ibkAccordionOpen.value}
+                onChange$={(e) => {
+                  const checked = (e.target as HTMLInputElement).checked;
+                  ibkAccordionOpen.value = checked;
+                  if (checked) loadIbkDetail();
+                }}
+                aria-label="Toggle detail IBK"
+              />
+              <div class="collapse-title text-lg font-semibold">
+                Detail Data IBK
+              </div>
+              <div class="collapse-content">
+                {ibkLoading.value && (
+                  <div class="flex justify-center items-center h-20 my-4">
+                    <div class="text-center">
+                      <span class="loading loading-spinner loading-lg text-primary"></span>
+                      <p class="text-base-content/60 mt-4">
+                        Memuat detail IBK...
+                      </p>
+                    </div>
                   </div>
-                </div>
-              )}
-              {!ibkLoading.value && ibkDetail.value && (
-                <div class="py-2">
-                  <IBKDetailView data={ibkDetail.value} />
-                </div>
-              )}
+                )}
+                {!ibkLoading.value && ibkDetail.value && (
+                  <div class="py-2">
+                    <IBKDetailView data={ibkDetail.value} />
+                  </div>
+                )}
+                {!ibkLoading.value &&
+                  !ibkDetail.value &&
+                  ibkAccordionOpen.value && (
+                    <div class="alert alert-error">
+                      <LuAlertCircle class="w-5 h-5" />
+                      <span>Gagal memuat detail IBK</span>
+                    </div>
+                  )}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div class="alert alert-warning">
+              <LuAlertCircle class="w-5 h-5" />
+              <span>Tidak ada data IBK yang tersedia untuk ditampilkan</span>
+            </div>
+          )}
         </>
       )}
     </div>

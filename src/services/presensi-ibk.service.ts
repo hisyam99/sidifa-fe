@@ -31,7 +31,15 @@ export class PresensiIBKService {
 
   async detail(id: string): Promise<PresensiIBKDetailResponse> {
     const res = await api.get(`/kader/presensi-ibk/detail/${id}`);
-    return res.data as PresensiIBKDetailResponse;
+
+    // Handle case where API returns data directly vs wrapped in {data: ...}
+    if (res.data && typeof res.data === "object" && "data" in res.data) {
+      // Response is {data: {data: PresensiIBKItem}} - return the outer wrapper
+      return res.data as PresensiIBKDetailResponse;
+    } else {
+      // Response is {data: PresensiIBKItem} - wrap it
+      return { data: res.data } as PresensiIBKDetailResponse;
+    }
   }
 
   async add(payload: {

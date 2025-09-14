@@ -13,6 +13,8 @@ export interface PresensiIBKItem extends PresensiIBKBase {
   created_at: string;
   updated_at: string | null;
   deleted_at?: string | null;
+  // Add ibk_id as fallback when ibk object is not available
+  ibk_id?: string;
   ibk?: {
     id: string;
     nama: string;
