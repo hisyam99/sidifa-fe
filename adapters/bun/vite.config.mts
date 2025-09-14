@@ -5,19 +5,12 @@ import baseConfig from "../../vite.config.mts";
 import "dotenv/config";
 
 // This polyfill is required when you use SSG and build your app with Bun, because Bun does not have TextEncoderStream. See: https://github.com/oven-sh/bun/issues/5648
-(
-  globalThis as unknown as {
-    TextEncoderStream?: {
-      new (): TextEncoderStream;
-      prototype: TextEncoderStream;
-    };
-  }
-).TextEncoderStream ||= _TextEncoderStream_polyfill as unknown as {
+globalThis.TextEncoderStream ||= _TextEncoderStream_polyfill as {
   new (): TextEncoderStream;
   prototype: TextEncoderStream;
 };
 
-export default extendConfig(baseConfig as any, () => {
+export default extendConfig(baseConfig, () => {
   return {
     build: {
       ssr: true,
@@ -40,5 +33,5 @@ export default extendConfig(baseConfig as any, () => {
         },
       }),
     ],
-  } as any;
+  };
 });
