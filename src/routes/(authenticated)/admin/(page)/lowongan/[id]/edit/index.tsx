@@ -6,13 +6,14 @@ import {
   LowonganForm,
   type LowonganFormData,
 } from "~/components/admin/lowongan";
+import type { LowonganItem } from "~/types/lowongan";
 
 export default component$(() => {
   const { fetchDetail, updateItem, loading, error, success } =
     useLowonganAdmin();
   const loc = useLocation();
   const nav = useNavigate();
-  const initial = useSignal<any>(null);
+  const initial = useSignal<LowonganItem | null>(null);
 
   useTask$(async ({ track }) => {
     track(() => loc.params.id);

@@ -1,15 +1,15 @@
 import { component$, useTask$, useSignal } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation } from "@builder.io/qwik-city";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import { GenericLoadingSpinner } from "~/components/common";
 import { buildLowonganUploadUrl } from "~/utils/url";
+import type { LowonganItem } from "~/types/lowongan";
 
 export default component$(() => {
   const loc = useLocation();
   const { fetchDetail, loading, error } = useLowonganAdmin();
-  const item = useSignal<any>(null);
+  const item = useSignal<LowonganItem | null>(null);
 
   useTask$(async ({ track }) => {
     track(() => loc.params.id);

@@ -32,8 +32,8 @@ export default component$(() => {
     try {
       const response = await getPosyanduDetail(posyanduId);
       posyanduData.value = response.data;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }

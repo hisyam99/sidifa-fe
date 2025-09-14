@@ -1,6 +1,11 @@
 // File: /sidifa-fev2/src/components/ui/StatisticsCard.tsx
 
-import { component$, QRL, type FunctionComponent } from "@builder.io/qwik";
+import {
+  component$,
+  QRL,
+  type Component,
+  type SVGProps,
+} from "@builder.io/qwik";
 import {
   LuTrendingUp,
   LuTrendingDown,
@@ -20,10 +25,12 @@ import {
   // Include all icons that appear in posyandu/index.tsx or elsewhere that pass a string icon name to StatisticsCard
 } from "~/components/icons/lucide-optimized"; // Changed import source
 
-// FIX: Define a comprehensive ICON_LOOKUP_MAP within this component file.
+// Define a comprehensive ICON_LOOKUP_MAP within this component file.
 // This ensures the actual component functions are local to this file's closure for rendering,
 // and the parent components only ever deal with string names.
-const STATS_ICON_LOOKUP_MAP: { [key: string]: FunctionComponent<any> } = {
+const STATS_ICON_LOOKUP_MAP: {
+  [key: string]: Component<SVGProps<SVGSVGElement>>;
+} = {
   LuTrendingUp: LuTrendingUp,
   LuTrendingDown: LuTrendingDown,
   LuBarChart3: LuBarChart3,
@@ -54,7 +61,6 @@ interface StatisticsCardProps {
     isPositive: boolean;
     label: string;
   };
-  // FIX: Icon prop is a string name
   icon?: string;
   color?: "primary" | "secondary" | "accent" | "success" | "warning" | "error";
   size?: "sm" | "md" | "lg";
@@ -69,14 +75,13 @@ export default component$<StatisticsCardProps>(
     value,
     description,
     trend,
-    // icon prop now takes a string name
-    icon = "LuBarChart3", // Default to string name
+    icon = "LuBarChart3", // Default icon name
     color = "primary",
     showChart = false,
     chartData = [],
     onClick$,
   }) => {
-    // FIX: Dynamically get the icon component from the map *here*.
+    // Dynamically get the icon component from the map
     const IconComponent = STATS_ICON_LOOKUP_MAP[icon] || LuBarChart3; // Fallback to default if not found
 
     const colorClasses = {
@@ -166,11 +171,11 @@ export default component$<StatisticsCardProps>(
           {showChart && chartData.length > 0 && (
             <div class="mt-4">
               <div class="space-y-2">
-                {chartData.slice(0, 4).map((item, index) => {
+                {chartData.slice(0, 4).map((item) => {
                   const percentage = total > 0 ? (item.value / total) * 100 : 0;
                   return (
                     <div
-                      key={index}
+                      key={item.label}
                       class="flex items-center justify-between text-xs"
                     >
                       <div class="flex items-center gap-2">
@@ -194,11 +199,11 @@ export default component$<StatisticsCardProps>(
 
               {/* Progress bars */}
               <div class="space-y-1 mt-3">
-                {chartData.slice(0, 4).map((item, index) => {
+                {chartData.slice(0, 4).map((item) => {
                   const percentage = total > 0 ? (item.value / total) * 100 : 0;
                   return (
                     <div
-                      key={index}
+                      key={item.label}
                       class="w-full bg-base-200 rounded-full h-1.5"
                     >
                       <div

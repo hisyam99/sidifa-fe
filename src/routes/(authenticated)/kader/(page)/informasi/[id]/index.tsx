@@ -1,7 +1,6 @@
 import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { useInformasiEdukasiKader } from "~/hooks/useInformasiEdukasiKader";
 import { useAuth } from "~/hooks";
 import { GenericLoadingSpinner } from "~/components/common";
@@ -15,13 +14,14 @@ import {
   LuShare,
   LuArrowLeft,
 } from "~/components/icons/lucide-optimized";
+import type { InformasiItem } from "~/types/informasi";
 
 export default component$(() => {
   const loc = useLocation();
   const nav = useNavigate();
   const { isLoggedIn } = useAuth();
   const { fetchDetail, fetchList, error, items } = useInformasiEdukasiKader();
-  const item = useSignal<any>(null);
+  const item = useSignal<InformasiItem | null>(null);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
@@ -101,7 +101,7 @@ export default component$(() => {
     // Header: only paragraphs
     const tokens = marked.lexer(md);
     const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
-    const headerHtml = marked.parser(paragraphTokens as any);
+    const headerHtml = marked.parser(paragraphTokens);
     renderedHeaderHtml.value = DOMPurify.sanitize(headerHtml as string);
 
     const scrollToHash = () => {

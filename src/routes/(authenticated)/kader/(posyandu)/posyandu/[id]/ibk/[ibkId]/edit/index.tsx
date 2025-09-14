@@ -10,6 +10,7 @@ import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
 import { IBKSectionAssessment } from "~/components/ibk/IBKSectionAssessment";
 import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
+import type { IBKDisabilityInfo } from "~/types/ibk";
 
 // Schema sama dengan create agar field konsisten
 const ibkSchema = object({
@@ -193,16 +194,18 @@ export default component$(() => {
       setValues(form, mapVal);
 
       // Prefill disabilitas existing items
-      const disabilitasIbk = (d?.disabilitasIbk || []).map((x: any) => ({
-        id: x.id,
-        jenis_difabilitas_id: x.jenis_difasilitas_id || x.jenis_difabilitas_id,
-        tingkat_keparahan: x.tingkat_keparahan,
-        sejak_kapan: x.sejak_kapan,
-        keterangan: x.keterangan,
-      }));
+      const disabilitasIbk = (d?.disabilitasIbk || []).map(
+        (x: IBKDisabilityInfo) => ({
+          id: String(x.id),
+          jenis_difabilitas_id: String(x.jenis_difasilitas?.id || ""),
+          tingkat_keparahan: x.tingkat_keparahan || "",
+          sejak_kapan: x.sejak_kapan,
+          keterangan: x.keterangan,
+        }),
+      );
       existingDisabilities.value = disabilitasIbk;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }

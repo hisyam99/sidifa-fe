@@ -11,6 +11,7 @@ import { ibkService } from "~/services/api";
 import { IBKDetailView } from "~/components/ibk/IBKDetailView";
 import { extractErrorMessage } from "~/utils/error";
 import { LuAlertCircle } from "~/components/icons/lucide-optimized";
+import type { IBKDetailViewData } from "~/types/ibk";
 
 export default component$(() => {
   const nav = useNavigate();
@@ -20,7 +21,7 @@ export default component$(() => {
 
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
-  const data = useSignal<any | null>(null);
+  const data = useSignal<IBKDetailViewData | null>(null);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
@@ -29,8 +30,8 @@ export default component$(() => {
     try {
       const res = await ibkService.getIbkDetail(ibkId);
       data.value = res?.data || res;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }

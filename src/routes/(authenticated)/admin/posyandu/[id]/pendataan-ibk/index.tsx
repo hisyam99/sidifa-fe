@@ -30,8 +30,8 @@ export default component$(() => {
     try {
       const response = await getPosyanduDetail(posyanduId);
       posyanduData.value = response.data;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }
@@ -90,40 +90,35 @@ export default component$(() => {
           <h2 class="card-title">Pencarian & Filter</h2>
           <div class="flex flex-col md:flex-row gap-4">
             <div class="form-control flex-1">
-              <label for="search-ibk" class="label">
+              <label class="label">
                 <span class="label-text">Cari data IBK</span>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    placeholder="Masukkan nama atau ID IBK..."
+                    class="input input-bordered flex-1"
+                  />
+                  <button class="btn btn-primary">
+                    <LuSearch class="w-4 h-4" />
+                  </button>
+                </div>
               </label>
-              <div class="input-group">
-                <input
-                  id="search-ibk"
-                  type="text"
-                  placeholder="Masukkan nama atau ID IBK..."
-                  class="input input-bordered flex-1"
-                />
-                <button class="btn btn-primary">
-                  <LuSearch class="w-4 h-4" />
-                </button>
-              </div>
             </div>
             <div class="form-control">
-              <label for="filter-status" class="label">
+              <label class="label">
                 <span class="label-text">Filter Status</span>
+                <select class="select select-bordered">
+                  <option value="">Semua Status</option>
+                  <option value="active">Aktif</option>
+                  <option value="inactive">Tidak Aktif</option>
+                </select>
               </label>
-              <select id="filter-status" class="select select-bordered">
-                <option value="">Semua Status</option>
-                <option value="active">Aktif</option>
-                <option value="inactive">Tidak Aktif</option>
-              </select>
             </div>
             <div class="form-control">
-              <label for="filter-date" class="label">
+              <label class="label">
                 <span class="label-text">Filter Tanggal</span>
+                <input type="date" class="input input-bordered" />
               </label>
-              <input
-                id="filter-date"
-                type="date"
-                class="input input-bordered"
-              />
             </div>
           </div>
         </div>

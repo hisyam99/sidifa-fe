@@ -105,7 +105,7 @@ export default component$(() => {
     // Header: only paragraphs
     const tokens = marked.lexer(md);
     const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
-    const headerHtml = marked.parser(paragraphTokens as any);
+    const headerHtml = marked.parser(paragraphTokens);
     renderedHeaderHtml.value = DOMPurify.sanitize(headerHtml as string);
 
     const scrollToHash = () => {

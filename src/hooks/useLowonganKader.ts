@@ -37,8 +37,8 @@ export const useLowonganKader = () => {
         total.value = meta.totalData ?? meta.total ?? items.value.length;
         totalPage.value =
           meta.totalPage ?? Math.max(1, Math.ceil(total.value / limit.value));
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal memuat data";
       } finally {
         loading.value = false;
       }
@@ -50,8 +50,8 @@ export const useLowonganKader = () => {
     error.value = null;
     try {
       return (await kaderLowonganService.detail(id)) as LowonganItem;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memuat detail";
       return null;
     } finally {
       loading.value = false;

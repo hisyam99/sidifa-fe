@@ -5,7 +5,7 @@ import { extractErrorMessage } from "~/utils/error";
 export interface EditIBKPayload {
   id: string;
   // All allowed fields (string) from ibk create schema; file is optional File
-  [key: string]: any;
+  [key: string]: string | File | undefined;
   file?: File | string;
 }
 
@@ -23,8 +23,8 @@ export function useEditIBK() {
       const formData = ibkService.buildIbkUpdateFormData({ ...rest, file });
       await ibkService.updateIbk(id, formData);
       success.value = "Data IBK berhasil diperbarui.";
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }

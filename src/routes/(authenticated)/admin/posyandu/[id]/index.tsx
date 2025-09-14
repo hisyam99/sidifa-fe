@@ -1,7 +1,6 @@
 import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
-import { Link } from "@builder.io/qwik-city";
+import { Link, useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
-import { useLocation } from "@builder.io/qwik-city";
 import { adminService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import {
@@ -33,8 +32,8 @@ export default component$(() => {
     try {
       const response = await adminService.detailPosyandu(posyanduId);
       posyanduData.value = response as PosyanduDetail; // Explicitly cast response
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }

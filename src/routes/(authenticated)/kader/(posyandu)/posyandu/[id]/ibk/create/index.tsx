@@ -131,8 +131,8 @@ export default component$(() => {
     try {
       const res = await getPosyanduDetail(posyanduId);
       posyandu.value = res;
-    } catch (err: any) {
-      posyanduError.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      posyanduError.value = extractErrorMessage(err as Error);
       posyandu.value = null;
     } finally {
       loading.value = false;
@@ -332,8 +332,8 @@ export default component$(() => {
       }
       success.value = "Data IBK dan disabilitas berhasil disimpan.";
       nav(`/kader/posyandu/${posyanduId}/ibk`);
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     }
   });
 
@@ -450,10 +450,9 @@ export default component$(() => {
                   <button
                     type="button"
                     class="btn btn-primary gap-2"
-                    disabled={!(isCurrentStepValid as any)()}
+                    disabled={!isCurrentStepValid()}
                     onClick$={$(async () => {
-                      if (await (isCurrentStepValid as any)())
-                        currentStep.value++;
+                      if (await isCurrentStepValid()) currentStep.value++;
                     })}
                   >
                     Lanjutkan

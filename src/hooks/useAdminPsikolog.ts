@@ -36,8 +36,8 @@ export const useAdminPsikolog = () => {
         total.value = response.meta?.total || 0;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data psikolog";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal memuat data psikolog";
       } finally {
         loading.value = false;
       }
@@ -57,8 +57,8 @@ export const useAdminPsikolog = () => {
         await adminService.createPsikolog(data);
         success.value = "Berhasil menambah psikolog";
         await fetchList();
-      } catch (err: any) {
-        error.value = err.message || "Gagal menambah psikolog";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal menambah psikolog";
       } finally {
         loading.value = false;
       }
@@ -80,8 +80,8 @@ export const useAdminPsikolog = () => {
         await adminService.updatePsikolog(data);
         success.value = "Berhasil memperbarui psikolog";
         await fetchList();
-      } catch (err: any) {
-        error.value = err.message || "Gagal memperbarui psikolog";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal memperbarui psikolog";
       } finally {
         loading.value = false;
       }
@@ -95,8 +95,8 @@ export const useAdminPsikolog = () => {
       await adminService.deletePsikolog(id);
       success.value = "Berhasil menghapus psikolog";
       await fetchList();
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus psikolog";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal menghapus psikolog";
     } finally {
       loading.value = false;
     }

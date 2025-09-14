@@ -13,6 +13,17 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
 import { useDebouncer } from "~/utils/debouncer";
 
+// Type for IBK API response item
+interface IBKApiItem {
+  id: string;
+  nama: string;
+  nik: string | number;
+  jenis_kelamin?: string;
+  alamat?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
 export default component$(() => {
   const searchNama = useSignal("");
   const searchNik = useSignal("");
@@ -63,7 +74,7 @@ export default component$(() => {
         nama: searchNama.value ? searchNama.value : undefined,
         nik: searchNik.value ? searchNik.value : undefined,
       });
-      existingIBK.value = (res.data || []).map((item: any) => ({
+      existingIBK.value = (res.data || []).map((item: IBKApiItem) => ({
         personal_data: {
           id: item.id,
           nama_lengkap: item.nama,
@@ -107,9 +118,10 @@ export default component$(() => {
         "limit:",
         limit.value,
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value =
-        err?.message || "Gagal memuat data IBK. Pastikan ID Posyandu benar.";
+        (err as Error)?.message ||
+        "Gagal memuat data IBK. Pastikan ID Posyandu benar.";
       setTimeout(() => navigate("/kader/posyandu"), 2000);
     } finally {
       loading.value = false;

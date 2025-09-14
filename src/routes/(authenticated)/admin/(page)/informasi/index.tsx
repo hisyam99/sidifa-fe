@@ -74,7 +74,7 @@ export default component$(() => {
 
     try {
       const stats = await informasiEdukasiAdminService.statistik();
-      const count = (stats as any)?.count ?? (stats as any) ?? {};
+      const count = stats?.count ?? stats ?? {};
       totalInformasi.value = Number(count.total ?? 0);
       totalArtikel.value = Number(count.artikel ?? 0);
       totalPanduan.value = Number(count.panduan ?? 0);
@@ -131,7 +131,7 @@ export default component$(() => {
     const paragraphTokens = tokens.filter((t) => t.type === "paragraph");
     const firstParagraph =
       paragraphTokens.length > 0 ? [paragraphTokens[0]] : [];
-    const html = marked.parser(firstParagraph as any);
+    const html = marked.parser(firstParagraph);
     return DOMPurify.sanitize(html as string);
   };
 

@@ -40,10 +40,17 @@ const monitoringSchema = object({
 });
 
 export type MonitoringFormType = MonitoringIBKCreateRequest & {
-  [key: string]: any;
+  [key: string]: string;
 };
 
 type HadirItem = {
+  ibk?: {
+    id: string;
+    nama: string;
+    nik: number | string;
+    jenis_kelamin: string;
+    alamat: string;
+  };
   id: string; // presensi IBK id
   nama: string;
   nik?: string | number;
@@ -98,8 +105,8 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
           limit: LIMIT,
           page: page.value,
         });
-        const data = (res?.data || []) as any[];
-        const mapped = data.map((d: any) => ({
+        const data = (res?.data || []) as HadirItem[];
+        const mapped = data.map((d: HadirItem) => ({
           id: d.id,
           nama: d.nama || d.ibk?.nama || "(Tanpa Nama)",
           nik: d.nik ?? d.ibk?.nik,
@@ -110,10 +117,11 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
         } else {
           items.value = [...items.value, ...mapped];
         }
-        const meta: any = res?.meta || {};
-        totalPage.value = (meta.totalPage as number) || totalPage.value || 1;
-      } catch (e: any) {
-        errorItems.value = e?.message || "Gagal memuat daftar IBK hadir";
+        const meta = res?.meta;
+        totalPage.value = (meta?.totalPage as number) || totalPage.value || 1;
+      } catch (e: unknown) {
+        errorItems.value =
+          (e as Error)?.message || "Gagal memuat daftar IBK hadir";
       } finally {
         loadingItems.value = false;
       }

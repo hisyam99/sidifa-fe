@@ -2,6 +2,16 @@ import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
 import type { AdminVerificationItem } from "~/types/admin-account-verification";
 
+interface APIUserRow {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "posyandu" | "psikolog";
+  verification: "verified" | "unverified" | "declined";
+  requested_at?: string;
+  verified_at?: string | null;
+}
+
 export const useAdminAccountVerification = () => {
   const items = useSignal<AdminVerificationItem[]>([]);
   const loading = useSignal(false);
@@ -36,23 +46,24 @@ export const useAdminAccountVerification = () => {
         });
 
         const rows = Array.isArray(response.data) ? response.data : [];
-        items.value = rows.map((row: any) => ({
-          id: row.id,
-          name: row.name,
-          email: row.email,
-          role: row.role,
-          status:
-            (row.verification as "verified" | "unverified" | "declined") ??
-            "unverified",
-          requested_at: row.requested_at ?? "",
-          verified_at: row.verified_at ?? null,
-        }));
+        items.value = rows.map(
+          (row: APIUserRow): AdminVerificationItem => ({
+            id: row.id,
+            name: row.name,
+            email: row.email,
+            role: row.role,
+            status: row.verification ?? "unverified",
+            requested_at: row.requested_at ?? "",
+            verified_at: row.verified_at ?? null,
+          }),
+        );
         totalData.value = response.meta?.totalData || 0;
         totalPages.value = response.meta?.totalPage || 1;
         page.value = response.meta?.currentPage || 1;
         limit.value = response.meta?.limit || 10;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data verifikasi akun";
+      } catch (err: unknown) {
+        error.value =
+          (err as Error)?.message || "Gagal memuat data verifikasi akun";
         items.value = [];
       } finally {
         loading.value = false;
@@ -67,8 +78,8 @@ export const useAdminAccountVerification = () => {
       await adminService.verifyUser(item.id, "verified");
       success.value = `Akun ${item.name} berhasil diverifikasi.`;
       await fetchList();
-    } catch (err: any) {
-      error.value = err.message || "Gagal memverifikasi akun";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memverifikasi akun";
     } finally {
       loading.value = false;
     }
@@ -81,8 +92,8 @@ export const useAdminAccountVerification = () => {
       await adminService.verifyUser(item.id, "declined");
       success.value = `Akun ${item.name} ditolak.`;
       await fetchList();
-    } catch (err: any) {
-      error.value = err.message || "Gagal menandai declined";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal menandai declined";
     } finally {
       loading.value = false;
     }

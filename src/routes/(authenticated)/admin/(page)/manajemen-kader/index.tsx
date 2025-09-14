@@ -96,8 +96,8 @@ export default component$(() => {
 
       // Update meta for PaginationControls
       // meta.value = { totalData: totalItems, totalPage: totalPages, currentPage: currentPage.value, limit: limit.value };
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat data pengguna.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memuat data pengguna.";
     } finally {
       loading.value = false;
     }

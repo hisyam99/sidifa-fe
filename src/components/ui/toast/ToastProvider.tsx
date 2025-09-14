@@ -108,9 +108,13 @@ export const ToastProvider = component$(() => {
         message: string;
         durationMs?: number;
       }>;
-      const { type, message, durationMs } = ce.detail || ({} as any);
+
+      // Handle undefined detail with explicit check
+      if (!ce.detail) return;
+
+      const { type, message, durationMs } = ce.detail;
       if (!type || !message) return;
-      show(type, message, durationMs ?? undefined);
+      show(type, message, durationMs);
     };
     window.addEventListener("sidifa:toast", handler as EventListener);
     return () =>

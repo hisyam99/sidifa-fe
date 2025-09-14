@@ -31,8 +31,30 @@ import { MonitoringIBKTable } from "~/components/posyandu/monitoring/MonitoringI
 import { MonitoringIBKForm } from "~/components/posyandu/monitoring/MonitoringIBKForm";
 import { IBKSearchSelect } from "~/components/posyandu/monitoring/IBKSearchSelect";
 import { buildJadwalPosyanduUrl } from "~/utils/url";
+import type { MonitoringIBKBase } from "~/types/monitoring-ibk";
 
-function mapApiToJadwalItem(apiData: any): JadwalPosyanduItem {
+// Interface for raw API jadwal data
+interface JadwalApiData {
+  id: string;
+  posyandu_id: string;
+  nama_kegiatan: string;
+  jenis_kegiatan: string;
+  deskripsi: string;
+  lokasi: string;
+  tanggal: string;
+  waktu_mulai: string;
+  waktu_selesai: string;
+  file_name?: string;
+  created_at: string;
+  updated_at: string;
+  posyandu?: {
+    id: string;
+    nama_posyandu: string;
+    alamat: string;
+  };
+}
+
+function mapApiToJadwalItem(apiData: JadwalApiData): JadwalPosyanduItem {
   return {
     id: apiData.id,
     posyandu_id: apiData.posyandu_id,
@@ -119,8 +141,9 @@ export default component$(() => {
         const apiData = await jadwalPosyanduService.getJadwalDetail(jadwalId);
         const data = apiData.data || apiData;
         jadwal.value = mapApiToJadwalItem(data);
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat detail jadwal posyandu.";
+      } catch (err: unknown) {
+        error.value =
+          (err as Error)?.message || "Gagal memuat detail jadwal posyandu.";
       } finally {
         loading.value = false;
       }
@@ -137,10 +160,17 @@ export default component$(() => {
     return updateStatus(id, status);
   });
 
-  const handleMonitoringCreate = $(async (data: any) => {
-    await createMonitoring({ ...data, jadwal_posyandu_id: jadwalId });
-    monitoringShowForm.value = false;
-  });
+  const handleMonitoringCreate = $(
+    async (
+      data: MonitoringIBKBase | Partial<Omit<MonitoringIBKBase, "ibk_id">>,
+    ) => {
+      await createMonitoring({
+        ...data,
+        jadwal_posyandu_id: jadwalId,
+      } as MonitoringIBKBase);
+      monitoringShowForm.value = false;
+    },
+  );
 
   const handleMonitoringEdit: QRL<(id: string) => void> = $(
     async (id: string) => {
@@ -150,16 +180,20 @@ export default component$(() => {
     },
   );
 
-  const handleMonitoringUpdate = $(async (data: any) => {
-    if (monitoringEditId.value) {
-      await updateMonitoring(monitoringEditId.value, {
-        ...data,
-        jadwal_posyandu_id: jadwalId,
-      });
-      monitoringEditId.value = null;
-      monitoringShowForm.value = false;
-    }
-  });
+  const handleMonitoringUpdate = $(
+    async (
+      data: MonitoringIBKBase | Partial<Omit<MonitoringIBKBase, "ibk_id">>,
+    ) => {
+      if (monitoringEditId.value) {
+        await updateMonitoring(monitoringEditId.value, {
+          ...data,
+          jadwal_posyandu_id: jadwalId,
+        });
+        monitoringEditId.value = null;
+        monitoringShowForm.value = false;
+      }
+    },
+  );
 
   const handleMonitoringDelete = $(async (id: string) => {
     if (

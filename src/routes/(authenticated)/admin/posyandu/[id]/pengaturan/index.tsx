@@ -32,8 +32,8 @@ export default component$(() => {
     try {
       const response = await getPosyanduDetail(posyanduId);
       posyanduData.value = response.data;
-    } catch (err: any) {
-      error.value = extractErrorMessage(err);
+    } catch (err: unknown) {
+      error.value = extractErrorMessage(err as Error);
     } finally {
       loading.value = false;
     }
@@ -97,50 +97,50 @@ export default component$(() => {
             <div class="form-control">
               <label class="label">
                 <span class="label-text">Nama Posyandu</span>
+                <input
+                  type="text"
+                  placeholder="Nama posyandu"
+                  class="input input-bordered"
+                  value={posyandu.nama_posyandu}
+                  disabled
+                />
               </label>
-              <input
-                type="text"
-                placeholder="Nama posyandu"
-                class="input input-bordered"
-                value={posyandu.nama_posyandu}
-                disabled
-              />
             </div>
             <div class="form-control">
               <label class="label">
                 <span class="label-text">Alamat</span>
+                <textarea
+                  placeholder="Alamat posyandu"
+                  class="textarea textarea-bordered"
+                  value={posyandu.alamat}
+                  disabled
+                />
               </label>
-              <textarea
-                placeholder="Alamat posyandu"
-                class="textarea textarea-bordered"
-                value={posyandu.alamat}
-                disabled
-              />
             </div>
             <div class="form-control">
               <label class="label">
                 <span class="label-text">No. Telepon</span>
+                <input
+                  type="text"
+                  placeholder="Nomor telepon"
+                  class="input input-bordered"
+                  value={posyandu.no_telp}
+                  disabled
+                />
               </label>
-              <input
-                type="text"
-                placeholder="Nomor telepon"
-                class="input input-bordered"
-                value={posyandu.no_telp}
-                disabled
-              />
             </div>
             <div class="form-control">
               <label class="label">
                 <span class="label-text">Status</span>
+                <select class="select select-bordered" disabled>
+                  <option value="active" selected={!posyandu.deleted_at}>
+                    Aktif
+                  </option>
+                  <option value="inactive" selected={!!posyandu.deleted_at}>
+                    Tidak Aktif
+                  </option>
+                </select>
               </label>
-              <select class="select select-bordered" disabled>
-                <option value="active" selected={!posyandu.deleted_at}>
-                  Aktif
-                </option>
-                <option value="inactive" selected={!!posyandu.deleted_at}>
-                  Tidak Aktif
-                </option>
-              </select>
             </div>
           </div>
           <div class="card-actions justify-end mt-4">
@@ -233,18 +233,18 @@ export default component$(() => {
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="form-control">
-              <label class="label">
+              <div class="label">
                 <span class="label-text">Backup Data</span>
-              </label>
+              </div>
               <button class="btn btn-outline btn-primary">
                 <LuDatabase class="w-4 h-4" />
                 Buat Backup
               </button>
             </div>
             <div class="form-control">
-              <label class="label">
+              <div class="label">
                 <span class="label-text">Restore Data</span>
-              </label>
+              </div>
               <button class="btn btn-outline btn-secondary">
                 <LuDatabase class="w-4 h-4" />
                 Restore Data
@@ -269,9 +269,9 @@ export default component$(() => {
           </h3>
           <div class="space-y-4">
             <div class="form-control">
-              <label class="label">
+              <div class="label">
                 <span class="label-text">Hapus Posyandu</span>
-              </label>
+              </div>
               <button class="btn btn-error">
                 <LuTrash class="w-4 h-4" />
                 Hapus Posyandu

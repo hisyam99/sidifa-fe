@@ -10,6 +10,10 @@ import { useJadwalPosyandu } from "~/hooks/useJadwalPosyandu";
 import { JadwalPosyanduTable } from "~/components/posyandu/jadwal/JadwalPosyanduTable";
 import { JadwalPosyanduForm } from "~/components/posyandu/jadwal/JadwalPosyanduForm";
 import { PaginationControls } from "~/components/common/PaginationControls";
+import type {
+  JadwalPosyanduCreateRequest,
+  JadwalPosyanduUpdateRequest,
+} from "~/types/jadwal-posyandu";
 
 export default component$(() => {
   const location = useLocation();
@@ -42,11 +46,16 @@ export default component$(() => {
     fetchList();
   });
 
-  const handleCreate = $(async (data: any) => {
-    console.log("DEBUG HANDLE CREATE DATA", data);
-    await createJadwal({ ...data, posyandu_id: posyanduId });
-    showForm.value = false;
-  });
+  const handleCreate = $(
+    async (data: JadwalPosyanduCreateRequest | JadwalPosyanduUpdateRequest) => {
+      console.log("DEBUG HANDLE CREATE DATA", data);
+      await createJadwal({
+        ...data,
+        posyandu_id: posyanduId,
+      } as JadwalPosyanduCreateRequest);
+      showForm.value = false;
+    },
+  );
 
   const handleEdit: QRL<(id: string) => void> = $(async (id: string) => {
     editId.value = id;
@@ -55,13 +64,18 @@ export default component$(() => {
     showForm.value = true;
   });
 
-  const handleUpdate = $(async (data: any) => {
-    if (editId.value) {
-      await updateJadwal(editId.value, { ...data, posyandu_id: posyanduId });
-      editId.value = null;
-      showForm.value = false;
-    }
-  });
+  const handleUpdate = $(
+    async (data: JadwalPosyanduCreateRequest | JadwalPosyanduUpdateRequest) => {
+      if (editId.value) {
+        await updateJadwal(editId.value, {
+          ...data,
+          posyandu_id: posyanduId,
+        } as JadwalPosyanduUpdateRequest);
+        editId.value = null;
+        showForm.value = false;
+      }
+    },
+  );
 
   const handleDetail: QRL<(jadwalId: string) => void> = $(
     (jadwalId: string) => {

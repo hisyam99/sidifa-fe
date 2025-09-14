@@ -135,9 +135,9 @@ async function tryRefreshToken(): Promise<boolean> {
     csrfFetched = false;
     csrfTokenValue = null;
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Jika refresh token mendapat 401, trigger callback untuk logout
-    if (error?.response?.status === 401) {
+    if ((error as ApiError)?.response?.status === 401) {
       console.log("🔐 Refresh token failed with 401 - triggering logout");
       triggerRefreshTokenFailure();
     }

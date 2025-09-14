@@ -14,6 +14,7 @@ import {
 } from "~/components/icons/lucide-optimized";
 import { ibkService } from "~/services/api";
 import { IBKDetailView } from "~/components/ibk/IBKDetailView";
+import type { IBKDetailViewData } from "~/types/ibk";
 
 export default component$(() => {
   const loc = useLocation();
@@ -22,7 +23,7 @@ export default component$(() => {
   const error = useSignal<string | null>(null);
   const item = useSignal<MonitoringIBKItem | null>(null);
   const ibkLoading = useSignal(false);
-  const ibkDetail = useSignal<any | null>(null);
+  const ibkDetail = useSignal<IBKDetailViewData | null>(null);
   const ibkAccordionOpen = useSignal(false);
 
   // Helper function to get monitoring status config
@@ -43,9 +44,10 @@ export default component$(() => {
     error.value = null;
     try {
       const res = await monitoringIBKService.detail(id);
-      item.value = res.data || (res as any);
-    } catch (err: any) {
-      error.value = err?.message || "Gagal memuat detail monitoring.";
+      item.value = res.data;
+    } catch (err: unknown) {
+      error.value =
+        (err as Error)?.message || "Gagal memuat detail monitoring.";
     } finally {
       loading.value = false;
     }

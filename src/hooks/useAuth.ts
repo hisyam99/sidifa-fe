@@ -70,7 +70,7 @@ export const useAuth = () => {
       sessionUtils.setUserProfile(profileData);
       sessionUtils.setAuthStatus(true);
       globalAuthState.lastCheck = now;
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Tangani 429 error dengan lebih spesifik
       if (isRateLimitError(err)) {
         console.log(

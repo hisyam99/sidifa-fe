@@ -50,8 +50,8 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
       );
       // If you use useComputed$ for totalPage, log it here too
       // (If not available here, log in the component after import)
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat jadwal posyandu.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memuat jadwal posyandu.";
     } finally {
       loading.value = false;
     }
@@ -80,8 +80,8 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
         "DEBUG selectedJadwal.value in fetchDetail",
         selectedJadwal.value,
       );
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat detail jadwal.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memuat detail jadwal.";
     } finally {
       loading.value = false;
     }
@@ -95,8 +95,8 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
       await jadwalPosyanduService.createJadwal(data);
       success.value = "Jadwal berhasil dibuat.";
       await fetchList();
-    } catch (err: any) {
-      error.value = err.message || "Gagal membuat jadwal.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal membuat jadwal.";
     } finally {
       loading.value = false;
     }
@@ -111,8 +111,8 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
         await jadwalPosyanduService.updateJadwal(id, data);
         success.value = "Jadwal berhasil diupdate.";
         await fetchList();
-      } catch (err: any) {
-        error.value = err.message || "Gagal mengupdate jadwal.";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal mengupdate jadwal.";
       } finally {
         loading.value = false;
       }
@@ -127,8 +127,8 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
       await jadwalPosyanduService.deleteJadwal(id);
       success.value = "Jadwal berhasil dihapus.";
       await fetchList();
-    } catch (err: any) {
-      error.value = err.message || "Gagal menghapus jadwal.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal menghapus jadwal.";
     } finally {
       loading.value = false;
     }

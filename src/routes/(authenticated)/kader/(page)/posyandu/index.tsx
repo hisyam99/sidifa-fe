@@ -65,8 +65,8 @@ export default component$(() => {
           isRegistered: item.is_registered ?? false,
         }));
         meta.value = response.meta;
-      } catch (err: any) {
-        error.value = err.message || "Gagal memuat data posyandu.";
+      } catch (err: unknown) {
+        error.value = (err as Error)?.message || "Gagal memuat data posyandu.";
       } finally {
         loading.value = false;
       }
@@ -93,8 +93,8 @@ export default component$(() => {
         isRegistered: item.is_registered ?? false,
       }));
       meta.value = response.meta;
-    } catch (err: any) {
-      error.value = err.message || "Gagal mendaftar ke posyandu";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal mendaftar ke posyandu";
     } finally {
       loading.value = false;
     }
@@ -117,8 +117,8 @@ export default component$(() => {
         isRegistered: item.is_registered ?? false,
       }));
       meta.value = response.meta;
-    } catch (err: any) {
-      error.value = err.message || "Gagal memuat data posyandu.";
+    } catch (err: unknown) {
+      error.value = (err as Error)?.message || "Gagal memuat data posyandu.";
     } finally {
       loading.value = false;
     }
