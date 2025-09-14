@@ -16,7 +16,7 @@ export const TYPE_TO_ID: Record<string, string> = {
   wicara: "f1e2d3c4-b5a6-9870-5432-109876fedcba",
 };
 
-export interface DisabilityType {
+export interface DisabilityTypeDefinition {
   type: string;
   title: string;
   description: string;
@@ -25,7 +25,7 @@ export interface DisabilityType {
   examples: string[];
 }
 
-export const disabilityTypes: DisabilityType[] = [
+export const disabilityTypes: DisabilityTypeDefinition[] = [
   {
     type: "fisik",
     title: "Disabilitas Fisik",

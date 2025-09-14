@@ -47,7 +47,7 @@ export default component$(() => {
 
       <Form onSubmit$={handleSubmit} class="space-y-4">
         <Field name="email">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormField
               field={field}
               props={props}

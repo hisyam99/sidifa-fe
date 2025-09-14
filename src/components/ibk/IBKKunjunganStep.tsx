@@ -1,8 +1,13 @@
-import { Field } from "@modular-forms/qwik";
+import { Field, type FormStore } from "@modular-forms/qwik";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 import { LuInfo } from "~/components/icons/lucide-optimized";
+import type { IBKFormData } from "~/types/ibk";
 
-export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
+export function IBKSectionDetail({
+  form,
+}: Readonly<{
+  form: FormStore<IBKFormData, undefined>;
+}>) {
   return (
     <>
       <div class="alert alert-info mb-4">
@@ -14,7 +19,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field of={form} name="pekerjaan" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -24,7 +29,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="pendidikan" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -34,7 +39,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="status_perkawinan" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -51,7 +56,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="titik_koordinat" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -62,7 +67,7 @@ export function IBKSectionDetail({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="keterangan_tambahan" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}

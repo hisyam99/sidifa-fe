@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, type JSXOutput } from "@builder.io/qwik";
 
 interface AvatarProps {
   email?: string;
@@ -28,7 +28,7 @@ export const Avatar = component$<AvatarProps>(
       ""
     ).toUpperCase();
 
-    let content: any;
+    let content: JSXOutput;
     if (src) {
       content = (
         <img

@@ -54,7 +54,10 @@ export function useMonitoringIBK(options: UseMonitoringIBKOptions) {
     error.value = null;
     try {
       const res = await monitoringIBKService.detail(id);
-      selected.value = res.data ?? null;
+
+      // Handle different possible response structures
+      const detailData = res.data ?? res ?? null;
+      selected.value = detailData;
     } catch (err: unknown) {
       error.value = extractErrorMessage(err as string);
     } finally {

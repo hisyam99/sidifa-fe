@@ -95,7 +95,15 @@ export class MonitoringIBKService {
 
   async detail(id: string): Promise<MonitoringIBKDetailResponse> {
     const res = await api.get(`/kader/monitoring-ibk/detail/${id}`);
-    return res.data as MonitoringIBKDetailResponse;
+
+    // Handle case where API returns data directly vs wrapped in {data: ...}
+    if (res.data && typeof res.data === "object" && "data" in res.data) {
+      // Response is {data: {data: MonitoringIBKItem}} - return the outer wrapper
+      return res.data as MonitoringIBKDetailResponse;
+    } else {
+      // Response is {data: MonitoringIBKItem} - wrap it
+      return { data: res.data } as MonitoringIBKDetailResponse;
+    }
   }
 
   // New: delete monitoring

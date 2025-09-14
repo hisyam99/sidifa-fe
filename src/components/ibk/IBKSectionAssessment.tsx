@@ -1,8 +1,13 @@
-import { Field } from "@modular-forms/qwik";
+import { Field, type FormStore } from "@modular-forms/qwik";
 import FormFieldModular from "~/components/ui/FormFieldModular";
 import { LuInfo } from "~/components/icons/lucide-optimized";
+import type { IBKFormData } from "~/types/ibk";
 
-export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
+export function IBKSectionAssessment({
+  form,
+}: Readonly<{
+  form: FormStore<IBKFormData, undefined>;
+}>) {
   return (
     <>
       <div class="alert alert-info mb-4">
@@ -14,7 +19,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field of={form} name="total_iq" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -26,7 +31,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="kategori_iq" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -36,7 +41,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="tipe_kepribadian" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -46,7 +51,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="deskripsi_kepribadian" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -57,7 +62,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="potensi" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -67,7 +72,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="minat" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -77,7 +82,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="bakat" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -87,7 +92,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="keterampilan" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -97,7 +102,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="catatan_psikolog" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}
@@ -108,7 +113,7 @@ export function IBKSectionAssessment({ form }: Readonly<{ form: any }>) {
           )}
         </Field>
         <Field of={form} name="rekomendasi_intervensi" type="string">
-          {(field: any, props: any) => (
+          {(field, props) => (
             <FormFieldModular
               field={field}
               props={props}

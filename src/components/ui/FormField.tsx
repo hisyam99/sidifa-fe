@@ -1,8 +1,15 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, type InputHTMLAttributes } from "@builder.io/qwik";
+
+interface FieldState {
+  value: string | undefined;
+  error: string | undefined;
+  dirty: boolean;
+  touched: boolean;
+}
 
 interface FormFieldProps {
-  field: any;
-  props: any;
+  field: FieldState;
+  props: InputHTMLAttributes<HTMLInputElement>;
   type?: string;
   placeholder?: string;
   label?: string;

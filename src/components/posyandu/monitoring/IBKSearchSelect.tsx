@@ -1,6 +1,12 @@
 import { component$, useSignal, $, useTask$, QRL } from "@builder.io/qwik";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 
+// IBK search item interface
+interface IBKSearchItem {
+  id: string;
+  nama: string;
+}
+
 interface IBKSearchSelectProps {
   posyanduId: string;
   jadwalId?: string; // optional; when provided, use ibk-not-registered endpoint
@@ -14,7 +20,7 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
     const query = useSignal("");
     const open = useSignal(false);
     const loading = useSignal(false);
-    const items = useSignal<any[]>([]);
+    const items = useSignal<IBKSearchItem[]>([]);
     const selectedLabel = useSignal<string>("");
 
     const fetchList = $(async () => {
@@ -101,7 +107,7 @@ export const IBKSearchSelect = component$<IBKSearchSelectProps>(
               </li>
             )}
             {!loading.value &&
-              items.value.map((row: any) => {
+              items.value.map((row: IBKSearchItem) => {
                 const label = row?.nama || "(Tanpa Nama)";
                 return (
                   <li key={row.id}>

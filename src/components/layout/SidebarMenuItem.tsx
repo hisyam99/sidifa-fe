@@ -1,20 +1,24 @@
-import { component$, $ } from "@builder.io/qwik";
+import { component$, $, type FunctionComponent } from "@builder.io/qwik";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { useDrawer } from "~/hooks/useDrawer";
 import * as LucideIcons from "~/components/icons/lucide-optimized";
 
-const ICON_LOOKUP_MAP: Record<string, any> = LucideIcons;
+type IconComponent = FunctionComponent<{ class?: string }>;
+const ICON_LOOKUP_MAP: Record<string, IconComponent> = LucideIcons as Record<
+  string,
+  IconComponent
+>;
 
 interface SidebarMenuItemProps {
   href: string;
   label: string;
-  icon?: any; // accept component reference or string key
+  icon?: IconComponent | string; // accept component reference or string key
   exact?: boolean; // when true, only highlight on exact path match (ignoring trailing slash)
   hasDropdown?: boolean; // indicates this item has dropdown
   submenuItems?: Array<{
     href: string;
     label: string;
-    icon?: any;
+    icon?: IconComponent | string;
     description?: string;
   }>;
   drawerId?: string; // drawer ID to close when clicked
@@ -55,7 +59,6 @@ export const SidebarMenuItem = component$<SidebarMenuItemProps>((props) => {
     return (
       <li class="dropdown dropdown-hover dropdown-right sidebar-dropdown">
         <div
-          tabIndex={0}
           class={`flex items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200 hover:bg-primary/10 hover:text-primary cursor-pointer ${
             isActive || isSubmenuActive
               ? "bg-primary/10 text-primary font-semibold"
@@ -107,11 +110,14 @@ export const SidebarMenuItem = component$<SidebarMenuItemProps>((props) => {
                   const isSubActive =
                     current === subItem.href ||
                     current.startsWith(subItem.href + "/");
+                  const subItemHref = subItem.href;
+                  const subItemLabel = subItem.label;
+                  const subItemDescription = subItem.description;
 
                   return (
                     <button
                       key={subItem.href}
-                      onClick$={() => handleNavigation(subItem.href)}
+                      onClick$={() => handleNavigation(subItemHref)}
                       class={`w-full text-left flex items-start gap-3 p-2 rounded-lg hover:bg-primary/10 transition-all duration-200 group ${
                         isSubActive
                           ? "bg-primary/15 text-primary border border-primary/20"
@@ -125,11 +131,11 @@ export const SidebarMenuItem = component$<SidebarMenuItemProps>((props) => {
                       </div>
                       <div class="flex-1 min-w-0">
                         <div class="font-medium text-sm group-hover:text-primary transition-colors truncate">
-                          {subItem.label}
+                          {subItemLabel}
                         </div>
-                        {subItem.description && (
+                        {subItemDescription && (
                           <div class="text-xs text-base-content/60 mt-0.5 leading-relaxed">
-                            {subItem.description}
+                            {subItemDescription}
                           </div>
                         )}
                       </div>

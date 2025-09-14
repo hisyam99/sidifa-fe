@@ -50,7 +50,7 @@ export default component$(() => {
           password: values.password,
         });
       } catch (loginErr: unknown) {
-        const msg = extractErrorMessage(loginErr as any).toLowerCase();
+        const msg = extractErrorMessage(loginErr as string).toLowerCase();
         if (msg.includes("unverified")) {
           verificationStatus.value = "unverified";
           await emitToastError(

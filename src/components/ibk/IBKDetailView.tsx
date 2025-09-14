@@ -17,15 +17,16 @@ import {
 } from "~/components/icons/lucide-optimized";
 
 import { ID_TO_TYPE } from "./ibkDisabilityTypes";
+import type { IBKDetailViewData, IBKDisabilityInfo } from "~/types/ibk";
 
 interface IBKDetailViewProps {
-  data: any; // API shape varies across pages; keep flexible
+  data: IBKDetailViewData;
   onBack$?: QRL<() => void>;
   onEdit$?: QRL<() => void>;
 }
 
 // Helper function to get disability color theme
-const getDisabilityTheme = (jenisNama: string) => {
+const getDisabilityTheme = (jenisNama: string | undefined) => {
   switch (jenisNama?.toLowerCase()) {
     case "fisik":
       return {
@@ -83,7 +84,7 @@ const getDisabilityTheme = (jenisNama: string) => {
 };
 
 // Helper function to get severity color
-const getSeverityColor = (severity: string) => {
+const getSeverityColor = (severity: string | undefined) => {
   switch (severity?.toLowerCase()) {
     case "ringan":
       return "badge-success";
@@ -106,10 +107,10 @@ export const IBKDetailView = component$<IBKDetailViewProps>(
     const noTelp = data?.no_telp ?? data?.personal_data?.no_telp ?? "-";
     const jenisKelamin =
       data?.jenis_kelamin ?? data?.personal_data?.gender ?? "-";
-    const umur = data?.umur ?? "-";
+    const umur = String(data?.umur ?? "-");
     const agama = data?.agama ?? "-";
     const tempatLahir = data?.tempat_lahir ?? "-";
-    const tanggalLahir = (data?.tanggal_lahir ?? "-").substring(0, 10);
+    const tanggalLahir = String(data?.tanggal_lahir ?? "-").substring(0, 10);
 
     const kesehatan = data?.kesehatan_ibk;
     const detail = data?.detail_ibk;
@@ -451,12 +452,14 @@ export const IBKDetailView = component$<IBKDetailViewProps>(
 
                       <div class="space-y-3 sm:space-y-4 md:grid md:grid-cols-2 md:gap-4 md:space-y-0">
                         {disabilitasIbk.map(
-                          (disabilitas: any, index: number) => {
+                          (disabilitas: IBKDisabilityInfo, index: number) => {
                             const theme = getDisabilityTheme(
-                              ID_TO_TYPE[disabilitas.jenis_difasilitas?.id],
+                              ID_TO_TYPE[
+                                disabilitas.jenis_difasilitas?.id || ""
+                              ],
                             );
                             const severityColor = getSeverityColor(
-                              disabilitas.tingkat_keparahan,
+                              disabilitas.tingkat_keparahan || "",
                             );
                             const Icon = theme.icon;
                             const formatDate = (dateStr: string) => {

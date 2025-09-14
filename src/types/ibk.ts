@@ -4,6 +4,25 @@ export type Gender = "laki-laki" | "perempuan";
 export type DisabilityType = "fisik" | "intelektual" | "mental" | "sensorik";
 export type MaritalStatus = "single" | "married" | "divorced" | "widowed";
 
+// Development status type alias
+export type DevelopmentStatus = "sesuai" | "terlambat" | "tidak_sesuai";
+
+// Severity level type aliases
+export type SeverityLevel = "ringan" | "sedang" | "berat";
+export type ExtendedSeverityLevel = "ringan" | "sedang" | "berat" | "parah";
+export type CognitiveSeverity = "normal" | "ringan" | "sedang" | "berat";
+
+// Capability levels
+export type MobilityCapability =
+  | "mandiri"
+  | "bantuan_sebagian"
+  | "bantuan_total";
+export type CommunicationCapability = "normal" | "terbatas" | "sangat_terbatas";
+export type SocialCapability = "baik" | "cukup" | "kurang";
+
+// Status types
+export type ReferralStatus = "pending" | "completed" | "cancelled";
+
 // Base IBK Personal Data
 export interface IBKPersonalData {
   id?: string;
@@ -80,15 +99,15 @@ export interface DisabilityInfo {
 
   // Specific disability details
   deskripsi_kondisi: string;
-  tingkat_keparahan?: "ringan" | "sedang" | "berat";
+  tingkat_keparahan?: SeverityLevel;
   sejak_kapan?: string;
   penyebab?: string;
 
   // Functional capabilities
-  kemampuan_mobilitas?: "mandiri" | "bantuan_sebagian" | "bantuan_total";
-  kemampuan_komunikasi?: "normal" | "terbatas" | "sangat_terbatas";
-  kemampuan_kognitif?: "normal" | "ringan" | "sedang" | "berat";
-  kemampuan_sosial?: "baik" | "cukup" | "kurang";
+  kemampuan_mobilitas?: MobilityCapability;
+  kemampuan_komunikasi?: CommunicationCapability;
+  kemampuan_kognitif?: CognitiveSeverity;
+  kemampuan_sosial?: SocialCapability;
 
   // Support needs
   kebutuhan_alat_bantu?: string[];
@@ -110,11 +129,11 @@ export interface VisitHistory {
   keluhan_tambahan?: string[];
 
   // Development Checklist
-  perkembangan_motorik_kasar?: "sesuai" | "terlambat" | "tidak_sesuai";
-  perkembangan_motorik_halus?: "sesuai" | "terlambat" | "tidak_sesuai";
-  perkembangan_bahasa?: "sesuai" | "terlambat" | "tidak_sesuai";
-  perkembangan_sosial?: "sesuai" | "terlambat" | "tidak_sesuai";
-  perkembangan_kognitif?: "sesuai" | "terlambat" | "tidak_sesuai";
+  perkembangan_motorik_kasar?: DevelopmentStatus;
+  perkembangan_motorik_halus?: DevelopmentStatus;
+  perkembangan_bahasa?: DevelopmentStatus;
+  perkembangan_sosial?: DevelopmentStatus;
+  perkembangan_kognitif?: DevelopmentStatus;
 
   // Interventions & Activities
   intervensi_diberikan?: string[];
@@ -124,7 +143,7 @@ export interface VisitHistory {
   // Referrals
   rujukan_ke?: string;
   alasan_rujukan?: string;
-  status_rujukan?: "pending" | "completed" | "cancelled";
+  status_rujukan?: ReferralStatus;
 
   // Documentation
   foto_dokumentasi?: string[]; // File URLs
@@ -301,4 +320,141 @@ export interface GetIBKListResponse {
 export interface GetIBKDetailResponse {
   success: boolean;
   data: IBKRecord;
+}
+
+// ========== IBK Detail View API Response Types ==========
+
+// Health information from API
+export interface IBKHealthInfo {
+  hasil_diagnosa?: string;
+  odgj?: boolean;
+  jenis_bantuan?: string;
+  riwayat_terapi?: string;
+}
+
+// Detail information from API
+export interface IBKDetailInfo {
+  pekerjaan?: string;
+  pendidikan?: string;
+  status_perkawinan?: string;
+  titik_koordinat?: string;
+  keterangan_tambahan?: string;
+  [key: string]: string | undefined;
+}
+
+// Complete IBK form data type used in create/edit routes
+export interface IBKFormData {
+  // Step 1: Personal Data
+  nama: string;
+  nik: string;
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  file: string;
+  jenis_kelamin: string;
+  agama: string;
+  umur: string;
+  alamat: string;
+  no_telp: string;
+  nama_wali: string;
+  no_telp_wali: string;
+
+  // Step 2: Assessment
+  total_iq: string;
+  kategori_iq: string;
+  tipe_kepribadian: string;
+  deskripsi_kepribadian: string;
+  catatan_psikolog: string;
+  rekomendasi_intervensi: string;
+  potensi: string;
+  minat: string;
+  bakat: string;
+  keterampilan: string;
+
+  // Step 3: Health
+  hasil_diagnosa: string;
+  jenis_bantuan: string;
+  riwayat_terapi: string;
+
+  // Step 4: Detail
+  pekerjaan: string;
+  pendidikan: string;
+  status_perkawinan: string;
+  titik_koordinat: string;
+  keterangan_tambahan: string;
+
+  // Index signature for modular-forms compatibility
+  [key: string]: string;
+}
+
+// Assessment information from API
+export interface IBKAssessmentInfo {
+  total_iq?: number | string;
+  kategori_iq?: string;
+  tipe_kepribadian?: string;
+  potensi?: string;
+  minat?: string;
+  bakat?: string;
+  keterampilan?: string;
+  deskripsi_kepribadian?: string;
+  catatan_psikolog?: string;
+  rekomendasi_intervensi?: string;
+}
+
+// Disability type from API
+export interface APIDisabilityType {
+  id: number | string;
+  nama: string;
+  deskripsi?: string;
+}
+
+// Disability information from API
+export interface IBKDisabilityInfo {
+  id: number | string;
+  jenis_difasilitas?: APIDisabilityType;
+  tingkat_keparahan?: ExtendedSeverityLevel;
+  sejak_kapan?: string;
+  keterangan?: string;
+}
+
+// Complete IBK Detail View data structure as returned by API
+export interface IBKDetailViewData {
+  // Photo
+  file_foto?: string;
+  file?: string;
+
+  // Personal data (can be flattened or nested)
+  nama?: string;
+  nik?: string | number;
+  alamat?: string;
+  no_telp?: string;
+  jenis_kelamin?: string;
+  umur?: string | number;
+  agama?: string;
+  tempat_lahir?: string;
+  tanggal_lahir?: string;
+
+  // Guardian information
+  nama_wali?: string;
+  no_telp_wali?: string;
+
+  // Nested personal data (alternative structure)
+  personal_data?: {
+    nama_lengkap?: string;
+    nik?: string | number;
+    alamat_lengkap?: string;
+    no_telp?: string;
+    gender?: string;
+  };
+
+  // Health information
+  kesehatan_ibk?: IBKHealthInfo;
+
+  // Detail information
+  detail_ibk?: IBKDetailInfo;
+
+  // Assessment information
+  assesmen_ibk?: IBKAssessmentInfo;
+
+  // Disability information array
+  disabilitasIbk?: IBKDisabilityInfo[];
 }

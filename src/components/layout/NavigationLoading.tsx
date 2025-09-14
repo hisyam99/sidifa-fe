@@ -14,6 +14,14 @@ import {
   LuChevronDown,
 } from "~/components/icons/lucide-optimized";
 import { useAuthFromCookie } from "~/routes/layout";
+import type { SidebarMenuItemType } from "~/components/common/Sidebar";
+
+// Type guard function to check if item has dropdown
+const hasDropdown = (
+  item: SidebarMenuItemType,
+): item is SidebarMenuItemType & { hasDropdown: true } => {
+  return item.hasDropdown === true;
+};
 
 export const NavigationLoading = component$(() => {
   const { logout } = useAuth();
@@ -64,7 +72,7 @@ export const NavigationLoading = component$(() => {
     { href: "/", label: "Beranda", icon: LuHome },
     { href: "/faq", label: "FAQ", icon: LuHelpCircle },
     dashboardItem,
-  ];
+  ] as const;
 
   const currentPath = location.url.pathname;
 
@@ -76,7 +84,7 @@ export const NavigationLoading = component$(() => {
           {/* Desktop menu same layout */}
           <div class="hidden lg:flex items-center gap-2">
             {menuItems.map((item) => {
-              if ((item as any).hasDropdown) {
+              if (hasDropdown(item)) {
                 return (
                   <div
                     key={item.href}

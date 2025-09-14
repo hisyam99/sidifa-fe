@@ -23,7 +23,7 @@ export const useRoutingProgressProvider = () => {
 
   useTask$(({ track, cleanup }) => {
     track(() => location.isNavigating);
-    let interval: any;
+    let interval: NodeJS.Timeout | undefined;
     if (location.isNavigating) {
       isLoading.value = true;
       progress.value = 0;

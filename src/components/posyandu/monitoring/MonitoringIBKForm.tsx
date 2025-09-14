@@ -172,209 +172,227 @@ export const MonitoringIBKForm = component$<MonitoringIBKFormProps>(
     };
 
     return (
-      <Form
-        class="space-y-4"
-        onSubmit$={async (values) => {
-          await onSubmit$(values);
-        }}
-      >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="label">
-              <span class="label-text font-medium">Pilih IBK</span>
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                class="input input-bordered w-full"
-                value={form.internal.fields?.ibk_id?.value as string}
-                readOnly
-                disabled
-              />
-            ) : (
-              <div class="relative w-full" onClick$={openDropdown}>
-                <input
-                  type="text"
-                  class="input input-bordered w-full"
-                  placeholder={"Cari nama IBK..."}
-                  value={selectedLabel.value || query.value}
-                  onInput$={(e) => {
-                    selectedLabel.value = "";
-                    query.value = (e.target as HTMLInputElement).value;
-                  }}
-                  onFocus$={openDropdown}
-                  onBlur$={closeDropdown}
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  spellcheck={false}
-                />
-                {open.value && (
-                  <ul
-                    class="absolute left-0 right-0 mt-2 z-[9999] menu menu-sm p-2 shadow bg-base-100 rounded-box max-h-60 overflow-auto"
-                    onScroll$={handleScroll}
-                  >
-                    {loadingItems.value && (
-                      <li class="px-2 py-1 text-sm">Memuat...</li>
-                    )}
-                    {!loadingItems.value && errorItems.value && (
-                      <li class="px-2 py-1 text-sm text-error">
-                        {errorItems.value}
-                      </li>
-                    )}
-                    {!loadingItems.value && visibleItems().length === 0 && (
-                      <li class="px-2 py-1 text-sm text-base-content/60">
-                        Tidak ada hasil
-                      </li>
-                    )}
-                    {!loadingItems.value &&
-                      visibleItems().map((row) => {
-                        const label = row.nama || "(Tanpa Nama)";
-                        return (
-                          <li key={row.id}>
-                            <button
-                              type="button"
-                              class="justify-start"
-                              onClick$={$(() =>
-                                applySelection({ id: row.id, label }),
-                              )}
-                            >
-                              {label}
-                            </button>
-                          </li>
-                        );
-                      })}
-                  </ul>
+      <div class="flex flex-col h-full">
+        <Form
+          class="flex flex-col h-full"
+          onSubmit$={async (values) => {
+            await onSubmit$(values);
+          }}
+        >
+          {/* Scrollable Form Content */}
+          <div class="flex-1 overflow-y-auto space-y-4 pr-2 min-h-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                {isEditing ? (
+                  <label class="label">
+                    <span class="label-text font-medium">Pilih IBK</span>
+                    <input
+                      type="text"
+                      class="input input-bordered w-full"
+                      value={form.internal.fields?.ibk_id?.value as string}
+                      readOnly
+                      disabled
+                    />
+                  </label>
+                ) : (
+                  <label class="label">
+                    <span class="label-text font-medium">Pilih IBK</span>
+                    <div class="relative w-full" onClick$={openDropdown}>
+                      <input
+                        type="text"
+                        class="input input-bordered w-full"
+                        placeholder={"Cari nama IBK..."}
+                        value={selectedLabel.value || query.value}
+                        onInput$={(e) => {
+                          selectedLabel.value = "";
+                          query.value = (e.target as HTMLInputElement).value;
+                        }}
+                        onFocus$={openDropdown}
+                        onBlur$={closeDropdown}
+                        autoComplete="off"
+                        autoCapitalize="off"
+                        spellcheck={false}
+                      />
+                      {open.value && (
+                        <ul
+                          class="absolute left-0 right-0 mt-2 z-[9999] menu menu-sm p-2 shadow bg-base-100 rounded-box max-h-60 overflow-auto"
+                          onScroll$={handleScroll}
+                        >
+                          {loadingItems.value && (
+                            <li class="px-2 py-1 text-sm">Memuat...</li>
+                          )}
+                          {!loadingItems.value && errorItems.value && (
+                            <li class="px-2 py-1 text-sm text-error">
+                              {errorItems.value}
+                            </li>
+                          )}
+                          {!loadingItems.value &&
+                            visibleItems().length === 0 && (
+                              <li class="px-2 py-1 text-sm text-base-content/60">
+                                Tidak ada hasil
+                              </li>
+                            )}
+                          {!loadingItems.value &&
+                            visibleItems().map((row) => {
+                              const label = row.nama || "(Tanpa Nama)";
+                              return (
+                                <li key={row.id}>
+                                  <button
+                                    type="button"
+                                    class="justify-start"
+                                    onClick$={$(() =>
+                                      applySelection({ id: row.id, label }),
+                                    )}
+                                  >
+                                    {label}
+                                  </button>
+                                </li>
+                              );
+                            })}
+                        </ul>
+                      )}
+                    </div>
+                  </label>
                 )}
+                {/* Hidden field to satisfy form state */}
+                <Field name="ibk_id" type="string">
+                  {(field, props) => (
+                    <input
+                      id="monitoring-ibk-id"
+                      type="hidden"
+                      {...props}
+                      value={field.value || ""}
+                    />
+                  )}
+                </Field>
               </div>
-            )}
-            {/* Hidden field to satisfy form state */}
-            <Field name="ibk_id" type="string">
+              <Field name="jadwal_posyandu_id" type="string">
+                {(field, props) => (
+                  <div class="form-control w-full">
+                    <label class="label">
+                      <span class="label-text font-medium">
+                        Jadwal Posyandu ID
+                      </span>
+                      <input
+                        {...props}
+                        type="text"
+                        value={field.value || ""}
+                        class="input input-bordered w-full focus-ring"
+                        readOnly
+                        disabled
+                      />
+                    </label>
+                    <div class="label">
+                      <span class="label-text-alt text-base-content/60">
+                        Otomatis dari jadwal terpilih
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </Field>
+            </div>
+            <Field name="tanggal_kunjungan" type="string">
               {(field, props) => (
-                <input
-                  id="monitoring-ibk-id"
-                  type="hidden"
-                  {...props}
-                  value={field.value || ""}
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="date"
+                  label="Tanggal Kunjungan"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="kecamatan" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="text"
+                  label="Kecamatan"
+                  placeholder="Kecamatan kunjungan"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="keluhan" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="textarea"
+                  label="Keluhan"
+                  placeholder="Keluhan IBK"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="perilaku_baru" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="text"
+                  label="Perilaku Baru"
+                  placeholder="Perilaku baru yang diamati"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="tindak_lanjut" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="textarea"
+                  label="Tindak Lanjut"
+                  placeholder="Rencana tindak lanjut"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="fungsional_checklist" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="text"
+                  label="Checklist Fungsional"
+                  placeholder="ID/Ref checklist"
+                  required
+                />
+              )}
+            </Field>
+            <Field name="keterangan" type="string">
+              {(field, props) => (
+                <FormFieldModular
+                  field={field}
+                  props={props}
+                  type="textarea"
+                  label="Keterangan"
+                  placeholder="Keterangan tambahan (opsional)"
                 />
               )}
             </Field>
           </div>
-          <Field name="jadwal_posyandu_id" type="string">
-            {(field, props) => (
-              <div class="form-control w-full">
-                <label class="label">
-                  <span class="label-text font-medium">Jadwal Posyandu ID</span>
-                </label>
-                <input
-                  {...props}
-                  type="text"
-                  value={field.value || ""}
-                  class="input input-bordered w-full focus-ring"
-                  readOnly
-                  disabled
-                />
-                <label class="label">
-                  <span class="label-text-alt text-base-content/60">
-                    Otomatis dari jadwal terpilih
-                  </span>
-                </label>
-              </div>
-            )}
-          </Field>
-        </div>
-        <Field name="tanggal_kunjungan" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="date"
-              label="Tanggal Kunjungan"
-              required
-            />
-          )}
-        </Field>
-        <Field name="kecamatan" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="text"
-              label="Kecamatan"
-              placeholder="Kecamatan kunjungan"
-              required
-            />
-          )}
-        </Field>
-        <Field name="keluhan" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="textarea"
-              label="Keluhan"
-              placeholder="Keluhan IBK"
-              required
-            />
-          )}
-        </Field>
-        <Field name="perilaku_baru" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="text"
-              label="Perilaku Baru"
-              placeholder="Perilaku baru yang diamati"
-              required
-            />
-          )}
-        </Field>
-        <Field name="tindak_lanjut" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="textarea"
-              label="Tindak Lanjut"
-              placeholder="Rencana tindak lanjut"
-              required
-            />
-          )}
-        </Field>
-        <Field name="fungsional_checklist" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="text"
-              label="Checklist Fungsional"
-              placeholder="ID/Ref checklist"
-              required
-            />
-          )}
-        </Field>
-        <Field name="keterangan" type="string">
-          {(field, props) => (
-            <FormFieldModular
-              field={field}
-              props={props}
-              type="textarea"
-              label="Keterangan"
-              placeholder="Keterangan tambahan (opsional)"
-            />
-          )}
-        </Field>
 
-        <button
-          type="submit"
-          class="btn btn-primary w-full"
-          disabled={form.submitting || loading}
-        >
-          {form.submitting || loading
-            ? "Menyimpan..."
-            : submitButtonText || "Simpan Monitoring"}
-        </button>
-      </Form>
+          {/* Fixed Button Area */}
+          <div class="shrink-0 pt-4 mt-4 border-t border-base-200">
+            <button
+              type="submit"
+              class="btn btn-primary w-full"
+              disabled={form.submitting || loading}
+            >
+              {form.submitting ||
+                (loading && (
+                  <span class="loading loading-spinner loading-sm"></span>
+                ))}
+              {form.submitting || loading
+                ? "Menyimpan..."
+                : submitButtonText || "Simpan Monitoring"}
+            </button>
+          </div>
+        </Form>
+      </div>
     );
   },
 );

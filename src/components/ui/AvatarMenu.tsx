@@ -1,11 +1,17 @@
-import { component$, QRL } from "@builder.io/qwik";
+import {
+  component$,
+  QRL,
+  type Component,
+  type SVGProps,
+  type JSXChildren,
+} from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { Avatar } from "./Avatar";
 
 interface MenuItem {
   href: string;
   label: string;
-  icon: any;
+  icon: Component<SVGProps<SVGSVGElement>>;
 }
 
 interface AvatarMenuProps {
@@ -13,7 +19,7 @@ interface AvatarMenuProps {
   role?: string;
   menuItems: MenuItem[];
   onLogout: QRL<() => void>;
-  children?: any;
+  children?: JSXChildren;
 }
 
 export const AvatarMenu = component$<AvatarMenuProps>(
@@ -27,10 +33,7 @@ export const AvatarMenu = component$<AvatarMenuProps>(
         >
           <Avatar email={email} />
         </button>
-        <ul
-          tabIndex={0}
-          class="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box border border-base-200/50 w-max min-w-56 max-w-[95vw] overflow-x-auto right-0 z-[1000]"
-        >
+        <ul class="menu menu-sm dropdown-content mt-3 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box border border-base-200/50 w-max min-w-56 max-w-[95vw] overflow-x-auto right-0 z-[1000]">
           <li class="menu-title">
             <div class="flex items-center gap-3 p-2 max-w-full">
               <Avatar email={email} size="w-8 h-8" />

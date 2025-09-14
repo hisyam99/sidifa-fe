@@ -618,17 +618,27 @@ export default component$(() => {
                     monitoringEditId.value = null;
                   }}
                 >
-                  <div class="modal-box modal-box-overflow-visible max-w-xl">
-                    <button
-                      class="btn btn-sm btn-circle absolute right-2 top-2"
-                      onClick$={() => {
-                        monitoringShowForm.value = false;
-                        monitoringEditId.value = null;
-                      }}
-                    >
-                      ✕
-                    </button>
-                    <div class="max-h-[calc(100dvh-4rem)] overflow-y-auto">
+                  <div class="modal-box max-w-xl w-full h-[90vh] sm:h-[85vh] flex flex-col p-0">
+                    {/* Modal Header */}
+                    <div class="flex items-center justify-between p-6 border-b border-base-200">
+                      <h3 class="font-bold text-lg">
+                        {monitoringEditId.value
+                          ? "Edit Monitoring IBK"
+                          : "Tambah Monitoring IBK"}
+                      </h3>
+                      <button
+                        class="btn btn-sm btn-circle btn-ghost"
+                        onClick$={() => {
+                          monitoringShowForm.value = false;
+                          monitoringEditId.value = null;
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* Modal Body - Full Height Form */}
+                    <div class="flex-1 p-6 overflow-hidden">
                       <MonitoringIBKForm
                         initialData={
                           monitoringEditId.value
