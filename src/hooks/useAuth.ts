@@ -95,7 +95,12 @@ export const useAuth = () => {
         sessionUtils.setAuthStatus(false);
         clearUiAuthCookies();
         if (isBrowser) {
-          await nav("/", { replaceState: true });
+          const currentPath = window.location.pathname;
+          if (currentPath === "/" || currentPath === "") {
+            window.location.replace("/");
+          } else {
+            await nav("/", { replaceState: true });
+          }
         }
       } else {
         // Untuk error lain yang tidak spesifik, jangan hapus session
@@ -129,9 +134,16 @@ export const useAuth = () => {
     globalAuthState.isInitialized = false;
     globalAuthState.lastCheck = 0;
 
-    // Navigate with replaceState to prevent going back to authenticated state
+    // Handle navigation: refresh if already on homepage, otherwise navigate to homepage
     if (isBrowser) {
-      await nav("/", { replaceState: true });
+      const currentPath = window.location.pathname;
+      if (currentPath === "/" || currentPath === "") {
+        // Refresh page if already on homepage to show logged out state
+        window.location.replace("/");
+      } else {
+        // Navigate to homepage with replaceState to prevent going back to authenticated state
+        await nav("/", { replaceState: true });
+      }
     }
 
     // Fire-and-forget API call to logout on server side (no await)
