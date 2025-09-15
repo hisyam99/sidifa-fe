@@ -5,6 +5,7 @@ import {
   isServer,
   isBrowser,
 } from "@builder.io/qwik";
+import { useNavigate } from "@builder.io/qwik-city";
 import {
   profileService,
   authService,
@@ -32,6 +33,7 @@ export const useAuth = () => {
   const user = useSignal<User | null>(globalAuthState.globalUser);
   const loading = useSignal(globalAuthState.globalLoading);
   const error = useSignal<string | null>(null);
+  const nav = useNavigate();
 
   const checkAuthStatus = $(async (forceCheck = false) => {
     // Prevent API calls during SSG/server
@@ -93,7 +95,7 @@ export const useAuth = () => {
         sessionUtils.setAuthStatus(false);
         clearUiAuthCookies();
         if (isBrowser) {
-          window.location.href = "/";
+          await nav("/", { replaceState: true });
         }
       } else {
         // Untuk error lain yang tidak spesifik, jangan hapus session
@@ -127,9 +129,9 @@ export const useAuth = () => {
     globalAuthState.isInitialized = false;
     globalAuthState.lastCheck = 0;
 
-    // Redirect immediately for faster UX
+    // Navigate with replaceState to prevent going back to authenticated state
     if (isBrowser) {
-      window.location.href = "/";
+      await nav("/", { replaceState: true });
     }
 
     // Fire-and-forget API call to logout on server side (no await)
