@@ -1,5 +1,5 @@
 import { component$, $ } from "@builder.io/qwik";
-import { useLocation, Link, useNavigate } from "@builder.io/qwik-city";
+import { useLocation, Link } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import {
   LuHome,
@@ -21,11 +21,10 @@ import { isActivePath } from "~/utils/path";
 export const NavigationAdmin = component$(() => {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const nav = useNavigate();
 
   const handleLogout = $(async () => {
-    await logout();
-    await nav("/", { replaceState: true });
+    logout();
+    // No need to await or manually navigate since logout() handles redirect internally
   });
 
   const menuItems = [

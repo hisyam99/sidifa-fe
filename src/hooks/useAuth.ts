@@ -115,24 +115,28 @@ export const useAuth = () => {
     if (isServer) {
       return;
     }
-    try {
-      await authService.logout();
-    } catch (err) {
-      console.error("Error during logout:", err);
-    } finally {
-      sessionUtils.clearAllAuthData();
-      sessionUtils.setAuthStatus(false);
-      clearUiAuthCookies();
-      user.value = null;
-      isLoggedIn.value = false;
-      globalAuthState.globalUser = null;
-      globalAuthState.globalIsLoggedIn = false;
-      globalAuthState.isInitialized = false;
-      globalAuthState.lastCheck = 0;
-      if (isBrowser) {
-        window.location.href = "/";
-      }
+
+    // Optimistic logout: Clear local session immediately
+    sessionUtils.clearAllAuthData();
+    sessionUtils.setAuthStatus(false);
+    clearUiAuthCookies();
+    user.value = null;
+    isLoggedIn.value = false;
+    globalAuthState.globalUser = null;
+    globalAuthState.globalIsLoggedIn = false;
+    globalAuthState.isInitialized = false;
+    globalAuthState.lastCheck = 0;
+
+    // Redirect immediately for faster UX
+    if (isBrowser) {
+      window.location.href = "/";
     }
+
+    // Fire-and-forget API call to logout on server side (no await)
+    authService.logout().catch((err) => {
+      console.error("Background logout API call failed:", err);
+      // Note: User is already logged out locally, so this is just cleanup
+    });
   });
 
   const refreshUserData = $(async () => {

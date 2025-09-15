@@ -29,7 +29,8 @@ export const NavigationLoading = component$(() => {
   const ssrAuth = useAuthFromCookie();
 
   const handleLogout = $(async () => {
-    await logout();
+    logout();
+    // No need to await since logout() handles redirect internally
   });
 
   // Compute role-specific dashboard item from SSR cookie role
