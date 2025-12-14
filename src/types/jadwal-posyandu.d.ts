@@ -15,8 +15,7 @@ export interface JadwalPosyanduCreateRequest extends JadwalPosyanduBase {
   file_name?: File | string; // File (upload) or string (existing)
 }
 
-export interface JadwalPosyanduUpdateRequest
-  extends Partial<JadwalPosyanduBase> {
+export interface JadwalPosyanduUpdateRequest extends Partial<JadwalPosyanduBase> {
   file_name?: File | string;
 }
 
@@ -50,4 +49,40 @@ export interface JadwalPosyanduListResponse {
 
 export interface JadwalPosyanduDetailResponse {
   data: JadwalPosyanduItem;
+}
+
+// ========== IBK Jadwal Posyandu Types ==========
+
+export interface IBKJadwalPosyanduResponse {
+  ibk: {
+    id: string;
+    nama: string;
+    nik: string;
+  };
+  jadwal_posyandu: {
+    id: string;
+    nama_kegiatan: string;
+    jenis_kegiatan: string;
+    deskripsi: string;
+    lokasi: string;
+    tanggal: string;
+    waktu_mulai: string;
+    waktu_selesai: string;
+    file_name: string | null;
+    created_at: string;
+    posyandu: {
+      id: string;
+      nama_posyandu: string;
+      alamat: string;
+      no_telp: string;
+    };
+  };
+  presensi_ibk: {
+    id: string;
+    status_presensi: string;
+    antrian_ke: number;
+    waktu_datang: string;
+    created_at: string;
+    updated_at: string | null;
+  };
 }
