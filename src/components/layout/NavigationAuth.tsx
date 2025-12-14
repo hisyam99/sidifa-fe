@@ -1,13 +1,6 @@
 import { component$, $ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
-import {
-  LuMenu,
-  LuHome,
-  LuUser,
-  LuSettings,
-  LuHelpCircle,
-  LuBarChart,
-} from "~/components/icons/lucide-optimized";
+import { LuMenu, LuHome, LuUser, LuSettings, LuHelpCircle, LuBarChart, LuCalendar } from "~/components/icons/lucide-optimized";
 import { useLocation, Link } from "@builder.io/qwik-city";
 import { AvatarMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
@@ -26,17 +19,12 @@ export const NavigationAuth = component$(() => {
   const menuItems = [
     { href: "/", label: "Beranda", icon: LuHome },
     { href: "/faq", label: "FAQ", icon: LuHelpCircle },
+    { href: "/jadwal-posyandu", label: "Jadwal Posyandu", icon: LuCalendar },
     { href: "/dashboard", label: "Dashboard", icon: LuBarChart },
     { href: "/dashboard/profile", label: "Profil", icon: LuUser },
-    ...(user.value?.role === "admin"
-      ? [{ href: "/admin", label: "Dashboard Admin", icon: LuBarChart }]
-      : []),
-    ...(user.value?.role === "kader"
-      ? [{ href: "/kader", label: "Dashboard Kader", icon: LuBarChart }]
-      : []),
-    ...(user.value?.role === "psikolog"
-      ? [{ href: "/psikolog", label: "Dashboard Psikolog", icon: LuBarChart }]
-      : []),
+    ...(user.value?.role === "admin" ? [{ href: "/admin", label: "Dashboard Admin", icon: LuBarChart }] : []),
+    ...(user.value?.role === "kader" ? [{ href: "/kader", label: "Dashboard Kader", icon: LuBarChart }] : []),
+    ...(user.value?.role === "psikolog" ? [{ href: "/psikolog", label: "Dashboard Psikolog", icon: LuBarChart }] : []),
     { href: "/dashboard/settings", label: "Pengaturan", icon: LuSettings },
   ];
 
@@ -56,9 +44,7 @@ export const NavigationAuth = component$(() => {
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
-                  isActivePath(currentPath, item.href, item.href === "/")
-                    ? " font-bold text-primary"
-                    : ""
+                  isActivePath(currentPath, item.href, item.href === "/") ? " font-bold text-primary" : ""
                 }`}
               >
                 <item.icon class="w-4 h-4 text-primary" />
@@ -82,11 +68,7 @@ export const NavigationAuth = component$(() => {
           />
           {/* Hamburger mobile menu - setelah avatar */}
           <div class="dropdown dropdown-end lg:hidden">
-            <button
-              class="btn btn-ghost btn-circle"
-              tabIndex={0}
-              aria-label="Buka menu navigasi"
-            >
+            <button class="btn btn-ghost btn-circle" tabIndex={0} aria-label="Buka menu navigasi">
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
@@ -95,9 +77,7 @@ export const NavigationAuth = component$(() => {
                   <Link
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
-                      isActivePath(currentPath, item.href, item.href === "/")
-                        ? " font-bold text-primary"
-                        : ""
+                      isActivePath(currentPath, item.href, item.href === "/") ? " font-bold text-primary" : ""
                     }`}
                   >
                     <item.icon class="w-5 h-5 text-primary" />
