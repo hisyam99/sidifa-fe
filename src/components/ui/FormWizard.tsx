@@ -54,16 +54,14 @@ export default component$<FormWizardProps>(
     const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 
     // Extract button icon for submit and next
-    let submitButtonIcon = null;
-    if (isLoading.value) {
-      submitButtonIcon = <Spinner size="w-5 h-5" />;
-    }
-    let nextButtonIcon = null;
-    if (isLoading.value) {
-      nextButtonIcon = <Spinner size="w-5 h-5" />;
-    } else {
-      nextButtonIcon = <LuChevronRight class="w-4 h-4" />;
-    }
+    const submitButtonIcon = isLoading.value ? (
+      <Spinner size="w-5 h-5" />
+    ) : null;
+    const nextButtonIcon = isLoading.value ? (
+      <Spinner size="w-5 h-5" />
+    ) : (
+      <LuChevronRight class="w-4 h-4" />
+    );
 
     return (
       <div class={`w-full ${className}`}>

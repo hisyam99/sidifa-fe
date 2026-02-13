@@ -52,16 +52,12 @@ export default component$<FormFieldModularProps>(
       error: boolean,
       className: string = "",
     ): string {
-      let base = "";
-      if (type === "select") {
-        base = "select select-bordered w-full focus-ring";
-      } else if (type === "textarea") {
-        base = "textarea textarea-bordered w-full focus-ring";
-      } else if (type === "file") {
-        base = "input input-bordered w-full focus-ring";
-      } else {
-        base = "input input-bordered w-full focus-ring";
-      }
+      const base =
+        type === "select"
+          ? "select select-bordered w-full focus-ring"
+          : type === "textarea"
+            ? "textarea textarea-bordered w-full focus-ring"
+            : "input input-bordered w-full focus-ring";
 
       let errorClass = "";
       if (type === "select") {
@@ -200,7 +196,7 @@ export default component$<FormFieldModularProps>(
     // Always ensure className is a string
     const safeClassName = typeof className === "string" ? className : "";
 
-    let inputElement = null;
+    let inputElement;
     if (type === "select" && options) {
       inputElement = renderSelect(props, field, options, safeClassName);
     } else if (type === "textarea") {
