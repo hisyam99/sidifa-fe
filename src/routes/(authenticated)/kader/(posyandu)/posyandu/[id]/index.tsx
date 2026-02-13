@@ -1,22 +1,20 @@
-// File: /sidifa-fev2/src/routes/posyandu/index.tsx
-
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
 import { getPosyanduDetail } from "~/services/api";
+import { kaderDashboardService } from "~/services/dashboard.service";
 import type { PosyanduDetail } from "~/types";
+import type { KaderDashboardStats } from "~/services/dashboard.service";
 import { extractErrorMessage } from "~/utils/error";
-import StatisticsCard from "~/components/ui/StatisticsCard";
+import { KaderStatCard } from "~/components/kader";
 import {
   LuUser,
   LuMapPin,
   LuPhone,
   LuCalendar,
-  LuPencil,
-  LuTrash,
-  LuShare,
+  LuUsers,
+  LuActivity,
   LuArrowRight,
-  LuMenu,
 } from "~/components/icons/lucide-optimized";
 
 export default component$(() => {
@@ -24,6 +22,8 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const data = useSignal<PosyanduDetail | null>(null);
+  const stats = useSignal<KaderDashboardStats | null>(null);
+  const statsLoading = useSignal(true);
   const { isLoggedIn } = useAuth();
 
   useTask$(async ({ track }) => {
@@ -31,10 +31,25 @@ export default component$(() => {
     const idParam = track(() => loc.params.id);
     if (isLoggedIn.value && idParam) {
       loading.value = true;
+      statsLoading.value = true;
       error.value = null;
+
       try {
+        // Fetch posyandu detail
         const res = await getPosyanduDetail(idParam);
         data.value = res;
+
+        // Fetch stats
+        try {
+          const statsData =
+            await kaderDashboardService.getStatsByPosyandu(idParam);
+          stats.value = statsData;
+        } catch (statsErr) {
+          console.error("Error fetching stats:", statsErr);
+          // Stats error doesn't block main content
+        } finally {
+          statsLoading.value = false;
+        }
       } catch (err: unknown) {
         error.value = extractErrorMessage(err as Error);
       } finally {
@@ -43,83 +58,16 @@ export default component$(() => {
     }
   });
 
-  // Dummy status badge
   const statusBadge = (
     <span class="badge badge-success badge-lg gap-2">Aktif</span>
   );
 
-  // Dummy statistics for posyandu
-  const stats = [
-    {
-      title: "Total Anggota",
-      value: 120,
-      icon: "LuUsers",
-      color: "primary" as const,
-      description: "Jumlah seluruh anggota posyandu",
-    },
-    {
-      title: "IBK Terdaftar",
-      value: 8,
-      icon: "LuHeart",
-      color: "accent" as const,
-      description: "Individu Berkebutuhan Khusus",
-    },
-    {
-      title: "Kunjungan Bulan Ini",
-      value: 15,
-      icon: "LuActivity",
-      color: "success" as const,
-      description: "Total kunjungan posyandu bulan ini",
-    },
-    {
-      title: "Jadwal Berikutnya",
-      value: 3,
-      icon: "LuCalendar",
-      color: "secondary" as const,
-      description: "Kunjungan terjadwal minggu ini",
-    },
-  ];
-
-  // Dummy user info
   const userInfo = (userId: string) => (
     <div class="flex items-center gap-2 mt-2">
       <LuUser class="w-4 h-4 text-primary" />
       <span class="text-xs text-base-content/70">User ID: {userId}</span>
     </div>
   );
-
-  // Action menu (dropdown)
-  const actionMenu = (
-    <div class="dropdown dropdown-end">
-      <label class="btn btn-ghost btn-circle">
-        <LuMenu class="w-6 h-6" />
-      </label>
-      <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-44 border border-base-200/50">
-        <li>
-          <button class="flex items-center gap-2" onClick$={() => {}}>
-            <LuPencil class="w-4 h-4 text-primary" /> Edit Data
-          </button>
-        </li>
-        <li>
-          <button class="flex items-center gap-2" onClick$={() => {}}>
-            <LuTrash class="w-4 h-4 text-error" /> Hapus Data
-          </button>
-        </li>
-        <li>
-          <button class="flex items-center gap-2" onClick$={() => {}}>
-            <LuShare class="w-4 h-4 text-info" /> Bagikan
-          </button>
-        </li>
-        <li>
-          <button class="flex items-center gap-2" onClick$={() => {}}>
-            <LuArrowRight class="w-4 h-4" /> Salin ID
-          </button>
-        </li>
-      </ul>
-    </div>
-  );
-
-  // Inline skeletons only where values are dynamic
 
   return (
     <div class="">
@@ -133,19 +81,50 @@ export default component$(() => {
             Informasi lengkap, statistik, dan aksi untuk posyandu ini
           </p>
         </div>
+
         {/* Statistik grid */}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          {stats.map((stat) => (
-            <StatisticsCard
-              key={stat.title}
-              title={stat.title}
-              value={stat.value}
-              icon={stat.icon}
-              color={stat.color}
-              description={stat.description}
-            />
-          ))}
-        </div>
+        {statsLoading.value ? (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} class="skeleton h-32 w-full rounded-2xl"></div>
+            ))}
+          </div>
+        ) : stats.value ? (
+          <section
+            aria-label="Statistik posyandu"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 animate-[fadeInUp_500ms_ease_0ms_both]"
+          >
+            <div style={{ animationDelay: "0ms" }} class="contents">
+              <KaderStatCard
+                title="Total Anggota"
+                value={stats.value.totalAnggota.toString()}
+                icon={LuUsers}
+                description="Anggota terdaftar"
+              />
+            </div>
+            <div style={{ animationDelay: "60ms" }} class="contents">
+              <KaderStatCard
+                title="Total IBK"
+                value={stats.value.totalIbk.toString()}
+                icon={LuActivity}
+                description="Ibu dan balita terdaftar"
+              />
+            </div>
+            <div style={{ animationDelay: "120ms" }} class="contents">
+              <KaderStatCard
+                title="Kunjungan Bulan Ini"
+                value={stats.value.kunjunganBulanIni.toString()}
+                icon={LuCalendar}
+                description="Total kunjungan"
+              />
+            </div>
+          </section>
+        ) : (
+          <div class="alert alert-warning mb-8">
+            <span>Data statistik tidak tersedia</span>
+          </div>
+        )}
+
         {/* Tombol Tambah IBK */}
         <div class="flex justify-end mb-4">
           {loading.value ? (
@@ -159,9 +138,8 @@ export default component$(() => {
             </Link>
           )}
         </div>
+
         <div class="card bg-base-100 shadow-xl border border-base-200/50 relative">
-          {/* Hamburger menu in top right */}
-          <div class="absolute top-4 right-4 z-10">{actionMenu}</div>
           <div class="card-body p-6 lg:p-8">
             {error.value && (
               <div class="alert alert-error mb-4" role="alert">
@@ -228,7 +206,14 @@ export default component$(() => {
                       ) : (
                         <span>
                           Dibuat:{" "}
-                          {new Date(data.value!.created_at).toLocaleString()}
+                          {new Date(data.value!.created_at).toLocaleString(
+                            "id-ID",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )}
                         </span>
                       )}
                     </div>
@@ -241,12 +226,6 @@ export default component$(() => {
                       )}
                     </div>
                   </div>
-                </div>
-                <div class="divider">Aksi Lainnya</div>
-                <div class="flex flex-wrap gap-3 justify-end">
-                  <button class="btn btn-outline gap-2" onClick$={() => {}}>
-                    <LuArrowRight class="w-4 h-4" /> Salin ID
-                  </button>
                 </div>
               </>
             )}
