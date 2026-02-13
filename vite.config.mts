@@ -23,6 +23,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
       tailwindcss(),
       qwikReact(),
     ],
+    resolve: {
+      conditions: ["browser", "import", "module"],
+    },
     optimizeDeps: {
       exclude: [],
     },
