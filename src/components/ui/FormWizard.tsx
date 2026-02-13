@@ -79,7 +79,7 @@ export default component$<FormWizardProps>(
 
             <div class="w-full bg-base-200 rounded-full h-2 mb-6">
               <div
-                class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-500 ease-out"
+                class="bg-linear-to-r from-primary to-secondary h-2 rounded-full transition-all duration-500 ease-out"
                 style={`width: ${progressPercentage}%`}
               ></div>
             </div>
@@ -193,7 +193,7 @@ export default component$<FormWizardProps>(
             </div>
 
             {/* Form Content Slot */}
-            <div class="min-h-[200px]">
+            <div class="min-h-50">
               <Slot />
             </div>
           </div>
