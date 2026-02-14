@@ -30,7 +30,7 @@ export default component$(() => {
     {
       href: `${base}/jadwal`,
       label: "Jadwal Posyandu",
-      icon: LuCalendarClock, // You may need to import or use a suitable icon
+      icon: LuCalendarClock,
     },
     {
       href: `${base}/laporan-statistik`,
@@ -40,7 +40,7 @@ export default component$(() => {
   ];
 
   return (
-    <div class="min-h-screen bg-base-200/60">
+    <div class="min-h-screen">
       <div class="drawer lg:drawer-open">
         <input
           id="drawer-posyandu-detail"
@@ -59,12 +59,7 @@ export default component$(() => {
             <Slot />
           </main>
         </div>
-        <Sidebar
-          title="Detail Posyandu"
-          menuItems={menuItems}
-          drawerId="drawer-posyandu-detail"
-          ptClass="pt-16"
-        >
+        <Sidebar menuItems={menuItems} drawerId="drawer-posyandu-detail">
           <li class="mt-8">
             <Link
               href={`/kader/posyandu/${posyanduId}/ibk/create`}

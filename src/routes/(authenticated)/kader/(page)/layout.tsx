@@ -91,12 +91,7 @@ export default component$(() => {
           </label>
           <Slot />
         </div>
-        <Sidebar
-          title="Si-DIFA Kader"
-          menuItems={menuItems}
-          drawerId="kader-drawer"
-          ptClass="pt-16"
-        />
+        <Sidebar menuItems={menuItems} drawerId="kader-drawer" />
       </div>
     </div>
   );

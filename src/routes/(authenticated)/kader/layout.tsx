@@ -23,7 +23,7 @@ export default component$(() => {
   return (
     <>
       <NavigationKader />
-      <div class="min-h-screen bg-base-200/60">
+      <div class="min-h-screen">
         <RoleProtectedContent allowedRoles={["kader", "admin"]}>
           <div class="relative">
             {/* {isNavigating.value && <Spinner overlay class="fixed" />} */}

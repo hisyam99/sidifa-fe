@@ -22,6 +22,7 @@ export interface SidebarProps {
   drawerId: string;
   class?: string;
   ptClass?: string; // deprecated, kept for backward compat
+  bgClass?: string; // sidebar background, default: "bg-base-100 lg:bg-base-100/80 lg:backdrop-blur-sm"
 }
 
 export const Sidebar = component$<SidebarProps>((props) => {
@@ -34,7 +35,9 @@ export const Sidebar = component$<SidebarProps>((props) => {
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
-      <div class="h-full w-64 border-r border-base-200/60 bg-base-100 lg:bg-base-100/80 lg:backdrop-blur-sm overflow-y-auto">
+      <div
+        class={`h-full w-64 border-r border-base-200/60 overflow-y-auto ${props.bgClass ?? "bg-base-100 lg:bg-base-100/80 lg:backdrop-blur-sm"}`}
+      >
         <nav class="p-3">
           <ul class="menu px-1 py-2 gap-0.5">
             {props.menuItems.map((item) => (
