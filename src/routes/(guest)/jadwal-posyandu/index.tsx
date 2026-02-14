@@ -61,7 +61,7 @@ export default component$(() => {
   };
 
   return (
-    <div class="min-h-screen bg-gradient-to-br from-primary/5 via-base-100 to-secondary/5">
+    <div class="min-h-screen bg-linear-to-br from-primary/5 via-base-100 to-secondary/5">
       <div class="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div class="text-center mb-8">

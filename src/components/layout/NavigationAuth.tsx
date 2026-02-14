@@ -91,7 +91,7 @@ export const NavigationAuth = component$(() => {
             >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
-            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
+            <ul class="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems.map((item) => (
                 <li key={item.href}>
                   <Link

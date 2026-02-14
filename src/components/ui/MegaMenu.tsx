@@ -21,7 +21,7 @@ export const MegaMenu = component$<MegaMenuProps>(
         <Slot name="trigger" />
         {isHovered && (
           <div
-            class={`absolute top-full z-[1000] mt-1 mega-menu-content ${className.includes("dropdown-start") ? "right-0" : "left-0"}`}
+            class={`absolute top-full z-1000 mt-1 mega-menu-content ${className.includes("dropdown-start") ? "right-0" : "left-0"}`}
             style={{
               animation: "mega-menu-enter 0.2s ease-out forwards",
             }}

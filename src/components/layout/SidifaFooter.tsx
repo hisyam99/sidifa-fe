@@ -52,11 +52,11 @@ export const SidifaFooter = component$(() => {
 
   return (
     <footer
-      class="bg-base-200 border-t border-base-300 backdrop-blur supports-[backdrop-filter]:bg-base-200"
+      class="bg-base-200 border-t border-base-300 backdrop-blur supports-backdrop-filter:bg-base-200"
       role="contentinfo"
     >
       {/* Decorative wave */}
-      <div class="w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
+      <div class="w-full h-1 bg-linear-to-r from-primary via-secondary to-accent" />
 
       <div class="container mx-auto px-4 py-12">
         {/* Main Footer Content */}
