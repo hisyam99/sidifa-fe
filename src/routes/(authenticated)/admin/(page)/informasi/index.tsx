@@ -139,10 +139,10 @@ export default component$(() => {
     <div class="space-y-6">
       <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
         <div class="min-w-0">
-          <h1 class="text-xl sm:text-2xl font-bold break-words">
+          <h1 class="text-xl sm:text-2xl font-bold wrap-break-word">
             Manajemen Informasi Edukasi
           </h1>
-          <p class="text-sm sm:text-base text-base-content/70 mt-1 break-words">
+          <p class="text-sm sm:text-base text-base-content/70 mt-1 wrap-break-word">
             Kelola artikel, panduan, dan materi edukasi untuk pengguna
           </p>
         </div>
@@ -278,7 +278,7 @@ export default component$(() => {
                     class="w-full h-full object-cover"
                     loading="lazy"
                   />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div class="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
                   <div class="absolute top-2 left-2">
                     <span class="badge badge-primary badge-sm">
                       {(item.tipe || "").toString().toUpperCase()}

@@ -39,7 +39,10 @@ export class JadwalPosyanduService {
     await api.post("/kader/jadwal-posyandu", formData);
   }
 
-  async updateJadwal(id: string, data: JadwalPosyanduUpdateRequest): Promise<void> {
+  async updateJadwal(
+    id: string,
+    data: JadwalPosyanduUpdateRequest,
+  ): Promise<void> {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -60,11 +63,16 @@ export class JadwalPosyanduService {
     await api.patch(`/kader/jadwal-posyandu/update/${id}`, formData);
   }
 
-  async getJadwalList(posyanduId: string, params: { limit?: number; page?: number }): Promise<JadwalPosyanduListResponse> {
+  async getJadwalList(
+    posyanduId: string,
+    params: { limit?: number; page?: number },
+  ): Promise<JadwalPosyanduListResponse> {
     const query = new URLSearchParams();
     if (params.limit) query.append("limit", params.limit.toString());
     if (params.page) query.append("page", params.page.toString());
-    const response = await api.get(`/kader/jadwal-posyandu/${posyanduId}?${query.toString()}`);
+    const response = await api.get(
+      `/kader/jadwal-posyandu/${posyanduId}?${query.toString()}`,
+    );
     return response.data;
   }
 

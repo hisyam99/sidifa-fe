@@ -1,4 +1,10 @@
-import { component$, useSignal, useStore, $, useVisibleTask$ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useStore,
+  $,
+  useVisibleTask$,
+} from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
@@ -15,7 +21,7 @@ const ibkSchema = object({
   nama: pipe(string(), nonEmpty("Nama wajib diisi")),
   nik: pipe(
     string(),
-    custom((val) => /^\d{16}$/.test(val as string), "NIK harus 16 digit angka")
+    custom((val) => /^\d{16}$/.test(val as string), "NIK harus 16 digit angka"),
   ),
   tempat_lahir: string(),
   tanggal_lahir: pipe(string(), nonEmpty("Tanggal lahir wajib diisi")),
@@ -172,10 +178,10 @@ export default component$(() => {
                   tingkat_keparahan: string;
                   sejak_kapan?: string;
                   keterangan?: string;
-                }>
+                }>,
               ) => {
                 selectedDisabilities.value = items;
-              }
+              },
             )}
           />
         </div>
@@ -221,8 +227,10 @@ export default component$(() => {
     ];
     return requiredStep1.every(
       (field) =>
-        !form.internal.fields[field as keyof typeof form.internal.fields]?.error &&
-        form.internal.fields[field as keyof typeof form.internal.fields]?.value !== ""
+        !form.internal.fields[field as keyof typeof form.internal.fields]
+          ?.error &&
+        form.internal.fields[field as keyof typeof form.internal.fields]
+          ?.value !== "",
     );
   });
 
@@ -242,7 +250,9 @@ export default component$(() => {
       }
       formData.append("tanggal_lahir", tanggalLahirValue);
       const totalIqValue =
-        formDataStore.total_iq !== undefined && formDataStore.total_iq !== null && formDataStore.total_iq !== ""
+        formDataStore.total_iq !== undefined &&
+        formDataStore.total_iq !== null &&
+        formDataStore.total_iq !== ""
           ? String(formDataStore.total_iq)
           : "0";
       formData.append("total_iq", totalIqValue);
@@ -265,20 +275,29 @@ export default component$(() => {
       formData.append("keterangan_tambahan", formDataStore.keterangan_tambahan);
       formData.append("kategori_iq", formDataStore.kategori_iq);
       formData.append("tipe_kepribadian", formDataStore.tipe_kepribadian);
-      formData.append("deskripsi_kepribadian", formDataStore.deskripsi_kepribadian);
+      formData.append(
+        "deskripsi_kepribadian",
+        formDataStore.deskripsi_kepribadian,
+      );
       formData.append("potensi", formDataStore.potensi);
       formData.append("minat", formDataStore.minat);
       formData.append("bakat", formDataStore.bakat);
       formData.append("keterampilan", formDataStore.keterampilan);
       formData.append("catatan_psikolog", formDataStore.catatan_psikolog);
-      formData.append("rekomendasi_intervensi", formDataStore.rekomendasi_intervensi);
+      formData.append(
+        "rekomendasi_intervensi",
+        formDataStore.rekomendasi_intervensi,
+      );
       // formData.append("odgj", formDataStore.odgj);
       formData.append("hasil_diagnosa", formDataStore.hasil_diagnosa);
       formData.append("jenis_bantuan", formDataStore.jenis_bantuan);
       formData.append("riwayat_terapi", formDataStore.riwayat_terapi);
 
       const res = await ibkService.createIbk(formData);
-      const returnedId = (res?.data?.id || res?.id || res?.data?.ibk_id || res?.ibk_id) as string | undefined;
+      const returnedId = (res?.data?.id ||
+        res?.id ||
+        res?.data?.ibk_id ||
+        res?.ibk_id) as string | undefined;
       const ibkId = returnedId;
       if (!ibkId) {
         throw new Error("ID IBK tidak tersedia dari respons.");
@@ -348,7 +367,9 @@ export default component$(() => {
           {error.value}
         </div>
       )}
-      {success.value && <output class="alert alert-success mb-2">{success.value}</output>}
+      {success.value && (
+        <output class="alert alert-success mb-2">{success.value}</output>
+      )}
       {posyandu.value && (
         <>
           {/* Progress & Stepper tetap */}
@@ -357,7 +378,10 @@ export default component$(() => {
               <h2 class="text-lg font-semibold text-base-content">
                 Langkah {currentStep.value + 1} dari {steps.length}
               </h2>
-              <div class="text-sm text-base-content/70">{Math.round(((currentStep.value + 1) / steps.length) * 100)}% selesai</div>
+              <div class="text-sm text-base-content/70">
+                {Math.round(((currentStep.value + 1) / steps.length) * 100)}%
+                selesai
+              </div>
             </div>
             <div class="w-full bg-base-200 rounded-full h-2 mb-6">
               <div
@@ -369,7 +393,10 @@ export default component$(() => {
           <div class="mb-8">
             <div class="flex items-center justify-between">
               {steps.map((step, idx) => (
-                <div key={step.id} class={`flex flex-col items-center flex-1 relative`}>
+                <div
+                  key={step.id}
+                  class={`flex flex-col items-center flex-1 relative`}
+                >
                   <div
                     class={`relative z-10 w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                       idx === currentStep.value
@@ -382,7 +409,11 @@ export default component$(() => {
                     <span class="text-sm font-semibold">{idx + 1}</span>
                   </div>
                   <div class="mt-3 text-center max-w-20">
-                    <p class={`text-xs font-medium ${idx === currentStep.value ? "text-primary" : "text-base-content/70"}`}>{step.title}</p>
+                    <p
+                      class={`text-xs font-medium ${idx === currentStep.value ? "text-primary" : "text-base-content/70"}`}
+                    >
+                      {step.title}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -426,13 +457,19 @@ export default component$(() => {
                     Lanjutkan
                   </button>
                 ) : (
-                  <button type="submit" class="btn btn-primary gap-2" disabled={form.submitting}>
+                  <button
+                    type="submit"
+                    class="btn btn-primary gap-2"
+                    disabled={form.submitting}
+                  >
                     Simpan
                   </button>
                 )}
               </div>
               {currentStep.value !== 4 && form.invalid && (
-                <div class="alert alert-error mt-2">Ada data yang belum valid/terisi. Silakan cek kembali!</div>
+                <div class="alert alert-error mt-2">
+                  Ada data yang belum valid/terisi. Silakan cek kembali!
+                </div>
               )}
             </Form>
           </div>

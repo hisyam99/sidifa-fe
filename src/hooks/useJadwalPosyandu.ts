@@ -5,6 +5,16 @@ import type {
   JadwalPosyanduUpdateRequest,
 } from "~/types";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+
+const KEY_PREFIX = "kader:jadwal-posyandu";
+
+interface CachedListData {
+  items: JadwalPosyanduItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 interface UseJadwalPosyanduOptions {
   posyanduId: string;
@@ -27,44 +37,89 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
   );
 
   const fetchList = $(async (params?: { page?: number; limit?: number }) => {
-    loading.value = true;
     error.value = null;
+
+    const resolvedPage = params?.page ?? page.value;
+    const resolvedLimit = params?.limit ?? limit.value;
+
+    const key = queryClient.buildKey(
+      KEY_PREFIX,
+      posyanduId,
+      "list",
+      resolvedPage,
+      resolvedLimit,
+    );
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<CachedListData>(key);
+    if (cached) {
+      jadwalList.splice(0, jadwalList.length, ...cached.items);
+      total.value = cached.total;
+      page.value = cached.page;
+      limit.value = cached.limit;
+
+      if (queryClient.isFresh(key)) return;
+    }
+
+    if (!cached) loading.value = true;
+
     try {
-      const res = await jadwalPosyanduService.getJadwalList(posyanduId, {
-        page: params?.page ?? page.value,
-        limit: params?.limit ?? limit.value,
-      });
-      jadwalList.splice(0, jadwalList.length, ...(res.data || []));
-      total.value = res.meta?.totalData ?? 0;
-      page.value = res.meta?.currentPage ?? 1;
-      limit.value = res.meta?.limit ?? 10;
-      // Debug logs
-      console.log("[JadwalPosyandu] API response:", res);
-      console.log(
-        "[JadwalPosyandu] total:",
-        total.value,
-        "limit:",
-        limit.value,
-        "page:",
-        page.value,
+      const res = await queryClient.fetchQuery(
+        key,
+        () =>
+          jadwalPosyanduService.getJadwalList(posyanduId, {
+            page: resolvedPage,
+            limit: resolvedLimit,
+          }),
+        DEFAULT_STALE_TIME,
       );
-      // If you use useComputed$ for totalPage, log it here too
-      // (If not available here, log in the component after import)
+
+      const result: CachedListData = {
+        items: res.data || [],
+        total: res.meta?.totalData ?? 0,
+        page: res.meta?.currentPage ?? 1,
+        limit: res.meta?.limit ?? 10,
+      };
+
+      queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+      jadwalList.splice(0, jadwalList.length, ...result.items);
+      total.value = result.total;
+      page.value = result.page;
+      limit.value = result.limit;
     } catch (err: unknown) {
-      error.value = (err as Error)?.message || "Gagal memuat jadwal posyandu.";
+      if (!cached) {
+        error.value =
+          (err as Error)?.message || "Gagal memuat jadwal posyandu.";
+      }
     } finally {
       loading.value = false;
     }
   });
 
   const fetchDetail = $(async (id: string) => {
-    loading.value = true;
     error.value = null;
+
+    const key = queryClient.buildKey(KEY_PREFIX, "detail", id);
+
+    // Return cached detail if fresh
+    const cached = queryClient.getQueryData<JadwalPosyanduItem>(key);
+    if (cached && queryClient.isFresh(key)) {
+      selectedJadwal.value = cached;
+      return;
+    }
+
+    loading.value = true;
+
     try {
-      const res = await jadwalPosyanduService.getJadwalDetail(id);
-      console.log("DEBUG raw API response", res);
+      const res = await queryClient.fetchQuery(
+        key,
+        () => jadwalPosyanduService.getJadwalDetail(id),
+        DEFAULT_STALE_TIME,
+      );
+
       const data = res.data || res || {};
-      selectedJadwal.value = {
+      const detail: JadwalPosyanduItem = {
         ...data,
         tanggal: data?.tanggal ? data.tanggal.substring(0, 10) : "",
         file_name: data?.file_name || "",
@@ -76,10 +131,9 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
         lokasi: data?.lokasi || "",
         posyandu_id: data?.posyandu_id || "",
       };
-      console.log(
-        "DEBUG selectedJadwal.value in fetchDetail",
-        selectedJadwal.value,
-      );
+
+      queryClient.setQueryData(key, detail, DEFAULT_STALE_TIME);
+      selectedJadwal.value = detail;
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal memuat detail jadwal.";
     } finally {
@@ -94,6 +148,9 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     try {
       await jadwalPosyanduService.createJadwal(data);
       success.value = "Jadwal berhasil dibuat.";
+      queryClient.invalidateQueries(
+        queryClient.buildKey(KEY_PREFIX, posyanduId),
+      );
       await fetchList();
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal membuat jadwal.";
@@ -110,6 +167,10 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
       try {
         await jadwalPosyanduService.updateJadwal(id, data);
         success.value = "Jadwal berhasil diupdate.";
+        queryClient.invalidateQueries(
+          queryClient.buildKey(KEY_PREFIX, posyanduId),
+        );
+        queryClient.removeQuery(queryClient.buildKey(KEY_PREFIX, "detail", id));
         await fetchList();
       } catch (err: unknown) {
         error.value = (err as Error)?.message || "Gagal mengupdate jadwal.";
@@ -126,6 +187,10 @@ export function useJadwalPosyandu(options: UseJadwalPosyanduOptions) {
     try {
       await jadwalPosyanduService.deleteJadwal(id);
       success.value = "Jadwal berhasil dihapus.";
+      queryClient.invalidateQueries(
+        queryClient.buildKey(KEY_PREFIX, posyanduId),
+      );
+      queryClient.removeQuery(queryClient.buildKey(KEY_PREFIX, "detail", id));
       await fetchList();
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal menghapus jadwal.";

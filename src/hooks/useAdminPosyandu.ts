@@ -1,6 +1,17 @@
 import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import type { AdminPosyanduItem } from "~/types/admin-posyandu-management";
+
+const KEY_PREFIX = "admin:posyandu";
+
+interface CachedListData {
+  items: AdminPosyanduItem[];
+  totalData: number;
+  totalPage: number;
+  page: number;
+  limit: number;
+}
 
 export const useAdminPosyandu = () => {
   const items = useSignal<AdminPosyanduItem[]>([]);
@@ -20,14 +31,47 @@ export const useAdminPosyandu = () => {
         nama_posyandu?: string;
       } = {},
     ) => {
-      loading.value = true;
       error.value = null;
+
+      const resolvedPage = params.page ?? page.value;
+      const resolvedLimit = params.limit ?? limit.value;
+
+      const key = queryClient.buildKey(
+        KEY_PREFIX,
+        "list",
+        resolvedPage,
+        resolvedLimit,
+        params.nama_posyandu,
+      );
+
+      // Stale-while-revalidate: apply cached data immediately
+      const cached = queryClient.getQueryData<CachedListData>(key);
+      if (cached) {
+        items.value = cached.items;
+        totalData.value = cached.totalData;
+        totalPage.value = cached.totalPage;
+        page.value = cached.page;
+        limit.value = cached.limit;
+
+        // If data is still fresh, skip the network request entirely
+        if (queryClient.isFresh(key)) return;
+        // Otherwise fall through to background refetch (no loading spinner)
+      }
+
+      // Only show loading spinner when there is no cached data to display
+      if (!cached) loading.value = true;
+
       try {
-        const response = await adminService.listPosyandu({
-          limit: params.limit ?? limit.value,
-          page: params.page ?? page.value,
-          nama_posyandu: params.nama_posyandu,
-        });
+        const response = await queryClient.fetchQuery(
+          key,
+          () =>
+            adminService.listPosyandu({
+              limit: resolvedLimit,
+              page: resolvedPage,
+              nama_posyandu: params.nama_posyandu,
+            }),
+          DEFAULT_STALE_TIME,
+        );
 
         // Transform response to AdminPosyanduItem format
         const rows = Array.isArray(response.data)
@@ -35,7 +79,7 @@ export const useAdminPosyandu = () => {
               Partial<AdminPosyanduItem> & { deleted_at?: string | null }
             >)
           : [];
-        items.value = rows.map(
+        const transformed = rows.map(
           (
             item: Partial<AdminPosyanduItem> & { deleted_at?: string | null },
           ) => ({
@@ -43,14 +87,30 @@ export const useAdminPosyandu = () => {
             status: item.deleted_at ? "Tidak Aktif" : "Aktif",
           }),
         ) as AdminPosyanduItem[];
-        totalData.value = response.meta?.count || 0;
-        totalPage.value = response.meta?.totalPage || 1;
-        page.value = response.meta?.currentPage || 1;
-        limit.value = response.meta?.limit || 10;
+
+        const result: CachedListData = {
+          items: transformed,
+          totalData: response.meta?.count || 0,
+          totalPage: response.meta?.totalPage || 1,
+          page: response.meta?.currentPage || 1,
+          limit: response.meta?.limit || 10,
+        };
+
+        // Update cache with the transformed result for instant re-use
+        queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+        items.value = result.items;
+        totalData.value = result.totalData;
+        totalPage.value = result.totalPage;
+        page.value = result.page;
+        limit.value = result.limit;
       } catch (err: unknown) {
-        const msg = (err as { message?: string })?.message;
-        error.value = msg || "Gagal memuat data posyandu";
-        items.value = [];
+        // Only surface the error if there was no cached fallback
+        if (!cached) {
+          const msg = (err as { message?: string })?.message;
+          error.value = msg || "Gagal memuat data posyandu";
+          items.value = [];
+        }
       } finally {
         loading.value = false;
       }
@@ -65,8 +125,8 @@ export const useAdminPosyandu = () => {
     }) => {
       loading.value = true;
       error.value = null;
+      success.value = null;
       try {
-        // Only send required fields for creation
         const createData = {
           nama_posyandu: data.nama_posyandu,
           alamat: data.alamat,
@@ -74,7 +134,8 @@ export const useAdminPosyandu = () => {
         };
         await adminService.createPosyandu(createData);
         success.value = "Berhasil menambah posyandu";
-        await fetchList(); // Refresh the list
+        queryClient.invalidateQueries(KEY_PREFIX);
+        await fetchList();
       } catch (err: unknown) {
         const msg = (err as { message?: string })?.message;
         error.value = msg || "Gagal menambah posyandu";
@@ -94,8 +155,8 @@ export const useAdminPosyandu = () => {
     }) => {
       loading.value = true;
       error.value = null;
+      success.value = null;
       try {
-        // Only send fields that can be updated
         const updateData = {
           id: data.id,
           nama_posyandu: data.nama_posyandu,
@@ -104,7 +165,8 @@ export const useAdminPosyandu = () => {
         };
         await adminService.updatePosyandu(updateData);
         success.value = "Berhasil memperbarui posyandu";
-        await fetchList(); // Refresh the list
+        queryClient.invalidateQueries(KEY_PREFIX);
+        await fetchList();
       } catch (err: unknown) {
         const msg = (err as { message?: string })?.message;
         error.value = msg || "Gagal memperbarui posyandu";
@@ -117,10 +179,12 @@ export const useAdminPosyandu = () => {
   const deleteItem = $(async (id: string) => {
     loading.value = true;
     error.value = null;
+    success.value = null;
     try {
       await adminService.deletePosyandu(id);
       success.value = "Berhasil menghapus posyandu";
-      await fetchList(); // Refresh the list
+      queryClient.invalidateQueries(KEY_PREFIX);
+      await fetchList();
     } catch (err: unknown) {
       const msg = (err as { message?: string })?.message;
       error.value = msg || "Gagal menghapus posyandu";

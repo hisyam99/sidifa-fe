@@ -1,5 +1,12 @@
 import { component$ } from "@builder.io/qwik";
-import { LuMenu, LuHome, LuLogIn, LuStethoscope, LuHelpCircle, LuCalendar } from "~/components/icons/lucide-optimized";
+import {
+  LuMenu,
+  LuHome,
+  LuLogIn,
+  LuStethoscope,
+  LuHelpCircle,
+  LuCalendar,
+} from "~/components/icons/lucide-optimized";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { BrandLogo } from "~/components/common";
 import { isActivePath } from "~/utils/path";
@@ -35,7 +42,9 @@ export const NavigationGuest = component$(() => {
                 key={item.href}
                 href={item.href}
                 class={`btn btn-ghost btn-sm gap-2 max-w-xs truncate hover:bg-primary/10 transition-all duration-300${
-                  isActivePath(currentPath, item.href, item.href === "/") ? " font-bold text-primary" : ""
+                  isActivePath(currentPath, item.href, item.href === "/")
+                    ? " font-bold text-primary"
+                    : ""
                 }`}
               >
                 <item.icon class="w-4 h-4 text-primary" />
@@ -54,7 +63,11 @@ export const NavigationGuest = component$(() => {
 
           {/* Hamburger mobile menu */}
           <div class="dropdown dropdown-end lg:hidden">
-            <button class="btn btn-ghost btn-circle" tabIndex={0} aria-label="Buka menu navigasi">
+            <button
+              class="btn btn-ghost btn-circle"
+              tabIndex={0}
+              aria-label="Buka menu navigasi"
+            >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
             <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
@@ -63,7 +76,9 @@ export const NavigationGuest = component$(() => {
                   <Link
                     href={item.href}
                     class={`flex items-center gap-3 hover:bg-primary/10${
-                      isActivePath(currentPath, item.href, item.href === "/") ? " font-bold text-primary" : ""
+                      isActivePath(currentPath, item.href, item.href === "/")
+                        ? " font-bold text-primary"
+                        : ""
                     }`}
                   >
                     <item.icon class="w-5 h-5 text-primary" />
@@ -72,7 +87,10 @@ export const NavigationGuest = component$(() => {
                 </li>
               ))}
               <li>
-                <Link href="/auth/login" class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200">
+                <Link
+                  href="/auth/login"
+                  class="flex items-center gap-3 hover:bg-primary/10 transition-all duration-200"
+                >
                   <LuLogIn class="w-5 h-5 text-primary" />
                   <span class="font-medium">Masuk</span>
                 </Link>

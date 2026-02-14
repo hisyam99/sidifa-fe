@@ -1,6 +1,7 @@
 import { $, useSignal } from "@builder.io/qwik";
 import { ibkService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
+import { queryClient } from "~/lib/query";
 
 export interface EditIBKPayload {
   id: string;
@@ -23,6 +24,11 @@ export function useEditIBK() {
       const formData = ibkService.buildIbkUpdateFormData({ ...rest, file });
       await ibkService.updateIbk(id, formData);
       success.value = "Data IBK berhasil diperbarui.";
+
+      // Invalidate all IBK-related caches so lists and details refetch
+      queryClient.invalidateQueries("kader:ibk");
+      queryClient.invalidateQueries("kader:presensi-ibk");
+      queryClient.invalidateQueries("kader:monitoring-ibk");
     } catch (err: unknown) {
       error.value = extractErrorMessage(err as Error);
     } finally {

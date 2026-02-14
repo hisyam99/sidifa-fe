@@ -15,6 +15,7 @@ import {
 import { sessionUtils, type User } from "~/utils/auth";
 import { isRateLimitError, isAuthError } from "~/utils/error";
 import { clearUiAuthCookies } from "~/utils/ui-auth-cookie";
+import { queryClient } from "~/lib/query";
 
 // Global state untuk mencegah multiple API calls dan initialization
 const globalAuthState = {
@@ -123,10 +124,11 @@ export const useAuth = () => {
       return;
     }
 
-    // Optimistic logout: Clear local session immediately
+    // Optimistic logout: Clear local session and query cache immediately
     sessionUtils.clearAllAuthData();
     sessionUtils.setAuthStatus(false);
     clearUiAuthCookies();
+    queryClient.clear();
     user.value = null;
     isLoggedIn.value = false;
     globalAuthState.globalUser = null;

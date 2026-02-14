@@ -1,6 +1,16 @@
 import { useSignal, $ } from "@builder.io/qwik";
 import { adminService } from "~/services/api";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import type { AdminPsikologItem } from "~/types/admin-psikolog-management";
+
+const KEY_PREFIX = "admin:psikolog";
+
+interface CachedListData {
+  items: AdminPsikologItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 export const useAdminPsikolog = () => {
   const items = useSignal<AdminPsikologItem[]>([]);
@@ -21,23 +31,65 @@ export const useAdminPsikolog = () => {
         status?: "Aktif" | "Tidak Aktif" | "";
       } = {},
     ) => {
-      loading.value = true;
       error.value = null;
-      try {
-        const response = await adminService.listPsikolog({
-          limit: params.limit ?? limit.value,
-          page: params.page ?? page.value,
-          nama: params.nama,
-          spesialisasi: params.spesialisasi,
-          status: params.status,
-        });
 
-        items.value = response.data as AdminPsikologItem[];
-        total.value = response.meta?.total || 0;
-        page.value = response.meta?.currentPage || 1;
-        limit.value = response.meta?.limit || 10;
+      const resolvedPage = params.page ?? page.value;
+      const resolvedLimit = params.limit ?? limit.value;
+
+      const key = queryClient.buildKey(
+        KEY_PREFIX,
+        "list",
+        resolvedPage,
+        resolvedLimit,
+        params.nama,
+        params.spesialisasi,
+        params.status,
+      );
+
+      // Stale-while-revalidate: apply cached data immediately
+      const cached = queryClient.getQueryData<CachedListData>(key);
+      if (cached) {
+        items.value = cached.items;
+        total.value = cached.total;
+        page.value = cached.page;
+        limit.value = cached.limit;
+
+        if (queryClient.isFresh(key)) return;
+      }
+
+      if (!cached) loading.value = true;
+
+      try {
+        const response = await queryClient.fetchQuery(
+          key,
+          () =>
+            adminService.listPsikolog({
+              limit: resolvedLimit,
+              page: resolvedPage,
+              nama: params.nama,
+              spesialisasi: params.spesialisasi,
+              status: params.status,
+            }),
+          DEFAULT_STALE_TIME,
+        );
+
+        const result: CachedListData = {
+          items: response.data as AdminPsikologItem[],
+          total: response.meta?.total || 0,
+          page: response.meta?.currentPage || 1,
+          limit: response.meta?.limit || 10,
+        };
+
+        queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+        items.value = result.items;
+        total.value = result.total;
+        page.value = result.page;
+        limit.value = result.limit;
       } catch (err: unknown) {
-        error.value = (err as Error)?.message || "Gagal memuat data psikolog";
+        if (!cached) {
+          error.value = (err as Error)?.message || "Gagal memuat data psikolog";
+        }
       } finally {
         loading.value = false;
       }
@@ -53,9 +105,11 @@ export const useAdminPsikolog = () => {
     }) => {
       loading.value = true;
       error.value = null;
+      success.value = null;
       try {
         await adminService.createPsikolog(data);
         success.value = "Berhasil menambah psikolog";
+        queryClient.invalidateQueries(KEY_PREFIX);
         await fetchList();
       } catch (err: unknown) {
         error.value = (err as Error)?.message || "Gagal menambah psikolog";
@@ -76,9 +130,11 @@ export const useAdminPsikolog = () => {
     }) => {
       loading.value = true;
       error.value = null;
+      success.value = null;
       try {
         await adminService.updatePsikolog(data);
         success.value = "Berhasil memperbarui psikolog";
+        queryClient.invalidateQueries(KEY_PREFIX);
         await fetchList();
       } catch (err: unknown) {
         error.value = (err as Error)?.message || "Gagal memperbarui psikolog";
@@ -91,9 +147,11 @@ export const useAdminPsikolog = () => {
   const deleteItem = $(async (id: string) => {
     loading.value = true;
     error.value = null;
+    success.value = null;
     try {
       await adminService.deletePsikolog(id);
       success.value = "Berhasil menghapus psikolog";
+      queryClient.invalidateQueries(KEY_PREFIX);
       await fetchList();
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal menghapus psikolog";

@@ -34,8 +34,8 @@ export default component$(() => {
       jadwalData.value = response;
     } catch (err: unknown) {
       error.value =
-        (err as { response?: { data?: { message?: string } } }).response?.data?.message ||
-        "Gagal mengambil data. Pastikan NIK sudah terdaftar.";
+        (err as { response?: { data?: { message?: string } } }).response?.data
+          ?.message || "Gagal mengambil data. Pastikan NIK sudah terdaftar.";
     } finally {
       loading.value = false;
     }
@@ -66,7 +66,9 @@ export default component$(() => {
         {/* Header */}
         <div class="text-center mb-8">
           <h1 class="text-4xl font-bold text-primary mb-2">Jadwal Posyandu</h1>
-          <p class="text-base-content/70">Cek jadwal dan status kehadiran Anda</p>
+          <p class="text-base-content/70">
+            Cek jadwal dan status kehadiran Anda
+          </p>
         </div>
 
         {/* Search Form */}
@@ -86,15 +88,25 @@ export default component$(() => {
                   placeholder="Masukkan NIK Anda"
                   class="input input-bordered flex-1"
                   value={nik.value}
-                  onInput$={(e) => (nik.value = (e.target as HTMLInputElement).value)}
+                  onInput$={(e) =>
+                    (nik.value = (e.target as HTMLInputElement).value)
+                  }
                   onKeyPress$={(e) => {
                     if (e.key === "Enter") {
                       handleSearch();
                     }
                   }}
                 />
-                <button class="btn btn-primary" onClick$={handleSearch} disabled={loading.value}>
-                  {loading.value ? <span class="loading loading-spinner loading-sm"></span> : <LuSearch class="w-5 h-5" />}
+                <button
+                  class="btn btn-primary"
+                  onClick$={handleSearch}
+                  disabled={loading.value}
+                >
+                  {loading.value ? (
+                    <span class="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    <LuSearch class="w-5 h-5" />
+                  )}
                   Cari
                 </button>
               </div>
@@ -122,11 +134,15 @@ export default component$(() => {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p class="text-sm text-base-content/70">Nama</p>
-                    <p class="font-semibold text-lg">{jadwalData.value.ibk.nama}</p>
+                    <p class="font-semibold text-lg">
+                      {jadwalData.value.ibk.nama}
+                    </p>
                   </div>
                   <div>
                     <p class="text-sm text-base-content/70">NIK</p>
-                    <p class="font-semibold text-lg">{jadwalData.value.ibk.nik}</p>
+                    <p class="font-semibold text-lg">
+                      {jadwalData.value.ibk.nik}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -144,8 +160,14 @@ export default component$(() => {
                     <div class="stat">
                       <div class="stat-title">Status Kehadiran</div>
                       <div class="stat-value text-2xl">
-                        <span class={`badge ${getStatusBadge(jadwalData.value.presensi_ibk.status_presensi).class} badge-lg`}>
-                          {getStatusBadge(jadwalData.value.presensi_ibk.status_presensi).label}
+                        <span
+                          class={`badge ${getStatusBadge(jadwalData.value.presensi_ibk.status_presensi).class} badge-lg`}
+                        >
+                          {
+                            getStatusBadge(
+                              jadwalData.value.presensi_ibk.status_presensi,
+                            ).label
+                          }
                         </span>
                       </div>
                     </div>
@@ -153,8 +175,13 @@ export default component$(() => {
                   <div class="stats shadow">
                     <div class="stat">
                       <div class="stat-title">Nomor Antrian</div>
-                      <div class="stat-value text-primary">{jadwalData.value.presensi_ibk.antrian_ke}</div>
-                      <div class="stat-desc">Anda antrian ke-{jadwalData.value.presensi_ibk.antrian_ke}</div>
+                      <div class="stat-value text-primary">
+                        {jadwalData.value.presensi_ibk.antrian_ke}
+                      </div>
+                      <div class="stat-desc">
+                        Anda antrian ke-
+                        {jadwalData.value.presensi_ibk.antrian_ke}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -167,8 +194,12 @@ export default component$(() => {
                 </div>
                 {jadwalData.value.presensi_ibk.updated_at && (
                   <div class="mt-2">
-                    <p class="text-sm text-base-content/70">Terakhir Diperbarui</p>
-                    <p class="font-medium">{formatDate(jadwalData.value.presensi_ibk.updated_at)}</p>
+                    <p class="text-sm text-base-content/70">
+                      Terakhir Diperbarui
+                    </p>
+                    <p class="font-medium">
+                      {formatDate(jadwalData.value.presensi_ibk.updated_at)}
+                    </p>
                   </div>
                 )}
               </div>
@@ -184,12 +215,16 @@ export default component$(() => {
                 <div class="space-y-4">
                   <div>
                     <p class="text-sm text-base-content/70">Nama Kegiatan</p>
-                    <p class="font-semibold text-lg">{jadwalData.value.jadwal_posyandu.nama_kegiatan}</p>
+                    <p class="font-semibold text-lg">
+                      {jadwalData.value.jadwal_posyandu.nama_kegiatan}
+                    </p>
                   </div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p class="text-sm text-base-content/70">Jenis Kegiatan</p>
-                      <p class="font-medium">{jadwalData.value.jadwal_posyandu.jenis_kegiatan}</p>
+                      <p class="font-medium">
+                        {jadwalData.value.jadwal_posyandu.jenis_kegiatan}
+                      </p>
                     </div>
                     <div>
                       <p class="text-sm text-base-content/70">Tanggal</p>
@@ -203,7 +238,8 @@ export default component$(() => {
                     <p class="text-sm text-base-content/70">Waktu</p>
                     <p class="font-medium flex items-center gap-2">
                       <LuClock class="w-4 h-4 text-primary" />
-                      {jadwalData.value.jadwal_posyandu.waktu_mulai} - {jadwalData.value.jadwal_posyandu.waktu_selesai}
+                      {jadwalData.value.jadwal_posyandu.waktu_mulai} -{" "}
+                      {jadwalData.value.jadwal_posyandu.waktu_selesai}
                     </p>
                   </div>
                   <div>
@@ -215,7 +251,9 @@ export default component$(() => {
                   </div>
                   <div>
                     <p class="text-sm text-base-content/70">Deskripsi</p>
-                    <p class="font-medium">{jadwalData.value.jadwal_posyandu.deskripsi}</p>
+                    <p class="font-medium">
+                      {jadwalData.value.jadwal_posyandu.deskripsi}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -231,11 +269,15 @@ export default component$(() => {
                 <div class="space-y-3">
                   <div>
                     <p class="text-sm text-base-content/70">Nama Posyandu</p>
-                    <p class="font-semibold text-lg">{jadwalData.value.jadwal_posyandu.posyandu.nama_posyandu}</p>
+                    <p class="font-semibold text-lg">
+                      {jadwalData.value.jadwal_posyandu.posyandu.nama_posyandu}
+                    </p>
                   </div>
                   <div>
                     <p class="text-sm text-base-content/70">Alamat</p>
-                    <p class="font-medium">{jadwalData.value.jadwal_posyandu.posyandu.alamat}</p>
+                    <p class="font-medium">
+                      {jadwalData.value.jadwal_posyandu.posyandu.alamat}
+                    </p>
                   </div>
                   <div>
                     <p class="text-sm text-base-content/70">No. Telepon</p>
@@ -255,8 +297,13 @@ export default component$(() => {
           <div class="card bg-base-100 shadow-xl">
             <div class="card-body text-center py-16">
               <LuCalendar class="w-24 h-24 mx-auto text-base-content/20 mb-4" />
-              <h3 class="text-xl font-semibold text-base-content/70">Masukkan NIK untuk melihat jadwal</h3>
-              <p class="text-base-content/50">Data jadwal posyandu dan status presensi akan ditampilkan di sini</p>
+              <h3 class="text-xl font-semibold text-base-content/70">
+                Masukkan NIK untuk melihat jadwal
+              </h3>
+              <p class="text-base-content/50">
+                Data jadwal posyandu dan status presensi akan ditampilkan di
+                sini
+              </p>
             </div>
           </div>
         )}
