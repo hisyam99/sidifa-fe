@@ -1,5 +1,6 @@
 import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { AdminPageHeader } from "~/components/admin";
 import {
   UserManagementTable,
   UserFilterControls,
@@ -152,8 +153,11 @@ export default component$(() => {
   });
 
   return (
-    <div>
-      <h1 class="text-3xl font-bold mb-6">Manajemen Pengguna</h1>
+    <div class="space-y-6">
+      <AdminPageHeader
+        title="Manajemen Pengguna"
+        description="Kelola data pengguna yang terdaftar pada sistem."
+      />
 
       <UserFilterControls
         searchQuery={searchQuery}

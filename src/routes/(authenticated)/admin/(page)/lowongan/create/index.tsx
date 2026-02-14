@@ -1,6 +1,7 @@
 import { component$, $ } from "@builder.io/qwik";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import Alert from "~/components/ui/Alert";
+import { AdminPageHeader } from "~/components/admin";
 import { useNavigate } from "@builder.io/qwik-city";
 import {
   LowonganForm,
@@ -21,10 +22,15 @@ export default component$(() => {
   });
 
   return (
-    <div class="mx-auto">
-      <h1 class="text-2xl font-bold mb-4">Tambah Lowongan</h1>
+    <div class="space-y-6">
+      <AdminPageHeader
+        title="Tambah Lowongan"
+        description="Buat lowongan kerja inklusif baru."
+      />
+
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
+
       <LowonganForm
         onSubmit$={handleSubmit}
         loading={loading.value}

@@ -1,10 +1,10 @@
 import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
-import { useAdminPsikolog } from "~/hooks/useAdminPsikolog"; // Assuming this hook exists
+import { useAdminPsikolog } from "~/hooks/useAdminPsikolog";
+import { AdminPageHeader } from "~/components/admin";
 
 import {
-  AdminPsikologListHeader,
   AdminPsikologFilterControls,
   AdminPsikologTable,
   AdminPsikologForm,
@@ -185,17 +185,15 @@ export default component$(() => {
   };
 
   return (
-    <div>
-      <AdminPsikologListHeader
+    <div class="space-y-6">
+      <AdminPageHeader
         title="Manajemen Data Psikolog"
         description="Kelola data psikolog yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
-      />
-
-      <div class="flex justify-end mb-6">
+      >
         <button class="btn btn-primary" onClick$={openCreateModal}>
           Tambah Psikolog Baru
         </button>
-      </div>
+      </AdminPageHeader>
 
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}

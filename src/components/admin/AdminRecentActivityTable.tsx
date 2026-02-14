@@ -23,45 +23,48 @@ export const AdminRecentActivityTable = component$(
     };
 
     return (
-      <section class="group relative overflow-hidden rounded-2xl border border-white/30 bg-white/10 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300">
-        <div class="pointer-events-none absolute inset-px rounded-[1rem] bg-gradient-to-br from-white/25 via-white/10 to-transparent opacity-70"></div>
+      <div class="relative overflow-hidden rounded-2xl border border-base-300/50 bg-base-100 shadow-sm transition-all duration-300 h-full flex flex-col">
+        {/* Subtle top accent line */}
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-primary/40 via-primary/20 to-transparent"></div>
 
-        <header class="relative z-[1] flex items-center justify-between p-4">
-          <div>
-            <h2 class="text-base font-semibold text-base-content/80">
+        <header class="flex items-center justify-between gap-4 px-5 pt-5 pb-3">
+          <div class="min-w-0">
+            <h2 class="text-sm font-semibold text-base-content tracking-tight">
               Jadwal Kegiatan Terbaru
             </h2>
-            <p class="text-xs text-base-content/60 mt-1">
-              Daftar kegiatan posyandu
+            <p class="text-xs text-base-content/50 mt-0.5">
+              Daftar kegiatan posyandu terkini
             </p>
           </div>
-          <span class="text-xs text-base-content/60">
+          <span class="inline-flex items-center rounded-lg bg-base-200/80 px-2.5 py-1 text-xs font-medium text-base-content/60 tabular-nums">
             {activities.length} kegiatan
           </span>
         </header>
 
-        <div class="relative z-[1] overflow-hidden">
+        <div class="flex-1 overflow-hidden">
           <div class="overflow-x-auto">
             <table class="table table-sm w-full">
               <thead>
-                <tr class="bg-white/20 backdrop-blur-md sticky top-0 z-10">
-                  <th class="text-xs font-semibold text-base-content/60">#</th>
-                  <th class="text-xs font-semibold text-base-content/60">
+                <tr class="border-b border-base-200">
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30">
+                    #
+                  </th>
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30">
                     Nama Kegiatan
                   </th>
-                  <th class="text-xs font-semibold text-base-content/60 hidden md:table-cell">
-                    Jenis Kegiatan
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30 hidden md:table-cell">
+                    Jenis
                   </th>
-                  <th class="text-xs font-semibold text-base-content/60 hidden lg:table-cell">
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30 hidden lg:table-cell">
                     Posyandu
                   </th>
-                  <th class="text-xs font-semibold text-base-content/60 hidden sm:table-cell">
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30 hidden sm:table-cell">
                     Lokasi
                   </th>
-                  <th class="text-xs font-semibold text-base-content/60">
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30">
                     Tanggal
                   </th>
-                  <th class="text-xs font-semibold text-base-content/60 hidden xl:table-cell">
+                  <th class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40 bg-base-200/30 hidden xl:table-cell">
                     Waktu
                   </th>
                 </tr>
@@ -71,55 +74,70 @@ export const AdminRecentActivityTable = component$(
                   <tr>
                     <td
                       colSpan={7}
-                      class="text-center text-base-content/60 py-8"
+                      class="text-center text-sm text-base-content/50 py-12"
                     >
-                      Tidak ada jadwal kegiatan.
+                      <div class="flex flex-col items-center gap-2">
+                        <svg
+                          class="w-8 h-8 text-base-content/20"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.5"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span>Tidak ada jadwal kegiatan.</span>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   activities.map((activity, index) => (
                     <tr
                       key={activity.id}
-                      class="hover:bg-white/10 transition-colors duration-200"
+                      class="hover:bg-base-200/30 transition-colors duration-150 border-b border-base-200/50 last:border-b-0"
                     >
-                      <th class="align-top text-base-content/60">
+                      <th class="align-top text-xs text-base-content/40 tabular-nums">
                         {index + 1}
                       </th>
                       <td class="align-top">
                         <div>
-                          <p class="text-sm font-medium text-base-content/90">
+                          <p class="text-sm font-medium text-base-content leading-snug">
                             {activity.nama_kegiatan}
                           </p>
                           {activity.deskripsi && (
-                            <p class="text-xs text-base-content/60 line-clamp-1 mt-0.5">
+                            <p class="text-xs text-base-content/50 line-clamp-1 mt-0.5">
                               {activity.deskripsi}
                             </p>
                           )}
                         </div>
                       </td>
-                      <td class="align-top text-base-content/80 hidden md:table-cell">
-                        <span class="badge badge-sm badge-ghost">
+                      <td class="align-top hidden md:table-cell">
+                        <span class="inline-flex items-center rounded-md bg-primary/8 px-2 py-0.5 text-xs font-medium text-primary/80 ring-1 ring-inset ring-primary/15">
                           {activity.jenis_kegiatan}
                         </span>
                       </td>
-                      <td class="align-top text-base-content/80 hidden lg:table-cell">
+                      <td class="align-top hidden lg:table-cell">
                         <div>
-                          <p class="text-sm font-medium">
+                          <p class="text-sm font-medium text-base-content/80">
                             {activity.posyandu.nama_posyandu}
                           </p>
-                          <p class="text-xs text-base-content/60 line-clamp-1">
+                          <p class="text-xs text-base-content/50 line-clamp-1">
                             {activity.posyandu.alamat}
                           </p>
                         </div>
                       </td>
-                      <td class="align-top text-base-content/70 text-sm hidden sm:table-cell">
+                      <td class="align-top text-sm text-base-content/60 hidden sm:table-cell">
                         {activity.lokasi}
                       </td>
-                      <td class="align-top whitespace-nowrap text-base-content/80 text-sm">
+                      <td class="align-top whitespace-nowrap text-sm text-base-content/70 tabular-nums">
                         {formatDate(activity.tanggal)}
                       </td>
-                      <td class="align-top whitespace-nowrap text-base-content/70 text-xs hidden xl:table-cell">
-                        {formatTime(activity.waktu_mulai)} -{" "}
+                      <td class="align-top whitespace-nowrap text-xs text-base-content/50 tabular-nums hidden xl:table-cell">
+                        {formatTime(activity.waktu_mulai)} –{" "}
                         {formatTime(activity.waktu_selesai)}
                       </td>
                     </tr>
@@ -129,9 +147,7 @@ export const AdminRecentActivityTable = component$(
             </table>
           </div>
         </div>
-
-        <div class="pointer-events-none absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-primary/20 blur-2xl transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
-      </section>
+      </div>
     );
   },
 );

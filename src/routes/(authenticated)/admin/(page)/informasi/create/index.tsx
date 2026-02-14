@@ -1,6 +1,7 @@
 import { component$, $ } from "@builder.io/qwik";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import Alert from "~/components/ui/Alert";
+import { AdminPageHeader } from "~/components/admin";
 import { useNavigate } from "@builder.io/qwik-city";
 import {
   InformasiForm,
@@ -28,10 +29,15 @@ export default component$(() => {
   });
 
   return (
-    <div class="p-4 mx-auto">
-      <h1 class="text-2xl font-bold mb-4">Tambah Informasi Edukasi</h1>
+    <div class="space-y-6">
+      <AdminPageHeader
+        title="Tambah Informasi Edukasi"
+        description="Buat artikel, panduan, atau materi edukasi baru untuk pengguna."
+      />
+
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
+
       <InformasiForm
         onSubmit$={handleSubmit}
         loading={loading.value}

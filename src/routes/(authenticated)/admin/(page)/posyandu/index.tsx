@@ -3,9 +3,9 @@ import { useAuth } from "~/hooks";
 import { useAdminPosyandu } from "~/hooks/useAdminPosyandu";
 import { usePagination } from "~/hooks/usePagination";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { AdminPageHeader } from "~/components/admin";
 
 import {
-  AdminPosyanduListHeader,
   AdminPosyanduFilterControls,
   AdminPosyanduTable,
   AdminPosyanduForm,
@@ -13,7 +13,7 @@ import {
   AdminPosyanduDetailCard,
 } from "~/components/admin/posyandu-management";
 import { PaginationControls, ConfirmationModal } from "~/components/common";
-import Alert from "~/components/ui/Alert"; // Keeping the existing Alert component
+import Alert from "~/components/ui/Alert";
 import Spinner from "~/components/ui/Spinner";
 
 import type {
@@ -188,17 +188,15 @@ export default component$(() => {
   });
 
   return (
-    <div class="relative">
-      <AdminPosyanduListHeader
+    <div class="space-y-6">
+      <AdminPageHeader
         title="Manajemen Data Posyandu"
         description="Kelola data posyandu yang terdaftar pada sistem, termasuk informasi detail, status, dan riwayat."
-      />
-
-      <div class="flex justify-end mb-6">
+      >
         <button class="btn btn-primary" onClick$={openCreateModal}>
           Tambah Posyandu Baru
         </button>
-      </div>
+      </AdminPageHeader>
 
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}

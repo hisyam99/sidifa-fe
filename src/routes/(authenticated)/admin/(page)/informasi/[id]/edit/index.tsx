@@ -1,6 +1,7 @@
 import { component$, useTask$, useSignal, $ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
+import { AdminPageHeader } from "~/components/admin";
 import Alert from "~/components/ui/Alert";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import {
@@ -56,8 +57,12 @@ export default component$(() => {
   });
 
   return (
-    <div class="p-4 mx-auto">
-      <h1 class="text-2xl font-bold mb-4">Edit Informasi Edukasi</h1>
+    <div class="space-y-6">
+      <AdminPageHeader
+        title="Edit Informasi Edukasi"
+        description="Perbarui artikel, panduan, atau materi edukasi."
+      />
+
       {error.value && <Alert type="error" message={error.value} />}
       {success.value && <Alert type="success" message={success.value} />}
 

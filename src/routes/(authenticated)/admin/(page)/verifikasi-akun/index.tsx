@@ -3,9 +3,9 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks";
 import { useAdminAccountVerification } from "~/hooks/useAdminAccountVerification";
 import { usePagination } from "~/hooks/usePagination";
+import { AdminPageHeader } from "~/components/admin";
 
 import {
-  AdminVerificationListHeader,
   AdminVerificationFilterControls,
   AdminVerificationTable,
 } from "~/components/admin/account-verification";
@@ -106,8 +106,8 @@ export default component$(() => {
   });
 
   return (
-    <div>
-      <AdminVerificationListHeader
+    <div class="space-y-6">
+      <AdminPageHeader
         title="Verifikasi Akun Pengguna"
         description="Kelola status verifikasi akun pengguna, memastikan keabsahan data dan akses."
       />

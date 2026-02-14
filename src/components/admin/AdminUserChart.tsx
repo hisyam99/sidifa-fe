@@ -144,32 +144,38 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
   });
 
   return (
-    <div class="group relative overflow-hidden rounded-2xl border border-white/30 bg-white/10 p-6 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all duration-300">
-      {/* subtle glass gradient edge */}
-      <div class="pointer-events-none absolute inset-px rounded-[1rem] bg-gradient-to-br from-white/25 via-white/10 to-transparent opacity-70"></div>
+    <div class="relative overflow-hidden rounded-2xl border border-base-300/50 bg-base-100 shadow-sm transition-all duration-300 h-full flex flex-col">
+      {/* Subtle top accent line */}
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-primary/40 via-primary/20 to-transparent"></div>
 
-      <div class="relative z-[1]">
-        <header class="mb-4">
-          <h2 class="text-lg font-semibold text-base-content/80">
-            Total Pengguna
-          </h2>
-          <p class="text-sm text-base-content/60">
-            Perbandingan kategori pengguna aktif
-          </p>
-        </header>
-
-        <div class="mb-4">
-          <div class="text-3xl font-extrabold text-base-content/90">
-            {(ibkCount + kaderCount + psikologCount).toLocaleString()}
+      <div class="px-5 pt-5 pb-3">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0">
+            <h2 class="text-sm font-semibold text-base-content tracking-tight">
+              Total Pengguna
+            </h2>
+            <p class="text-xs text-base-content/50 mt-0.5">
+              Perbandingan kategori pengguna aktif
+            </p>
           </div>
-          <p class="text-xs text-base-content/60">Total pengguna keseluruhan</p>
+          <span class="inline-flex items-center rounded-lg bg-base-200/80 px-2.5 py-1 text-xs font-medium text-base-content/60 tabular-nums">
+            {(ibkCount + kaderCount + psikologCount).toLocaleString()} total
+          </span>
         </div>
 
-        <div ref={chartRef} class="w-full"></div>
+        <div class="mt-3">
+          <div class="text-3xl font-extrabold text-base-content tracking-tight tabular-nums">
+            {(ibkCount + kaderCount + psikologCount).toLocaleString()}
+          </div>
+          <p class="text-xs text-base-content/50 mt-0.5">
+            Total pengguna keseluruhan
+          </p>
+        </div>
       </div>
 
-      {/* animated accent blur blob */}
-      <div class="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-primary/20 blur-2xl transition-opacity duration-300 opacity-0 group-hover:opacity-100"></div>
+      <div class="flex-1 px-5 pb-5">
+        <div ref={chartRef} class="w-full"></div>
+      </div>
     </div>
   );
 });

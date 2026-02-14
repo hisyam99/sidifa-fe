@@ -17,40 +17,41 @@ export interface SidebarMenuItemType {
 }
 
 export interface SidebarProps {
-  title: string;
+  title?: string; // kept optional for backward compat, no longer rendered
   menuItems: SidebarMenuItemType[];
   drawerId: string;
   class?: string;
-  ptClass?: string; // padding-top class, e.g. "pt-16"
+  ptClass?: string; // deprecated, kept for backward compat
 }
 
 export const Sidebar = component$<SidebarProps>((props) => {
   return (
     <aside
-      class={`z-20 drawer-side h-screen pt-16 lg:pt-0 ${props.class ?? ""}`}
+      class={`z-20 drawer-side pt-16 lg:pt-0 lg:top-16 lg:h-[calc(100vh-4rem)] ${props.class ?? ""}`}
     >
       <label
         for={props.drawerId}
         aria-label="close sidebar"
         class="drawer-overlay"
       ></label>
-      <div class="h-full p-2 md:py-4 bg-base-100/95 lg:bg-transparent backdrop-blur supports-[backdrop-filter]:bg-base-100/70">
-        {/* Header dihapus total sesuai permintaan */}
-        <ul class="menu px-2 py-3 gap-1">
-          {props.menuItems.map((item) => (
-            <SidebarMenuItem
-              key={item.href}
-              href={item.href}
-              label={item.label}
-              icon={item.icon}
-              exact={item.exact}
-              hasDropdown={item.hasDropdown}
-              submenuItems={item.submenuItems}
-              drawerId={props.drawerId}
-            />
-          ))}
-          <Slot />
-        </ul>
+      <div class="h-full w-64 border-r border-base-200/60 bg-base-100 lg:bg-base-100/80 lg:backdrop-blur-sm overflow-y-auto">
+        <nav class="p-3">
+          <ul class="menu px-1 py-2 gap-0.5">
+            {props.menuItems.map((item) => (
+              <SidebarMenuItem
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                exact={item.exact}
+                hasDropdown={item.hasDropdown}
+                submenuItems={item.submenuItems}
+                drawerId={props.drawerId}
+              />
+            ))}
+            <Slot />
+          </ul>
+        </nav>
       </div>
     </aside>
   );

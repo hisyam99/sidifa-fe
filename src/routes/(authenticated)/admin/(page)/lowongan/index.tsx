@@ -4,6 +4,7 @@ import { useAuth } from "~/hooks/useAuth";
 import { useLowonganAdmin } from "~/hooks/useLowonganAdmin";
 import { usePagination } from "~/hooks/usePagination";
 import Alert from "~/components/ui/Alert";
+import { AdminPageHeader } from "~/components/admin";
 import { useNavigate } from "@builder.io/qwik-city";
 import { LowonganTable, LowonganFilterBar } from "~/components/admin/lowongan";
 import { PaginationControls, ConfirmationModal } from "~/components/common";
@@ -93,20 +94,17 @@ export default component$(() => {
 
   return (
     <div class="space-y-6">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl font-bold">Manajemen Lowongan</h1>
-          <p class="text-base-content/70 mt-1">
-            Kelola lowongan kerja inklusif
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Manajemen Lowongan"
+        description="Kelola lowongan kerja inklusif"
+      >
         <button
           class="btn btn-primary gap-2"
           onClick$={() => nav("/admin/lowongan/create")}
         >
           Tambah Lowongan
         </button>
-      </div>
+      </AdminPageHeader>
 
       <LowonganFilterBar
         filterOptions={filterOptions}

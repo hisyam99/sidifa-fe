@@ -12,6 +12,7 @@ import {
   LuBriefcase,
   LuBookOpen,
   LuChevronDown,
+  LuCalendar,
 } from "~/components/icons/lucide-optimized";
 import { AvatarMenu, MegaMenu } from "../ui";
 import { BrandLogo } from "~/components/common";
@@ -29,6 +30,7 @@ export const NavigationKader = component$(() => {
   const menuItems = [
     { href: "/", label: "Beranda", icon: LuHome },
     { href: "/faq", label: "FAQ", icon: LuHelpCircle },
+    { href: "/jadwal-posyandu", label: "Jadwal Posyandu", icon: LuCalendar },
     {
       href: "/kader",
       label: "Dashboard Kader",
@@ -75,7 +77,7 @@ export const NavigationKader = component$(() => {
                     </div>
                     <div
                       q:slot="content"
-                      class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-[480px]"
+                      class="bg-base-100/90 backdrop-blur-lg border border-base-200/60 rounded-xl shadow-2xl p-1 w-120"
                     >
                       <div class="p-4">
                         <div class="mb-3">
@@ -102,7 +104,7 @@ export const NavigationKader = component$(() => {
                                   : " text-base-content/80 hover:text-primary"
                               }`}
                             >
-                              <div class="flex-shrink-0 mt-0.5">
+                              <div class="shrink-0 mt-0.5">
                                 <subItem.icon class="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                               </div>
                               <div class="flex-1 min-w-0">
@@ -168,7 +170,7 @@ export const NavigationKader = component$(() => {
             >
               <LuMenu class="w-6 h-6 text-base-content" />
             </button>
-            <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
+            <ul class="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow-xl bg-base-100/95 backdrop-blur-md rounded-box w-64 border border-base-200/50">
               {menuItems
                 .filter((item) => item.href !== "/kader")
                 .map((item) => (

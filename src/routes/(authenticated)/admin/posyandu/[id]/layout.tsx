@@ -10,7 +10,8 @@ import {
   LuArrowLeft,
   LuUsers,
   LuSettings,
-} from "~/components/icons/lucide-optimized"; // Changed import source
+  LuMenu,
+} from "~/components/icons/lucide-optimized";
 import { useLocation } from "@builder.io/qwik-city";
 import { Sidebar } from "~/components/common/Sidebar";
 
@@ -76,37 +77,45 @@ export default component$(() => {
   ];
 
   return (
-    <div class="min-h-screen bg-base-200/60">
+    <div class="min-h-screen bg-base-200/50">
       <div class="drawer lg:drawer-open">
         <input
           id="drawer-posyandu-detail"
           type="checkbox"
           class="drawer-toggle"
         />
-        <div class="drawer-content flex flex-col p-4 md:p-8">
-          <label
-            for="drawer-posyandu-detail"
-            class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
-          >
-            <LuBarChart />
-            Buka Menu
-          </label>
-          <main class="bg-base-100 p-6 rounded-2xl shadow-lg">
-            <Slot />
-          </main>
+
+        {/* Main content area — full width, no container constraint */}
+        <div class="drawer-content flex flex-col min-h-[calc(100vh-4rem)]">
+          <div class="flex-1 p-4 md:p-6 lg:p-8">
+            {/* Mobile sidebar toggle */}
+            <label
+              for="drawer-posyandu-detail"
+              class="btn btn-ghost btn-sm gap-2 drawer-button lg:hidden mb-4 -ml-1"
+            >
+              <LuMenu class="w-5 h-5" />
+              <span class="text-sm font-medium">Menu</span>
+            </label>
+
+            <main class="transition-all duration-200">
+              <Slot />
+            </main>
+          </div>
         </div>
+
+        {/* Sidebar */}
         <Sidebar
-          title="Detail Posyandu (Admin)"
+          title="Detail Posyandu"
           menuItems={menuItems}
           drawerId="drawer-posyandu-detail"
           ptClass="pt-16"
         >
-          <li class="mt-8">
+          <li class="mt-6 px-1">
             <Link
-              href="/admin/manajemen-posyandu"
-              class="btn btn-outline btn-primary w-full flex items-center gap-2"
+              href="/admin/posyandu"
+              class="btn btn-outline btn-primary btn-sm w-full flex items-center gap-2"
             >
-              <LuArrowLeft />
+              <LuArrowLeft class="w-4 h-4" />
               Kembali ke List Posyandu
             </Link>
           </li>

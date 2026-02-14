@@ -1,60 +1,43 @@
-import { component$, Slot, useSignal, useTask$ } from "@builder.io/qwik";
-import { useLocation } from "@builder.io/qwik-city";
+import { component$, Slot } from "@builder.io/qwik";
 import { useCheckRole } from "~/hooks/useCheckRole";
 import { Breadcrumbs, NavigationAdmin } from "~/components/layout";
 import { Sidebar } from "~/components/common/Sidebar";
 import { getAdminMenuItems } from "~/data/admin-navigation-data";
-import { LuBarChart } from "~/components/icons/lucide-optimized"; // Updated import path
-import { AnimatedPageContainer } from "~/components/layout/AnimatedPageContainer";
+import { LuMenu } from "~/components/icons/lucide-optimized";
 
 export default component$(() => {
   useCheckRole(["admin"]);
   const menuItems = getAdminMenuItems();
 
-  // Track navigation for global loading overlay
-  const location = useLocation();
-  const isNavigating = useSignal(false);
-  const prevPath = useSignal(location.url.pathname);
-
-  useTask$(({ track }) => {
-    const currentPath = track(() => location.url.pathname);
-    if (prevPath.value !== currentPath) {
-      isNavigating.value = true;
-      // End loading after a short delay to allow for smooth transition
-      setTimeout(() => {
-        isNavigating.value = false;
-        prevPath.value = currentPath;
-      }, 350); // Adjust duration for fade effect
-    }
-  });
-
   return (
     <>
       <NavigationAdmin />
-      <div class="min-h-screen bg-base-200/60">
-        <div class="container mx-auto drawer lg:drawer-open">
+      <div class="min-h-screen bg-base-200/50">
+        <div class="drawer lg:drawer-open">
           <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-          <div class="drawer-content flex flex-col p-4 md:py-8 relative">
-            <label
-              for="my-drawer-2"
-              class="btn btn-primary drawer-button lg:hidden mb-4 self-start"
-            >
-              <LuBarChart class="w-5 h-5" />
-              Buka Menu
-            </label>
-            <Breadcrumbs />
-            <AnimatedPageContainer>
-              <main class="bg-base-100 p-6 rounded-2xl shadow-lg transition-all duration-300">
+
+          {/* Main content area — full width, no container constraint */}
+          <div class="drawer-content flex flex-col min-h-[calc(100vh-4rem)]">
+            <div class="flex-1 p-4 md:p-6 lg:p-8">
+              {/* Mobile sidebar toggle */}
+              <label
+                for="my-drawer-2"
+                class="btn btn-ghost btn-sm gap-2 drawer-button lg:hidden mb-4 -ml-1"
+              >
+                <LuMenu class="w-5 h-5" />
+                <span class="text-sm font-medium">Menu</span>
+              </label>
+
+              <Breadcrumbs />
+
+              <main class="transition-all duration-200">
                 <Slot />
               </main>
-            </AnimatedPageContainer>
+            </div>
           </div>
-          <Sidebar
-            title="Si-DIFA Admin"
-            menuItems={menuItems}
-            drawerId="my-drawer-2"
-            ptClass="pt-16"
-          />
+
+          {/* Sidebar */}
+          <Sidebar menuItems={menuItems} drawerId="my-drawer-2" />
         </div>
       </div>
     </>

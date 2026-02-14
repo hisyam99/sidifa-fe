@@ -4,6 +4,7 @@ import { useAuth } from "~/hooks/useAuth";
 import { useInformasiEdukasiAdmin } from "~/hooks/useInformasiEdukasiAdmin";
 import { usePagination } from "~/hooks/usePagination";
 import Alert from "~/components/ui/Alert";
+import { AdminPageHeader } from "~/components/admin";
 import { useNavigate } from "@builder.io/qwik-city";
 import {
   InformasiTable,
@@ -137,37 +138,30 @@ export default component$(() => {
 
   return (
     <div class="space-y-6">
-      <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-        <div class="min-w-0">
-          <h1 class="text-xl sm:text-2xl font-bold wrap-break-word">
-            Manajemen Informasi Edukasi
-          </h1>
-          <p class="text-sm sm:text-base text-base-content/70 mt-1 wrap-break-word">
-            Kelola artikel, panduan, dan materi edukasi untuk pengguna
-          </p>
-        </div>
-        <div class="w-full md:w-auto">
-          <button
-            class="btn btn-primary gap-2 w-full md:w-auto"
-            onClick$={() => nav("/admin/informasi/create")}
+      <AdminPageHeader
+        title="Manajemen Informasi Edukasi"
+        description="Kelola artikel, panduan, dan materi edukasi untuk pengguna"
+      >
+        <button
+          class="btn btn-primary gap-2"
+          onClick$={() => nav("/admin/informasi/create")}
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
-            Tambah Informasi Baru
-          </button>
-        </div>
-      </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+          Tambah Informasi Baru
+        </button>
+      </AdminPageHeader>
 
       {/* Summary Cards */}
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">

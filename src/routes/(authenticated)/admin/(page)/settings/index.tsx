@@ -1,13 +1,13 @@
 import { $, component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useNavigate } from "@builder.io/qwik-city";
+import { AdminPageHeader } from "~/components/admin";
 import { LuSettings, LuArrowLeft } from "~/components/icons/lucide-optimized";
 
 export default component$(() => {
   const nav = useNavigate();
 
   const handleBack = $(() => {
-    // Go back if possible, otherwise go to admin home
     if (history.length > 1) {
       history.back();
     } else {
@@ -16,24 +16,34 @@ export default component$(() => {
   });
 
   return (
-    <div class="flex items-center justify-center">
-      <div class="card bg-base-100 shadow-xl max-w-2xl w-full">
-        <div class="card-body items-center text-center p-8">
-          <div class="mb-4 rounded-full bg-primary/10 p-4">
+    <div class="space-y-6">
+      <AdminPageHeader
+        title="Pengaturan"
+        description="Konfigurasi sistem dan preferensi akun admin."
+      />
+
+      <div class="flex items-center justify-center py-12">
+        <div class="max-w-md w-full text-center space-y-6">
+          <div class="inline-flex items-center justify-center rounded-full bg-primary/10 p-5">
             <LuSettings class="w-10 h-10 text-primary" />
           </div>
-          <h1 class="card-title text-2xl">Pengaturan</h1>
-          <p class="text-base-content/70">
-            Halaman pengaturan untuk Admin akan segera hadir. Fitur seperti
-            manajemen akun, preferensi tampilan, notifikasi, dan konfigurasi
-            sistem akan tersedia di sini.
-          </p>
-          <div class="mt-6 flex gap-3">
-            <button class="btn btn-ghost gap-2" onClick$={handleBack}>
+
+          <div class="space-y-2">
+            <h2 class="text-xl font-semibold text-base-content">
+              Segera Hadir
+            </h2>
+            <p class="text-sm text-base-content/60 leading-relaxed">
+              Fitur seperti manajemen akun, preferensi tampilan, notifikasi, dan
+              konfigurasi sistem akan tersedia di sini.
+            </p>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 pt-2">
+            <button class="btn btn-ghost btn-sm gap-2" onClick$={handleBack}>
               <LuArrowLeft class="w-4 h-4" />
               Kembali
             </button>
-            <button class="btn btn-disabled">Coming Soon</button>
+            <button class="btn btn-disabled btn-sm">Coming Soon</button>
           </div>
         </div>
       </div>
