@@ -18,6 +18,20 @@ export const NavigationWrapper = component$(() => {
     ? sessionUtils.getAuthStatus() === true
     : false;
 
+  // CRITICAL FIX: When client-side auth has definitively resolved (loading is false)
+  // and says the user is NOT logged in, that MUST take priority over the stale SSR
+  // snapshot. This handles the optimistic logout case where ssrAuth still holds
+  // the previous server-rendered value (routeLoader$ doesn't re-run on soft navigation),
+  // but client-side state has already been cleared.
+  if (
+    isBrowser &&
+    !loading.value &&
+    !isLoggedIn.value &&
+    !clientThinksAuthenticated
+  ) {
+    return <NavigationGuest />;
+  }
+
   // Guard: if cookies or localStorage indicate authenticated but client is still loading, show loading navbar
   if (
     (ssrAuth.value.isLoggedIn || clientThinksAuthenticated) &&
@@ -26,7 +40,8 @@ export const NavigationWrapper = component$(() => {
     return <NavigationLoading />;
   }
 
-  // Prefer SSR auth snapshot (no flicker)
+  // Prefer SSR auth snapshot (no flicker) — only used when client hasn't resolved yet
+  // or client confirms the user is still authenticated
   if (ssrAuth.value.isLoggedIn && ssrAuth.value.role) {
     const role = ssrAuth.value.role;
     switch (role) {
