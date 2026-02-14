@@ -1,10 +1,11 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import * as d3 from "d3";
+import { component$ } from "@builder.io/qwik";
 
 interface UserCategoryData {
   category: string;
   count: number;
-  color: string;
+  colorBar: string;
+  colorText: string;
+  colorBadge: string;
 }
 
 interface AdminUserChartProps {
@@ -14,134 +15,34 @@ interface AdminUserChartProps {
 }
 
 export const AdminUserChart = component$<AdminUserChartProps>((props) => {
-  const chartRef = useSignal<HTMLDivElement>();
   const { ibkCount, kaderCount, psikologCount } = props;
+  const total = ibkCount + kaderCount + psikologCount;
 
   const data: UserCategoryData[] = [
-    { category: "IBK", count: ibkCount, color: "hsl(220, 70%, 60%)" },
-    { category: "Kader", count: kaderCount, color: "hsl(160, 70%, 50%)" },
-    { category: "Psikolog", count: psikologCount, color: "hsl(30, 80%, 60%)" },
+    {
+      category: "IBK",
+      count: ibkCount,
+      colorBar: "bg-primary",
+      colorText: "text-primary",
+      colorBadge: "bg-primary/15",
+    },
+    {
+      category: "Kader",
+      count: kaderCount,
+      colorBar: "bg-success",
+      colorText: "text-success",
+      colorBadge: "bg-success/15",
+    },
+    {
+      category: "Psikolog",
+      count: psikologCount,
+      colorBar: "bg-warning",
+      colorText: "text-warning",
+      colorBadge: "bg-warning/15",
+    },
   ];
 
-  useTask$(({ track }) => {
-    track(() => chartRef.value);
-    if (!chartRef.value) return;
-
-    const container = chartRef.value;
-    const width = container.clientWidth;
-    const height = 200;
-    const margin = { top: 20, right: 20, bottom: 40, left: 60 };
-
-    // Clear previous chart
-    container.innerHTML = "";
-
-    const svg = d3
-      .select(container)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("viewBox", `0 0 ${width} ${height}`)
-      .style("max-width", "100%")
-      .style("height", "auto");
-
-    // Create scales with proper typing
-    const xScale = d3
-      .scaleBand()
-      .domain(data.map((d) => d.category))
-      .range([margin.left, width - margin.right])
-      .padding(0.3);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.count) || 0])
-      .range([height - margin.bottom, margin.top]);
-
-    // Add bars with proper event typing
-    svg
-      .selectAll<SVGRectElement, UserCategoryData>("rect")
-      .data(data)
-      .enter()
-      .append("rect")
-      .attr("x", (d) => xScale(d.category) || 0)
-      .attr("y", (d) => yScale(d.count))
-      .attr("width", xScale.bandwidth())
-      .attr("height", (d) => height - margin.bottom - yScale(d.count))
-      .attr("fill", (d) => d.color)
-      .attr("rx", 6)
-      .style("opacity", 0.8)
-      .on("mouseover", function (this: SVGRectElement) {
-        d3.select(this).style("opacity", 1);
-      })
-      .on("mouseout", function (this: SVGRectElement) {
-        d3.select(this).style("opacity", 0.8);
-      });
-
-    // Add value labels on bars
-    svg
-      .selectAll<SVGTextElement, UserCategoryData>("text.value-label")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr("class", "value-label")
-      .attr(
-        "x",
-        (d) => (xScale(d.category) || 0) + (xScale.bandwidth() || 0) / 2,
-      )
-      .attr("y", (d) => yScale(d.count) - 10)
-      .attr("text-anchor", "middle")
-      .attr("fill", "currentColor")
-      .style("font-size", "14px")
-      .style("font-weight", "600")
-      .text((d) => d.count.toLocaleString());
-
-    // Add X axis
-    const xAxis = d3.axisBottom(xScale);
-    svg
-      .append("g")
-      .attr("transform", `translate(0, ${height - margin.bottom})`)
-      .call(xAxis)
-      .selectAll("text")
-      .style("font-size", "12px")
-      .attr("fill", "currentColor");
-
-    // Add Y axis
-    const yAxis = d3.axisLeft(yScale).ticks(5);
-    svg
-      .append("g")
-      .attr("transform", `translate(${margin.left}, 0)`)
-      .call(yAxis)
-      .selectAll("text")
-      .style("font-size", "12px")
-      .attr("fill", "currentColor");
-
-    // Add legend with proper typing
-    const legend = svg.append("g").attr("class", "legend");
-    const legendItems = legend
-      .selectAll<SVGGElement, UserCategoryData>("g.legend-item")
-      .data(data)
-      .enter()
-      .append("g")
-      .attr("class", "legend-item")
-      .attr(
-        "transform",
-        (d, i) =>
-          `translate(${width - margin.right - 200 + i * 60}, ${margin.top})`,
-      );
-
-    legendItems
-      .append("circle")
-      .attr("r", 5)
-      .attr("fill", (d) => d.color);
-
-    legendItems
-      .append("text")
-      .attr("x", 10)
-      .attr("y", 4)
-      .attr("text-anchor", "start")
-      .style("font-size", "12px")
-      .attr("fill", "currentColor")
-      .text((d) => d.category);
-  });
+  const maxVal = Math.max(...data.map((d) => d.count), 1);
 
   return (
     <div class="relative overflow-hidden rounded-2xl border border-base-300/50 bg-base-100 shadow-sm transition-all duration-300 h-full flex flex-col">
@@ -159,13 +60,13 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
             </p>
           </div>
           <span class="inline-flex items-center rounded-lg bg-base-200/80 px-2.5 py-1 text-xs font-medium text-base-content/60 tabular-nums">
-            {(ibkCount + kaderCount + psikologCount).toLocaleString()} total
+            {total.toLocaleString()} total
           </span>
         </div>
 
         <div class="mt-3">
           <div class="text-3xl font-extrabold text-base-content tracking-tight tabular-nums">
-            {(ibkCount + kaderCount + psikologCount).toLocaleString()}
+            {total.toLocaleString()}
           </div>
           <p class="text-xs text-base-content/50 mt-0.5">
             Total pengguna keseluruhan
@@ -174,7 +75,82 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
       </div>
 
       <div class="flex-1 px-5 pb-5">
-        <div ref={chartRef} class="w-full"></div>
+        {/* Stacked overview bar */}
+        {total > 0 && (
+          <div class="w-full h-3 rounded-full overflow-hidden flex bg-base-200/60 mb-5">
+            {data.map((item, idx) => {
+              const pct = total > 0 ? (item.count / total) * 100 : 0;
+              if (pct === 0) return null;
+              return (
+                <div
+                  key={`stack-${idx}`}
+                  class={`h-full transition-all duration-500 ${item.colorBar} ${idx === 0 ? "rounded-l-full" : ""} ${idx === data.length - 1 ? "rounded-r-full" : ""}`}
+                  style={{ width: `${Math.max(pct, 2)}%` }}
+                ></div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Vertical bar chart */}
+        <div
+          class="flex items-end gap-3 sm:gap-4 md:gap-6 justify-center"
+          style={{ height: "140px" }}
+        >
+          {data.map((item, idx) => {
+            const heightPct =
+              maxVal > 0 ? Math.max((item.count / maxVal) * 100, 4) : 4;
+            const pctOfTotal =
+              total > 0 ? Math.round((item.count / total) * 1000) / 10 : 0;
+
+            return (
+              <div
+                key={`bar-${idx}`}
+                class="flex flex-col items-center justify-end group flex-1 max-w-[100px]"
+                style={{ height: "100%" }}
+              >
+                {/* Value label */}
+                <span
+                  class={`text-sm font-bold tabular-nums mb-1.5 ${item.colorText}`}
+                >
+                  {item.count.toLocaleString()}
+                </span>
+
+                {/* Bar */}
+                <div
+                  class={`w-full rounded-t-lg transition-all duration-500 ${item.colorBar} opacity-80 group-hover:opacity-100 min-w-[32px]`}
+                  style={{ height: `${heightPct}%` }}
+                ></div>
+
+                {/* Category label */}
+                <div class="mt-2.5 text-center">
+                  <span class="text-xs font-semibold text-base-content/80 block">
+                    {item.category}
+                  </span>
+                  <span
+                    class={`inline-block mt-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md ${item.colorBadge} ${item.colorText}`}
+                  >
+                    {pctOfTotal}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend row */}
+        <div class="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-base-200/60">
+          {data.map((item, idx) => (
+            <div key={`legend-${idx}`} class="flex items-center gap-1.5">
+              <span
+                class={`inline-block w-2.5 h-2.5 rounded-full ${item.colorBar}`}
+              ></span>
+              <span class="text-[11px] text-base-content/60 font-medium">
+                {item.category}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
