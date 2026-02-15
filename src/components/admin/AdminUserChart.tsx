@@ -49,7 +49,7 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
       {/* Subtle top accent line */}
       <div class="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-primary/40 via-primary/20 to-transparent"></div>
 
-      <div class="px-5 pt-5 pb-3">
+      <div class="px-5 pt-5 pb-3 shrink-0">
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <h2 class="text-sm font-semibold text-base-content tracking-tight">
@@ -74,10 +74,10 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
         </div>
       </div>
 
-      <div class="flex-1 px-5 pb-5">
+      <div class="flex-1 px-5 pb-5 flex flex-col min-h-0">
         {/* Stacked overview bar */}
         {total > 0 && (
-          <div class="w-full h-3 rounded-full overflow-hidden flex bg-base-200/60 mb-5">
+          <div class="w-full h-3 rounded-full overflow-hidden flex bg-base-200/60 mb-5 shrink-0">
             {data.map((item, idx) => {
               const pct = total > 0 ? (item.count / total) * 100 : 0;
               if (pct === 0) return null;
@@ -92,11 +92,8 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
           </div>
         )}
 
-        {/* Vertical bar chart */}
-        <div
-          class="flex items-end gap-3 sm:gap-4 md:gap-6 justify-center"
-          style={{ height: "140px" }}
-        >
+        {/* Vertical bar chart — flex-grow to fill available card space */}
+        <div class="flex items-end gap-3 sm:gap-4 md:gap-6 justify-center flex-1 min-h-[140px]">
           {data.map((item, idx) => {
             const heightPct =
               maxVal > 0 ? Math.max((item.count / maxVal) * 100, 4) : 4;
@@ -123,7 +120,7 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
                 ></div>
 
                 {/* Category label */}
-                <div class="mt-2.5 text-center">
+                <div class="mt-2.5 text-center shrink-0">
                   <span class="text-xs font-semibold text-base-content/80 block">
                     {item.category}
                   </span>
@@ -139,7 +136,7 @@ export const AdminUserChart = component$<AdminUserChartProps>((props) => {
         </div>
 
         {/* Legend row */}
-        <div class="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-base-200/60">
+        <div class="flex items-center justify-center gap-4 mt-4 pt-3 border-t border-base-200/60 shrink-0">
           {data.map((item, idx) => (
             <div key={`legend-${idx}`} class="flex items-center gap-1.5">
               <span
