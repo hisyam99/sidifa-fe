@@ -1,17 +1,16 @@
 import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
-import { useAuth } from "~/hooks"; // Add this import
+import { useAuth } from "~/hooks";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { IBKTable, Alert } from "~/components/ui";
 import { PaginationControls } from "~/components/common";
 import type { IBKRecord } from "~/types";
-import {
-  LuPlus,
-  LuActivity,
-  // Ensure all necessary icons are imported
-} from "~/components/icons/lucide-optimized"; // Changed import source
+import { LuPlus, LuActivity } from "~/components/icons/lucide-optimized";
 import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
 import { useDebouncer } from "~/utils/debouncer";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+
+const KEY_PREFIX = "kader:ibk";
 
 // Type for IBK API response item
 interface IBKApiItem {
@@ -22,6 +21,12 @@ interface IBKApiItem {
   alamat?: string;
   created_at: string;
   updated_at?: string;
+}
+
+interface CachedIBKListData {
+  items: IBKRecord[];
+  total: number;
+  totalPages: number;
 }
 
 export default component$(() => {
@@ -36,23 +41,54 @@ export default component$(() => {
   const totalPages = useSignal(1);
   const navigate = useNavigate();
 
-  // Search/filter state
-  // HAPUS: const genderFilter = useSignal("");
-
   const limitOptions = ["5", "10", "20", "50", "100"];
 
   // Extract posyanduId from route params
   const posyanduId = location.params.id;
-  console.log("POSYANDU ID", posyanduId);
 
   const existingIBK = useSignal<IBKRecord[]>([]);
   const tableRef = useSignal<HTMLDivElement | undefined>(undefined);
   const hasInteracted = useSignal(false);
   const nikError = useSignal<string | null>(null);
 
-  const { isLoggedIn } = useAuth(); // Get isLoggedIn
+  const { isLoggedIn } = useAuth();
 
-  // Fetch IBK list from backend
+  const mapApiToIBKRecords = $((data: IBKApiItem[]): IBKRecord[] => {
+    return data.map((item: IBKApiItem) => ({
+      personal_data: {
+        id: item.id,
+        nama_lengkap: item.nama,
+        nik: String(item.nik),
+        tempat_lahir: "-",
+        tanggal_lahir: "",
+        gender:
+          item.jenis_kelamin?.toLowerCase() === "laki-laki"
+            ? "laki-laki"
+            : "perempuan",
+        agama: "",
+        alamat_lengkap: item.alamat || "",
+        rt_rw: "",
+        kecamatan: "",
+        kabupaten: "",
+        provinsi: "",
+        kode_pos: "",
+        no_telp: "",
+        nama_ayah: "",
+        nama_ibu: "",
+        created_at: item.created_at,
+        updated_at: item.updated_at || "",
+      },
+      disability_info: undefined,
+      visit_history: [],
+      posyandu_id: posyanduId,
+      status: "active",
+      total_kunjungan: 0,
+      last_visit: undefined,
+      next_scheduled_visit: undefined,
+    }));
+  });
+
+  // Fetch IBK list from backend with caching
   const fetchIbkList = $(async () => {
     if (!isLoggedIn.value || !posyanduId) {
       if (!posyanduId) {
@@ -63,66 +99,71 @@ export default component$(() => {
       }
       return;
     }
-    loading.value = true;
+
     error.value = null;
+
+    const key = queryClient.buildKey(
+      KEY_PREFIX,
+      posyanduId,
+      "list",
+      page.value,
+      limit.value,
+      searchNama.value || undefined,
+      searchNik.value || undefined,
+    );
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<CachedIBKListData>(key);
+    if (cached) {
+      existingIBK.value = cached.items;
+      total.value = cached.total;
+      totalPages.value = cached.totalPages;
+
+      // If data is still fresh, skip the network request entirely
+      if (queryClient.isFresh(key)) return;
+      // Otherwise fall through to background refetch (no loading spinner)
+    }
+
+    // Only show loading spinner when there is no cached data to display
+    if (!cached) loading.value = true;
+
     try {
-      const res = await ibkService.getIbkListByPosyandu({
-        posyanduId,
-        page: page.value,
-        limit: limit.value,
-        orderBy: "created_at",
-        nama: searchNama.value ? searchNama.value : undefined,
-        nik: searchNik.value ? searchNik.value : undefined,
-      });
-      existingIBK.value = (res.data || []).map((item: IBKApiItem) => ({
-        personal_data: {
-          id: item.id,
-          nama_lengkap: item.nama,
-          nik: String(item.nik),
-          tempat_lahir: "-", // not provided
-          tanggal_lahir: "", // not provided
-          gender:
-            item.jenis_kelamin?.toLowerCase() === "laki-laki"
-              ? "laki-laki"
-              : "perempuan",
-          agama: "", // not provided
-          alamat_lengkap: item.alamat,
-          rt_rw: "", // not provided
-          kecamatan: "", // not provided
-          kabupaten: "", // not provided
-          provinsi: "", // not provided
-          kode_pos: "", // not provided
-          no_telp: "", // not provided
-          nama_ayah: "", // not provided
-          nama_ibu: "", // not provided
-          created_at: item.created_at,
-          updated_at: item.updated_at || "",
-        },
-        disability_info: undefined,
-        visit_history: [],
-        posyandu_id: posyanduId,
-        status: "active", // or use item.status if available
-        total_kunjungan: 0,
-        last_visit: undefined,
-        next_scheduled_visit: undefined,
-      }));
-      total.value = res.meta?.totalData || 0;
-      totalPages.value = res.meta?.totalPage || 1;
-      console.log(
-        "IBK meta:",
-        res.meta,
-        "total:",
-        total.value,
-        "totalPages:",
-        totalPages.value,
-        "limit:",
-        limit.value,
+      const res = await queryClient.fetchQuery(
+        key,
+        () =>
+          ibkService.getIbkListByPosyandu({
+            posyanduId,
+            page: page.value,
+            limit: limit.value,
+            orderBy: "created_at",
+            nama: searchNama.value ? searchNama.value : undefined,
+            nik: searchNik.value ? searchNik.value : undefined,
+          }),
+        DEFAULT_STALE_TIME,
       );
+
+      const mappedItems = await mapApiToIBKRecords(res.data || []);
+
+      const result: CachedIBKListData = {
+        items: mappedItems,
+        total: res.meta?.totalData || 0,
+        totalPages: res.meta?.totalPage || 1,
+      };
+
+      // Update cache with the transformed result for instant re-use
+      queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+      existingIBK.value = result.items;
+      total.value = result.total;
+      totalPages.value = result.totalPages;
     } catch (err: unknown) {
-      error.value =
-        (err as Error)?.message ||
-        "Gagal memuat data IBK. Pastikan ID Posyandu benar.";
-      setTimeout(() => navigate("/kader/posyandu"), 2000);
+      // Only surface the error if there was no cached fallback
+      if (!cached) {
+        error.value =
+          (err as Error)?.message ||
+          "Gagal memuat data IBK. Pastikan ID Posyandu benar.";
+        setTimeout(() => navigate("/kader/posyandu"), 2000);
+      }
     } finally {
       loading.value = false;
     }
@@ -148,43 +189,18 @@ export default component$(() => {
     }
   });
 
-  // Remove showAddForm, currentStep, formData, wizardSteps, and all form logic
-
-  // Initial data loading or side effects for ibk
-  useTask$(({ track }) => {
-    track(isLoggedIn); // Re-run when isLoggedIn changes
-
-    if (isLoggedIn.value) {
-      // This is where you would call your data fetching function, e.g., fetchDataForIBK();
-      console.log("Fetching IBK data now that user is logged in.");
-      // For now, it's a console log as there's no explicit fetch call in the mock data section.
-      // If you have a function like `fetchIBKData()` uncomment and call it here.
-      // fetchDataForIBK();
-    } else {
-      console.log("Not logged in, not fetching IBK data.");
-      // Clear any data if not logged in, or show appropriate message
-      existingIBK.value.splice(0, existingIBK.value.length);
-    }
-  });
-
-  // IBK actions (no changes needed here)
+  // IBK actions
   const handleEdit = $((ibk: IBKRecord) => {
     navigate(`/kader/posyandu/${posyanduId}/ibk/${ibk.personal_data.id}/edit`);
   });
 
-  // Filtered IBK list (only gender in-memory)
+  // Filtered IBK list
   const filteredIBK = useSignal<IBKRecord[]>([]);
   useTask$(({ track }) => {
     track(() => existingIBK.value);
-    // HAPUS: track(() => genderFilter.value);
-    const data = existingIBK.value;
-    // HAPUS: if (genderFilter.value) {
-    // HAPUS:   data = data.filter(
-    // HAPUS:     (ibk) => ibk.personal_data.gender === genderFilter.value,
-    // HAPUS:   );
-    // HAPUS: }
-    filteredIBK.value = data;
+    filteredIBK.value = existingIBK.value;
   });
+
   // View Detail: navigate to dedicated page
   const handleViewDetail = $((ibk: IBKRecord) => {
     navigate(`/kader/posyandu/${posyanduId}/ibk/${ibk.personal_data.id}`);
@@ -193,6 +209,10 @@ export default component$(() => {
   const debouncedFetch = useDebouncer(
     $(async () => {
       page.value = 1;
+      // Invalidate list cache when search params change
+      queryClient.invalidateQueries(
+        queryClient.buildKey(KEY_PREFIX, posyanduId, "list"),
+      );
       await fetchIbkList();
     }),
     400,
@@ -291,7 +311,6 @@ export default component$(() => {
                     )}
                   </div>
                 </div>
-                {/* HAPUS: <div class="w-full md:w-auto"> ... <label class="label"><span class="label-text">Jenis Kelamin</span></label> ... <select ...>...</select> ... </div> */}
                 <div class="w-full md:w-auto">
                   <label class="label">
                     <span class="label-text">Limit per Halaman</span>

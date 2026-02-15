@@ -11,6 +11,9 @@ import { IBKSectionAssessment } from "~/components/ibk/IBKSectionAssessment";
 import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
 import type { IBKDisabilityInfo } from "~/types/ibk";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+
+const IBK_KEY_PREFIX = "kader:ibk";
 
 // Schema sama dengan create agar field konsisten
 const ibkSchema = object({
@@ -148,11 +151,90 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
-    loading.value = true;
     error.value = null;
+
+    const detailKey = queryClient.buildKey(IBK_KEY_PREFIX, "detail", ibkId);
+
+    // Stale-while-revalidate: try cached data first
+    const cached = queryClient.getQueryData<Record<string, unknown>>(detailKey);
+    if (cached && queryClient.isFresh(detailKey)) {
+      // Use cached data directly without network request
+      loading.value = true;
+      try {
+        const d = cached;
+        const asses = (d?.assesmen_ibk || {}) as Record<string, unknown>;
+        const sehat = (d?.kesehatan_ibk || {}) as Record<string, unknown>;
+        const det = (d?.detail_ibk || {}) as Record<string, unknown>;
+
+        const mapVal: IBKForm = {
+          nama: (d?.nama ??
+            (d?.personal_data as Record<string, unknown>)?.nama_lengkap ??
+            "") as string,
+          nik: String(
+            d?.nik ?? (d?.personal_data as Record<string, unknown>)?.nik ?? "",
+          ),
+          tempat_lahir: (d?.tempat_lahir ?? "") as string,
+          tanggal_lahir: ((d?.tanggal_lahir ?? "") as string).substring(0, 10),
+          file: (d?.file_foto ?? d?.file ?? "") as string,
+          jenis_kelamin: (d?.jenis_kelamin ?? "") as string,
+          agama: (d?.agama ?? "") as string,
+          umur: String(d?.umur ?? ""),
+          alamat: (d?.alamat ??
+            (d?.personal_data as Record<string, unknown>)?.alamat_lengkap ??
+            "") as string,
+          no_telp: (d?.no_telp ?? "") as string,
+          nama_wali: (d?.nama_wali ?? "") as string,
+          no_telp_wali: (d?.no_telp_wali ?? "") as string,
+          total_iq: String(asses?.total_iq ?? ""),
+          kategori_iq: (asses?.kategori_iq ?? "") as string,
+          tipe_kepribadian: (asses?.tipe_kepribadian ?? "") as string,
+          deskripsi_kepribadian: (asses?.deskripsi_kepribadian ?? "") as string,
+          catatan_psikolog: (asses?.catatan_psikolog ?? "") as string,
+          rekomendasi_intervensi: (asses?.rekomendasi_intervensi ??
+            "") as string,
+          potensi: (asses?.potensi ?? "") as string,
+          minat: (asses?.minat ?? "") as string,
+          bakat: (asses?.bakat ?? "") as string,
+          keterampilan: (asses?.keterampilan ?? "") as string,
+          hasil_diagnosa: (sehat?.hasil_diagnosa ?? "") as string,
+          jenis_bantuan: (sehat?.jenis_bantuan ?? "") as string,
+          riwayat_terapi: (sehat?.riwayat_terapi ?? "") as string,
+          pekerjaan: (det?.pekerjaan ?? "") as string,
+          pendidikan: (det?.pendidikan ?? "") as string,
+          status_perkawinan: (det?.status_perkawinan ?? "") as string,
+          titik_koordinat: (det?.titik_koordinat ?? "") as string,
+          keterangan_tambahan: (det?.keterangan_tambahan ?? "") as string,
+        };
+
+        setValues(form, mapVal);
+
+        const disabilitasIbk = (
+          (d?.disabilitasIbk || []) as IBKDisabilityInfo[]
+        ).map((x: IBKDisabilityInfo) => ({
+          id: String(x.id),
+          jenis_difabilitas_id: String(x.jenis_difasilitas?.id || ""),
+          tingkat_keparahan: x.tingkat_keparahan || "",
+          sejak_kapan: x.sejak_kapan,
+          keterangan: x.keterangan,
+        }));
+        existingDisabilities.value = disabilitasIbk;
+      } finally {
+        loading.value = false;
+      }
+      return;
+    }
+
+    loading.value = true;
     try {
-      const res = await ibkService.getIbkDetail(ibkId);
+      const res = await queryClient.fetchQuery(
+        detailKey,
+        () => ibkService.getIbkDetail(ibkId),
+        DEFAULT_STALE_TIME,
+      );
       const d = res?.data || res;
+
+      // Store raw detail in cache for reuse
+      queryClient.setQueryData(detailKey, d, DEFAULT_STALE_TIME);
       const asses = d?.assesmen_ibk || {};
       const sehat = d?.kesehatan_ibk || {};
       const det = d?.detail_ibk || {};
@@ -334,6 +416,9 @@ export default component$(() => {
           // Kirim semua field; backend menerima file_foto sebagai string sementara
           await updateIbk({ id: ibkId, ...values, posyanduId });
           if (saveErr.value) return;
+
+          // Invalidate IBK caches so lists and details refetch with fresh data
+          queryClient.invalidateQueries(IBK_KEY_PREFIX);
 
           // 1) Update existing disabilities (PATCH one by one)
           const edits =

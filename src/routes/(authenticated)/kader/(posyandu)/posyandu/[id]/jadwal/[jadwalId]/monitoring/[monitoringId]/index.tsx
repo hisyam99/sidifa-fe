@@ -15,6 +15,10 @@ import {
 import { ibkService } from "~/services/api";
 import { IBKDetailView } from "~/components/ibk/IBKDetailView";
 import type { IBKDetailViewData } from "~/types/ibk";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+
+const MONITORING_KEY_PREFIX = "kader:monitoring-ibk";
+const IBK_KEY_PREFIX = "kader:ibk";
 
 export default component$(() => {
   const loc = useLocation();
@@ -40,11 +44,46 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
-    loading.value = true;
     error.value = null;
+
+    const detailKey = queryClient.buildKey(MONITORING_KEY_PREFIX, "detail", id);
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<MonitoringIBKItem>(detailKey);
+    if (cached) {
+      item.value = cached;
+      loading.value = false;
+
+      // If data is still fresh, skip the network request entirely
+      if (queryClient.isFresh(detailKey)) return;
+
+      // Background refetch (no loading spinner)
+      try {
+        const res = await queryClient.fetchQuery(
+          detailKey,
+          () => monitoringIBKService.detail(id),
+          DEFAULT_STALE_TIME,
+        );
+        const detail = res.data;
+        queryClient.setQueryData(detailKey, detail, DEFAULT_STALE_TIME);
+        item.value = detail;
+      } catch (err: unknown) {
+        console.error("Background refetch monitoring detail failed:", err);
+      }
+      return;
+    }
+
+    // No cached data — show loading spinner
+    loading.value = true;
     try {
-      const res = await monitoringIBKService.detail(id);
-      item.value = res.data;
+      const res = await queryClient.fetchQuery(
+        detailKey,
+        () => monitoringIBKService.detail(id),
+        DEFAULT_STALE_TIME,
+      );
+      const detail = res.data;
+      queryClient.setQueryData(detailKey, detail, DEFAULT_STALE_TIME);
+      item.value = detail;
     } catch (err: unknown) {
       error.value =
         (err as Error)?.message || "Gagal memuat detail monitoring.";
@@ -57,10 +96,26 @@ export default component$(() => {
     if (ibkLoading.value || ibkDetail.value) return;
     const ibkId = item.value?.ibk_id;
     if (!ibkId) return;
+
+    const ibkKey = queryClient.buildKey(IBK_KEY_PREFIX, "detail", ibkId);
+
+    // Return cached IBK detail if fresh
+    const cached = queryClient.getQueryData<IBKDetailViewData>(ibkKey);
+    if (cached && queryClient.isFresh(ibkKey)) {
+      ibkDetail.value = cached;
+      return;
+    }
+
     ibkLoading.value = true;
     try {
-      const ibkRes = await ibkService.getIbkDetail(ibkId);
-      ibkDetail.value = ibkRes?.data || ibkRes;
+      const ibkRes = await queryClient.fetchQuery(
+        ibkKey,
+        () => ibkService.getIbkDetail(ibkId),
+        DEFAULT_STALE_TIME,
+      );
+      const detail = ibkRes?.data || ibkRes;
+      queryClient.setQueryData(ibkKey, detail, DEFAULT_STALE_TIME);
+      ibkDetail.value = detail;
     } finally {
       ibkLoading.value = false;
     }

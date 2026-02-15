@@ -12,6 +12,9 @@ import { IBKDetailView } from "~/components/ibk/IBKDetailView";
 import { extractErrorMessage } from "~/utils/error";
 import { LuAlertCircle } from "~/components/icons/lucide-optimized";
 import type { IBKDetailViewData } from "~/types/ibk";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+
+const KEY_PREFIX = "kader:ibk";
 
 export default component$(() => {
   const nav = useNavigate();
@@ -25,11 +28,47 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
-    loading.value = true;
     error.value = null;
+
+    const key = queryClient.buildKey(KEY_PREFIX, "detail", ibkId);
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<IBKDetailViewData>(key);
+    if (cached) {
+      data.value = cached;
+      loading.value = false;
+
+      // If data is still fresh, skip the network request entirely
+      if (queryClient.isFresh(key)) return;
+
+      // Otherwise fall through to background refetch (no loading spinner)
+      try {
+        const res = await queryClient.fetchQuery(
+          key,
+          () => ibkService.getIbkDetail(ibkId),
+          DEFAULT_STALE_TIME,
+        );
+        const detail = res?.data || res;
+        queryClient.setQueryData(key, detail, DEFAULT_STALE_TIME);
+        data.value = detail;
+      } catch (err: unknown) {
+        // Silently fail on background refetch since we have cached data
+        console.error("Background refetch IBK detail failed:", err);
+      }
+      return;
+    }
+
+    // No cached data — show loading spinner
+    loading.value = true;
     try {
-      const res = await ibkService.getIbkDetail(ibkId);
-      data.value = res?.data || res;
+      const res = await queryClient.fetchQuery(
+        key,
+        () => ibkService.getIbkDetail(ibkId),
+        DEFAULT_STALE_TIME,
+      );
+      const detail = res?.data || res;
+      queryClient.setQueryData(key, detail, DEFAULT_STALE_TIME);
+      data.value = detail;
     } catch (err: unknown) {
       error.value = extractErrorMessage(err as Error);
     } finally {

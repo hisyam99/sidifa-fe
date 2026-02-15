@@ -9,12 +9,16 @@ import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import { object, string, nonEmpty, pipe, custom, InferOutput } from "valibot";
 import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
 import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
 import { IBKSectionAssessment } from "~/components/ibk/IBKSectionAssessment";
 import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
+
+const POSYANDU_KEY_PREFIX = "kader:posyandu";
+const IBK_KEY_PREFIX = "kader:ibk";
 
 const ibkSchema = object({
   // Step 1: Data Diri
@@ -126,10 +130,47 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async ({ track }) => {
     track(() => posyanduId);
-    loading.value = true;
     posyanduError.value = null;
+
+    const detailKey = queryClient.buildKey(
+      POSYANDU_KEY_PREFIX,
+      "detail",
+      posyanduId,
+    );
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<PosyanduDetail>(detailKey);
+    if (cached) {
+      posyandu.value = cached;
+      loading.value = false;
+
+      // If data is still fresh, skip the network request entirely
+      if (queryClient.isFresh(detailKey)) return;
+
+      // Background refetch (no loading spinner)
+      try {
+        const res = await queryClient.fetchQuery(
+          detailKey,
+          () => getPosyanduDetail(posyanduId),
+          DEFAULT_STALE_TIME,
+        );
+        queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
+        posyandu.value = res;
+      } catch (err: unknown) {
+        console.error("Background refetch posyandu detail failed:", err);
+      }
+      return;
+    }
+
+    // No cached data — show loading spinner
+    loading.value = true;
     try {
-      const res = await getPosyanduDetail(posyanduId);
+      const res = await queryClient.fetchQuery(
+        detailKey,
+        () => getPosyanduDetail(posyanduId),
+        DEFAULT_STALE_TIME,
+      );
+      queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
       posyandu.value = res;
     } catch (err: unknown) {
       posyanduError.value = extractErrorMessage(err as Error);
@@ -333,6 +374,12 @@ export default component$(() => {
       if (payloads.length > 0) {
         await ibkService.createIbkDisabilities(payloads);
       }
+
+      // Invalidate IBK caches so lists refetch with fresh data
+      queryClient.invalidateQueries(
+        queryClient.buildKey(IBK_KEY_PREFIX, posyanduId),
+      );
+
       success.value = "Data IBK dan disabilitas berhasil disimpan.";
       nav(`/kader/posyandu/${posyanduId}/ibk`);
     } catch (err: unknown) {

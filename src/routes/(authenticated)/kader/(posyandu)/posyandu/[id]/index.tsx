@@ -7,6 +7,7 @@ import type { PosyanduDetail } from "~/types";
 import type { KaderDashboardStats } from "~/services/dashboard.service";
 import { extractErrorMessage } from "~/utils/error";
 import { KaderStatCard } from "~/components/kader";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import {
   LuUser,
   LuMapPin,
@@ -16,6 +17,9 @@ import {
   LuActivity,
   LuArrowRight,
 } from "~/components/icons/lucide-optimized";
+
+const POSYANDU_KEY_PREFIX = "kader:posyandu";
+const STATS_KEY_PREFIX = "kader:posyandu-stats";
 
 export default component$(() => {
   const loc = useLocation();
@@ -30,30 +34,90 @@ export default component$(() => {
     track(isLoggedIn);
     const idParam = track(() => loc.params.id);
     if (isLoggedIn.value && idParam) {
-      loading.value = true;
-      statsLoading.value = true;
       error.value = null;
 
-      try {
-        // Fetch posyandu detail
-        const res = await getPosyanduDetail(idParam);
-        data.value = res;
+      // --- Posyandu Detail with caching ---
+      const detailKey = queryClient.buildKey(
+        POSYANDU_KEY_PREFIX,
+        "detail",
+        idParam,
+      );
+      const cachedDetail = queryClient.getQueryData<PosyanduDetail>(detailKey);
+      if (cachedDetail) {
+        data.value = cachedDetail;
+        loading.value = false;
 
-        // Fetch stats
+        if (queryClient.isFresh(detailKey)) {
+          // Detail is fresh, skip network
+        } else {
+          // Background refetch (no loading spinner)
+          try {
+            const res = await queryClient.fetchQuery(
+              detailKey,
+              () => getPosyanduDetail(idParam),
+              DEFAULT_STALE_TIME,
+            );
+            data.value = res;
+            queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
+          } catch (err: unknown) {
+            // Silently fail on background refetch since we have cached data
+            console.error("Background refetch posyandu detail failed:", err);
+          }
+        }
+      } else {
+        loading.value = true;
         try {
-          const statsData =
-            await kaderDashboardService.getStatsByPosyandu(idParam);
+          const res = await queryClient.fetchQuery(
+            detailKey,
+            () => getPosyanduDetail(idParam),
+            DEFAULT_STALE_TIME,
+          );
+          data.value = res;
+          queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
+        } catch (err: unknown) {
+          error.value = extractErrorMessage(err as Error);
+        } finally {
+          loading.value = false;
+        }
+      }
+
+      // --- Stats with caching ---
+      const statsKey = queryClient.buildKey(STATS_KEY_PREFIX, idParam);
+      const cachedStats =
+        queryClient.getQueryData<KaderDashboardStats>(statsKey);
+      if (cachedStats) {
+        stats.value = cachedStats;
+        statsLoading.value = false;
+
+        if (!queryClient.isFresh(statsKey)) {
+          // Background refetch stats
+          try {
+            const statsData = await queryClient.fetchQuery(
+              statsKey,
+              () => kaderDashboardService.getStatsByPosyandu(idParam),
+              DEFAULT_STALE_TIME,
+            );
+            stats.value = statsData;
+            queryClient.setQueryData(statsKey, statsData, DEFAULT_STALE_TIME);
+          } catch (statsErr) {
+            console.error("Background refetch stats failed:", statsErr);
+          }
+        }
+      } else {
+        statsLoading.value = true;
+        try {
+          const statsData = await queryClient.fetchQuery(
+            statsKey,
+            () => kaderDashboardService.getStatsByPosyandu(idParam),
+            DEFAULT_STALE_TIME,
+          );
           stats.value = statsData;
+          queryClient.setQueryData(statsKey, statsData, DEFAULT_STALE_TIME);
         } catch (statsErr) {
           console.error("Error fetching stats:", statsErr);
-          // Stats error doesn't block main content
         } finally {
           statsLoading.value = false;
         }
-      } catch (err: unknown) {
-        error.value = extractErrorMessage(err as Error);
-      } finally {
-        loading.value = false;
       }
     }
   });

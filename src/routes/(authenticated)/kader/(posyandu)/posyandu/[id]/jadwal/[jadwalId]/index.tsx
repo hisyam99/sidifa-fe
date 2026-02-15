@@ -8,6 +8,7 @@ import {
 import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
 import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import {
   LuCalendar,
   LuMapPin,
@@ -32,6 +33,8 @@ import { MonitoringIBKForm } from "~/components/posyandu/monitoring/MonitoringIB
 import { IBKSearchSelect } from "~/components/posyandu/monitoring/IBKSearchSelect";
 import { buildJadwalPosyanduUrl } from "~/utils/url";
 import type { MonitoringIBKBase } from "~/types/monitoring-ibk";
+
+const JADWAL_DETAIL_KEY_PREFIX = "kader:jadwal-posyandu";
 
 // Interface for raw API jadwal data
 interface JadwalApiData {
@@ -135,12 +138,52 @@ export default component$(() => {
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     (async () => {
-      loading.value = true;
       error.value = null;
+
+      const detailKey = queryClient.buildKey(
+        JADWAL_DETAIL_KEY_PREFIX,
+        "detail",
+        jadwalId,
+      );
+
+      // Stale-while-revalidate: apply cached data immediately
+      const cached = queryClient.getQueryData<JadwalPosyanduItem>(detailKey);
+      if (cached) {
+        jadwal.value = cached;
+        loading.value = false;
+
+        // If data is still fresh, skip the network request entirely
+        if (queryClient.isFresh(detailKey)) return;
+
+        // Background refetch (no loading spinner)
+        try {
+          const apiData = await queryClient.fetchQuery(
+            detailKey,
+            () => jadwalPosyanduService.getJadwalDetail(jadwalId),
+            DEFAULT_STALE_TIME,
+          );
+          const data = apiData.data || apiData;
+          const mapped = mapApiToJadwalItem(data);
+          queryClient.setQueryData(detailKey, mapped, DEFAULT_STALE_TIME);
+          jadwal.value = mapped;
+        } catch (err: unknown) {
+          console.error("Background refetch jadwal detail failed:", err);
+        }
+        return;
+      }
+
+      // No cached data — show loading spinner
+      loading.value = true;
       try {
-        const apiData = await jadwalPosyanduService.getJadwalDetail(jadwalId);
+        const apiData = await queryClient.fetchQuery(
+          detailKey,
+          () => jadwalPosyanduService.getJadwalDetail(jadwalId),
+          DEFAULT_STALE_TIME,
+        );
         const data = apiData.data || apiData;
-        jadwal.value = mapApiToJadwalItem(data);
+        const mapped = mapApiToJadwalItem(data);
+        queryClient.setQueryData(detailKey, mapped, DEFAULT_STALE_TIME);
+        jadwal.value = mapped;
       } catch (err: unknown) {
         error.value =
           (err as Error)?.message || "Gagal memuat detail jadwal posyandu.";

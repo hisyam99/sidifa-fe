@@ -2,6 +2,7 @@ import { component$, useSignal, useComputed$, $ } from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import { usePagination } from "~/hooks/usePagination";
 import { kaderService } from "~/services/api";
+import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import {
   PosyanduListHeader,
   PosyanduFilterSort,
@@ -13,7 +14,21 @@ import type {
   PaginationMeta,
   PosyanduFilterOptions,
   PosyanduSortOptions,
-} from "~/types/posyandu"; // Import new types
+} from "~/types/posyandu";
+
+const KEY_PREFIX = "kader:posyandu";
+
+const mapResponseItems = (data: PosyanduItem[]): PosyanduItem[] => {
+  return data.map((item: PosyanduItem) => ({
+    ...item,
+    isRegistered: item.is_registered ?? false,
+  }));
+};
+
+interface CachedListData {
+  items: PosyanduItem[];
+  meta: PaginationMeta;
+}
 
 export default component$(() => {
   const posyanduList = useSignal<PosyanduItem[]>([]);
@@ -40,7 +55,6 @@ export default component$(() => {
   const {
     currentPage,
     currentLimit: limit,
-    // meta: paginationMeta, (not used)
     handlePageChange,
     handleLimitChange,
     resetPage,
@@ -52,21 +66,61 @@ export default component$(() => {
         loading.value = false;
         return; // Prevent fetch during SSG or unauthenticated
       }
-      loading.value = true;
+
       error.value = null;
+
+      const key = queryClient.buildKey(
+        KEY_PREFIX,
+        "list",
+        params.page,
+        params.limit,
+        params.nama_posyandu,
+        params.status,
+      );
+
+      // Stale-while-revalidate: apply cached data immediately
+      const cached = queryClient.getQueryData<CachedListData>(key);
+      if (cached) {
+        posyanduList.value = cached.items;
+        meta.value = cached.meta;
+
+        // If data is still fresh, skip the network request entirely
+        if (queryClient.isFresh(key)) return;
+        // Otherwise fall through to background refetch (no loading spinner)
+      }
+
+      // Only show loading spinner when there is no cached data to display
+      if (!cached) loading.value = true;
+
       try {
-        const response = await kaderService.getKaderPosyanduList({
-          ...params,
-          // Add sort options if API supports
-        });
-        // Map is_registered (API) ke isRegistered (camelCase)
-        posyanduList.value = response.data.map((item: PosyanduItem) => ({
-          ...item,
-          isRegistered: item.is_registered ?? false,
-        }));
-        meta.value = response.meta;
+        const response = await queryClient.fetchQuery(
+          key,
+          () =>
+            kaderService.getKaderPosyanduList({
+              ...params,
+            }),
+          DEFAULT_STALE_TIME,
+        );
+
+        const mappedItems = mapResponseItems(response.data);
+        const responseMeta: PaginationMeta = response.meta;
+
+        const result: CachedListData = {
+          items: mappedItems,
+          meta: responseMeta,
+        };
+
+        // Update cache with the transformed result for instant re-use
+        queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+        posyanduList.value = result.items;
+        meta.value = result.meta;
       } catch (err: unknown) {
-        error.value = (err as Error)?.message || "Gagal memuat data posyandu.";
+        // Only surface the error if there was no cached fallback
+        if (!cached) {
+          error.value =
+            (err as Error)?.message || "Gagal memuat data posyandu.";
+        }
       } finally {
         loading.value = false;
       }
@@ -82,17 +136,43 @@ export default component$(() => {
     error.value = null;
     try {
       await kaderService.registerKaderPosyandu(posyanduId);
-      // Refresh the list and update the state without window alert
-      const response = await kaderService.getKaderPosyanduList({
-        limit: limit.value,
-        page: currentPage.value,
-        ...filterOptions.value,
-      });
-      posyanduList.value = response.data.map((item: PosyanduItem) => ({
-        ...item,
-        isRegistered: item.is_registered ?? false,
-      }));
-      meta.value = response.meta;
+
+      // Invalidate posyandu list caches so data refetches with updated registration status
+      queryClient.invalidateQueries(KEY_PREFIX);
+
+      // Refetch the current page through queryClient for consistent caching
+      const key = queryClient.buildKey(
+        KEY_PREFIX,
+        "list",
+        currentPage.value,
+        limit.value,
+        filterOptions.value.nama_posyandu,
+        filterOptions.value.status,
+      );
+
+      const response = await queryClient.fetchQuery(
+        key,
+        () =>
+          kaderService.getKaderPosyanduList({
+            limit: limit.value,
+            page: currentPage.value,
+            ...filterOptions.value,
+          }),
+        DEFAULT_STALE_TIME,
+      );
+
+      const mappedItems = mapResponseItems(response.data);
+      const responseMeta: PaginationMeta = response.meta;
+
+      const result: CachedListData = {
+        items: mappedItems,
+        meta: responseMeta,
+      };
+
+      queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+      posyanduList.value = result.items;
+      meta.value = result.meta;
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal mendaftar ke posyandu";
     } finally {
@@ -100,23 +180,49 @@ export default component$(() => {
     }
   });
 
-  // Perbaikan: Handler filter/sort sama seperti admin
+  // Handler filter/sort
   const handleFilterSortChange = $(async () => {
     await resetPage();
-    loading.value = true;
+
+    // Invalidate list cache when filter/sort params change
+    queryClient.invalidateQueries(queryClient.buildKey(KEY_PREFIX, "list"));
+
     error.value = null;
+    loading.value = true;
+
     try {
-      const response = await kaderService.getKaderPosyanduList({
-        ...filterOptions.value,
-        limit: limit.value,
-        page: 1,
-        // sortBy: sortOptions.value.sortBy, // Hapus jika API tidak mendukung
-      });
-      posyanduList.value = response.data.map((item: PosyanduItem) => ({
-        ...item,
-        isRegistered: item.is_registered ?? false,
-      }));
-      meta.value = response.meta;
+      const key = queryClient.buildKey(
+        KEY_PREFIX,
+        "list",
+        1,
+        limit.value,
+        filterOptions.value.nama_posyandu,
+        filterOptions.value.status,
+      );
+
+      const response = await queryClient.fetchQuery(
+        key,
+        () =>
+          kaderService.getKaderPosyanduList({
+            ...filterOptions.value,
+            limit: limit.value,
+            page: 1,
+          }),
+        DEFAULT_STALE_TIME,
+      );
+
+      const mappedItems = mapResponseItems(response.data);
+      const responseMeta: PaginationMeta = response.meta;
+
+      const result: CachedListData = {
+        items: mappedItems,
+        meta: responseMeta,
+      };
+
+      queryClient.setQueryData(key, result, DEFAULT_STALE_TIME);
+
+      posyanduList.value = result.items;
+      meta.value = result.meta;
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal memuat data posyandu.";
     } finally {

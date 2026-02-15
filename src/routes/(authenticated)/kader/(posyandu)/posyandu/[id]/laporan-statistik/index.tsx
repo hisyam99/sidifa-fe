@@ -8,6 +8,9 @@ import type {
   PeriodeFilter,
 } from "~/types/statistik-laporan";
 import { extractErrorMessage } from "~/utils/error";
+import { queryClient, SHORT_STALE_TIME } from "~/lib/query";
+
+const KEY_PREFIX = "kader:statistik-laporan";
 import { KaderStatCard } from "~/components/kader";
 import {
   StatDistributionBar,
@@ -48,13 +51,43 @@ export default component$(() => {
   const periode = useSignal<PeriodeFilter>("semua");
 
   const fetchData = $(async (posyanduId: string, p: PeriodeFilter) => {
-    loading.value = true;
     error.value = null;
+
+    const key = queryClient.buildKey(KEY_PREFIX, posyanduId, p);
+
+    // Stale-while-revalidate: apply cached data immediately
+    const cached = queryClient.getQueryData<StatistikLaporanData>(key);
+    if (cached) {
+      data.value = cached;
+      loading.value = false;
+
+      // If data is still fresh, skip the network request entirely
+      if (queryClient.isFresh(key)) return;
+
+      // Background refetch (no loading spinner)
+      try {
+        const result = await queryClient.fetchQuery(
+          key,
+          () => statistikLaporanService.getStatistikLaporan(posyanduId, p),
+          SHORT_STALE_TIME,
+        );
+        queryClient.setQueryData(key, result, SHORT_STALE_TIME);
+        data.value = result;
+      } catch (err: unknown) {
+        console.error("Background refetch statistik-laporan failed:", err);
+      }
+      return;
+    }
+
+    // No cached data — show loading spinner
+    loading.value = true;
     try {
-      const result = await statistikLaporanService.getStatistikLaporan(
-        posyanduId,
-        p,
+      const result = await queryClient.fetchQuery(
+        key,
+        () => statistikLaporanService.getStatistikLaporan(posyanduId, p),
+        SHORT_STALE_TIME,
       );
+      queryClient.setQueryData(key, result, SHORT_STALE_TIME);
       data.value = result;
     } catch (err: unknown) {
       error.value = extractErrorMessage(err as Error);
@@ -76,6 +109,10 @@ export default component$(() => {
     periode.value = newPeriode;
     const idParam = loc.params.id;
     if (idParam) {
+      // Invalidate old periode cache to force fresh fetch for new filter
+      queryClient.invalidateQueries(
+        queryClient.buildKey(KEY_PREFIX, idParam, newPeriode),
+      );
       await fetchData(idParam, newPeriode);
     }
   });
