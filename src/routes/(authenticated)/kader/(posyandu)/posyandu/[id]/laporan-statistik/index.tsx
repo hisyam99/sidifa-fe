@@ -344,9 +344,9 @@ export default component$(() => {
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* ODGJ Card */}
-              <div class="card bg-base-100 shadow-md border border-base-200/50">
-                <div class="card-body p-5">
-                  <h3 class="font-semibold text-base text-base-content/90 mb-4">
+              <div class="card bg-base-100 shadow-md border border-base-200/50 flex flex-col h-full">
+                <div class="card-body p-5 flex flex-col min-h-0">
+                  <h3 class="font-semibold text-base text-base-content/90 mb-4 shrink-0">
                     Status ODGJ
                   </h3>
                   {(() => {
@@ -356,7 +356,7 @@ export default component$(() => {
 
                     if (total === 0) {
                       return (
-                        <div class="flex items-center justify-center h-32 text-base-content/40 text-sm">
+                        <div class="flex items-center justify-center flex-1 min-h-[8rem] text-base-content/40 text-sm">
                           Belum ada data kesehatan
                         </div>
                       );
@@ -532,10 +532,10 @@ export default component$(() => {
 
             <div class="card bg-base-100 shadow-md border border-base-200/50">
               <div class="card-body p-0">
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto overflow-y-auto max-h-[480px] overscroll-contain">
                   <table class="table table-sm">
-                    <thead>
-                      <tr class="bg-base-200/40">
+                    <thead class="sticky top-0 z-10">
+                      <tr class="bg-base-200">
                         <th class="text-xs font-semibold uppercase tracking-wider text-base-content/60">
                           Kategori
                         </th>

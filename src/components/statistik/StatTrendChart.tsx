@@ -52,16 +52,25 @@ function formatFullMonthLabel(bulan: string): string {
   return `${months[monthIdx] ?? bulan} ${year}`;
 }
 
+/** Minimum width per bar column in px when horizontal scrolling kicks in */
+const MIN_BAR_WIDTH = 40;
+const SCROLL_THRESHOLD = 12;
+
 export const StatTrendChart = component$<StatTrendChartProps>((props) => {
   const { title, data, barColor, emptyMessage } = props;
   const color = barColor || "bg-primary";
   const maxVal = Math.max(...data.map((d) => d.jumlah), 1);
   const totalAll = data.reduce((sum, d) => sum + d.jumlah, 0);
+  const needsScroll = data.length > SCROLL_THRESHOLD;
+  const chartMinWidth = needsScroll
+    ? `${data.length * MIN_BAR_WIDTH}px`
+    : undefined;
 
   return (
-    <div class="card bg-base-100 shadow-md border border-base-200/50">
-      <div class="card-body p-5">
-        <div class="flex items-center justify-between mb-4">
+    <div class="card bg-base-100 shadow-md border border-base-200/50 flex flex-col h-full">
+      <div class="card-body p-5 flex flex-col min-h-0">
+        {/* Pinned header */}
+        <div class="flex items-center justify-between mb-4 shrink-0">
           <h3 class="font-semibold text-base text-base-content/90">{title}</h3>
           {data.length > 0 && (
             <span class="badge badge-ghost badge-sm tabular-nums">
@@ -71,13 +80,16 @@ export const StatTrendChart = component$<StatTrendChartProps>((props) => {
         </div>
 
         {data.length === 0 ? (
-          <div class="flex items-center justify-center h-40 text-base-content/40 text-sm">
+          <div class="flex items-center justify-center flex-1 min-h-[10rem] text-base-content/40 text-sm">
             {emptyMessage || "Belum ada data trend"}
           </div>
         ) : (
-          <>
-            {/* Chart area */}
-            <div class="relative">
+          /* Scrollable chart area */
+          <div class="flex-1 min-h-0 overflow-x-auto overscroll-x-contain">
+            <div
+              class="relative"
+              style={chartMinWidth ? { minWidth: chartMinWidth } : undefined}
+            >
               {/* Y-axis guide lines */}
               <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
                 {[0, 1, 2, 3].map((i) => (
@@ -138,7 +150,7 @@ export const StatTrendChart = component$<StatTrendChartProps>((props) => {
                 ))}
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

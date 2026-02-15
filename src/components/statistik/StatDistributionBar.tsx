@@ -27,23 +27,25 @@ export const StatDistributionBar = component$<StatDistributionBarProps>(
   (props) => {
     const { title, data, emptyMessage } = props;
     const total = data.reduce((sum, item) => sum + item.jumlah, 0);
+    const sorted = [...data].sort((a, b) => b.jumlah - a.jumlah);
 
     return (
-      <div class="card bg-base-100 shadow-md border border-base-200/50">
-        <div class="card-body p-5">
-          <h3 class="font-semibold text-base text-base-content/90 mb-4">
+      <div class="card bg-base-100 shadow-md border border-base-200/50 flex flex-col h-full">
+        <div class="card-body p-5 flex flex-col min-h-0">
+          {/* Pinned header */}
+          <h3 class="font-semibold text-base text-base-content/90 mb-3 shrink-0">
             {title}
           </h3>
 
           {data.length === 0 || total === 0 ? (
-            <div class="flex items-center justify-center h-32 text-base-content/40 text-sm">
+            <div class="flex items-center justify-center flex-1 min-h-[8rem] text-base-content/40 text-sm">
               {emptyMessage || "Belum ada data"}
             </div>
           ) : (
-            <div class="space-y-3">
-              {data
-                .sort((a, b) => b.jumlah - a.jumlah)
-                .map((item, idx) => {
+            <>
+              {/* Scrollable bars area */}
+              <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain pr-1 space-y-3 max-h-[240px]">
+                {sorted.map((item, idx) => {
                   const pct =
                     total > 0
                       ? Math.round((item.jumlah / total) * 1000) / 10
@@ -69,9 +71,10 @@ export const StatDistributionBar = component$<StatDistributionBarProps>(
                     </div>
                   );
                 })}
+              </div>
 
-              {/* Total footer */}
-              <div class="pt-2 mt-1 border-t border-base-200/60 flex items-center justify-between">
+              {/* Pinned footer */}
+              <div class="pt-2 mt-2 border-t border-base-200/60 flex items-center justify-between shrink-0">
                 <span class="text-xs font-medium text-base-content/50">
                   Total
                 </span>
@@ -79,7 +82,7 @@ export const StatDistributionBar = component$<StatDistributionBarProps>(
                   {total}
                 </span>
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>

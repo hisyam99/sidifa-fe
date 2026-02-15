@@ -51,6 +51,10 @@ function formatFullMonthLabel(bulan: string): string {
   return `${months[monthIdx] ?? bulan} ${year}`;
 }
 
+/** Minimum width per bar column in px when horizontal scrolling kicks in */
+const MIN_BAR_WIDTH = 48;
+const SCROLL_THRESHOLD = 12;
+
 export const StatKehadiranTrend = component$<StatKehadiranTrendProps>(
   (props) => {
     const { title, data, emptyMessage } = props;
@@ -64,12 +68,16 @@ export const StatKehadiranTrend = component$<StatKehadiranTrendProps>(
             (data.reduce((sum, d) => sum + d.persentase, 0) / data.length) * 10,
           ) / 10
         : 0;
+    const needsScroll = data.length > SCROLL_THRESHOLD;
+    const chartMinWidth = needsScroll
+      ? `${data.length * MIN_BAR_WIDTH}px`
+      : undefined;
 
     return (
-      <div class="card bg-base-100 shadow-md border border-base-200/50">
-        <div class="card-body p-5">
-          {/* Header */}
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+      <div class="card bg-base-100 shadow-md border border-base-200/50 flex flex-col h-full">
+        <div class="card-body p-5 flex flex-col min-h-0">
+          {/* Pinned header */}
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4 shrink-0">
             <h3 class="font-semibold text-base text-base-content/90">
               {title}
             </h3>
@@ -95,100 +103,111 @@ export const StatKehadiranTrend = component$<StatKehadiranTrendProps>(
           </div>
 
           {data.length === 0 ? (
-            <div class="flex items-center justify-center h-40 text-base-content/40 text-sm">
+            <div class="flex items-center justify-center flex-1 min-h-[10rem] text-base-content/40 text-sm">
               {emptyMessage || "Belum ada data kehadiran"}
             </div>
           ) : (
             <>
-              {/* Chart area */}
-              <div class="relative">
-                {/* Y-axis guide lines */}
-                <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                  {[0, 1, 2, 3].map((i) => (
-                    <div
-                      key={`guide-${i}`}
-                      class="border-b border-base-200/40 w-full"
-                    ></div>
-                  ))}
-                </div>
-
-                {/* Stacked bars container */}
+              {/* Scrollable chart area */}
+              <div class="flex-1 min-h-0 overflow-x-auto overscroll-x-contain">
                 <div
-                  class="relative flex items-end gap-1 sm:gap-1.5 md:gap-2"
-                  style={{ height: "200px" }}
+                  class="relative"
+                  style={
+                    chartMinWidth ? { minWidth: chartMinWidth } : undefined
+                  }
                 >
-                  {data.map((item, idx) => {
-                    const totalPct =
-                      maxVal > 0 ? Math.max((item.total / maxVal) * 100, 3) : 3;
-                    const hadirRatio =
-                      item.total > 0 ? (item.hadir / item.total) * 100 : 0;
-                    const tidakHadirRatio =
-                      item.total > 0 ? (item.tidakHadir / item.total) * 100 : 0;
-
-                    return (
+                  {/* Y-axis guide lines */}
+                  <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                    {[0, 1, 2, 3].map((i) => (
                       <div
-                        key={`bar-${idx}`}
-                        class="flex-1 flex flex-col items-center justify-end group relative min-w-0"
-                        style={{ height: "100%" }}
-                      >
-                        {/* Tooltip on hover */}
-                        <div class="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">
-                          <div class="bg-base-content text-base-100 text-[10px] px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap font-medium leading-relaxed">
-                            <div class="font-semibold mb-0.5">
-                              {formatFullMonthLabel(item.bulan)}
+                        key={`guide-${i}`}
+                        class="border-b border-base-200/40 w-full"
+                      ></div>
+                    ))}
+                  </div>
+
+                  {/* Stacked bars container */}
+                  <div
+                    class="relative flex items-end gap-1 sm:gap-1.5 md:gap-2"
+                    style={{ height: "200px" }}
+                  >
+                    {data.map((item, idx) => {
+                      const totalPct =
+                        maxVal > 0
+                          ? Math.max((item.total / maxVal) * 100, 3)
+                          : 3;
+                      const hadirRatio =
+                        item.total > 0 ? (item.hadir / item.total) * 100 : 0;
+                      const tidakHadirRatio =
+                        item.total > 0
+                          ? (item.tidakHadir / item.total) * 100
+                          : 0;
+
+                      return (
+                        <div
+                          key={`bar-${idx}`}
+                          class="flex-1 flex flex-col items-center justify-end group relative min-w-0"
+                          style={{ height: "100%" }}
+                        >
+                          {/* Tooltip on hover */}
+                          <div class="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 pointer-events-none">
+                            <div class="bg-base-content text-base-100 text-[10px] px-2.5 py-1.5 rounded-md shadow-lg whitespace-nowrap font-medium leading-relaxed">
+                              <div class="font-semibold mb-0.5">
+                                {formatFullMonthLabel(item.bulan)}
+                              </div>
+                              <div>
+                                Hadir: {item.hadir} · Tidak: {item.tidakHadir}
+                              </div>
+                              <div>Kehadiran: {item.persentase}%</div>
                             </div>
-                            <div>
-                              Hadir: {item.hadir} · Tidak: {item.tidakHadir}
-                            </div>
-                            <div>Kehadiran: {item.persentase}%</div>
+                          </div>
+
+                          {/* Percentage label */}
+                          {item.total > 0 && (
+                            <span class="text-[9px] sm:text-[10px] font-semibold text-base-content/60 mb-0.5 tabular-nums leading-none">
+                              {item.persentase}%
+                            </span>
+                          )}
+
+                          {/* Stacked bar */}
+                          <div
+                            class="w-full rounded-t-sm overflow-hidden flex flex-col-reverse min-w-1.5 max-w-12 transition-all duration-500"
+                            style={{ height: `${totalPct}%` }}
+                          >
+                            {/* Hadir (bottom — green) */}
+                            <div
+                              class="w-full bg-success transition-all duration-500 group-hover:brightness-110"
+                              style={{ height: `${hadirRatio}%` }}
+                            ></div>
+                            {/* Tidak hadir (top — red) */}
+                            <div
+                              class="w-full bg-error/60 transition-all duration-500 group-hover:brightness-110"
+                              style={{ height: `${tidakHadirRatio}%` }}
+                            ></div>
                           </div>
                         </div>
+                      );
+                    })}
+                  </div>
 
-                        {/* Percentage label */}
-                        {item.total > 0 && (
-                          <span class="text-[9px] sm:text-[10px] font-semibold text-base-content/60 mb-0.5 tabular-nums leading-none">
-                            {item.persentase}%
-                          </span>
-                        )}
-
-                        {/* Stacked bar */}
-                        <div
-                          class="w-full rounded-t-sm overflow-hidden flex flex-col-reverse min-w-1.5 max-w-12 transition-all duration-500"
-                          style={{ height: `${totalPct}%` }}
-                        >
-                          {/* Hadir (bottom — green) */}
-                          <div
-                            class="w-full bg-success transition-all duration-500 group-hover:brightness-110"
-                            style={{ height: `${hadirRatio}%` }}
-                          ></div>
-                          {/* Tidak hadir (top — red) */}
-                          <div
-                            class="w-full bg-error/60 transition-all duration-500 group-hover:brightness-110"
-                            style={{ height: `${tidakHadirRatio}%` }}
-                          ></div>
-                        </div>
+                  {/* X-axis labels */}
+                  <div class="flex gap-1 sm:gap-1.5 md:gap-2 mt-1.5 border-t border-base-200/60 pt-1.5">
+                    {data.map((item, idx) => (
+                      <div
+                        key={`label-${idx}`}
+                        class="flex-1 text-center min-w-0"
+                      >
+                        <span class="text-[9px] sm:text-[10px] text-base-content/50 font-medium truncate block">
+                          {formatMonthLabel(item.bulan)}
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* X-axis labels */}
-                <div class="flex gap-1 sm:gap-1.5 md:gap-2 mt-1.5 border-t border-base-200/60 pt-1.5">
-                  {data.map((item, idx) => (
-                    <div
-                      key={`label-${idx}`}
-                      class="flex-1 text-center min-w-0"
-                    >
-                      <span class="text-[9px] sm:text-[10px] text-base-content/50 font-medium truncate block">
-                        {formatMonthLabel(item.bulan)}
-                      </span>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Summary footer */}
-              <div class="mt-4 pt-3 border-t border-base-200/60 grid grid-cols-3 gap-3 text-center">
+              {/* Pinned summary footer */}
+              <div class="mt-4 pt-3 border-t border-base-200/60 grid grid-cols-3 gap-3 text-center shrink-0">
                 <div>
                   <div class="text-lg font-bold text-success tabular-nums">
                     {totalHadir}
