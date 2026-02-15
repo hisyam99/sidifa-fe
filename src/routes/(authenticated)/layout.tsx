@@ -1,5 +1,14 @@
-import { component$, Slot } from "@builder.io/qwik";
+import {
+  component$,
+  Slot,
+  useSignal,
+  useContextProvider,
+} from "@builder.io/qwik";
 import type { RequestHandler } from "@builder.io/qwik-city";
+import {
+  BreadcrumbContext,
+  type BreadcrumbOverrides,
+} from "~/contexts/breadcrumb.context";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   cacheControl({
@@ -11,5 +20,7 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 };
 
 export default component$(() => {
+  const breadcrumbOverrides = useSignal<BreadcrumbOverrides>({});
+  useContextProvider(BreadcrumbContext, breadcrumbOverrides);
   return <Slot />;
 });

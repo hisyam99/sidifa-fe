@@ -4,12 +4,17 @@ import {
   useStore,
   $,
   useVisibleTask$,
+  useContext,
 } from "@builder.io/qwik";
 import { useForm, valiForm$ } from "@modular-forms/qwik";
 import { useNavigate, useLocation } from "@builder.io/qwik-city";
 import { ibkService, getPosyanduDetail } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 import { object, string, nonEmpty, pipe, custom, InferOutput } from "valibot";
 import { IBKSectionPersonalData } from "~/components/ibk/IBKPersonalStep";
 import { IBKSectionDetail } from "~/components/ibk/IBKKunjunganStep";
@@ -107,6 +112,7 @@ export default component$(() => {
   const nav = useNavigate();
   const loc = useLocation();
   const posyanduId = loc.params.id;
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
   const error = useSignal<string | null>(null);
   const success = useSignal<string | null>(null);
   const currentStep = useSignal(0);
@@ -144,6 +150,14 @@ export default component$(() => {
       posyandu.value = cached;
       loading.value = false;
 
+      if (cached.nama_posyandu) {
+        setBreadcrumbName(
+          breadcrumbOverrides,
+          posyanduId,
+          cached.nama_posyandu,
+        );
+      }
+
       // If data is still fresh, skip the network request entirely
       if (queryClient.isFresh(detailKey)) return;
 
@@ -156,6 +170,9 @@ export default component$(() => {
         );
         queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
         posyandu.value = res;
+        if (res.nama_posyandu) {
+          setBreadcrumbName(breadcrumbOverrides, posyanduId, res.nama_posyandu);
+        }
       } catch (err: unknown) {
         console.error("Background refetch posyandu detail failed:", err);
       }
@@ -172,6 +189,9 @@ export default component$(() => {
       );
       queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
       posyandu.value = res;
+      if (res.nama_posyandu) {
+        setBreadcrumbName(breadcrumbOverrides, posyanduId, res.nama_posyandu);
+      }
     } catch (err: unknown) {
       posyanduError.value = extractErrorMessage(err as Error);
       posyandu.value = null;

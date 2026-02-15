@@ -3,6 +3,7 @@ import {
   useSignal,
   useVisibleTask$,
   $,
+  useContext,
   type QRL,
 } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
@@ -13,6 +14,10 @@ import { extractErrorMessage } from "~/utils/error";
 import { LuAlertCircle } from "~/components/icons/lucide-optimized";
 import type { IBKDetailViewData } from "~/types/ibk";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 
 const KEY_PREFIX = "kader:ibk";
 
@@ -25,6 +30,7 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const data = useSignal<IBKDetailViewData | null>(null);
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
@@ -37,6 +43,10 @@ export default component$(() => {
     if (cached) {
       data.value = cached;
       loading.value = false;
+
+      if (cached?.nama) {
+        setBreadcrumbName(breadcrumbOverrides, ibkId, String(cached.nama));
+      }
 
       // If data is still fresh, skip the network request entirely
       if (queryClient.isFresh(key)) return;
@@ -51,6 +61,9 @@ export default component$(() => {
         const detail = res?.data || res;
         queryClient.setQueryData(key, detail, DEFAULT_STALE_TIME);
         data.value = detail;
+        if (detail?.nama) {
+          setBreadcrumbName(breadcrumbOverrides, ibkId, String(detail.nama));
+        }
       } catch (err: unknown) {
         // Silently fail on background refetch since we have cached data
         console.error("Background refetch IBK detail failed:", err);
@@ -69,6 +82,9 @@ export default component$(() => {
       const detail = res?.data || res;
       queryClient.setQueryData(key, detail, DEFAULT_STALE_TIME);
       data.value = detail;
+      if (detail?.nama) {
+        setBreadcrumbName(breadcrumbOverrides, ibkId, String(detail.nama));
+      }
     } catch (err: unknown) {
       error.value = extractErrorMessage(err as Error);
     } finally {

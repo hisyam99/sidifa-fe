@@ -31,9 +31,6 @@ export default component$(() => {
                       {getRoleDisplayName(user.value?.role)}
                     </span>
                   </div>
-                  <div class="text-xs text-base-content/60 text-center mb-2">
-                    ID: {user.value?.id}
-                  </div>
                 </div>
               </div>
               <div class="mt-6 space-y-3">

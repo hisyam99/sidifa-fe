@@ -1,4 +1,10 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useVisibleTask$,
+  $,
+  useContext,
+} from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { presensiIBKService } from "~/services/presensi-ibk.service";
 import type { PresensiIBKItem } from "~/types";
@@ -17,6 +23,10 @@ import { ibkService } from "~/services/api";
 import { IBKDetailView } from "~/components/ibk/IBKDetailView";
 import type { IBKDetailViewData } from "~/types/ibk";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 
 const PRESENSI_KEY_PREFIX = "kader:presensi-ibk";
 const IBK_KEY_PREFIX = "kader:ibk";
@@ -30,6 +40,7 @@ export default component$(() => {
   const ibkLoading = useSignal(false);
   const ibkDetail = useSignal<IBKDetailViewData | null>(null);
   const ibkAccordionOpen = useSignal(false);
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
 
   // Helper function to get status styling
   const getStatusConfig = (status: string) => {
@@ -89,6 +100,14 @@ export default component$(() => {
       item.value = cached;
       loading.value = false;
 
+      if (cached.ibk?.nama || cached.ibk_id) {
+        setBreadcrumbName(
+          breadcrumbOverrides,
+          presensiId,
+          cached.ibk?.nama || "Presensi",
+        );
+      }
+
       // If data is still fresh, skip the network request entirely
       if (queryClient.isFresh(detailKey)) return;
 
@@ -102,6 +121,13 @@ export default component$(() => {
         const detail = res.data;
         queryClient.setQueryData(detailKey, detail, DEFAULT_STALE_TIME);
         item.value = detail;
+        if (detail.ibk?.nama || detail.ibk_id) {
+          setBreadcrumbName(
+            breadcrumbOverrides,
+            presensiId,
+            detail.ibk?.nama || "Presensi",
+          );
+        }
       } catch (err: unknown) {
         console.error("Background refetch presensi detail failed:", err);
       }
@@ -119,6 +145,13 @@ export default component$(() => {
       const detail = res.data;
       queryClient.setQueryData(detailKey, detail, DEFAULT_STALE_TIME);
       item.value = detail;
+      if (detail.ibk?.nama || detail.ibk_id) {
+        setBreadcrumbName(
+          breadcrumbOverrides,
+          presensiId,
+          detail.ibk?.nama || "Presensi",
+        );
+      }
     } catch (err: unknown) {
       error.value = (err as Error)?.message || "Gagal memuat detail presensi.";
     } finally {

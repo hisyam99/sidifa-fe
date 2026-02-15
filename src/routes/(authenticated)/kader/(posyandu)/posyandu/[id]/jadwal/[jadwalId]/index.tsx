@@ -4,11 +4,16 @@ import {
   useVisibleTask$,
   $,
   QRL,
+  useContext,
 } from "@builder.io/qwik";
 import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import { jadwalPosyanduService } from "~/services/jadwal-posyandu.service";
 import type { JadwalPosyanduItem, PresensiStatus } from "~/types";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 import {
   LuCalendar,
   LuMapPin,
@@ -82,6 +87,7 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const jadwal = useSignal<JadwalPosyanduItem | null>(null);
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
 
   function getInitialActiveTab(location: ReturnType<typeof useLocation>) {
     if ((location.url.hash || "").includes("tab=presensi")) {
@@ -152,6 +158,14 @@ export default component$(() => {
         jadwal.value = cached;
         loading.value = false;
 
+        if (cached.nama_kegiatan) {
+          setBreadcrumbName(
+            breadcrumbOverrides,
+            jadwalId,
+            cached.nama_kegiatan,
+          );
+        }
+
         // If data is still fresh, skip the network request entirely
         if (queryClient.isFresh(detailKey)) return;
 
@@ -166,6 +180,13 @@ export default component$(() => {
           const mapped = mapApiToJadwalItem(data);
           queryClient.setQueryData(detailKey, mapped, DEFAULT_STALE_TIME);
           jadwal.value = mapped;
+          if (mapped.nama_kegiatan) {
+            setBreadcrumbName(
+              breadcrumbOverrides,
+              jadwalId,
+              mapped.nama_kegiatan,
+            );
+          }
         } catch (err: unknown) {
           console.error("Background refetch jadwal detail failed:", err);
         }
@@ -184,6 +205,13 @@ export default component$(() => {
         const mapped = mapApiToJadwalItem(data);
         queryClient.setQueryData(detailKey, mapped, DEFAULT_STALE_TIME);
         jadwal.value = mapped;
+        if (mapped.nama_kegiatan) {
+          setBreadcrumbName(
+            breadcrumbOverrides,
+            jadwalId,
+            mapped.nama_kegiatan,
+          );
+        }
       } catch (err: unknown) {
         error.value =
           (err as Error)?.message || "Gagal memuat detail jadwal posyandu.";

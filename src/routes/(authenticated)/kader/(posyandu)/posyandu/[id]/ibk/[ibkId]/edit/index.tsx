@@ -1,4 +1,10 @@
-import { component$, useSignal, useVisibleTask$, $ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useVisibleTask$,
+  $,
+  useContext,
+} from "@builder.io/qwik";
 import { Link, useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
 import { extractErrorMessage } from "~/utils/error";
@@ -12,6 +18,10 @@ import { IBKSectionHealth } from "~/components/ibk/IBKSectionHealth";
 import { IBKSectionDisability } from "~/components/ibk/IBKSectionDisability";
 import type { IBKDisabilityInfo } from "~/types/ibk";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 
 const IBK_KEY_PREFIX = "kader:ibk";
 
@@ -102,6 +112,7 @@ export default component$(() => {
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);
   const currentStep = useSignal(0);
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
 
   const [form, { Form }] = useForm<IBKForm>({
     loader: { value: { ...defaultIBKForm } },
@@ -162,6 +173,11 @@ export default component$(() => {
       loading.value = true;
       try {
         const d = cached;
+
+        if (d?.nama) {
+          setBreadcrumbName(breadcrumbOverrides, ibkId, String(d.nama));
+        }
+
         const asses = (d?.assesmen_ibk || {}) as Record<string, unknown>;
         const sehat = (d?.kesehatan_ibk || {}) as Record<string, unknown>;
         const det = (d?.detail_ibk || {}) as Record<string, unknown>;
@@ -235,6 +251,10 @@ export default component$(() => {
 
       // Store raw detail in cache for reuse
       queryClient.setQueryData(detailKey, d, DEFAULT_STALE_TIME);
+
+      if (d?.nama) {
+        setBreadcrumbName(breadcrumbOverrides, ibkId, String(d.nama));
+      }
       const asses = d?.assesmen_ibk || {};
       const sehat = d?.kesehatan_ibk || {};
       const det = d?.detail_ibk || {};

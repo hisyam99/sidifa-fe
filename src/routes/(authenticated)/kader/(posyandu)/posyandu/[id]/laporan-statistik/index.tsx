@@ -1,4 +1,10 @@
-import { component$, useSignal, useTask$, $ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  useTask$,
+  $,
+  useContext,
+} from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
@@ -9,6 +15,10 @@ import type {
 } from "~/types/statistik-laporan";
 import { extractErrorMessage } from "~/utils/error";
 import { queryClient, SHORT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 
 const KEY_PREFIX = "kader:statistik-laporan";
 import { KaderStatCard } from "~/components/kader";
@@ -44,6 +54,24 @@ const PERIODE_OPTIONS: { value: PeriodeFilter; label: string }[] = [
 export default component$(() => {
   const loc = useLocation();
   const { isLoggedIn } = useAuth();
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
+
+  // Resolve posyandu name from cache for breadcrumbs (inside useTask$ to avoid re-render loop)
+  const posyanduIdParam = loc.params.id;
+  useTask$(() => {
+    if (posyanduIdParam) {
+      const cachedPosyandu = queryClient.getQueryData<{
+        nama_posyandu?: string;
+      }>(queryClient.buildKey("kader:posyandu", "detail", posyanduIdParam));
+      if (cachedPosyandu?.nama_posyandu) {
+        setBreadcrumbName(
+          breadcrumbOverrides,
+          posyanduIdParam,
+          cachedPosyandu.nama_posyandu,
+        );
+      }
+    }
+  });
 
   const loading = useSignal(true);
   const error = useSignal<string | null>(null);

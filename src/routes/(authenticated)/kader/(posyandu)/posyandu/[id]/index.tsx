@@ -1,4 +1,4 @@
-import { component$, useSignal, useTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useTask$, useContext } from "@builder.io/qwik";
 import { Link, useLocation } from "@builder.io/qwik-city";
 import { useAuth } from "~/hooks/useAuth";
 import { getPosyanduDetail } from "~/services/api";
@@ -9,13 +9,16 @@ import { extractErrorMessage } from "~/utils/error";
 import { KaderStatCard } from "~/components/kader";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
 import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
+import {
   LuUser,
   LuMapPin,
   LuPhone,
   LuCalendar,
   LuUsers,
   LuActivity,
-  LuArrowRight,
 } from "~/components/icons/lucide-optimized";
 
 const POSYANDU_KEY_PREFIX = "kader:posyandu";
@@ -29,6 +32,7 @@ export default component$(() => {
   const stats = useSignal<KaderDashboardStats | null>(null);
   const statsLoading = useSignal(true);
   const { isLoggedIn } = useAuth();
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
 
   useTask$(async ({ track }) => {
     track(isLoggedIn);
@@ -47,6 +51,12 @@ export default component$(() => {
         data.value = cachedDetail;
         loading.value = false;
 
+        setBreadcrumbName(
+          breadcrumbOverrides,
+          idParam,
+          cachedDetail.nama_posyandu,
+        );
+
         if (queryClient.isFresh(detailKey)) {
           // Detail is fresh, skip network
         } else {
@@ -59,6 +69,7 @@ export default component$(() => {
             );
             data.value = res;
             queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
+            setBreadcrumbName(breadcrumbOverrides, idParam, res.nama_posyandu);
           } catch (err: unknown) {
             // Silently fail on background refetch since we have cached data
             console.error("Background refetch posyandu detail failed:", err);
@@ -74,6 +85,7 @@ export default component$(() => {
           );
           data.value = res;
           queryClient.setQueryData(detailKey, res, DEFAULT_STALE_TIME);
+          setBreadcrumbName(breadcrumbOverrides, idParam, res.nama_posyandu);
         } catch (err: unknown) {
           error.value = extractErrorMessage(err as Error);
         } finally {
@@ -124,13 +136,6 @@ export default component$(() => {
 
   const statusBadge = (
     <span class="badge badge-success badge-lg gap-2">Aktif</span>
-  );
-
-  const userInfo = (userId: string) => (
-    <div class="flex items-center gap-2 mt-2">
-      <LuUser class="w-4 h-4 text-primary" />
-      <span class="text-xs text-base-content/70">User ID: {userId}</span>
-    </div>
   );
 
   return (
@@ -240,11 +245,6 @@ export default component$(() => {
                         )}
                       </div>
                     </div>
-                    {loading.value ? (
-                      <div class="skeleton h-4 w-40 mt-2"></div>
-                    ) : (
-                      userInfo(data.value!.users_id)
-                    )}
                   </div>
                   <div class="flex flex-col gap-2 text-sm text-base-content/70">
                     <div class="flex items-center gap-2">
@@ -279,14 +279,6 @@ export default component$(() => {
                             },
                           )}
                         </span>
-                      )}
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <LuArrowRight class="w-5 h-5 text-primary" />
-                      {loading.value ? (
-                        <div class="skeleton h-4 w-44"></div>
-                      ) : (
-                        <span>ID: {data.value!.id}</span>
                       )}
                     </div>
                   </div>

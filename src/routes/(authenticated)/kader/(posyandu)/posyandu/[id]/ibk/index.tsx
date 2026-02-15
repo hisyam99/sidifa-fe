@@ -1,4 +1,10 @@
-import { component$, useSignal, $, useTask$ } from "@builder.io/qwik";
+import {
+  component$,
+  useSignal,
+  $,
+  useTask$,
+  useContext,
+} from "@builder.io/qwik";
 import { useAuth } from "~/hooks";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { IBKTable, Alert } from "~/components/ui";
@@ -9,6 +15,10 @@ import { useLocation, useNavigate } from "@builder.io/qwik-city";
 import { ibkService } from "~/services/api";
 import { useDebouncer } from "~/utils/debouncer";
 import { queryClient, DEFAULT_STALE_TIME } from "~/lib/query";
+import {
+  BreadcrumbContext,
+  setBreadcrumbName,
+} from "~/contexts/breadcrumb.context";
 
 const KEY_PREFIX = "kader:ibk";
 
@@ -52,6 +62,21 @@ export default component$(() => {
   const nikError = useSignal<string | null>(null);
 
   const { isLoggedIn } = useAuth();
+  const breadcrumbOverrides = useContext(BreadcrumbContext);
+
+  // Resolve posyandu name from cache for breadcrumbs (inside useTask$ to avoid re-render loop)
+  useTask$(() => {
+    const cachedPosyandu = queryClient.getQueryData<{
+      nama_posyandu?: string;
+    }>(queryClient.buildKey("kader:posyandu", "detail", posyanduId));
+    if (cachedPosyandu?.nama_posyandu) {
+      setBreadcrumbName(
+        breadcrumbOverrides,
+        posyanduId,
+        cachedPosyandu.nama_posyandu,
+      );
+    }
+  });
 
   const mapApiToIBKRecords = $((data: IBKApiItem[]): IBKRecord[] => {
     return data.map((item: IBKApiItem) => ({
@@ -230,9 +255,6 @@ export default component$(() => {
             <p class="text-base-content/70 text-base sm:text-lg">
               Kelola data individu berkebutuhan khusus dengan sistem
               terintegrasi
-            </p>
-            <p class="break-words whitespace-normal">
-              Posyandu ID: {posyanduId}
             </p>
           </div>
           <button
